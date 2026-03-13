@@ -6,10 +6,6 @@ All my code and simulations for this research project.
 
 
 
-
-How to commit my changes in VS Code:
-
-
 ## Push Changes to GitHub
 
 How to commit my changes in VS Code:
@@ -23,4 +19,16 @@ git commit -m "your message"
 
 git push origin main
 
+```
+
+## If `git push origin main` is rejected
+
+This usually means GitHub has newer changes that are not on your computer yet.
+
+```bash
+git status
+
+git pull --rebase origin main
+
+git push origin main
 ```
