@@ -21,7 +21,7 @@ git push origin main
 
 ```
 
-## If `git push origin main` is rejected
+## If git push origin main is rejected
 
 This usually means GitHub has newer changes that are not on your computer yet.
 
