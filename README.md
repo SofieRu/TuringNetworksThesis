@@ -32,3 +32,8 @@ git pull --rebase origin main
 
 git push origin main
 ```
+
+
+## Connect to Imperial VPN
+
+How to connect to the VPN in VS Code
