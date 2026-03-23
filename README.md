@@ -37,3 +37,31 @@ git push origin main
 ## Connect to Imperial VPN
 
 How to connect to the VPN in VS Code
+
+Command + P -> Git: clone 
+
+Command + P -> Remote-SSH:Connect to Host
+
+Enter Imperial password
+
+Go to VS Code Terminal:
+
+```bash
+cd ~/TuringNetworksThesis
+
+module load Python/3.12.3-GCCcore-13.3.0
+
+source ~/venvs/thesis/bin/activate
+```
+
+How to run and submit jobs on HPC:
+
+```bash
+python TopologyRanking/3954-lhs-3node.py # just for testing
+
+time python TopologyRanking/3954-lhs-3node.py # test before to check how long it will run (set correct waiting time in run.pbs)
+
+qsub run.pbs # submit job to HPC
+
+qstat -u $USER # check status of job
+```
