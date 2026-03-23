@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
 # ## Type I - III diffusable nodes for 3954 topology using Random Matrix Theory (RMT)
 
 # **#3954 topology:**  
@@ -145,18 +142,14 @@ def is_turing_diego(J, DU, DV, DW):
     return False
 
 
-# In[ ]:
-
 
 # type I specifications
 
 n_samples = 100_000
 #sigma = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0]
-sigma = [0.9, 1.0]
-DU, DV, DW = 0.0, 1.0, 1.0 # try to vary DW to see if we get a different robustness score
+sigma = [1.5]
+DU, DV, DW = 1.0, 1.0, 0.0 # try to vary DW to see if we get a different robustness score
 
-
-# In[29]:
 
 
 results_type1_3954_rmt = []
@@ -188,15 +181,12 @@ for sig in sigma:
         "rob_shaberi":  rob_shaberi,
     })
 
-print(f"{'Sigma':<8} {'Tested':>8} {'Stable':>8} {'Diego_Tu':>10} {'Shaberi_Tu':>12} {'Diego_Ro':>11} {'Shaberi_Ro':>14}")
-print("-" * 80)
+# print(f"{'Sigma':<8} {'Tested':>8} {'Stable':>8} {'Diego_Tu':>10} {'Shaberi_Tu':>12} {'Diego_Ro':>11} {'Shaberi_Ro':>14}")
+# print("-" * 80)
 
-for r in results_type1_3954_rmt:
-    print(f"{r['sigma']:<6.1f} {n_samples:>10,} {r['stable']:>7,} {r['diego']:>8,} {r['shaberi']:>11,} "
-          f"{r['rob_diego']:>14.7f}% {r['rob_shaberi']:>14.7f}%")
-
-
-# In[ ]:
+# for r in results_type1_3954_rmt:
+#     print(f"{r['sigma']:<6.1f} {n_samples:>10,} {r['stable']:>7,} {r['diego']:>8,} {r['shaberi']:>11,} "
+#           f"{r['rob_diego']:>14.7f}% {r['rob_shaberi']:>14.7f}%")
 
 
 print(results_type1_3954_rmt)

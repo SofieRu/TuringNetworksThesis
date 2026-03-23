@@ -1,6 +1,11 @@
 #!/bin/bash
-#PBS -l walltime=01:00:00
-#PBS -l select=1:ncpus=1:mem=4gb
+#PBS -l walltime=00:20:00
+#PBS -l select=1:ncpus=2:mem=4gb
 
 cd $PBS_O_WORKDIR
-python3 TopologyRanking/3954-lhs-3node.ipynb
+
+module load Python/3.12.3-GCCcore-13.3.0
+source ~/venvs/thesis/bin/activate
+
+# run your script
+python TopologyRanking/3954-rmt-3node.py
