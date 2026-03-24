@@ -18,7 +18,6 @@
 # 
 # We should see Type I collapse to zero as d → 1, while Type II and III stay robustly non-zero...
 
-# In[39]:
 
 
 import numpy as np
