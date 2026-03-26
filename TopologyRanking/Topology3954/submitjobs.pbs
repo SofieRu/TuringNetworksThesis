@@ -1,13 +1,14 @@
 #!/bin/bash
 #PBS -J 0-14
 #PBS -l select=1:ncpus=1:mem=16gb
-#PBS -l walltime=05:00:00
+#PBS -l walltime=06:00:00
 #PBS -N lhs_3954
 #PBS -o logs/
 #PBS -e logs/
 
-# Load Python module (VERIFY this exists with: module avail Python)
-module load Python/3.12.3-GCCcore-13.3.0
+# Load Python module
+# Python/3.12.3-GCCcore-13.3.0
+module load SciPy-bundle/2024.05-gfbf-2024a
 
 # Change to working directory
 cd $PBS_O_WORKDIR
@@ -17,12 +18,12 @@ mkdir -p results
 mkdir -p logs
 
 # Verify Python script exists
-if [ ! -f "run_lhs_3node.py" ]; then
-    echo "ERROR: run_lhs_3node.py not found in $PBS_O_WORKDIR"
+if [ ! -f "3954-lhs-3node-hpc.py" ]; then
+    echo "ERROR: 3954-lhs-3node-hpc.py not found in $PBS_O_WORKDIR"
     exit 1
 fi
 
 # Run Python script with array index
 echo "Starting job ${PBS_ARRAY_INDEX} at $(date)"
-python run_lhs_3node.py $PBS_ARRAY_INDEX
+python 3954-lhs-3node-hpc.py $PBS_ARRAY_INDEX
 echo "Finished job ${PBS_ARRAY_INDEX} at $(date)"
