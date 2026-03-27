@@ -1,0 +1,29 @@
+Starting job 7 at Fri 27 Mar 10:07:10 GMT 2026
+Starting CCD_Type2: dU=0.0, dV=1.0, dW=1.0, n_samples=500,000
+[CCD_Type2] 100,000/500,000 | Stable: 95141 | Diego: 677 | Shaberi: 677
+[CCD_Type2] 200,000/500,000 | Stable: 190195 | Diego: 1347 | Shaberi: 1347
+[CCD_Type2] 300,000/500,000 | Stable: 285359 | Diego: 1998 | Shaberi: 1998
+[CCD_Type2] 400,000/500,000 | Stable: 380398 | Diego: 2641 | Shaberi: 2641
+[CCD_Type2] 500,000/500,000 | Stable: 475425 | Diego: 3291 | Shaberi: 3291
+
+======================================================================
+COMPLETED: CCD_Type2
+======================================================================
+Diego Turing:    3291 (0.6922%)
+Shaberi Total:   3291 (0.6922%)
+  Type-I:        0
+  Type-II:       3291
+  Hopf:          0
+
+Saved to: results/CCD_Type2.pkl
+======================================================================
+Finished job 7 at Fri 27 Mar 14:03:55 GMT 2026
+
+====================================
+CPU Time used: 03:53:09
+CPU Percent: 99%
+Memory usage: 302588kb
+Approx Power usage: 0.0466
+Walltime usage: 03:57:13
+
+====================================

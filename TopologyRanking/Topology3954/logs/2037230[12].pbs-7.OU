@@ -1,0 +1,29 @@
+Starting job 12 at Fri 27 Mar 10:07:39 GMT 2026
+Starting DCI_Type1: dU=1.0, dV=10.0, dW=0.0, n_samples=500,000
+[DCI_Type1] 100,000/500,000 | Stable: 95141 | Diego: 47 | Shaberi: 50
+[DCI_Type1] 200,000/500,000 | Stable: 190195 | Diego: 88 | Shaberi: 93
+[DCI_Type1] 300,000/500,000 | Stable: 285359 | Diego: 132 | Shaberi: 140
+[DCI_Type1] 400,000/500,000 | Stable: 380398 | Diego: 172 | Shaberi: 183
+[DCI_Type1] 500,000/500,000 | Stable: 475425 | Diego: 208 | Shaberi: 219
+
+======================================================================
+COMPLETED: DCI_Type1
+======================================================================
+Diego Turing:    208 (0.0438%)
+Shaberi Total:   219 (0.0461%)
+  Type-I:        43
+  Type-II:       170
+  Hopf:          6
+
+Saved to: results/DCI_Type1.pkl
+======================================================================
+Finished job 12 at Fri 27 Mar 14:07:34 GMT 2026
+
+====================================
+CPU Time used: 03:56:31
+CPU Percent: 99%
+Memory usage: 302032kb
+Approx Power usage: 0.047200000000000006
+Walltime usage: 04:00:12
+
+====================================
