@@ -8,8 +8,8 @@ from scipy.optimize import fsolve
 from scipy.stats import qmc
 
 # Create directories (for local testing)
-os.makedirs("results_shortcut", exist_ok=True)
-os.makedirs("logs_shortcut", exist_ok=True)
+os.makedirs("results", exist_ok=True)
+os.makedirs("logs", exist_ok=True)
 
 ################ LHS ANALYSIS FOR TOPOLOGY #3954 ################
 
