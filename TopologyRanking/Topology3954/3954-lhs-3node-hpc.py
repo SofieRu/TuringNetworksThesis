@@ -277,7 +277,7 @@ if __name__ == "__main__":
     results = run_analysis(config_id, n_samples)
     
     # Save as pickle (for Python)
-    output_pkl = f"results/{results['config_name']}.pkl"
+    output_pkl = f"results/{results['config_name']}_{n_samples//1000}k.pkl"
     with open(output_pkl, 'wb') as f:
         pickle.dump(results, f)
     
@@ -302,7 +302,7 @@ if __name__ == "__main__":
         'rob_shaberi_type_I': results['rob_shaberi_type_I'],
         'rob_shaberi_excl_II': results['rob_shaberi_excl_II'],
     }
-    output_csv = f"results/{results['config_name']}.csv"
+    output_csv = f"results/{results['config_name']}_{n_samples//1000}k.csv"
     pd.DataFrame([results_flat]).to_csv(output_csv, index=False)
     
     # Print summary

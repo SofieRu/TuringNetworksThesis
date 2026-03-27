@@ -3,6 +3,7 @@ import numpy as np
 import sys
 import pickle
 import os
+import pandas as pd
 from scipy.optimize import fsolve
 from scipy.stats import qmc
 
@@ -83,7 +84,7 @@ def is_turing_diego(J, DU, DV, DW):
         return False
     
     D = np.diag([DU, DV, DW])
-    for k in np.arange(0.01, 10.01, 0.01):
+    for k in np.arange(0.01, 10.01, 0.1):
         M = J - k**2 * D
         a1 = -np.trace(M)
         a2 = (M[0,0]*M[1,1] - M[0,1]*M[1,0] +
@@ -272,14 +273,40 @@ if __name__ == "__main__":
         sys.exit(1)
     
     config_id = int(sys.argv[1])
-    n_samples = 500_000
+    n_samples = 500_000  # 500K samples for Phase 1 and then increase to 1 million
     
     results = run_analysis(config_id, n_samples)
-
-    output_file = f"results/{results['config_name']}.pkl"
-    with open(output_file, 'wb') as f:
+    
+    # Save as pickle (for Python)
+    output_pkl = f"results/{results['config_name']}_{n_samples//1000}k.pkl"
+    with open(output_pkl, 'wb') as f:
         pickle.dump(results, f)
     
+    # Save as CSV (for Excel)
+    import pandas as pd
+    results_flat = {
+        'config_name': results['config_name'],
+        'config_id': results['config_id'],
+        'dA': results['diffusion']['dA'],
+        'dB': results['diffusion']['dB'],
+        'dC': results['diffusion']['dC'],
+        'n_samples': results['n_samples'],
+        'steady_states': results['steady_states'],
+        'stable_without_diffusion': results['stable_without_diffusion'],
+        'diego_turing': results['diego_turing'],
+        'shaberi_total': results['shaberi_total'],
+        'shaberi_type_I': results['shaberi_type_I'],
+        'shaberi_type_II': results['shaberi_type_II'],
+        'shaberi_hopf': results['shaberi_hopf'],
+        'rob_diego': results['rob_diego'],
+        'rob_shaberi_total': results['rob_shaberi_total'],
+        'rob_shaberi_type_I': results['rob_shaberi_type_I'],
+        'rob_shaberi_excl_II': results['rob_shaberi_excl_II'],
+    }
+    output_csv = f"results/{results['config_name']}_{n_samples//1000}k.csv"
+    pd.DataFrame([results_flat]).to_csv(output_csv, index=False)
+    
+    # Print summary
     print(f"\n{'='*70}")
     print(f"COMPLETED: {results['config_name']}")
     print(f"{'='*70}")
@@ -288,5 +315,7 @@ if __name__ == "__main__":
     print(f"  Type-I:        {results['shaberi_type_I']}")
     print(f"  Type-II:       {results['shaberi_type_II']}")
     print(f"  Hopf:          {results['shaberi_hopf']}")
-    print(f"\nSaved to: {output_file}")
+    print(f"\nSaved to:")
+    print(f"  {output_pkl}")
+    print(f"  {output_csv}")
     print(f"{'='*70}")
