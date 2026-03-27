@@ -82,7 +82,7 @@ def is_turing_diego(J, DU, DV, DW):
         return False
     
     D = np.diag([DU, DV, DW])
-    for k in np.linspace(0.1, 10, 100):
+    for k in np.arange(0.01, 10.01, 0.01):
         M = J - k**2 * D
         a1 = -np.trace(M)
         a2 = (M[0,0]*M[1,1] - M[0,1]*M[1,0] +
