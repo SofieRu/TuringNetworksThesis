@@ -165,6 +165,67 @@ DIFFUSION_CONFIGS = {
     14: {"name": "DCI_Type3", "dU": 0.0,  "dV": 1.0,  "dW": 0.0},
 }
 
+
+DIFFUSION_CONFIGS = {
+    # DCC: A=Destable, B=Compl., C=Compl.
+    0:  {"name": "DCC_Type1",          "dU": 1.0,  "dV": 10.0, "dW": 10.0},
+    1:  {"name": "DCC_Type1_OneFast",  "dU": 1.0,  "dV": 10.0, "dW": 1.0},
+    1:  {"name": "DCC_Type1_Control",  "dU": 1.0,  "dV": 1.0,  "dW": 1.0},   # Control: should fail
+    
+    2:  {"name": "DCC_Type2_Var1",     "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
+    2:  {"name": "DCC_Type2_Var2",     "dU": 1.0,  "dV": 0.0,  "dW": 1.0},
+    
+    3:  {"name": "DCC_Type3_Equal",    "dU": 0.0,  "dV": 1.0,  "dW": 1.0},   # Current
+    4:  {"name": "DCC_Type3_Unequal1", "dU": 0.0,  "dV": 0.1,  "dW": 1.0},   # 10× difference
+    5:  {"name": "DCC_Type3_Unequal2", "dU": 0.0,  "dV": 1.0,  "dW": 10.0},  # Large difference
+    
+    # CDD: A=Compl., B=Destable, C=Destable
+    6:  {"name": "CDD_Type1",          "dU": 10.0, "dV": 1.0,  "dW": 1.0},
+    7:  {"name": "CDD_Type1_Control",  "dU": 1.0,  "dV": 1.0,  "dW": 1.0},   # Control: should fail
+    
+    8:  {"name": "CDD_Type2",          "dU": 0.0,  "dV": 1.0,  "dW": 1.0},
+    
+    9:  {"name": "CDD_Type3_Equal",    "dU": 1.0,  "dV": 1.0,  "dW": 0.0},   # Current
+    10: {"name": "CDD_Type3_Unequal1", "dU": 1.0,  "dV": 0.1,  "dW": 0.0},   # Lower B diffusion
+    11: {"name": "CDD_Type3_Unequal2", "dU": 1.0,  "dV": 10.0, "dW": 0.0},   # Higher B diffusion
+    
+    # CCD: A=Compl., B=Compl., C=Destable
+    12: {"name": "CCD_Type1",          "dU": 10.0, "dV": 10.0, "dW": 1.0},
+    13: {"name": "CCD_Type1_Control",    "dU": 1.0,  "dV": 1.0,  "dW": 1.0},   # Control: should fail
+    
+    14: {"name": "CCD_Type2",          "dU": 0.0,  "dV": 1.0,  "dW": 1.0},
+    
+    15: {"name": "CCD_Type3_Equal",    "dU": 1.0,  "dV": 1.0,  "dW": 0.0},   # Current
+    16: {"name": "CCD_Type3_Unequal1", "dU": 0.1,  "dV": 1.0,  "dW": 0.0},   # Lower A diffusion
+    17: {"name": "CCD_Type3_Unequal2", "dU": 10.0, "dV": 1.0,  "dW": 0.0},   # Higher A diffusion
+    
+    # DCD: A=Destable, B=Compl., C=Destable
+    18: {"name": "DCD_Type1",          "dU": 1.0,  "dV": 10.0, "dW": 1.0},
+    19: {"name": "DCD_Type1_Control",    "dU": 1.0,  "dV": 1.0,  "dW": 1.0},   # Control: should fail
+    
+    20: {"name": "DCD_Type2",          "dU": 1.0,  "dV": 0.0,  "dW": 1.0},
+    
+    21: {"name": "DCD_Type3_Equal",    "dU": 1.0,  "dV": 1.0,  "dW": 0.0},   # Current
+    22: {"name": "DCD_Type3_Unequal1", "dU": 0.1,  "dV": 1.0,  "dW": 0.0},   # Lower A diffusion
+    23: {"name": "DCD_Type3_Unequal2", "dU": 10.0, "dV": 1.0,  "dW": 0.0},   # Higher A diffusion
+    
+    # DCI: A=Destable, B=Compl., C=Immobile
+    24: {"name": "DCI_Type1",          "dU": 1.0,  "dV": 10.0, "dW": 0.0},
+    25: {"name": "DCI_Type1_Control",    "dU": 1.0,  "dV": 1.0,  "dW": 0.0},   # Control: should fail
+    
+    26: {"name": "DCI_Type2",          "dU": 1.0,  "dV": 0.0,  "dW": 0.0},
+    
+    27: {"name": "DCI_Type3",          "dU": 0.0,  "dV": 1.0,  "dW": 0.0},   # Current (only B diffuses)
+}
+
+
+
+
+
+
+
+
+
 # MAIN ANALYSIS FUNCTION
 
 def run_analysis(config_id, n_samples):
