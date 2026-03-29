@@ -1,0 +1,17 @@
+Starting job 9 at Fri 27 Mar 15:44:50 GMT 2026
+Starting DCD_Type1: dU=1.0, dV=10.0, dW=1.0, n_samples=500,000
+[DCD_Type1] 100,000/500,000 | Stable: 95141 | Diego: 6 | Shaberi: 6
+[DCD_Type1] 200,000/500,000 | Stable: 190195 | Diego: 13 | Shaberi: 13
+[DCD_Type1] 300,000/500,000 | Stable: 285359 | Diego: 19 | Shaberi: 19
+[DCD_Type1] 400,000/500,000 | Stable: 380398 | Diego: 28 | Shaberi: 28
+[DCD_Type1] 500,000/500,000 | Stable: 475425 | Diego: 34 | Shaberi: 34
+Finished job 9 at Fri 27 Mar 16:28:13 GMT 2026
+
+====================================
+CPU Time used: 00:41:45
+CPU Percent: 99%
+Memory usage: 324240kb
+Approx Power usage: 0.008199999999999999
+Walltime usage: 00:44:12
+
+====================================

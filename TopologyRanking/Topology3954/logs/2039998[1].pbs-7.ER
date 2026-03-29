@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "/rds/general/user/sr1625/home/TuringNetworksThesis/TopologyRanking/Topology3954/3954-lhs-3node-hpc-shortcut.py", line 290, in <module>
+    'dA': results['diffusion']['dA'],
+          ~~~~~~~~~~~~~~~~~~~~^^^^^^
+KeyError: 'dA'

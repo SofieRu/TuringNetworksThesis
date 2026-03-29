@@ -1,0 +1,2 @@
+config_name,config_id,dU,dV,dW,n_samples,steady_states,stable_without_diffusion,diego_turing,shaberi_total,shaberi_type_I,shaberi_type_II,shaberi_hopf,rob_diego,rob_shaberi_total,rob_shaberi_type_I,rob_shaberi_excl_II
+DCI_Type1,12,1.0,10.0,0.0,500000,484620,475425,207,212,36,170,6,0.04353999053478467,0.04459168112741232,0.007572172266919072,0.00883420097807225

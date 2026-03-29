@@ -7,7 +7,9 @@ import glob
 import pandas as pd
 
 # Find all pickle files
-result_files = sorted(glob.glob('results/*.pkl'))
+#result_files = sorted(glob.glob('results/*.pkl'))
+result_files = sorted(glob.glob('results/*_500k.pkl'))
+
 
 # Load all results
 all_results = []
@@ -19,8 +21,11 @@ for filepath in result_files:
 # Create DataFrame
 df = pd.DataFrame(all_results)
 
-# Sort by robustness
-df = df.sort_values('rob_diego', ascending=False)
+# OLD (sorted by robustness):
+#df = df.sort_values('rob_diego', ascending=False)
+
+# NEW (sorted by config_id):
+df = df.sort_values('config_id', ascending=True)
 
 # Select columns to display
 cols = [

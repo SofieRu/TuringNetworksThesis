@@ -1,0 +1,17 @@
+Starting job 6 at Fri 27 Mar 15:44:31 GMT 2026
+Starting CCD_Type1: dU=10.0, dV=10.0, dW=1.0, n_samples=500,000
+[CCD_Type1] 100,000/500,000 | Stable: 95141 | Diego: 3 | Shaberi: 3
+[CCD_Type1] 200,000/500,000 | Stable: 190195 | Diego: 5 | Shaberi: 5
+[CCD_Type1] 300,000/500,000 | Stable: 285359 | Diego: 7 | Shaberi: 7
+[CCD_Type1] 400,000/500,000 | Stable: 380398 | Diego: 9 | Shaberi: 9
+[CCD_Type1] 500,000/500,000 | Stable: 475425 | Diego: 10 | Shaberi: 10
+Finished job 6 at Fri 27 Mar 16:27:34 GMT 2026
+
+====================================
+CPU Time used: 00:41:36
+CPU Percent: 98%
+Memory usage: 324076kb
+Approx Power usage: 0.008199999999999999
+Walltime usage: 00:43:45
+
+====================================

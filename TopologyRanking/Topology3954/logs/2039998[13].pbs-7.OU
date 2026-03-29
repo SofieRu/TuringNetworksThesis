@@ -1,0 +1,17 @@
+Starting job 13 at Fri 27 Mar 15:44:49 GMT 2026
+Starting DCI_Type2: dU=1.0, dV=0.0, dW=0.0, n_samples=500,000
+[DCI_Type2] 100,000/500,000 | Stable: 95141 | Diego: 1159 | Shaberi: 1159
+[DCI_Type2] 200,000/500,000 | Stable: 190195 | Diego: 2299 | Shaberi: 2299
+[DCI_Type2] 300,000/500,000 | Stable: 285359 | Diego: 3454 | Shaberi: 3454
+[DCI_Type2] 400,000/500,000 | Stable: 380398 | Diego: 4633 | Shaberi: 4633
+[DCI_Type2] 500,000/500,000 | Stable: 475425 | Diego: 5803 | Shaberi: 5803
+Finished job 13 at Fri 27 Mar 16:31:23 GMT 2026
+
+====================================
+CPU Time used: 00:44:40
+CPU Percent: 99%
+Memory usage: 327512kb
+Approx Power usage: 0.008799999999999999
+Walltime usage: 00:48:00
+
+====================================

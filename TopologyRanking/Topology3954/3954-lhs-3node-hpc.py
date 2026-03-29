@@ -82,8 +82,9 @@ def is_turing_diego(J, DU, DV, DW):
     if not (a1_0 > 0 and a3_0 > 0 and a1_0*a2_0 - a3_0 > 0):
         return False
     
+    # SUPPOSED TO BE 0.01 STEP, BUT INCREASED TO 0.1 FOR SPEED, CHANGE BACK LATER 
     D = np.diag([DU, DV, DW])
-    for k in np.arange(0.01, 10.01, 0.01):
+    for k in np.arange(0.01, 10.01, 0.1):   
         M = J - k**2 * D
         a1 = -np.trace(M)
         a2 = (M[0,0]*M[1,1] - M[0,1]*M[1,0] +
@@ -102,8 +103,9 @@ def is_turing_shaberi(J, eigs_0, DU, DV, DW):
         return None
     
     # STEP 2: Check for instability with diffusion
+    # SUPPOSED TO BE 0.01 STEP, BUT INCREASED TO 0.1 FOR SPEED, CHANGE BACK LATER
     D = np.diag([DU, DV, DW])
-    k_values = np.arange(0.01, 10.01, 0.01)
+    k_values = np.arange(0.01, 10.01, 0.1)
     
     has_instability = False
     is_oscillatory = False
@@ -354,13 +356,12 @@ if __name__ == "__main__":
         pickle.dump(results, f)
     
     # Save as CSV (for Excel)
-    import pandas as pd
     results_flat = {
         'config_name': results['config_name'],
         'config_id': results['config_id'],
-        'dA': results['diffusion']['dA'],
-        'dB': results['diffusion']['dB'],
-        'dC': results['diffusion']['dC'],
+        'dU': results['diffusion']['dU'],  # FIXED: was 'dA'
+        'dV': results['diffusion']['dV'],  # FIXED: was 'dB'
+        'dW': results['diffusion']['dW'],  # FIXED: was 'dC'
         'n_samples': results['n_samples'],
         'steady_states': results['steady_states'],
         'stable_without_diffusion': results['stable_without_diffusion'],

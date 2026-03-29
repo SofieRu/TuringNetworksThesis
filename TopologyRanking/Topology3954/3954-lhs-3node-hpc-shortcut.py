@@ -267,6 +267,8 @@ def run_analysis(config_id, n_samples):
 
 # ACTUAL HPC CODE TO RUN ALL CONFIGURATIONS
 
+# ACTUAL HPC CODE TO RUN ALL CONFIGURATIONS
+
 if __name__ == "__main__":
     if len(sys.argv) != 2:
         print("Usage: python run_lhs_3node.py <config_id>")
@@ -283,13 +285,12 @@ if __name__ == "__main__":
         pickle.dump(results, f)
     
     # Save as CSV (for Excel)
-    import pandas as pd
     results_flat = {
         'config_name': results['config_name'],
         'config_id': results['config_id'],
-        'dA': results['diffusion']['dA'],
-        'dB': results['diffusion']['dB'],
-        'dC': results['diffusion']['dC'],
+        'dU': results['diffusion']['dU'],  # FIXED: was 'dA'
+        'dV': results['diffusion']['dV'],  # FIXED: was 'dB'
+        'dW': results['diffusion']['dW'],  # FIXED: was 'dC'
         'n_samples': results['n_samples'],
         'steady_states': results['steady_states'],
         'stable_without_diffusion': results['stable_without_diffusion'],
