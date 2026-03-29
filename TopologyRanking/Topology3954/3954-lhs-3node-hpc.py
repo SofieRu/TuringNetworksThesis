@@ -138,56 +138,61 @@ def is_turing_shaberi(J, eigs_0, DU, DV, DW):
 
 # DIFFUSION CONFIGURATIONS
 
-DIFFUSION_CONFIGS = {
-    # DCC: A=Destable, B=Compl., C=Compl.
-    0:  {"name": "DCC_Type1", "dU": 1.0,  "dV": 10.0, "dW": 10.0},
-    1:  {"name": "DCC_Type2", "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
-    2:  {"name": "DCC_Type3", "dU": 0.0,  "dV": 1.0,  "dW": 1.0},
+# DIFFUSION_CONFIGS = {
+#     # DCC: A=Destable, B=Compl., C=Compl.
+#     0:  {"name": "DCC_Type1", "dU": 1.0,  "dV": 10.0, "dW": 10.0},
+#     1:  {"name": "DCC_Type2", "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
+#     2:  {"name": "DCC_Type3", "dU": 0.0,  "dV": 1.0,  "dW": 1.0},
     
-    # CDD: A=Compl., B=Destable, C=Destable
-    3:  {"name": "CDD_Type1", "dU": 10.0, "dV": 1.0,  "dW": 1.0},
-    4:  {"name": "CDD_Type2", "dU": 0.0,  "dV": 1.0,  "dW": 1.0},
-    5:  {"name": "CDD_Type3", "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
+#     # CDD: A=Compl., B=Destable, C=Destable
+#     3:  {"name": "CDD_Type1", "dU": 10.0, "dV": 1.0,  "dW": 1.0},
+#     4:  {"name": "CDD_Type2", "dU": 0.0,  "dV": 1.0,  "dW": 1.0},
+#     5:  {"name": "CDD_Type3", "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
     
-    # CCD: A=Compl., B=Compl., C=Destable
-    6:  {"name": "CCD_Type1", "dU": 10.0, "dV": 10.0, "dW": 1.0},
-    7:  {"name": "CCD_Type2", "dU": 0.0,  "dV": 1.0,  "dW": 1.0},
-    8:  {"name": "CCD_Type3", "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
+#     # CCD: A=Compl., B=Compl., C=Destable
+#     6:  {"name": "CCD_Type1", "dU": 10.0, "dV": 10.0, "dW": 1.0},
+#     7:  {"name": "CCD_Type2", "dU": 0.0,  "dV": 1.0,  "dW": 1.0},
+#     8:  {"name": "CCD_Type3", "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
     
-    # DCD: A=Destable, B=Compl., C=Destable
-    9:  {"name": "DCD_Type1", "dU": 1.0,  "dV": 10.0, "dW": 1.0},
-    10: {"name": "DCD_Type2", "dU": 1.0,  "dV": 0.0,  "dW": 1.0},
-    11: {"name": "DCD_Type3", "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
+#     # DCD: A=Destable, B=Compl., C=Destable
+#     9:  {"name": "DCD_Type1", "dU": 1.0,  "dV": 10.0, "dW": 1.0},
+#     10: {"name": "DCD_Type2", "dU": 1.0,  "dV": 0.0,  "dW": 1.0},
+#     11: {"name": "DCD_Type3", "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
     
-    # DCI: A=Destable, B=Compl., C=Immobile
-    12: {"name": "DCI_Type1", "dU": 1.0,  "dV": 10.0, "dW": 0.0},
-    13: {"name": "DCI_Type2", "dU": 1.0,  "dV": 0.0,  "dW": 0.0},
-    14: {"name": "DCI_Type3", "dU": 0.0,  "dV": 1.0,  "dW": 0.0},
-}
+#     # DCI: A=Destable, B=Compl., C=Immobile
+#     12: {"name": "DCI_Type1", "dU": 1.0,  "dV": 10.0, "dW": 0.0},
+#     13: {"name": "DCI_Type2", "dU": 1.0,  "dV": 0.0,  "dW": 0.0},
+#     14: {"name": "DCI_Type3", "dU": 0.0,  "dV": 1.0,  "dW": 0.0},
+# }
 
 
 DIFFUSION_CONFIGS = {
-    # DCC: A=Destable, B=Compl., C=Compl.
+    # DCC: A=Destable, B=Complementary, C=Complementary
     0:  {"name": "DCC_Type1",          "dU": 1.0,  "dV": 10.0, "dW": 10.0},
     1:  {"name": "DCC_Type1_OneFast",  "dU": 1.0,  "dV": 10.0, "dW": 1.0},
-    1:  {"name": "DCC_Type1_Control",  "dU": 1.0,  "dV": 1.0,  "dW": 1.0},   # Control: should fail
+    2:  {"name": "DCC_Type1_Control",  "dU": 1.0,  "dV": 1.0,  "dW": 1.0},
     
-    2:  {"name": "DCC_Type2_Var1",     "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
-    2:  {"name": "DCC_Type2_Var2",     "dU": 1.0,  "dV": 0.0,  "dW": 1.0},
+    3:  {"name": "DCC_Type2_Equal",    "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
+    4:  {"name": "DCC_Type2_Unequal1", "dU": 1.0,  "dV": 0.1,  "dW": 0.0},
+    5:  {"name": "DCC_Type2_Unequal2", "dU": 10.0, "dV": 1.0,  "dW": 0.0},
+    6:  {"name": "DCC_Type2_Var",      "dU": 1.0,  "dV": 0.0,  "dW": 1.0},
     
-    3:  {"name": "DCC_Type3_Equal",    "dU": 0.0,  "dV": 1.0,  "dW": 1.0},   # Current
-    4:  {"name": "DCC_Type3_Unequal1", "dU": 0.0,  "dV": 0.1,  "dW": 1.0},   # 10× difference
-    5:  {"name": "DCC_Type3_Unequal2", "dU": 0.0,  "dV": 1.0,  "dW": 10.0},  # Large difference
+    7:  {"name": "DCC_Type3_Equal",    "dU": 0.0,  "dV": 1.0,  "dW": 1.0},
+    8:  {"name": "DCC_Type3_Unequal1", "dU": 0.0,  "dV": 0.1,  "dW": 1.0},
+    9:  {"name": "DCC_Type3_Unequal2", "dU": 0.0,  "dV": 1.0,  "dW": 10.0},
     
-    # CDD: A=Compl., B=Destable, C=Destable
+    # CDD: A=Complementary, B=Destable, C=Destable
     6:  {"name": "CDD_Type1",          "dU": 10.0, "dV": 1.0,  "dW": 1.0},
-    7:  {"name": "CDD_Type1_Control",  "dU": 1.0,  "dV": 1.0,  "dW": 1.0},   # Control: should fail
+    7:  {"name": "CDD_Type1_Control",  "dU": 1.0,  "dV": 1.0,  "dW": 1.0},   
     
-    8:  {"name": "CDD_Type2",          "dU": 0.0,  "dV": 1.0,  "dW": 1.0},
+    8:  {"name": "CDD_Type2_Equal",    "dU": 0.0,  "dV": 1.0,  "dW": 1.0},
+    9:  {"name": "CDD_Type2_Unequal1", "dU": 0.0,  "dV": 0.1,  "dW": 1.0},
+    9:  {"name": "CDD_Type2_Unequal2", "dU": 0.0,  "dV": 1.0,  "dW": 10.0},
     
-    9:  {"name": "CDD_Type3_Equal",    "dU": 1.0,  "dV": 1.0,  "dW": 0.0},   # Current
-    10: {"name": "CDD_Type3_Unequal1", "dU": 1.0,  "dV": 0.1,  "dW": 0.0},   # Lower B diffusion
-    11: {"name": "CDD_Type3_Unequal2", "dU": 1.0,  "dV": 10.0, "dW": 0.0},   # Higher B diffusion
+    10: {"name": "CDD_Type3_Equal",    "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
+    11: {"name": "CDD_Type3_Unequal1", "dU": 1.0,  "dV": 0.1,  "dW": 0.0},
+    12: {"name": "CDD_Type3_Unequal2", "dU": 10.0, "dV": 1.0,  "dW": 0.0},
+    13: {"name": "CDD_Type3_Var",      "dU": 1.0,  "dV": 0.0,  "dW": 1.0},
     
     # CCD: A=Compl., B=Compl., C=Destable
     12: {"name": "CCD_Type1",          "dU": 10.0, "dV": 10.0, "dW": 1.0},
