@@ -232,13 +232,6 @@ DIFFUSION_CONFIGS = {
 }
 
 
-
-
-
-
-
-
-
 # MAIN ANALYSIS FUNCTION
 
 def run_analysis(config_id, n_samples):
@@ -359,9 +352,9 @@ if __name__ == "__main__":
     results_flat = {
         'config_name': results['config_name'],
         'config_id': results['config_id'],
-        'dU': results['diffusion']['dU'],  # FIXED: was 'dA'
-        'dV': results['diffusion']['dV'],  # FIXED: was 'dB'
-        'dW': results['diffusion']['dW'],  # FIXED: was 'dC'
+        'dU': results['diffusion']['dU'],
+        'dV': results['diffusion']['dV'],
+        'dW': results['diffusion']['dW'],
         'n_samples': results['n_samples'],
         'steady_states': results['steady_states'],
         'stable_without_diffusion': results['stable_without_diffusion'],
