@@ -1,0 +1,31 @@
+Starting job 37 at Mon 30 Mar 02:05:31 BST 2026
+Starting DCD_Type3_Var: dU=1.0, dV=1.0, dW=0.0, n_samples=500,000
+[DCD_Type3_Var] 100,000/500,000 | Stable: 95141 | Diego: 82 | Shaberi: 82
+[DCD_Type3_Var] 200,000/500,000 | Stable: 190195 | Diego: 151 | Shaberi: 151
+[DCD_Type3_Var] 300,000/500,000 | Stable: 285359 | Diego: 245 | Shaberi: 245
+[DCD_Type3_Var] 400,000/500,000 | Stable: 380398 | Diego: 312 | Shaberi: 312
+[DCD_Type3_Var] 500,000/500,000 | Stable: 475425 | Diego: 383 | Shaberi: 383
+
+======================================================================
+COMPLETED: DCD_Type3_Var
+======================================================================
+Diego Turing:    383 (0.0806%)
+Shaberi Total:   383 (0.0806%)
+  Type-I:        212
+  Type-II:       171
+  Hopf:          0
+
+Saved to:
+  results/DCD_Type3_Var_500k.pkl
+  results/DCD_Type3_Var_500k.csv
+======================================================================
+Finished job 37 at Mon 30 Mar 02:56:15 BST 2026
+
+====================================
+CPU Time used: 00:49:52
+CPU Percent: 98%
+Memory usage: 324696kb
+Approx Power usage: 0.009800000000000001
+Walltime usage: 00:50:51
+
+====================================

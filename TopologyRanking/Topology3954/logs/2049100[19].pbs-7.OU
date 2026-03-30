@@ -1,0 +1,31 @@
+Starting job 19 at Mon 30 Mar 02:06:09 BST 2026
+Starting CCD_Type1: dU=10.0, dV=10.0, dW=1.0, n_samples=500,000
+[CCD_Type1] 100,000/500,000 | Stable: 95141 | Diego: 3 | Shaberi: 3
+[CCD_Type1] 200,000/500,000 | Stable: 190195 | Diego: 5 | Shaberi: 5
+[CCD_Type1] 300,000/500,000 | Stable: 285359 | Diego: 7 | Shaberi: 7
+[CCD_Type1] 400,000/500,000 | Stable: 380398 | Diego: 9 | Shaberi: 9
+[CCD_Type1] 500,000/500,000 | Stable: 475425 | Diego: 10 | Shaberi: 10
+
+======================================================================
+COMPLETED: CCD_Type1
+======================================================================
+Diego Turing:    10 (0.0021%)
+Shaberi Total:   10 (0.0021%)
+  Type-I:        10
+  Type-II:       0
+  Hopf:          0
+
+Saved to:
+  results/CCD_Type1_500k.pkl
+  results/CCD_Type1_500k.csv
+======================================================================
+Finished job 19 at Mon 30 Mar 02:57:32 BST 2026
+
+====================================
+CPU Time used: 00:49:56
+CPU Percent: 98%
+Memory usage: 325232kb
+Approx Power usage: 0.009800000000000001
+Walltime usage: 00:51:29
+
+====================================

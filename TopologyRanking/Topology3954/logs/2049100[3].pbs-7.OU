@@ -1,0 +1,31 @@
+Starting job 3 at Mon 30 Mar 02:05:30 BST 2026
+Starting DCC_Type2_Equal: dU=1.0, dV=1.0, dW=0.0, n_samples=500,000
+[DCC_Type2_Equal] 100,000/500,000 | Stable: 95141 | Diego: 82 | Shaberi: 82
+[DCC_Type2_Equal] 200,000/500,000 | Stable: 190195 | Diego: 151 | Shaberi: 151
+[DCC_Type2_Equal] 300,000/500,000 | Stable: 285359 | Diego: 245 | Shaberi: 245
+[DCC_Type2_Equal] 400,000/500,000 | Stable: 380398 | Diego: 312 | Shaberi: 312
+[DCC_Type2_Equal] 500,000/500,000 | Stable: 475425 | Diego: 383 | Shaberi: 383
+
+======================================================================
+COMPLETED: DCC_Type2_Equal
+======================================================================
+Diego Turing:    383 (0.0806%)
+Shaberi Total:   383 (0.0806%)
+  Type-I:        212
+  Type-II:       171
+  Hopf:          0
+
+Saved to:
+  results/DCC_Type2_Equal_500k.pkl
+  results/DCC_Type2_Equal_500k.csv
+======================================================================
+Finished job 3 at Mon 30 Mar 02:52:51 BST 2026
+
+====================================
+CPU Time used: 00:46:38
+CPU Percent: 98%
+Memory usage: 325536kb
+Approx Power usage: 0.009200000000000002
+Walltime usage: 00:47:35
+
+====================================

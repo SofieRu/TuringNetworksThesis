@@ -1,0 +1,31 @@
+Starting job 5 at Mon 30 Mar 02:05:35 BST 2026
+Starting DCC_Type2_Unequal2: dU=10.0, dV=1.0, dW=0.0, n_samples=500,000
+[DCC_Type2_Unequal2] 100,000/500,000 | Stable: 95141 | Diego: 273 | Shaberi: 273
+[DCC_Type2_Unequal2] 200,000/500,000 | Stable: 190195 | Diego: 538 | Shaberi: 538
+[DCC_Type2_Unequal2] 300,000/500,000 | Stable: 285359 | Diego: 816 | Shaberi: 816
+[DCC_Type2_Unequal2] 400,000/500,000 | Stable: 380398 | Diego: 1113 | Shaberi: 1113
+[DCC_Type2_Unequal2] 500,000/500,000 | Stable: 475425 | Diego: 1386 | Shaberi: 1386
+
+======================================================================
+COMPLETED: DCC_Type2_Unequal2
+======================================================================
+Diego Turing:    1386 (0.2915%)
+Shaberi Total:   1386 (0.2915%)
+  Type-I:        1215
+  Type-II:       171
+  Hopf:          0
+
+Saved to:
+  results/DCC_Type2_Unequal2_500k.pkl
+  results/DCC_Type2_Unequal2_500k.csv
+======================================================================
+Finished job 5 at Mon 30 Mar 02:54:26 BST 2026
+
+====================================
+CPU Time used: 00:46:41
+CPU Percent: 98%
+Memory usage: 325232kb
+Approx Power usage: 0.009200000000000002
+Walltime usage: 00:48:57
+
+====================================

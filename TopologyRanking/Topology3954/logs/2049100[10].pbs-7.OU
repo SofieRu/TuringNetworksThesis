@@ -1,0 +1,31 @@
+Starting job 10 at Mon 30 Mar 02:05:17 BST 2026
+Starting CDD_Type1: dU=10.0, dV=1.0, dW=1.0, n_samples=500,000
+[CDD_Type1] 100,000/500,000 | Stable: 95141 | Diego: 15 | Shaberi: 15
+[CDD_Type1] 200,000/500,000 | Stable: 190195 | Diego: 28 | Shaberi: 28
+[CDD_Type1] 300,000/500,000 | Stable: 285359 | Diego: 44 | Shaberi: 44
+[CDD_Type1] 400,000/500,000 | Stable: 380398 | Diego: 59 | Shaberi: 59
+[CDD_Type1] 500,000/500,000 | Stable: 475425 | Diego: 74 | Shaberi: 74
+
+======================================================================
+COMPLETED: CDD_Type1
+======================================================================
+Diego Turing:    74 (0.0156%)
+Shaberi Total:   74 (0.0156%)
+  Type-I:        74
+  Type-II:       0
+  Hopf:          0
+
+Saved to:
+  results/CDD_Type1_500k.pkl
+  results/CDD_Type1_500k.csv
+======================================================================
+Finished job 10 at Mon 30 Mar 02:55:26 BST 2026
+
+====================================
+CPU Time used: 00:48:44
+CPU Percent: 98%
+Memory usage: 325356kb
+Approx Power usage: 0.009600000000000001
+Walltime usage: 00:50:16
+
+====================================
