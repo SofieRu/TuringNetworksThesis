@@ -142,34 +142,34 @@ def is_turing_shaberi(J, eigs_0, DU, DV, DW):
 
 DIFFUSION_CONFIGS = {
     # CDD: A=Complementary, B=Destable, C=Destable
-    10: {"name": "1754_CDD_Type1",          "dU": 10.0, "dV": 1.0,  "dW": 1.0},
-    11: {"name": "1754_CDD_Type1_Control",  "dU": 1.0,  "dV": 1.0,  "dW": 1.0},   
+    0:  {"name": "1754_CDD_Type1",          "dU": 10.0, "dV": 1.0,  "dW": 1.0},
+    1:  {"name": "1754_CDD_Type1_Control",  "dU": 1.0,  "dV": 1.0,  "dW": 1.0},   
     
-    12: {"name": "1754_CDD_Type2_Equal",    "dU": 0.0,  "dV": 1.0,  "dW": 1.0},
-    13: {"name": "1754_CDD_Type2_Unequal1", "dU": 0.0,  "dV": 0.1,  "dW": 1.0},
-    14: {"name": "1754_CDD_Type2_Unequal2", "dU": 0.0,  "dV": 1.0,  "dW": 10.0},
+    2:  {"name": "1754_CDD_Type2_Equal",    "dU": 0.0,  "dV": 1.0,  "dW": 1.0},
+    3:  {"name": "1754_CDD_Type2_Unequal1", "dU": 0.0,  "dV": 0.1,  "dW": 1.0},
+    4:  {"name": "1754_CDD_Type2_Unequal2", "dU": 0.0,  "dV": 1.0,  "dW": 10.0},
     
-    15: {"name": "1754_CDD_Type3_Equal",    "dU": 1.0,  "dV": 0.0,  "dW": 1.0},
-    16: {"name": "1754_CDD_Type3_Unequal1", "dU": 0.1,  "dV": 0.0,  "dW": 1.0},
-    17: {"name": "1754_CDD_Type3_Unequal2", "dU": 1.0,  "dV": 0.0,  "dW": 10.0},
-    18: {"name": "1754_CDD_Type3_Var",      "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
+    5:  {"name": "1754_CDD_Type3_Equal",    "dU": 1.0,  "dV": 0.0,  "dW": 1.0},
+    6:  {"name": "1754_CDD_Type3_Unequal1", "dU": 0.1,  "dV": 0.0,  "dW": 1.0},
+    7:  {"name": "1754_CDD_Type3_Unequal2", "dU": 1.0,  "dV": 0.0,  "dW": 10.0},
+    8:  {"name": "1754_CDD_Type3_Var",      "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
     
     # CCD: A=Compl., B=Compl., C=Destable
-    19: {"name": "1754_CCD_Type1",          "dU": 10.0, "dV": 10.0, "dW": 1.0},
-    20: {"name": "1754_CCD_Type1_OneFast",  "dU": 1.0,  "dV": 10.0, "dW": 1.0},
-    21: {"name": "1754_CCD_Type1_Control",  "dU": 1.0,  "dV": 1.0,  "dW": 1.0},
+    9:  {"name": "1754_CCD_Type1",          "dU": 10.0, "dV": 10.0, "dW": 1.0},
+    10: {"name": "1754_CCD_Type1_OneFast",  "dU": 1.0,  "dV": 10.0, "dW": 1.0},
+    11: {"name": "1754_CCD_Type1_Control",  "dU": 1.0,  "dV": 1.0,  "dW": 1.0},
     
-    22: {"name": "1754_CCD_Type2_Equal",    "dU": 1.0,  "dV": 0.0,  "dW": 1.0},
-    23: {"name": "1754_CCD_Type2_Unequal1", "dU": 0.1,  "dV": 0.0,  "dW": 1.0},
-    24: {"name": "1754_CCD_Type2_Unequal2", "dU": 1.0,  "dV": 0.0,  "dW": 10.0},
-    25: {"name": "1754_CCD_Type2_Var",      "dU": 0.0,  "dV": 1.0,  "dW": 1.0},
+    12: {"name": "1754_CCD_Type2_Equal",    "dU": 1.0,  "dV": 0.0,  "dW": 1.0},
+    13: {"name": "1754_CCD_Type2_Unequal1", "dU": 0.1,  "dV": 0.0,  "dW": 1.0},
+    14: {"name": "1754_CCD_Type2_Unequal2", "dU": 1.0,  "dV": 0.0,  "dW": 10.0},
+    15: {"name": "1754_CCD_Type2_Var",      "dU": 0.0,  "dV": 1.0,  "dW": 1.0},
     
-    26: {"name": "1754_CCD_Type3_Equal",    "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
-    27: {"name": "1754_CCD_Type3_Unequal1", "dU": 0.1,  "dV": 1.0,  "dW": 0.0},
-    28: {"name": "1754_CCD_Type3_Unequal2", "dU": 1.0,  "dV": 10.0,  "dW": 0.0},
+    16: {"name": "1754_CCD_Type3_Equal",    "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
+    17: {"name": "1754_CCD_Type3_Unequal1", "dU": 0.1,  "dV": 1.0,  "dW": 0.0},
+    18: {"name": "1754_CCD_Type3_Unequal2", "dU": 1.0,  "dV": 10.0,  "dW": 0.0},
     
     # DCI: A=Destable, B=Compl., C=Immobile
-    41: {"name": "1754_DCI_Type3",          "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
+    19: {"name": "1754_DCI_Type3",          "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
 }
 
 # MAIN ANALYSIS FUNCTION
