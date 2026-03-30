@@ -51,13 +51,3 @@ print("="*120)
 # Save as CSV for Excel
 df.to_csv('results_summary.csv', index=False)
 print("\nSaved to: results_summary.csv")
-
-# Print top 3
-print("\n" + "="*60)
-print("TOP 3 MOST ROBUST CONFIGURATIONS:")
-print("="*60)
-for idx, row in df.head(3).iterrows():
-    print(f"\n{row['config_name']}: {row['rob_diego']:.4f}%")
-    print(f"  Diffusion: dA={row['diffusion']['dA']}, dB={row['diffusion']['dB']}, dC={row['diffusion']['dC']}")
-    print(f"  Diego: {row['diego_turing']} patterns")
-    print(f"  Shaberi: {row['shaberi_type_I']} Type-I, {row['shaberi_type_II']} Type-II, {row['shaberi_hopf']} Hopf")
