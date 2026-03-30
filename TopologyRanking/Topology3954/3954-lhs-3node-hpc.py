@@ -339,7 +339,7 @@ if __name__ == "__main__":
         sys.exit(1)
     
     config_id = int(sys.argv[1])
-    n_samples = 500_000  # 500K samples for Phase 1 and then increase to 1 million
+    n_samples = 1_000_000  # 500K samples for Phase 1 and then increase to 1 million
     
     results = run_analysis(config_id, n_samples)
     
