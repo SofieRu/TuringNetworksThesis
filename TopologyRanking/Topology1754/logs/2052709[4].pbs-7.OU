@@ -1,0 +1,31 @@
+Starting job 4 at Tue 31 Mar 10:32:40 BST 2026
+Starting 1754_CDD_Type2_Unequal2: dU=0.0, dV=1.0, dW=10.0, n_samples=500,000
+[1754_CDD_Type2_Unequal2] 100,000/500,000 | Stable: 98487 | Diego: 0 | Shaberi: 0
+[1754_CDD_Type2_Unequal2] 200,000/500,000 | Stable: 196994 | Diego: 0 | Shaberi: 0
+[1754_CDD_Type2_Unequal2] 300,000/500,000 | Stable: 295429 | Diego: 0 | Shaberi: 0
+[1754_CDD_Type2_Unequal2] 400,000/500,000 | Stable: 393930 | Diego: 0 | Shaberi: 0
+[1754_CDD_Type2_Unequal2] 500,000/500,000 | Stable: 492415 | Diego: 0 | Shaberi: 0
+
+======================================================================
+COMPLETED: 1754_CDD_Type2_Unequal2
+======================================================================
+Diego Turing:    0 (0.0000%)
+Shaberi Total:   0 (0.0000%)
+  Type-I:        0
+  Type-II:       0
+  Hopf:          0
+
+Saved to:
+  results/1754_CDD_Type2_Unequal2_500k.pkl
+  results/1754_CDD_Type2_Unequal2_500k.csv
+======================================================================
+Finished job 4 at Tue 31 Mar 11:20:13 BST 2026
+
+====================================
+CPU Time used: 00:45:45
+CPU Percent: 98%
+Memory usage: 309988kb
+Approx Power usage: 0.009
+Walltime usage: 00:47:47
+
+====================================

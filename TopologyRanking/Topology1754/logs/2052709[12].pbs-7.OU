@@ -1,0 +1,31 @@
+Starting job 12 at Tue 31 Mar 10:33:40 BST 2026
+Starting 1754_CCD_Type1_OneFast: dU=1.0, dV=10.0, dW=1.0, n_samples=500,000
+[1754_CCD_Type1_OneFast] 100,000/500,000 | Stable: 98487 | Diego: 0 | Shaberi: 0
+[1754_CCD_Type1_OneFast] 200,000/500,000 | Stable: 196994 | Diego: 0 | Shaberi: 0
+[1754_CCD_Type1_OneFast] 300,000/500,000 | Stable: 295429 | Diego: 0 | Shaberi: 0
+[1754_CCD_Type1_OneFast] 400,000/500,000 | Stable: 393930 | Diego: 0 | Shaberi: 0
+[1754_CCD_Type1_OneFast] 500,000/500,000 | Stable: 492415 | Diego: 1 | Shaberi: 1
+
+======================================================================
+COMPLETED: 1754_CCD_Type1_OneFast
+======================================================================
+Diego Turing:    1 (0.0002%)
+Shaberi Total:   1 (0.0002%)
+  Type-I:        1
+  Type-II:       0
+  Hopf:          0
+
+Saved to:
+  results/1754_CCD_Type1_OneFast_500k.pkl
+  results/1754_CCD_Type1_OneFast_500k.csv
+======================================================================
+Finished job 12 at Tue 31 Mar 11:23:04 BST 2026
+
+====================================
+CPU Time used: 00:46:56
+CPU Percent: 98%
+Memory usage: 308372kb
+Approx Power usage: 0.009200000000000002
+Walltime usage: 00:49:34
+
+====================================

@@ -1,0 +1,31 @@
+Starting job 11 at Tue 31 Mar 10:33:36 BST 2026
+Starting 1754_CCD_Type1: dU=10.0, dV=10.0, dW=1.0, n_samples=500,000
+[1754_CCD_Type1] 100,000/500,000 | Stable: 98487 | Diego: 3 | Shaberi: 3
+[1754_CCD_Type1] 200,000/500,000 | Stable: 196994 | Diego: 4 | Shaberi: 4
+[1754_CCD_Type1] 300,000/500,000 | Stable: 295429 | Diego: 9 | Shaberi: 9
+[1754_CCD_Type1] 400,000/500,000 | Stable: 393930 | Diego: 12 | Shaberi: 12
+[1754_CCD_Type1] 500,000/500,000 | Stable: 492415 | Diego: 15 | Shaberi: 15
+
+======================================================================
+COMPLETED: 1754_CCD_Type1
+======================================================================
+Diego Turing:    15 (0.0030%)
+Shaberi Total:   15 (0.0030%)
+  Type-I:        15
+  Type-II:       0
+  Hopf:          0
+
+Saved to:
+  results/1754_CCD_Type1_500k.pkl
+  results/1754_CCD_Type1_500k.csv
+======================================================================
+Finished job 11 at Tue 31 Mar 11:21:45 BST 2026
+
+====================================
+CPU Time used: 00:46:55
+CPU Percent: 98%
+Memory usage: 308628kb
+Approx Power usage: 0.009200000000000002
+Walltime usage: 00:48:15
+
+====================================

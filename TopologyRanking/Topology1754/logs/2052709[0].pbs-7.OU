@@ -1,0 +1,31 @@
+Starting job 0 at Tue 31 Mar 10:32:06 BST 2026
+Starting 1754_CDD_Type1: dU=10.0, dV=1.0, dW=1.0, n_samples=500,000
+[1754_CDD_Type1] 100,000/500,000 | Stable: 98487 | Diego: 21 | Shaberi: 21
+[1754_CDD_Type1] 200,000/500,000 | Stable: 196994 | Diego: 36 | Shaberi: 36
+[1754_CDD_Type1] 300,000/500,000 | Stable: 295429 | Diego: 58 | Shaberi: 58
+[1754_CDD_Type1] 400,000/500,000 | Stable: 393930 | Diego: 72 | Shaberi: 72
+[1754_CDD_Type1] 500,000/500,000 | Stable: 492415 | Diego: 83 | Shaberi: 83
+
+======================================================================
+COMPLETED: 1754_CDD_Type1
+======================================================================
+Diego Turing:    83 (0.0169%)
+Shaberi Total:   83 (0.0169%)
+  Type-I:        83
+  Type-II:       0
+  Hopf:          0
+
+Saved to:
+  results/1754_CDD_Type1_500k.pkl
+  results/1754_CDD_Type1_500k.csv
+======================================================================
+Finished job 0 at Tue 31 Mar 11:21:45 BST 2026
+
+====================================
+CPU Time used: 00:48:18
+CPU Percent: 98%
+Memory usage: 323480kb
+Approx Power usage: 0.009600000000000001
+Walltime usage: 00:49:46
+
+====================================

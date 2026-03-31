@@ -1,0 +1,31 @@
+Starting job 23 at Tue 31 Mar 10:34:36 BST 2026
+Starting 1754_DCI_Type3: dU=1.0, dV=1.0, dW=0.0, n_samples=500,000
+[1754_DCI_Type3] 100,000/500,000 | Stable: 98487 | Diego: 72 | Shaberi: 72
+[1754_DCI_Type3] 200,000/500,000 | Stable: 196994 | Diego: 166 | Shaberi: 166
+[1754_DCI_Type3] 300,000/500,000 | Stable: 295429 | Diego: 248 | Shaberi: 248
+[1754_DCI_Type3] 400,000/500,000 | Stable: 393930 | Diego: 337 | Shaberi: 337
+[1754_DCI_Type3] 500,000/500,000 | Stable: 492415 | Diego: 407 | Shaberi: 407
+
+======================================================================
+COMPLETED: 1754_DCI_Type3
+======================================================================
+Diego Turing:    407 (0.0827%)
+Shaberi Total:   407 (0.0827%)
+  Type-I:        181
+  Type-II:       226
+  Hopf:          0
+
+Saved to:
+  results/1754_DCI_Type3_500k.pkl
+  results/1754_DCI_Type3_500k.csv
+======================================================================
+Finished job 23 at Tue 31 Mar 11:23:54 BST 2026
+
+====================================
+CPU Time used: 00:48:12
+CPU Percent: 98%
+Memory usage: 310100kb
+Approx Power usage: 0.009600000000000001
+Walltime usage: 00:49:24
+
+====================================
