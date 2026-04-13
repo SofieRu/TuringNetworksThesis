@@ -45,10 +45,10 @@ def load_data():
 
     return df
 
+##################################### FIGURE 1: Overview bar chart #####################################
 
-# Figure 1: Overview bar chart
 def fig1_overview(df):
-    fig, ax = plt.subplots(figsize=(14, 5))
+    fig, ax = plt.subplots(figsize=(14, 6))
 
     colors = df["turing_type"].map(TYPE_COLORS).fillna("#aaaaaa")
 
@@ -72,10 +72,17 @@ def fig1_overview(df):
 
     ax.set_ylabel("Robustness Score (in %)", fontsize=11)
     ax.set_title(
-        "Robustness of Topologies in Topology3954 Dataset\n(1 million simulations per topology)",
+        "Robustness of Topologies for #3954 Topology\n(1 million simulations per topology)",
         fontsize=12, loc="left", pad=10,
     )
     ax.spines[["top", "right"]].set_visible(False)
+
+    # fix 1 – remove extra left padding
+    ax.set_xlim(-0.5, len(df) - 0.5)
+
+    # fix 2 – horizontal grid lines only
+    ax.xaxis.grid(False)
+    ax.yaxis.grid(True)
 
     # Dashed vertical lines between topology groups
     topos = df["topology"].values
@@ -85,10 +92,63 @@ def fig1_overview(df):
 
     # Legend
     handles = [mpatches.Patch(color=c, label=t) for t, c in TYPE_COLORS.items()]
-    ax.legend(handles=handles, title="Turing Type", frameon=False)
+    #ax.legend(handles=handles, title="Turing Type", frameon=False)
+    ax.legend(handles=handles, title="Turing Type", frameon=False, loc="upper center", bbox_to_anchor=(0.5, -0.4), ncol=3)
 
     fig.tight_layout()
     save(fig, "3954_fig1_overview_bar_detail")
 
+
+
+##################################### FIGURE 2: Scatter of Type 1 to Type 3 #####################################
+
+
+def fig2_dotplot(df):
+    import random
+    random.seed(42)
+ 
+    fig, ax = plt.subplots(figsize=(7, 4))
+ 
+    types = ["Type1", "Type2", "Type3"]
+ 
+    for i, t in enumerate(types):
+        subset = df[df["turing_type"] == t]["rob_shaberi_total"]
+        # add small random jitter on x so dots don't stack
+        jitter = [i + random.uniform(-0.15, 0.15) for _ in subset]
+        ax.scatter(
+            jitter,
+            subset,
+            color=TYPE_COLORS[t],
+            s=80,
+            edgecolors="white",
+            linewidths=0.5,
+            zorder=3,
+        )
+ 
+    ax.set_xticks([0, 1, 2])
+    ax.set_xticklabels(["Type 1", "Type 2", "Type 3"], fontsize=11)
+    ax.set_ylabel("Robustness Score (in %, Shaberi Method)", fontsize=11)
+    ax.set_title(
+        "Plot of Robustness Scores by Turing Type for #3954\n(1 million simulations per topology)",
+        fontsize=12, loc="left", pad=10,
+    )
+    ax.xaxis.grid(False)
+    ax.set_xlim(-0.5, 2.5)
+ 
+    fig.tight_layout()
+    save(fig, "3954_fig2_dotplot")
+
+
+
+
+
+
+
+
+
+
+########### RUN THE WHOLE THING ############
+
 df = load_data()
 fig1_overview(df)
+fig2_dotplot(df)

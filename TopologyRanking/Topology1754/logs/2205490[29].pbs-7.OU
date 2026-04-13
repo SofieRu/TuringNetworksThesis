@@ -1,0 +1,36 @@
+Starting job 29 at Mon 13 Apr 17:14:39 BST 2026
+Starting 1754_DCC_Type3_Limit: dU=0.0, dV=0.1, dW=0.1, n_samples=1,000,000
+[1754_DCC_Type3_Limit] 100,000/1,000,000 | Stable: 98478 | Diego: 0 | Shaberi: 0
+[1754_DCC_Type3_Limit] 200,000/1,000,000 | Stable: 196894 | Diego: 0 | Shaberi: 0
+[1754_DCC_Type3_Limit] 300,000/1,000,000 | Stable: 295298 | Diego: 0 | Shaberi: 0
+[1754_DCC_Type3_Limit] 400,000/1,000,000 | Stable: 393751 | Diego: 0 | Shaberi: 0
+[1754_DCC_Type3_Limit] 500,000/1,000,000 | Stable: 492192 | Diego: 0 | Shaberi: 0
+[1754_DCC_Type3_Limit] 600,000/1,000,000 | Stable: 590728 | Diego: 0 | Shaberi: 0
+[1754_DCC_Type3_Limit] 700,000/1,000,000 | Stable: 689254 | Diego: 0 | Shaberi: 0
+[1754_DCC_Type3_Limit] 800,000/1,000,000 | Stable: 787663 | Diego: 0 | Shaberi: 0
+[1754_DCC_Type3_Limit] 900,000/1,000,000 | Stable: 886092 | Diego: 0 | Shaberi: 0
+[1754_DCC_Type3_Limit] 1,000,000/1,000,000 | Stable: 984576 | Diego: 0 | Shaberi: 0
+
+======================================================================
+COMPLETED: 1754_DCC_Type3_Limit
+======================================================================
+Diego Turing:    0 (0.0000%)
+Shaberi Total:   0 (0.0000%)
+  Type-I:        0
+  Type-II:       0
+  Hopf:          0
+
+Saved to:
+  results/1754_DCC_Type3_Limit_1000k.pkl
+  results/1754_DCC_Type3_Limit_1000k.csv
+======================================================================
+Finished job 29 at Mon 13 Apr 18:50:14 BST 2026
+
+====================================
+CPU Time used: 01:33:04
+CPU Percent: 99%
+Memory usage: 548152kb
+Approx Power usage: 0.018600000000000002
+Walltime usage: 01:36:07
+
+====================================
