@@ -2,6 +2,8 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import pandas as pd
+import random
+import numpy as np
 
 # have to run this first: module load matplotlib/3.9.2-gfbf-2024a
 
@@ -104,7 +106,6 @@ def fig1_overview(df):
 
 
 def fig2_dotplot(df):
-    import random
     random.seed(42)
  
     fig, ax = plt.subplots(figsize=(7, 4))
@@ -141,6 +142,46 @@ def fig2_dotplot(df):
 
 
 
+##################################### FIGURE 3: Grouped bars, max robustness per topology × type #####################################
+
+def fig3_grouped_topology(df):
+ 
+    fig, ax = plt.subplots(figsize=(10, 5))
+
+    topos = df["topology"].dropna().unique()
+    types = ["Type1", "Type2", "Type3"]
+    x     = np.arange(len(topos))
+    w     = 0.25
+ 
+    for i, t in enumerate(types):
+        vals = [
+            df[(df["topology"] == topo) & (df["turing_type"] == t)]["rob_shaberi_total"].max()
+            for topo in topos
+        ]
+        ax.bar(
+            x + (i - 1) * w,
+            vals,
+            width=w,
+            color=TYPE_COLORS[t],
+            label=t,
+            edgecolor="white",
+            linewidth=0.5,
+        )
+ 
+    ax.set_xticks(x)
+    ax.set_xticklabels(topos, fontsize=11)
+    ax.set_ylabel("Max robustness  (rob_shaberi_total)", fontsize=11)
+    ax.set_title(
+        "Topology #3954 – Max robustness per topology and Turing Type",
+        fontsize=12, loc="left", pad=10,
+    )
+    ax.xaxis.grid(False)
+    ax.legend(title="Turing Type", frameon=False,
+              loc="upper center", bbox_to_anchor=(0.5, -0.12), ncol=3)
+ 
+    fig.tight_layout()
+    save(fig, "3954_fig3_grouped_topology")
+
 
 
 
@@ -152,3 +193,4 @@ def fig2_dotplot(df):
 df = load_data()
 fig1_overview(df)
 fig2_dotplot(df)
+fig3_grouped_topology(df)
