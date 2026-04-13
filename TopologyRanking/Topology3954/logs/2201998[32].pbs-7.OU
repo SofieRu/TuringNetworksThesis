@@ -1,0 +1,36 @@
+Starting job 32 at Mon 13 Apr 15:29:17 BST 2026
+Starting 3954_DCI_Type1: dU=1.0, dV=10.0, dW=0.0, n_samples=1,000,000
+[3954_DCI_Type1] 100,000/1,000,000 | Stable: 95180 | Diego: 41 | Shaberi: 44
+[3954_DCI_Type1] 200,000/1,000,000 | Stable: 190103 | Diego: 78 | Shaberi: 84
+[3954_DCI_Type1] 300,000/1,000,000 | Stable: 285166 | Diego: 110 | Shaberi: 118
+[3954_DCI_Type1] 400,000/1,000,000 | Stable: 380343 | Diego: 147 | Shaberi: 156
+[3954_DCI_Type1] 500,000/1,000,000 | Stable: 475497 | Diego: 181 | Shaberi: 191
+[3954_DCI_Type1] 600,000/1,000,000 | Stable: 570769 | Diego: 228 | Shaberi: 240
+[3954_DCI_Type1] 700,000/1,000,000 | Stable: 665900 | Diego: 263 | Shaberi: 276
+[3954_DCI_Type1] 800,000/1,000,000 | Stable: 760988 | Diego: 309 | Shaberi: 322
+[3954_DCI_Type1] 900,000/1,000,000 | Stable: 856080 | Diego: 347 | Shaberi: 360
+[3954_DCI_Type1] 1,000,000/1,000,000 | Stable: 951296 | Diego: 384 | Shaberi: 398
+
+======================================================================
+COMPLETED: 3954_DCI_Type1
+======================================================================
+Diego Turing:    384 (0.0404%)
+Shaberi Total:   398 (0.0418%)
+  Type-I:        98
+  Type-II:       293
+  Hopf:          7
+
+Saved to:
+  results/3954_DCI_Type1_1000k.pkl
+  results/3954_DCI_Type1_1000k.csv
+======================================================================
+Finished job 32 at Mon 13 Apr 16:58:34 BST 2026
+
+====================================
+CPU Time used: 01:27:18
+CPU Percent: 99%
+Memory usage: 577544kb
+Approx Power usage: 0.0174
+Walltime usage: 01:29:36
+
+====================================

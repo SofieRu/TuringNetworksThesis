@@ -1,0 +1,36 @@
+Starting job 35 at Mon 13 Apr 15:29:14 BST 2026
+Starting 3954_DCI_Type2_Limit: dU=0.1, dV=0.0, dW=0.0, n_samples=1,000,000
+[3954_DCI_Type2_Limit] 100,000/1,000,000 | Stable: 95180 | Diego: 1101 | Shaberi: 1101
+[3954_DCI_Type2_Limit] 200,000/1,000,000 | Stable: 190103 | Diego: 2180 | Shaberi: 2180
+[3954_DCI_Type2_Limit] 300,000/1,000,000 | Stable: 285166 | Diego: 3226 | Shaberi: 3226
+[3954_DCI_Type2_Limit] 400,000/1,000,000 | Stable: 380343 | Diego: 4290 | Shaberi: 4290
+[3954_DCI_Type2_Limit] 500,000/1,000,000 | Stable: 475497 | Diego: 5319 | Shaberi: 5319
+[3954_DCI_Type2_Limit] 600,000/1,000,000 | Stable: 570769 | Diego: 6448 | Shaberi: 6448
+[3954_DCI_Type2_Limit] 700,000/1,000,000 | Stable: 665900 | Diego: 7495 | Shaberi: 7495
+[3954_DCI_Type2_Limit] 800,000/1,000,000 | Stable: 760988 | Diego: 8526 | Shaberi: 8526
+[3954_DCI_Type2_Limit] 900,000/1,000,000 | Stable: 856080 | Diego: 9622 | Shaberi: 9622
+[3954_DCI_Type2_Limit] 1,000,000/1,000,000 | Stable: 951296 | Diego: 10673 | Shaberi: 10673
+
+======================================================================
+COMPLETED: 3954_DCI_Type2_Limit
+======================================================================
+Diego Turing:    10673 (1.1219%)
+Shaberi Total:   10673 (1.1219%)
+  Type-I:        0
+  Type-II:       10673
+  Hopf:          0
+
+Saved to:
+  results/3954_DCI_Type2_Limit_1000k.pkl
+  results/3954_DCI_Type2_Limit_1000k.csv
+======================================================================
+Finished job 35 at Mon 13 Apr 17:00:44 BST 2026
+
+====================================
+CPU Time used: 01:28:59
+CPU Percent: 99%
+Memory usage: 597224kb
+Approx Power usage: 0.0176
+Walltime usage: 01:31:57
+
+====================================
