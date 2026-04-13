@@ -1,0 +1,2 @@
+config_name,config_id,dU,dV,dW,n_samples,steady_states,stable_without_diffusion,diego_turing,shaberi_total,shaberi_type_I,shaberi_type_II,shaberi_hopf,rob_diego,rob_shaberi_total,rob_shaberi_type_I,rob_shaberi_excl_II
+3954_CDD_Type3_Unequal2,19,10.0,1.0,0.0,1000000,969615,951296,2764,2764,2471,293,0,0.29055099569429493,0.29055099569429493,0.2597509082346609,0.2597509082346609

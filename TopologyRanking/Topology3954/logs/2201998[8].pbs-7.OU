@@ -1,0 +1,36 @@
+Starting job 8 at Mon 13 Apr 15:29:07 BST 2026
+Starting 3954_DCC_Type3_Unequal1: dU=0.0, dV=0.1, dW=1.0, n_samples=1,000,000
+[3954_DCC_Type3_Unequal1] 100,000/1,000,000 | Stable: 95180 | Diego: 643 | Shaberi: 643
+[3954_DCC_Type3_Unequal1] 200,000/1,000,000 | Stable: 190103 | Diego: 1238 | Shaberi: 1238
+[3954_DCC_Type3_Unequal1] 300,000/1,000,000 | Stable: 285166 | Diego: 1806 | Shaberi: 1806
+[3954_DCC_Type3_Unequal1] 400,000/1,000,000 | Stable: 380343 | Diego: 2380 | Shaberi: 2380
+[3954_DCC_Type3_Unequal1] 500,000/1,000,000 | Stable: 475497 | Diego: 3021 | Shaberi: 3021
+[3954_DCC_Type3_Unequal1] 600,000/1,000,000 | Stable: 570769 | Diego: 3600 | Shaberi: 3600
+[3954_DCC_Type3_Unequal1] 700,000/1,000,000 | Stable: 665900 | Diego: 4166 | Shaberi: 4166
+[3954_DCC_Type3_Unequal1] 800,000/1,000,000 | Stable: 760988 | Diego: 4832 | Shaberi: 4832
+[3954_DCC_Type3_Unequal1] 900,000/1,000,000 | Stable: 856080 | Diego: 5439 | Shaberi: 5439
+[3954_DCC_Type3_Unequal1] 1,000,000/1,000,000 | Stable: 951296 | Diego: 6016 | Shaberi: 6016
+
+======================================================================
+COMPLETED: 3954_DCC_Type3_Unequal1
+======================================================================
+Diego Turing:    6016 (0.6324%)
+Shaberi Total:   6016 (0.6324%)
+  Type-I:        0
+  Type-II:       6016
+  Hopf:          0
+
+Saved to:
+  results/3954_DCC_Type3_Unequal1_1000k.pkl
+  results/3954_DCC_Type3_Unequal1_1000k.csv
+======================================================================
+Finished job 8 at Mon 13 Apr 17:10:36 BST 2026
+
+====================================
+CPU Time used: 01:39:10
+CPU Percent: 99%
+Memory usage: 607616kb
+Approx Power usage: 0.019799999999999998
+Walltime usage: 01:41:50
+
+====================================

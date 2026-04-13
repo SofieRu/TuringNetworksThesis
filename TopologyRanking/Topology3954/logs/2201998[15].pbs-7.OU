@@ -1,0 +1,36 @@
+Starting job 15 at Mon 13 Apr 15:29:39 BST 2026
+Starting 3954_CDD_Type2_Unequal2: dU=0.0, dV=1.0, dW=10.0, n_samples=1,000,000
+[3954_CDD_Type2_Unequal2] 100,000/1,000,000 | Stable: 95180 | Diego: 712 | Shaberi: 712
+[3954_CDD_Type2_Unequal2] 200,000/1,000,000 | Stable: 190103 | Diego: 1383 | Shaberi: 1383
+[3954_CDD_Type2_Unequal2] 300,000/1,000,000 | Stable: 285166 | Diego: 2014 | Shaberi: 2014
+[3954_CDD_Type2_Unequal2] 400,000/1,000,000 | Stable: 380343 | Diego: 2657 | Shaberi: 2657
+[3954_CDD_Type2_Unequal2] 500,000/1,000,000 | Stable: 475497 | Diego: 3376 | Shaberi: 3376
+[3954_CDD_Type2_Unequal2] 600,000/1,000,000 | Stable: 570769 | Diego: 4024 | Shaberi: 4024
+[3954_CDD_Type2_Unequal2] 700,000/1,000,000 | Stable: 665900 | Diego: 4651 | Shaberi: 4651
+[3954_CDD_Type2_Unequal2] 800,000/1,000,000 | Stable: 760988 | Diego: 5379 | Shaberi: 5379
+[3954_CDD_Type2_Unequal2] 900,000/1,000,000 | Stable: 856080 | Diego: 6058 | Shaberi: 6058
+[3954_CDD_Type2_Unequal2] 1,000,000/1,000,000 | Stable: 951296 | Diego: 6700 | Shaberi: 6700
+
+======================================================================
+COMPLETED: 3954_CDD_Type2_Unequal2
+======================================================================
+Diego Turing:    6700 (0.7043%)
+Shaberi Total:   6700 (0.7043%)
+  Type-I:        0
+  Type-II:       6700
+  Hopf:          0
+
+Saved to:
+  results/3954_CDD_Type2_Unequal2_1000k.pkl
+  results/3954_CDD_Type2_Unequal2_1000k.csv
+======================================================================
+Finished job 15 at Mon 13 Apr 17:08:13 BST 2026
+
+====================================
+CPU Time used: 01:36:34
+CPU Percent: 99%
+Memory usage: 577548kb
+Approx Power usage: 0.019200000000000002
+Walltime usage: 01:38:52
+
+====================================

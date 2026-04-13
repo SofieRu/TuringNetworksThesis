@@ -1,0 +1,36 @@
+Starting job 22 at Mon 13 Apr 15:29:10 BST 2026
+Starting 3954_CCD_Type1_OneFast: dU=10.0, dV=1.0, dW=1.0, n_samples=1,000,000
+[3954_CCD_Type1_OneFast] 100,000/1,000,000 | Stable: 95180 | Diego: 8 | Shaberi: 8
+[3954_CCD_Type1_OneFast] 200,000/1,000,000 | Stable: 190103 | Diego: 24 | Shaberi: 24
+[3954_CCD_Type1_OneFast] 300,000/1,000,000 | Stable: 285166 | Diego: 36 | Shaberi: 36
+[3954_CCD_Type1_OneFast] 400,000/1,000,000 | Stable: 380343 | Diego: 53 | Shaberi: 53
+[3954_CCD_Type1_OneFast] 500,000/1,000,000 | Stable: 475497 | Diego: 65 | Shaberi: 65
+[3954_CCD_Type1_OneFast] 600,000/1,000,000 | Stable: 570769 | Diego: 78 | Shaberi: 78
+[3954_CCD_Type1_OneFast] 700,000/1,000,000 | Stable: 665900 | Diego: 97 | Shaberi: 97
+[3954_CCD_Type1_OneFast] 800,000/1,000,000 | Stable: 760988 | Diego: 111 | Shaberi: 111
+[3954_CCD_Type1_OneFast] 900,000/1,000,000 | Stable: 856080 | Diego: 125 | Shaberi: 125
+[3954_CCD_Type1_OneFast] 1,000,000/1,000,000 | Stable: 951296 | Diego: 135 | Shaberi: 135
+
+======================================================================
+COMPLETED: 3954_CCD_Type1_OneFast
+======================================================================
+Diego Turing:    135 (0.0142%)
+Shaberi Total:   135 (0.0142%)
+  Type-I:        135
+  Type-II:       0
+  Hopf:          0
+
+Saved to:
+  results/3954_CCD_Type1_OneFast_1000k.pkl
+  results/3954_CCD_Type1_OneFast_1000k.csv
+======================================================================
+Finished job 22 at Mon 13 Apr 17:07:54 BST 2026
+
+====================================
+CPU Time used: 01:35:26
+CPU Percent: 99%
+Memory usage: 585632kb
+Approx Power usage: 0.019
+Walltime usage: 01:39:15
+
+====================================

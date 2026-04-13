@@ -1,0 +1,36 @@
+Starting job 12 at Mon 13 Apr 15:29:35 BST 2026
+Starting 3954_CDD_Type1_Control: dU=1.0, dV=1.0, dW=1.0, n_samples=1,000,000
+[3954_CDD_Type1_Control] 100,000/1,000,000 | Stable: 95180 | Diego: 0 | Shaberi: 0
+[3954_CDD_Type1_Control] 200,000/1,000,000 | Stable: 190103 | Diego: 0 | Shaberi: 0
+[3954_CDD_Type1_Control] 300,000/1,000,000 | Stable: 285166 | Diego: 0 | Shaberi: 0
+[3954_CDD_Type1_Control] 400,000/1,000,000 | Stable: 380343 | Diego: 0 | Shaberi: 0
+[3954_CDD_Type1_Control] 500,000/1,000,000 | Stable: 475497 | Diego: 0 | Shaberi: 0
+[3954_CDD_Type1_Control] 600,000/1,000,000 | Stable: 570769 | Diego: 0 | Shaberi: 0
+[3954_CDD_Type1_Control] 700,000/1,000,000 | Stable: 665900 | Diego: 0 | Shaberi: 0
+[3954_CDD_Type1_Control] 800,000/1,000,000 | Stable: 760988 | Diego: 0 | Shaberi: 0
+[3954_CDD_Type1_Control] 900,000/1,000,000 | Stable: 856080 | Diego: 0 | Shaberi: 0
+[3954_CDD_Type1_Control] 1,000,000/1,000,000 | Stable: 951296 | Diego: 0 | Shaberi: 0
+
+======================================================================
+COMPLETED: 3954_CDD_Type1_Control
+======================================================================
+Diego Turing:    0 (0.0000%)
+Shaberi Total:   0 (0.0000%)
+  Type-I:        0
+  Type-II:       0
+  Hopf:          0
+
+Saved to:
+  results/3954_CDD_Type1_Control_1000k.pkl
+  results/3954_CDD_Type1_Control_1000k.csv
+======================================================================
+Finished job 12 at Mon 13 Apr 17:11:22 BST 2026
+
+====================================
+CPU Time used: 01:38:43
+CPU Percent: 99%
+Memory usage: 577480kb
+Approx Power usage: 0.019600000000000003
+Walltime usage: 01:42:08
+
+====================================
