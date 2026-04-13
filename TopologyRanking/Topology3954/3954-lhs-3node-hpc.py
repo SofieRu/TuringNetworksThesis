@@ -178,57 +178,71 @@ DIFFUSION_CONFIGS = {
     3:  {"name": "3954_DCC_Type2_Equal",    "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
     4:  {"name": "3954_DCC_Type2_Unequal1", "dU": 1.0,  "dV": 0.1,  "dW": 0.0},
     5:  {"name": "3954_DCC_Type2_Unequal2", "dU": 10.0, "dV": 1.0,  "dW": 0.0},
-    6:  {"name": "3954_DCC_Type2_Var",      "dU": 1.0,  "dV": 0.0,  "dW": 1.0},
+    6:  {"name": "3954_DCC_Type2_Limit",    "dU": 0.1,  "dV": 0.1,  "dW": 0.0},
     
     7:  {"name": "3954_DCC_Type3_Equal",    "dU": 0.0,  "dV": 1.0,  "dW": 1.0},
     8:  {"name": "3954_DCC_Type3_Unequal1", "dU": 0.0,  "dV": 0.1,  "dW": 1.0},
     9:  {"name": "3954_DCC_Type3_Unequal2", "dU": 0.0,  "dV": 1.0,  "dW": 10.0},
+    10: {"name": "3954_DCC_Type3_Limit",    "dU": 0.0,  "dV": 0.1,  "dW": 0.1},
     
     # CDD: A=Complementary, B=Destable, C=Destable
-    10: {"name": "3954_CDD_Type1",          "dU": 10.0, "dV": 1.0,  "dW": 1.0},
-    11: {"name": "3954_CDD_Type1_Control",  "dU": 1.0,  "dV": 1.0,  "dW": 1.0},   
+    11: {"name": "3954_CDD_Type1",          "dU": 10.0, "dV": 1.0,  "dW": 1.0},
+    12: {"name": "3954_CDD_Type1_Control",  "dU": 1.0,  "dV": 1.0,  "dW": 1.0},   
     
-    12: {"name": "3954_CDD_Type2_Equal",    "dU": 0.0,  "dV": 1.0,  "dW": 1.0},
-    13: {"name": "3954_CDD_Type2_Unequal1", "dU": 0.0,  "dV": 0.1,  "dW": 1.0},
-    14: {"name": "3954_CDD_Type2_Unequal2", "dU": 0.0,  "dV": 1.0,  "dW": 10.0},
+    13: {"name": "3954_CDD_Type2_Equal",    "dU": 0.0,  "dV": 1.0,  "dW": 1.0},
+    14: {"name": "3954_CDD_Type2_Unequal1", "dU": 0.0,  "dV": 0.1,  "dW": 1.0},
+    15: {"name": "3954_CDD_Type2_Unequal2", "dU": 0.0,  "dV": 1.0,  "dW": 10.0},
+    16: {"name": "3954_CDD_Type2_Limit",    "dU": 0.0,  "dV": 0.1,  "dW": 0.1},
     
-    15: {"name": "3954_CDD_Type3_Equal",    "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
-    16: {"name": "3954_CDD_Type3_Unequal1", "dU": 1.0,  "dV": 0.1,  "dW": 0.0},
-    17: {"name": "3954_CDD_Type3_Unequal2", "dU": 10.0, "dV": 1.0,  "dW": 0.0},
-    18: {"name": "3954_CDD_Type3_Var",      "dU": 1.0,  "dV": 0.0,  "dW": 1.0},
+    17: {"name": "3954_CDD_Type3_Equal",    "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
+    18: {"name": "3954_CDD_Type3_Unequal1", "dU": 1.0,  "dV": 0.1,  "dW": 0.0},
+    19: {"name": "3954_CDD_Type3_Unequal2", "dU": 10.0, "dV": 1.0,  "dW": 0.0},
+    20: {"name": "3954_CDD_Type3_Limit",    "dU": 0.1,  "dV": 0.1,  "dW": 0.0},
     
     # CCD: A=Compl., B=Compl., C=Destable
-    19: {"name": "3954_CCD_Type1",          "dU": 10.0, "dV": 10.0, "dW": 1.0},
-    20: {"name": "3954_CCD_Type1_OneFast",  "dU": 10.0, "dV": 1.0,  "dW": 1.0},
-    21: {"name": "3954_CCD_Type1_Control",  "dU": 1.0,  "dV": 1.0,  "dW": 1.0},
+    21: {"name": "3954_CCD_Type1",          "dU": 10.0, "dV": 10.0, "dW": 1.0},
+    22: {"name": "3954_CCD_Type1_OneFast",  "dU": 10.0, "dV": 1.0,  "dW": 1.0},
+    23: {"name": "3954_CCD_Type1_Control",  "dU": 1.0,  "dV": 1.0,  "dW": 1.0},
     
-    22: {"name": "3954_CCD_Type2_Equal",    "dU": 0.0,  "dV": 1.0,  "dW": 1.0},
-    23: {"name": "3954_CCD_Type2_Unequal1", "dU": 0.0,  "dV": 0.1,  "dW": 1.0},
-    24: {"name": "3954_CCD_Type2_Unequal2", "dU": 0.0,  "dV": 1.0,  "dW": 10.0},
-    25: {"name": "3954_CCD_Type2_Var",      "dU": 1.0,  "dV": 0.0,  "dW": 1.0},
+    24: {"name": "3954_CCD_Type2_Equal",    "dU": 0.0,  "dV": 1.0,  "dW": 1.0},
+    25: {"name": "3954_CCD_Type2_Unequal1", "dU": 0.0,  "dV": 0.1,  "dW": 1.0},
+    26: {"name": "3954_CCD_Type2_Unequal2", "dU": 0.0,  "dV": 1.0,  "dW": 10.0},
+    27: {"name": "3954_CCD_Type2_Limit",    "dU": 0.0,  "dV": 0.1,  "dW": 0.1},
     
-    26: {"name": "3954_CCD_Type3_Equal",    "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
-    27: {"name": "3954_CCD_Type3_Unequal1", "dU": 0.1,  "dV": 1.0,  "dW": 0.0},
-    28: {"name": "3954_CCD_Type3_Unequal2", "dU": 10.0, "dV": 1.0,  "dW": 0.0},
-    
-    # DCD: A=Destable, B=Compl., C=Destable
-    29: {"name": "3954_DCD_Type1",          "dU": 1.0,  "dV": 10.0, "dW": 1.0},
-    30: {"name": "3954_DCD_Type1_Control",  "dU": 1.0,  "dV": 1.0,  "dW": 1.0},
-    
-    31: {"name": "3954_DCD_Type2_Equal",    "dU": 1.0,  "dV": 0.0,  "dW": 1.0},
-    32: {"name": "3954_DCD_Type2_Unequal1", "dU": 0.1,  "dV": 0.0,  "dW": 1.0},
-    33: {"name": "3954_DCD_Type2_Unequal2", "dU": 1.0,  "dV": 0.0,  "dW": 10.0},
-    
-    34: {"name": "3954_DCD_Type3_Equal",    "dU": 0.0,  "dV": 1.0,  "dW": 1.0},   
-    35: {"name": "3954_DCD_Type3_Unequal1", "dU": 0.0,  "dV": 0.1,  "dW": 1.0},
-    36: {"name": "3954_DCD_Type3_Unequal2", "dU": 0.0,  "dV": 1.0,  "dW": 10.0},
-    37: {"name": "3954_DCD_Type3_Var",      "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
-    
+    28: {"name": "3954_CCD_Type3_Equal",    "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
+    29: {"name": "3954_CCD_Type3_Unequal1", "dU": 0.1,  "dV": 1.0,  "dW": 0.0},
+    30: {"name": "3954_CCD_Type3_Unequal2", "dU": 10.0, "dV": 1.0,  "dW": 0.0},
+    31: {"name": "3954_CCD_Type3_Limit",    "dU": 0.1,  "dV": 0.1,  "dW": 0.0},
+
     # DCI: A=Destable, B=Compl., C=Immobile
-    38: {"name": "3954_DCI_Type1",          "dU": 1.0,  "dV": 10.0, "dW": 0.0},
-    39: {"name": "3954_DCI_Type1_Control",  "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
-    40: {"name": "3954_DCI_Type2",          "dU": 1.0,  "dV": 0.0,  "dW": 0.0},
-    41: {"name": "3954_DCI_Type3",          "dU": 0.0,  "dV": 1.0,  "dW": 0.0},
+    32: {"name": "3954_DCI_Type1",          "dU": 1.0,  "dV": 10.0, "dW": 0.0},
+    33: {"name": "3954_DCI_Type1_Control",  "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
+    34: {"name": "3954_DCI_Type2",          "dU": 1.0,  "dV": 0.0,  "dW": 0.0},
+    35: {"name": "3954_DCI_Type2_Limit",    "dU": 0.1,  "dV": 0.0,  "dW": 0.0},
+    36: {"name": "3954_DCI_Type3",          "dU": 0.0,  "dV": 1.0,  "dW": 0.0},
+    37: {"name": "3954_DCI_Type3_Limit",    "dU": 0.0,  "dV": 0.1,  "dW": 0.0},
+
+    # ICD: A=Immobile, B=Compl., C=Destabile
+    38: {"name": "3954_ICD_Type1",          "dU": 0.0,  "dV": 10.0, "dW": 1.0},
+    39: {"name": "3954_ICD_Type1_Control",  "dU": 0.0,  "dV": 1.0,  "dW": 1.0},
+    40: {"name": "3954_ICD_Type2",          "dU": 0.0,  "dV": 0.0,  "dW": 1.0},
+    41: {"name": "3954_ICD_Type2_Limit",    "dU": 0.0,  "dV": 0.0,  "dW": 0.1},
+    42: {"name": "3954_ICD_Type3",          "dU": 0.0,  "dV": 1.0,  "dW": 0.0},
+    43: {"name": "3954_ICD_Type3_Limit",    "dU": 0.0,  "dV": 0.1,  "dW": 0.0},
+    
+    # # DCD: A=Destable, B=Compl., C=Destable
+    # 29: {"name": "3954_DCD_Type1",          "dU": 1.0,  "dV": 10.0, "dW": 1.0},
+    # 30: {"name": "3954_DCD_Type1_Control",  "dU": 1.0,  "dV": 1.0,  "dW": 1.0},
+    
+    # 31: {"name": "3954_DCD_Type2_Equal",    "dU": 1.0,  "dV": 0.0,  "dW": 1.0},
+    # 32: {"name": "3954_DCD_Type2_Unequal1", "dU": 0.1,  "dV": 0.0,  "dW": 1.0},
+    # 33: {"name": "3954_DCD_Type2_Unequal2", "dU": 1.0,  "dV": 0.0,  "dW": 10.0},
+    
+    # 34: {"name": "3954_DCD_Type3_Equal",    "dU": 0.0,  "dV": 1.0,  "dW": 1.0},   
+    # 35: {"name": "3954_DCD_Type3_Unequal1", "dU": 0.0,  "dV": 0.1,  "dW": 1.0},
+    # 36: {"name": "3954_DCD_Type3_Unequal2", "dU": 0.0,  "dV": 1.0,  "dW": 10.0},
+    # 37: {"name": "3954_DCD_Type3_Var",      "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
+    
 }
 
 
