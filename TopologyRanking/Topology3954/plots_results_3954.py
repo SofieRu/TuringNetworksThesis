@@ -1,30 +1,39 @@
-import ast
-import re
 from pathlib import Path
-
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
-import numpy as np
 import pandas as pd
 
-# ── Config ────────────────────────────────────────────────────────────────────
-CSV     = "3954_results_summary_curated_1mio.csv"
+# have to run this first: module load matplotlib/3.9.2-gfbf-2024a
+
+CSV = "3954_results_summary_curated_1mio.csv"
 OUT_DIR = Path("plots")
 OUT_DIR.mkdir(exist_ok=True)
 
-# ── Colours ───────────────────────────────────────────────────────────────────
+
+plt.style.use("seaborn-v0_8-whitegrid")
+plt.rcParams.update({
+    "font.family"     : "sans-serif",
+    "font.size"       : 10,
+    "axes.edgecolor"  : "#444444",
+    "axes.linewidth"  : 0.8,
+    "grid.color"      : "#dddddd",
+    "grid.linewidth"  : 0.7,
+    "axes.spines.top" : False,
+    "axes.spines.right": False,
+})
+
+
 TYPE_COLORS = {
-    "Type1": "#4C72B0",
-    "Type2": "#DD8452",
-    "Type3": "#55A868",
+    "Type1": "#444EA6",
+    "Type2": "#AE2BA1",
+    "Type3": "#3FA051",
 }
 
-# ── Helpers ───────────────────────────────────────────────────────────────────
 def save(fig, name):
     for ext in ("svg", "png"):
         fig.savefig(OUT_DIR / f"{name}.{ext}", bbox_inches="tight", dpi=300)
     plt.close(fig)
-    print(f"Saved → plots/{name}.svg / .png")
+    print(f"Saved to plots/{name}.svg")
 
 
 def load_data():
@@ -37,7 +46,7 @@ def load_data():
     return df
 
 
-# ── Figure 1: Overview bar chart ──────────────────────────────────────────────
+# Figure 1: Overview bar chart
 def fig1_overview(df):
     fig, ax = plt.subplots(figsize=(14, 5))
 
@@ -49,7 +58,7 @@ def fig1_overview(df):
         color=colors,
         edgecolor="white",
         linewidth=0.5,
-        width=0.8,
+        width=0.75,
     )
 
     # x-axis labels: strip the "3954_" prefix so they're shorter
@@ -61,9 +70,9 @@ def fig1_overview(df):
         fontsize=8,
     )
 
-    ax.set_ylabel("Robustness  (rob_shaberi_total)", fontsize=11)
+    ax.set_ylabel("Robustness Score (in %)", fontsize=11)
     ax.set_title(
-        "Robustness varies strongly across configurations Type 2/3 outperform Type 1",
+        "Robustness of Topologies in Topology3954 Dataset\n(1 million simulations per topology)",
         fontsize=12, loc="left", pad=10,
     )
     ax.spines[["top", "right"]].set_visible(False)
@@ -79,9 +88,7 @@ def fig1_overview(df):
     ax.legend(handles=handles, title="Turing Type", frameon=False)
 
     fig.tight_layout()
-    save(fig, "fig1_overview_bar")
+    save(fig, "3954_fig1_overview_bar_detail")
 
-
-# ── Run ───────────────────────────────────────────────────────────────────────
 df = load_data()
 fig1_overview(df)
