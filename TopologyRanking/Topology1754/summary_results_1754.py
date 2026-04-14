@@ -8,7 +8,7 @@ import pandas as pd
 
 # Find all pickle files
 #result_files = sorted(glob.glob('results/*.pkl'))
-result_files = sorted(glob.glob('results/*_500k.pkl'))
+result_files = sorted(glob.glob('results/*_1000k.pkl'))
 
 
 # Load all results
@@ -22,10 +22,10 @@ for filepath in result_files:
 df = pd.DataFrame(all_results)
 
 # OLD (sorted by robustness):
-df = df.sort_values('rob_diego', ascending=False)
+#df = df.sort_values('rob_diego', ascending=False)
 
 # NEW (sorted by config_id):
-#df = df.sort_values('config_id', ascending=True)
+df = df.sort_values('config_id', ascending=True)
 
 # Select columns to display
 cols = [
@@ -49,5 +49,5 @@ print(df[cols].to_string(index=False))
 print("="*120)
 
 # Save as CSV for Excel
-df.to_csv('1754_results_summary_ranked.csv', index=False)
-print("\nSaved to: 1754_results_summary_ranked.csv")
+df.to_csv('1754_results_summary.csv', index=False)
+print("\nSaved to: 1754_results_summary.csv")
