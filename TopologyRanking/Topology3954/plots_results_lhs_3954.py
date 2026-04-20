@@ -29,7 +29,7 @@ TYPE_COLORS = {
     "Type1": "#444EA6",
     "Type2": "#AE2BA1",
     "Type3": "#3FA051",
-}
+} 
 
 def save(fig, name):
     for ext in ("svg", "png"):
