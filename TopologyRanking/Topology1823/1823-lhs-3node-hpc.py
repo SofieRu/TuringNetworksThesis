@@ -151,8 +151,8 @@ DIFFUSION_CONFIGS = {
     0:  {"name": "1823_CDD_Type1",          "dU": 10.0, "dV": 0.0,  "dW": 1.0},
     1:  {"name": "1823_CDD_Type1_Control",  "dU": 1.0,  "dV": 0.0,  "dW": 1.0},
     2:  {"name": "1823_CDD_Type2_Actual",   "dU": 0.0,  "dV": 1.0,  "dW": 0.0},
-    2:  {"name": "1823_CDD_Type2_Diego",    "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
-    3:  {"name": "1823_CDD_Type3",          "dU": 1.0,  "dV": 0.0,  "dW": 1.0},
+    3:  {"name": "1823_CDD_Type2_Diego",    "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
+    4:  {"name": "1823_CDD_Type3",          "dU": 1.0,  "dV": 0.0,  "dW": 1.0},
 }
 
 
