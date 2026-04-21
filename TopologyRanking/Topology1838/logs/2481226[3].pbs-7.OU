@@ -1,0 +1,36 @@
+Starting job 3 at Mon 20 Apr 17:59:04 BST 2026
+Starting 1838_DDC_Type3: dU=0.0, dV=1.0, dW=1.0, n_samples=1,000,000
+[1838_DDC_Type3] 100,000/1,000,000 | Stable: 99753 | Diego: 1 | Shaberi: 1
+[1838_DDC_Type3] 200,000/1,000,000 | Stable: 199500 | Diego: 1 | Shaberi: 1
+[1838_DDC_Type3] 300,000/1,000,000 | Stable: 299282 | Diego: 1 | Shaberi: 1
+[1838_DDC_Type3] 400,000/1,000,000 | Stable: 399080 | Diego: 1 | Shaberi: 1
+[1838_DDC_Type3] 500,000/1,000,000 | Stable: 498864 | Diego: 1 | Shaberi: 1
+[1838_DDC_Type3] 600,000/1,000,000 | Stable: 598687 | Diego: 1 | Shaberi: 1
+[1838_DDC_Type3] 700,000/1,000,000 | Stable: 698475 | Diego: 1 | Shaberi: 1
+[1838_DDC_Type3] 800,000/1,000,000 | Stable: 798266 | Diego: 1 | Shaberi: 1
+[1838_DDC_Type3] 900,000/1,000,000 | Stable: 898043 | Diego: 1 | Shaberi: 1
+[1838_DDC_Type3] 1,000,000/1,000,000 | Stable: 997795 | Diego: 1 | Shaberi: 1
+
+======================================================================
+COMPLETED: 1838_DDC_Type3
+======================================================================
+Diego Turing:    1 (0.0001%)
+Shaberi Total:   1 (0.0001%)
+  Type-I:        1
+  Type-II:       0
+  Hopf:          0
+
+Saved to:
+  results/1838_DDC_Type3_1000k.pkl
+  results/1838_DDC_Type3_1000k.csv
+======================================================================
+Finished job 3 at Mon 20 Apr 19:39:12 BST 2026
+
+====================================
+CPU Time used: 01:37:58
+CPU Percent: 99%
+Memory usage: 546152kb
+Approx Power usage: 0.019399999999999997
+Walltime usage: 01:40:11
+
+====================================

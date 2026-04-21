@@ -1,0 +1,36 @@
+Starting job 0 at Mon 20 Apr 18:18:38 BST 2026
+Starting 1823_CDD_Type1: dU=10.0, dV=0.0, dW=1.0, n_samples=1,000,000
+[1823_CDD_Type1] 100,000/1,000,000 | Stable: 99284 | Diego: 1 | Shaberi: 1
+[1823_CDD_Type1] 200,000/1,000,000 | Stable: 198581 | Diego: 2 | Shaberi: 2
+[1823_CDD_Type1] 300,000/1,000,000 | Stable: 297825 | Diego: 3 | Shaberi: 3
+[1823_CDD_Type1] 400,000/1,000,000 | Stable: 397106 | Diego: 7 | Shaberi: 7
+[1823_CDD_Type1] 500,000/1,000,000 | Stable: 496391 | Diego: 7 | Shaberi: 7
+[1823_CDD_Type1] 600,000/1,000,000 | Stable: 595679 | Diego: 11 | Shaberi: 11
+[1823_CDD_Type1] 700,000/1,000,000 | Stable: 694931 | Diego: 12 | Shaberi: 12
+[1823_CDD_Type1] 800,000/1,000,000 | Stable: 794285 | Diego: 12 | Shaberi: 12
+[1823_CDD_Type1] 900,000/1,000,000 | Stable: 893513 | Diego: 12 | Shaberi: 12
+[1823_CDD_Type1] 1,000,000/1,000,000 | Stable: 992778 | Diego: 12 | Shaberi: 12
+
+======================================================================
+COMPLETED: 1823_CDD_Type1
+======================================================================
+Diego Turing:    12 (0.0012%)
+Shaberi Total:   12 (0.0012%)
+  Type-I:        12
+  Type-II:       0
+  Hopf:          0
+
+Saved to:
+  results/1823_CDD_Type1_1000k.pkl
+  results/1823_CDD_Type1_1000k.csv
+======================================================================
+Finished job 0 at Mon 20 Apr 20:05:05 BST 2026
+
+====================================
+CPU Time used: 01:43:18
+CPU Percent: 99%
+Memory usage: 560544kb
+Approx Power usage: 0.0206
+Walltime usage: 01:46:30
+
+====================================
