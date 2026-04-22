@@ -6,8 +6,6 @@ import os
 import pandas as pd
 from numpy.linalg import eigvals
 from scipy.optimize import fsolve
-from scipy.stats import qmc
-from scipy.linalg import eig
 
 # Create directories (for local testing)
 os.makedirs("results", exist_ok=True)
@@ -146,8 +144,6 @@ def is_turing_shaberi(J, eigs_0, DU, DV, DW):
 
 
 
-
-
 # EXTENDED VERSION
 
 DIFFUSION_CONFIGS = {
@@ -211,3 +207,156 @@ DIFFUSION_CONFIGS = {
     42: {"name": "RMT_3954_ICD_Type3",          "dU": 0.0,  "dV": 1.0,  "dW": 0.0},
     43: {"name": "RMT_3954_ICD_Type3_Limit",    "dU": 0.0,  "dV": 0.1,  "dW": 0.0},
 }
+
+#full range sigma values but to test we do less values
+#SIGMA_VALUES = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 3.6, 3.8, 4.0]
+SIGMA_VALUES = [0.2, 0.6, 1.0, 1.4, 1.8, 2.0, 2.4, 2.8, 3.2, 3.6, 3.8, 4.0]
+
+
+# MAIN ANALYSIS FUNCTION
+
+def run_analysis(config_id, n_samples):
+    
+    config = DIFFUSION_CONFIGS[config_id]
+    DU, DV, DW = config["dU"], config["dV"], config["dW"]
+    config_name = config["name"]
+    
+    print(f"Starting {config_name}: dU={DU}, dV={DV}, dW={DW}")
+    print(f"Testing {len(SIGMA_VALUES)} sigma values with {n_samples:,} samples each")
+    print(f"=" * 70)
+    
+    # Store results for all sigma values
+    results_by_sigma = []
+    
+    for sigma_idx, sigma in enumerate(SIGMA_VALUES):
+        np.random.seed(42)  # Same seed for all configs for fair comparison
+        
+        # Initialize counters
+        stable = 0
+        diego_turing = 0
+        shaberi_total = 0
+        shaberi_type_I = 0
+        shaberi_type_II = 0
+        shaberi_hopf = 0
+        
+        # Main loop
+        for i in range(n_samples):
+            J = generate_jacobian_3954(sigma)
+            eigs_0 = eigvals(J)
+            
+            if is_stable(J):
+                stable += 1
+                
+                # Diego method
+                if is_turing_diego(J, DU, DV, DW):
+                    diego_turing += 1
+                
+                # Shaberi method
+                turing_type = is_turing_shaberi(J, eigs_0, DU, DV, DW)
+                
+                if turing_type is not None:
+                    shaberi_total += 1
+                    if turing_type == 'Type-I':
+                        shaberi_type_I += 1
+                    elif turing_type == 'Type-II':
+                        shaberi_type_II += 1
+                    elif turing_type == 'Hopf':
+                        shaberi_hopf += 1
+            
+            # Progress indicator
+            if (i + 1) % 100000 == 0:
+                print(f"  [sig={sigma:.1f}] {i+1:,}/{n_samples:,} | Stable: {stable} | "
+                      f"Diego: {diego_turing} | Shaberi: {shaberi_total}")
+        
+        # Calculate robustness
+        rob_diego = 100 * diego_turing / stable if stable > 0 else 0.0
+        rob_shaberi_total = 100 * shaberi_total / stable if stable > 0 else 0.0
+        rob_shaberi_type_I = 100 * shaberi_type_I / stable if stable > 0 else 0.0
+        rob_shaberi_excl_II = 100 * (shaberi_type_I + shaberi_hopf) / stable if stable > 0 else 0.0
+        
+        # Store results for this sigma
+        sigma_result = {
+            "sigma": sigma,
+            "n_samples": n_samples,
+            "stable": stable,
+            "diego_turing": diego_turing,
+            "shaberi_total": shaberi_total,
+            "shaberi_type_I": shaberi_type_I,
+            "shaberi_type_II": shaberi_type_II,
+            "shaberi_hopf": shaberi_hopf,
+            "rob_diego": rob_diego,
+            "rob_shaberi_total": rob_shaberi_total,
+            "rob_shaberi_type_I": rob_shaberi_type_I,
+            "rob_shaberi_excl_II": rob_shaberi_excl_II,
+        }
+        
+        results_by_sigma.append(sigma_result)
+    
+    # Create summary results
+    results = {
+        "config_name": config_name,
+        "config_id": config_id,
+        "diffusion": {"dU": DU, "dV": DV, "dW": DW},
+        "n_samples_per_sigma": n_samples,
+        "n_sigma_values": len(SIGMA_VALUES),
+        "sigma_values": SIGMA_VALUES,
+        "results_by_sigma": results_by_sigma,
+    }
+    
+    return results
+
+# HPC EXECUTION
+
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print("Usage: python 3954-rmt-3node-hpc.py <config_id>")
+        sys.exit(1)
+    
+    config_id = int(sys.argv[1])
+    n_samples = 100_000  # 1M samples per sigma value
+    
+    results = run_analysis(config_id, n_samples)
+    
+    # Save as pickle
+    output_pkl = f"results/{results['config_name']}_{n_samples//1000}k.pkl"
+    with open(output_pkl, 'wb') as f:
+        pickle.dump(results, f)
+    
+    # Save as CSV (flatten sigma results)
+    csv_rows = []
+    for sigma_result in results['results_by_sigma']:
+        row = {
+            'config_name': results['config_name'],
+            'config_id': results['config_id'],
+            'dU': results['diffusion']['dU'],
+            'dV': results['diffusion']['dV'],
+            'dW': results['diffusion']['dW'],
+            'sigma': sigma_result['sigma'],
+            'n_samples': sigma_result['n_samples'],
+            'stable': sigma_result['stable'],
+            'diego_turing': sigma_result['diego_turing'],
+            'shaberi_total': sigma_result['shaberi_total'],
+            'shaberi_type_I': sigma_result['shaberi_type_I'],
+            'shaberi_type_II': sigma_result['shaberi_type_II'],
+            'shaberi_hopf': sigma_result['shaberi_hopf'],
+            'rob_diego': sigma_result['rob_diego'],
+            'rob_shaberi_total': sigma_result['rob_shaberi_total'],
+            'rob_shaberi_type_I': sigma_result['rob_shaberi_type_I'],
+            'rob_shaberi_excl_II': sigma_result['rob_shaberi_excl_II'],
+        }
+        csv_rows.append(row)
+    
+    output_csv = f"results/{results['config_name']}_{n_samples//1000}k.csv"
+    pd.DataFrame(csv_rows).to_csv(output_csv, index=False)
+    
+    # Print summary
+    print(f"\n{'='*70}")
+    print(f"COMPLETED: {results['config_name']}")
+    print(f"{'='*70}")
+    print(f"Tested {len(SIGMA_VALUES)} sigma values")
+    print(f"{n_samples:,} samples per sigma")
+    print(f"Total: {len(SIGMA_VALUES) * n_samples:,} Jacobians generated")
+    print(f"\nSaved to:")
+    print(f"  {output_pkl}")
+    print(f"  {output_csv}")
+    print(f"{'='*70}")
