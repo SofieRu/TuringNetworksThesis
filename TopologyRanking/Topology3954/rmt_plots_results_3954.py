@@ -32,7 +32,7 @@ def save(fig, name):
     for ext in ("svg", "png"):
         fig.savefig(OUT_DIR / f"{name}.{ext}", bbox_inches="tight", dpi=300)
     plt.close(fig)
-    print(f"Saved → plots/{name}.svg / .png")
+    print(f"Saved to plots/{name}.svg / .png")
 
 
 def load_data():
@@ -135,7 +135,7 @@ def fig2_corrected_robustness(df):
 
 def fig3_corrected_overview(df):
     df = df.copy()
-    df["rob_corrected"] = df["shaberi_total"] / df["n_samples"]
+    # df["rob_corrected"] = df["shaberi_total"] / df["n_samples"]
 
     fig, ax_stable = plt.subplots(figsize=(12, 6))
 
@@ -148,13 +148,14 @@ def fig3_corrected_overview(df):
     ax_stable.xaxis.grid(False)
 
     # Right y-axis: all configs in one colour, label only on first
+    # CHANGED subset[rob_corrected] to subset["shaberi_total"]!! CHANGE BACK LATER IF NEEDED
     ax_rob = ax_stable.twinx()
     for i, cfg in enumerate(df["config_name"].unique()):
         subset = df[df["config_name"] == cfg].sort_values("sigma")
         ax_rob.plot(
             subset["sigma"],
-            subset["rob_corrected"],
-            color="#8F2EB0",
+            subset["shaberi_total"],
+            color="#A325A9",
             linewidth=1,
             alpha=0.6,
             label="Corrected robustness – all configurations" if i == 0 else "",
