@@ -1,0 +1,41 @@
+Starting job 6 at Thu 23 Apr 13:14:54 BST 2026
+Starting RMT_3954_DCC_Type2_Limit: dU=0.1, dV=0.1, dW=0.0
+Testing 15 sigma values with 100,000 samples each
+======================================================================
+  [sig=0.2] 100,000/100,000 | Stable: 100000 | Diego: 0 | Shaberi: 0
+  [sig=0.6] 100,000/100,000 | Stable: 98966 | Diego: 2 | Shaberi: 2
+  [sig=1.0] 100,000/100,000 | Stable: 92345 | Diego: 124 | Shaberi: 124
+  [sig=1.4] 100,000/100,000 | Stable: 83226 | Diego: 536 | Shaberi: 536
+  [sig=1.8] 100,000/100,000 | Stable: 72870 | Diego: 972 | Shaberi: 972
+  [sig=2.0] 100,000/100,000 | Stable: 67959 | Diego: 1129 | Shaberi: 1129
+  [sig=2.4] 100,000/100,000 | Stable: 59093 | Diego: 1503 | Shaberi: 1503
+  [sig=2.8] 100,000/100,000 | Stable: 51853 | Diego: 1729 | Shaberi: 1729
+  [sig=3.2] 100,000/100,000 | Stable: 46233 | Diego: 2000 | Shaberi: 2000
+  [sig=3.6] 100,000/100,000 | Stable: 41674 | Diego: 2164 | Shaberi: 2164
+  [sig=3.8] 100,000/100,000 | Stable: 39752 | Diego: 2226 | Shaberi: 2226
+  [sig=4.0] 100,000/100,000 | Stable: 38013 | Diego: 2295 | Shaberi: 2295
+  [sig=6.0] 100,000/100,000 | Stable: 26971 | Diego: 2816 | Shaberi: 2816
+  [sig=8.0] 100,000/100,000 | Stable: 21713 | Diego: 3010 | Shaberi: 3010
+  [sig=10.0] 100,000/100,000 | Stable: 18489 | Diego: 3076 | Shaberi: 3076
+
+======================================================================
+COMPLETED: RMT_3954_DCC_Type2_Limit
+======================================================================
+Tested 15 sigma values
+100,000 samples per sigma
+Total: 1,500,000 Jacobians generated
+
+Saved to:
+  results/RMT_3954_DCC_Type2_Limit_100k.pkl
+  results/RMT_3954_DCC_Type2_Limit_100k.csv
+======================================================================
+Finished job 6 at Thu 23 Apr 14:26:23 BST 2026
+
+====================================
+CPU Time used: 01:10:22
+CPU Percent: 99%
+Memory usage: 138696kb
+Approx Power usage: 0.014
+Walltime usage: 01:11:32
+
+====================================
