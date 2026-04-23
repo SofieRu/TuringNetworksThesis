@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""
-Load all pickle results and create summary table
-"""
+
 import pickle
 import glob
 import pandas as pd
+
+# have to run this first: module load matplotlib/3.9.2-gfbf-2024a, module load SciPy-bundle/2024.05-gfbf-2024a
 
 # Find all pickle files
 #result_files = sorted(glob.glob('results/*.pkl'))
