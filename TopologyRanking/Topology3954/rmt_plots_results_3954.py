@@ -37,36 +37,35 @@ def save(fig, name):
 
 def load_data():
     df = pd.read_csv(CSV)
-    #df = df[~df["config_name"].str.contains("OneFast|Control|Limit")]
+    df = df[~df["config_name"].str.contains("OneFast|Control|Limit")]
     df["topology"]    = df["config_name"].str.extract(r"RMT_3954_([A-Z]+)_")
     df["turing_type"] = df["config_name"].str.extract(r"(Type[123])")
     return df
+
+
+########## FIGURE 1: Robustness vs Sigma overview ##########
 
 def fig1_sigma_vs_robustness(df):
     fig, ax_stable = plt.subplots(figsize=(12, 6))
 
     # Left y-axis: stable count (dashed black)
     stable = df.groupby("sigma")["stable"].first()
-    ax_stable.plot(
-        stable.index,
-        stable.values,
-        color="black",
-        linewidth=1.5,
-        linestyle="--",
-    )
+    ax_stable.plot(stable.index, stable.values, color="black", linewidth=1.5, linestyle="--", label="Stable steady state count")
     ax_stable.set_xlabel("Sigma (σ)", fontsize=11)
     ax_stable.set_ylabel("Number of stable steady states", fontsize=11)
     ax_stable.xaxis.grid(False)
 
-    # Right y-axis: robustness lines (no legend, overview only)
+    # Right y-axis: all configs in one colour, label only on first
     ax_rob = ax_stable.twinx()
-    for cfg in df["config_name"].unique():
+    for i, cfg in enumerate(df["config_name"].unique()):
         subset = df[df["config_name"] == cfg].sort_values("sigma")
         ax_rob.plot(
             subset["sigma"],
             subset["rob_shaberi_total"],
+            color="#A325A9",
             linewidth=1,
             alpha=0.6,
+            label="Robustness – all configurations" if i == 0 else "",
         )
     ax_rob.set_ylabel("Robustness (rob_shaberi_total)", fontsize=11)
     ax_rob.spines["right"].set_visible(True)
@@ -75,38 +74,34 @@ def fig1_sigma_vs_robustness(df):
     ax_rob.xaxis.grid(False)
 
     ax_stable.set_title(
-        "Topology #3954 RMT, Sigma vs Robustness and Stability",
+        "Topology #3954 RMT – Sigma vs Robustness and Stability",
         fontsize=12, loc="left", pad=10,
     )
+
+    lines1, labels1 = ax_stable.get_legend_handles_labels()
+    lines2, labels2 = ax_rob.get_legend_handles_labels()
+    ax_stable.legend(lines1 + lines2, labels1 + labels2, frameon=False,
+                     loc="upper center", bbox_to_anchor=(0.5, -0.12), ncol=2)
 
     fig.tight_layout()
     save(fig, "3954_rmt_fig1_sigma_vs_robustness_all")
 
 
-
-
-########## Figure 2 Corrected Robusness vs Sigma, with legend and colors ##########
+########## FIGURE 2: Corrected robustness vs Sigma, coloured by type ##########
 
 def fig2_corrected_robustness(df):
     df = df.copy()
     df["rob_corrected"] = df["shaberi_total"] / df["n_samples"]
- 
+
     fig, ax_stable = plt.subplots(figsize=(12, 6))
- 
+
     # Left y-axis: stable count (dashed black)
     stable = df.groupby("sigma")["stable"].first()
-    ax_stable.plot(
-        stable.index,
-        stable.values,
-        color="black",
-        linewidth=1.5,
-        linestyle="--",
-        label="Stable count",
-    )
+    ax_stable.plot(stable.index, stable.values, color="black", linewidth=1.5, linestyle="--", label="Stable steady state count")
     ax_stable.set_xlabel("Sigma (σ)", fontsize=11)
     ax_stable.set_ylabel("Number of stable steady states", fontsize=11)
     ax_stable.xaxis.grid(False)
- 
+
     # Right y-axis: corrected robustness, coloured by Turing type
     ax_rob = ax_stable.twinx()
     for t in ["Type1", "Type2", "Type3"]:
@@ -114,80 +109,74 @@ def fig2_corrected_robustness(df):
         if subset.empty:
             continue
         mean_rob = subset.groupby("sigma")["rob_corrected"].mean()
+        ax_rob.plot(mean_rob.index, mean_rob.values, color=TYPE_COLORS[t],
+                    linewidth=2, label=t)
+    ax_rob.set_ylabel("Corrected robustness (shaberi_total / n_samples)", fontsize=11)
+    ax_rob.spines["right"].set_visible(True)
+    ax_rob.spines["top"].set_visible(False)
+    ax_rob.yaxis.grid(False)
+    ax_rob.xaxis.grid(False)
+
+    ax_stable.set_title(
+        "Topology #3954 RMT – Corrected robustness (normalised by total samples) vs σ",
+        fontsize=12, loc="left", pad=10,
+    )
+
+    lines1, labels1 = ax_stable.get_legend_handles_labels()
+    lines2, labels2 = ax_rob.get_legend_handles_labels()
+    ax_stable.legend(lines1 + lines2, labels1 + labels2, frameon=False,
+                     loc="upper center", bbox_to_anchor=(0.5, -0.12), ncol=4)
+
+    fig.tight_layout()
+    save(fig, "3954_rmt_fig2_corrected_robustness")
+
+
+########## FIGURE 3: Corrected robustness overview (all configs, one colour) ##########
+
+def fig3_corrected_overview(df):
+    df = df.copy()
+    df["rob_corrected"] = df["shaberi_total"] / df["n_samples"]
+
+    fig, ax_stable = plt.subplots(figsize=(12, 6))
+
+    # Left y-axis: stable count (dashed black)
+    stable = df.groupby("sigma")["stable"].first()
+    ax_stable.plot(stable.index, stable.values, color="black", linewidth=1.5,
+                   linestyle="--", label="Stable steady state count")
+    ax_stable.set_xlabel("Sigma (σ)", fontsize=11)
+    ax_stable.set_ylabel("Number of stable steady states", fontsize=11)
+    ax_stable.xaxis.grid(False)
+
+    # Right y-axis: all configs in one colour, label only on first
+    ax_rob = ax_stable.twinx()
+    for i, cfg in enumerate(df["config_name"].unique()):
+        subset = df[df["config_name"] == cfg].sort_values("sigma")
         ax_rob.plot(
-            mean_rob.index,
-            mean_rob.values,
-            color=TYPE_COLORS[t],
-            linewidth=2,
-            label=t,
+            subset["sigma"],
+            subset["rob_corrected"],
+            color="#8F2EB0",
+            linewidth=1,
+            alpha=0.6,
+            label="Corrected robustness – all configurations" if i == 0 else "",
         )
     ax_rob.set_ylabel("Corrected robustness (shaberi_total / n_samples)", fontsize=11)
     ax_rob.spines["right"].set_visible(True)
     ax_rob.spines["top"].set_visible(False)
     ax_rob.yaxis.grid(False)
     ax_rob.xaxis.grid(False)
- 
-    ax_stable.set_title(
-        "Topology #3954 RMT Corrected robustness (normalised by total samples) vs σ",
-        fontsize=12, loc="left", pad=10,
-    )
- 
-    # Legend
-    lines1, labels1 = ax_stable.get_legend_handles_labels()
-    lines2, labels2 = ax_rob.get_legend_handles_labels()
-    ax_stable.legend(
-        lines1 + lines2, labels1 + labels2,
-        frameon=False,
-        loc="upper center",
-        bbox_to_anchor=(0.5, -0.12),
-        ncol=4,
-    )
- 
-    fig.tight_layout()
-    save(fig, "3954_rmt_fig2_corrected_robustness")
 
-
-
-########## FIGURE 3 CORRECTED ROBUSTNESS OVERVIEW PLOT ##########
-
-def fig3_corrected_overview(df):
-    df = df.copy()
-    df["rob_corrected"] = df["shaberi_total"] / df["n_samples"]
- 
-    fig, ax_stable = plt.subplots(figsize=(12, 6))
- 
-    # Left y-axis: stable count (dashed black)
-    stable = df.groupby("sigma")["stable"].first()
-    ax_stable.plot(stable.index, stable.values, color="black", linewidth=1.5, linestyle="--")
-    ax_stable.set_xlabel("Sigma (σ)", fontsize=11)
-    ax_stable.set_ylabel("Number of stable steady states", fontsize=11)
-    ax_stable.xaxis.grid(False)
- 
-    # Right y-axis: all configs, no legend, overview only
-    ax_rob = ax_stable.twinx()
-    for cfg in df["config_name"].unique():
-        subset = df[df["config_name"] == cfg].sort_values("sigma")
-        ax_rob.plot(subset["sigma"], subset["rob_corrected"], linewidth=1, alpha=0.6)
-    ax_rob.set_ylabel("Corrected robustness (shaberi_total / n_samples)", fontsize=11)
-    ax_rob.spines["right"].set_visible(True)
-    ax_rob.spines["top"].set_visible(False)
-    ax_rob.yaxis.grid(False)
-    ax_rob.xaxis.grid(False)
- 
     ax_stable.set_title(
         "Topology #3954 RMT – Corrected robustness (normalised by total samples) vs σ",
         fontsize=12, loc="left", pad=10,
     )
- 
+
+    lines1, labels1 = ax_stable.get_legend_handles_labels()
+    lines2, labels2 = ax_rob.get_legend_handles_labels()
+    ax_stable.legend(lines1 + lines2, labels1 + labels2, frameon=False,
+                     loc="upper center", bbox_to_anchor=(0.5, -0.12), ncol=2)
+
     fig.tight_layout()
     save(fig, "3954_rmt_fig3_corrected_overview")
-
-
-
-
-
-
-
 
 
 ########### RUN THE WHOLE THING ############
