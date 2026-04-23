@@ -222,13 +222,13 @@ DIFFUSION_CONFIGS = {
     36: {"name": "LHS_3954_DCI_Type3",          "dU": 0.0,  "dV": 1.0,  "dW": 0.0},
     37: {"name": "LHS_3954_DCI_Type3_Limit",    "dU": 0.0,  "dV": 0.1,  "dW": 0.0},
 
-    # ICD: A=Immobile, B=Compl., C=Destabile
-    38: {"name": "LHS_3954_ICD_Type1",          "dU": 0.0,  "dV": 10.0, "dW": 1.0},
-    39: {"name": "LHS_3954_ICD_Type1_Control",  "dU": 0.0,  "dV": 1.0,  "dW": 1.0},
-    40: {"name": "LHS_3954_ICD_Type2",          "dU": 0.0,  "dV": 0.0,  "dW": 1.0},
-    41: {"name": "LHS_3954_ICD_Type2_Limit",    "dU": 0.0,  "dV": 0.0,  "dW": 0.1},
-    42: {"name": "LHS_3954_ICD_Type3",          "dU": 0.0,  "dV": 1.0,  "dW": 0.0},
-    43: {"name": "LHS_3954_ICD_Type3_Limit",    "dU": 0.0,  "dV": 0.1,  "dW": 0.0},
+    # # ICD: A=Immobile, B=Compl., C=Destabile
+    # 38: {"name": "LHS_3954_ICD_Type1",          "dU": 0.0,  "dV": 10.0, "dW": 1.0},
+    # 39: {"name": "LHS_3954_ICD_Type1_Control",  "dU": 0.0,  "dV": 1.0,  "dW": 1.0},
+    # 40: {"name": "LHS_3954_ICD_Type2",          "dU": 0.0,  "dV": 0.0,  "dW": 1.0},
+    # 41: {"name": "LHS_3954_ICD_Type2_Limit",    "dU": 0.0,  "dV": 0.0,  "dW": 0.1},
+    # 42: {"name": "LHS_3954_ICD_Type3",          "dU": 0.0,  "dV": 1.0,  "dW": 0.0},
+    # 43: {"name": "LHS_3954_ICD_Type3_Limit",    "dU": 0.0,  "dV": 0.1,  "dW": 0.0},
     
     # # DCD: A=Destable, B=Compl., C=Destable
     # 29: {"name": "3954_DCD_Type1",          "dU": 1.0,  "dV": 10.0, "dW": 1.0},

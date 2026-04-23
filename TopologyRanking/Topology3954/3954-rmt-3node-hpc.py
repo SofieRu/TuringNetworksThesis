@@ -199,18 +199,18 @@ DIFFUSION_CONFIGS = {
     36: {"name": "RMT_3954_DCI_Type3",          "dU": 0.0,  "dV": 1.0,  "dW": 0.0},
     37: {"name": "RMT_3954_DCI_Type3_Limit",    "dU": 0.0,  "dV": 0.1,  "dW": 0.0},
 
-    # ICD: A=Immobile, B=Compl., C=Destabile
-    38: {"name": "RMT_3954_ICD_Type1",          "dU": 0.0,  "dV": 10.0, "dW": 1.0},
-    39: {"name": "RMT_3954_ICD_Type1_Control",  "dU": 0.0,  "dV": 1.0,  "dW": 1.0},
-    40: {"name": "RMT_3954_ICD_Type2",          "dU": 0.0,  "dV": 0.0,  "dW": 1.0},
-    41: {"name": "RMT_3954_ICD_Type2_Limit",    "dU": 0.0,  "dV": 0.0,  "dW": 0.1},
-    42: {"name": "RMT_3954_ICD_Type3",          "dU": 0.0,  "dV": 1.0,  "dW": 0.0},
-    43: {"name": "RMT_3954_ICD_Type3_Limit",    "dU": 0.0,  "dV": 0.1,  "dW": 0.0},
+    # # ICD: A=Immobile, B=Compl., C=Destabile
+    # 38: {"name": "RMT_3954_ICD_Type1",          "dU": 0.0,  "dV": 10.0, "dW": 1.0},
+    # 39: {"name": "RMT_3954_ICD_Type1_Control",  "dU": 0.0,  "dV": 1.0,  "dW": 1.0},
+    # 40: {"name": "RMT_3954_ICD_Type2",          "dU": 0.0,  "dV": 0.0,  "dW": 1.0},
+    # 41: {"name": "RMT_3954_ICD_Type2_Limit",    "dU": 0.0,  "dV": 0.0,  "dW": 0.1},
+    # 42: {"name": "RMT_3954_ICD_Type3",          "dU": 0.0,  "dV": 1.0,  "dW": 0.0},
+    # 43: {"name": "RMT_3954_ICD_Type3_Limit",    "dU": 0.0,  "dV": 0.1,  "dW": 0.0},
 }
 
 #full range sigma values but to test we do less values
 #SIGMA_VALUES = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 3.6, 3.8, 4.0]
-SIGMA_VALUES = [0.2, 0.6, 1.0, 1.4, 1.8, 2.0, 2.4, 2.8, 3.2, 3.6, 3.8, 4.0]
+SIGMA_VALUES = [0.2, 0.6, 1.0, 1.4, 1.8, 2.0, 2.4, 2.8, 3.2, 3.6, 3.8, 4.0, 6.0, 8.0, 10.0]
 
 
 # MAIN ANALYSIS FUNCTION

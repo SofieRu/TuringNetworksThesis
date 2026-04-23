@@ -1,5 +1,5 @@
 #!/bin/bash
-#PBS -J 0-43
+#PBS -J 0-37
 #PBS -l select=1:ncpus=1:mem=16gb
 #PBS -l walltime=20:00:00
 #PBS -N rmt_3954
