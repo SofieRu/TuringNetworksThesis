@@ -54,7 +54,7 @@ cols_display = [
     'config_name',
     'config_id',
     'sigma',
-    'stable',
+    'stable_without_diffusion',
     'diego_turing',
     'shaberi_total',
     'rob_diego',

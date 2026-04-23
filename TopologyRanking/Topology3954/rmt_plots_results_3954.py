@@ -49,7 +49,7 @@ def fig1_sigma_vs_robustness(df):
     fig, ax_stable = plt.subplots(figsize=(12, 6))
 
     # Left y-axis: stable count (dashed black)
-    stable = df.groupby("sigma")["stable"].first()
+    stable = df.groupby("sigma")["stable_without_diffusion"].first()
     ax_stable.plot(stable.index, stable.values, color="black", linewidth=1.5, linestyle="--", label="Stable steady state count")
     ax_stable.set_xlabel("Sigma (σ)", fontsize=11)
     ax_stable.set_ylabel("Number of stable steady states", fontsize=11)
@@ -96,7 +96,7 @@ def fig2_corrected_robustness(df):
     fig, ax_stable = plt.subplots(figsize=(12, 6))
 
     # Left y-axis: stable count (dashed black)
-    stable = df.groupby("sigma")["stable"].first()
+    stable = df.groupby("sigma")["stable_without_diffusion"].first()
     ax_stable.plot(stable.index, stable.values, color="black", linewidth=1.5, linestyle="--", label="Stable steady state count")
     ax_stable.set_xlabel("Sigma (σ)", fontsize=11)
     ax_stable.set_ylabel("Number of stable steady states", fontsize=11)
@@ -140,7 +140,7 @@ def fig3_corrected_overview(df):
     fig, ax_stable = plt.subplots(figsize=(12, 6))
 
     # Left y-axis: stable count (dashed black)
-    stable = df.groupby("sigma")["stable"].first()
+    stable = df.groupby("sigma")["stable_without_diffusion"].first()
     ax_stable.plot(stable.index, stable.values, color="black", linewidth=1.5,
                    linestyle="--", label="Stable steady state count")
     ax_stable.set_xlabel("Sigma (σ)", fontsize=11)
