@@ -1,0 +1,41 @@
+Starting job 32 at Thu 23 Apr 13:15:06 BST 2026
+Starting RMT_3954_DCI_Type1: dU=1.0, dV=10.0, dW=0.0
+Testing 15 sigma values with 100,000 samples each
+======================================================================
+  [sig=0.2] 100,000/100,000 | Stable: 100000 | Diego: 0 | Shaberi: 0
+  [sig=0.6] 100,000/100,000 | Stable: 98966 | Diego: 0 | Shaberi: 0
+  [sig=1.0] 100,000/100,000 | Stable: 92345 | Diego: 0 | Shaberi: 0
+  [sig=1.4] 100,000/100,000 | Stable: 83226 | Diego: 0 | Shaberi: 0
+  [sig=1.8] 100,000/100,000 | Stable: 72870 | Diego: 0 | Shaberi: 0
+  [sig=2.0] 100,000/100,000 | Stable: 67959 | Diego: 0 | Shaberi: 0
+  [sig=2.4] 100,000/100,000 | Stable: 59093 | Diego: 1 | Shaberi: 1
+  [sig=2.8] 100,000/100,000 | Stable: 51853 | Diego: 2 | Shaberi: 2
+  [sig=3.2] 100,000/100,000 | Stable: 46233 | Diego: 8 | Shaberi: 8
+  [sig=3.6] 100,000/100,000 | Stable: 41674 | Diego: 14 | Shaberi: 14
+  [sig=3.8] 100,000/100,000 | Stable: 39752 | Diego: 21 | Shaberi: 21
+  [sig=4.0] 100,000/100,000 | Stable: 38013 | Diego: 21 | Shaberi: 21
+  [sig=6.0] 100,000/100,000 | Stable: 26971 | Diego: 108 | Shaberi: 108
+  [sig=8.0] 100,000/100,000 | Stable: 21713 | Diego: 251 | Shaberi: 251
+  [sig=10.0] 100,000/100,000 | Stable: 18489 | Diego: 375 | Shaberi: 375
+
+======================================================================
+COMPLETED: RMT_3954_DCI_Type1
+======================================================================
+Tested 15 sigma values
+100,000 samples per sigma
+Total: 1,500,000 Jacobians generated
+
+Saved to:
+  results/RMT_3954_DCI_Type1_100k.pkl
+  results/RMT_3954_DCI_Type1_100k.csv
+======================================================================
+Finished job 32 at Thu 23 Apr 14:17:03 BST 2026
+
+====================================
+CPU Time used: 00:59:32
+CPU Percent: 99%
+Memory usage: 137812kb
+Approx Power usage: 0.0118
+Walltime usage: 01:02:00
+
+====================================
