@@ -1,0 +1,38 @@
+Starting job 18 at Wed 22 Apr 16:39:59 BST 2026
+Starting RMT_3954_CDD_Type3_Unequal1: dU=1.0, dV=0.1, dW=0.0
+Testing 12 sigma values with 100,000 samples each
+======================================================================
+  [sig=0.2] 100,000/100,000 | Stable: 100000 | Diego: 0 | Shaberi: 0
+  [sig=0.6] 100,000/100,000 | Stable: 98966 | Diego: 200 | Shaberi: 200
+  [sig=1.0] 100,000/100,000 | Stable: 92345 | Diego: 3630 | Shaberi: 3630
+  [sig=1.4] 100,000/100,000 | Stable: 83226 | Diego: 8094 | Shaberi: 8094
+  [sig=1.8] 100,000/100,000 | Stable: 72870 | Diego: 10429 | Shaberi: 10429
+  [sig=2.0] 100,000/100,000 | Stable: 67959 | Diego: 10980 | Shaberi: 10980
+  [sig=2.4] 100,000/100,000 | Stable: 59093 | Diego: 11486 | Shaberi: 11486
+  [sig=2.8] 100,000/100,000 | Stable: 51853 | Diego: 11607 | Shaberi: 11607
+  [sig=3.2] 100,000/100,000 | Stable: 46233 | Diego: 11548 | Shaberi: 11548
+  [sig=3.6] 100,000/100,000 | Stable: 41674 | Diego: 11350 | Shaberi: 11350
+  [sig=3.8] 100,000/100,000 | Stable: 39752 | Diego: 11283 | Shaberi: 11283
+  [sig=4.0] 100,000/100,000 | Stable: 38013 | Diego: 11161 | Shaberi: 11161
+
+======================================================================
+COMPLETED: RMT_3954_CDD_Type3_Unequal1
+======================================================================
+Tested 12 sigma values
+100,000 samples per sigma
+Total: 1,200,000 Jacobians generated
+
+Saved to:
+  results/RMT_3954_CDD_Type3_Unequal1_100k.pkl
+  results/RMT_3954_CDD_Type3_Unequal1_100k.csv
+======================================================================
+Finished job 18 at Wed 22 Apr 17:38:04 BST 2026
+
+====================================
+CPU Time used: 00:55:26
+CPU Percent: 99%
+Memory usage: 150888kb
+Approx Power usage: 0.011
+Walltime usage: 00:58:08
+
+====================================

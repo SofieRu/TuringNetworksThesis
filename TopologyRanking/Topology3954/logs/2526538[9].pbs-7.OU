@@ -1,0 +1,38 @@
+Starting job 9 at Wed 22 Apr 16:40:11 BST 2026
+Starting RMT_3954_DCC_Type3_Unequal2: dU=0.0, dV=1.0, dW=10.0
+Testing 12 sigma values with 100,000 samples each
+======================================================================
+  [sig=0.2] 100,000/100,000 | Stable: 100000 | Diego: 0 | Shaberi: 0
+  [sig=0.6] 100,000/100,000 | Stable: 98966 | Diego: 0 | Shaberi: 0
+  [sig=1.0] 100,000/100,000 | Stable: 92345 | Diego: 0 | Shaberi: 0
+  [sig=1.4] 100,000/100,000 | Stable: 83226 | Diego: 0 | Shaberi: 0
+  [sig=1.8] 100,000/100,000 | Stable: 72870 | Diego: 0 | Shaberi: 1
+  [sig=2.0] 100,000/100,000 | Stable: 67959 | Diego: 0 | Shaberi: 4
+  [sig=2.4] 100,000/100,000 | Stable: 59093 | Diego: 0 | Shaberi: 28
+  [sig=2.8] 100,000/100,000 | Stable: 51853 | Diego: 0 | Shaberi: 38
+  [sig=3.2] 100,000/100,000 | Stable: 46233 | Diego: 0 | Shaberi: 104
+  [sig=3.6] 100,000/100,000 | Stable: 41674 | Diego: 0 | Shaberi: 178
+  [sig=3.8] 100,000/100,000 | Stable: 39752 | Diego: 0 | Shaberi: 237
+  [sig=4.0] 100,000/100,000 | Stable: 38013 | Diego: 0 | Shaberi: 293
+
+======================================================================
+COMPLETED: RMT_3954_DCC_Type3_Unequal2
+======================================================================
+Tested 12 sigma values
+100,000 samples per sigma
+Total: 1,200,000 Jacobians generated
+
+Saved to:
+  results/RMT_3954_DCC_Type3_Unequal2_100k.pkl
+  results/RMT_3954_DCC_Type3_Unequal2_100k.csv
+======================================================================
+Finished job 9 at Wed 22 Apr 17:48:42 BST 2026
+
+====================================
+CPU Time used: 01:05:56
+CPU Percent: 98%
+Memory usage: 136532kb
+Approx Power usage: 0.013
+Walltime usage: 01:08:35
+
+====================================
