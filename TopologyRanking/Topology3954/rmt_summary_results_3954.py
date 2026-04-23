@@ -30,7 +30,7 @@ for filepath in result_files:
                 'dW': dW,
                 'sigma': sigma_result['sigma'],
                 'n_samples': sigma_result['n_samples'],
-                'stable': sigma_result['stable'],
+                'stable_without_diffusion': sigma_result['stable'],
                 'diego_turing': sigma_result['diego_turing'],
                 'shaberi_total': sigma_result['shaberi_total'],
                 'shaberi_type_I': sigma_result['shaberi_type_I'],
