@@ -1,0 +1,36 @@
+Starting job 22 at Fri 24 Apr 01:18:01 BST 2026
+Starting 1754_DCC_Type1_OneFast: dU=1.0, dV=1.0, dW=10.0, n_samples=1,000,000
+[1754_DCC_Type1_OneFast] 100,000/1,000,000 | Stable: 98478 | Diego: 0 | Shaberi: 0
+[1754_DCC_Type1_OneFast] 200,000/1,000,000 | Stable: 196894 | Diego: 0 | Shaberi: 0
+[1754_DCC_Type1_OneFast] 300,000/1,000,000 | Stable: 295298 | Diego: 0 | Shaberi: 0
+[1754_DCC_Type1_OneFast] 400,000/1,000,000 | Stable: 393751 | Diego: 0 | Shaberi: 0
+[1754_DCC_Type1_OneFast] 500,000/1,000,000 | Stable: 492192 | Diego: 0 | Shaberi: 0
+[1754_DCC_Type1_OneFast] 600,000/1,000,000 | Stable: 590728 | Diego: 0 | Shaberi: 0
+[1754_DCC_Type1_OneFast] 700,000/1,000,000 | Stable: 689254 | Diego: 0 | Shaberi: 0
+[1754_DCC_Type1_OneFast] 800,000/1,000,000 | Stable: 787663 | Diego: 0 | Shaberi: 0
+[1754_DCC_Type1_OneFast] 900,000/1,000,000 | Stable: 886092 | Diego: 0 | Shaberi: 0
+[1754_DCC_Type1_OneFast] 1,000,000/1,000,000 | Stable: 984576 | Diego: 0 | Shaberi: 0
+
+======================================================================
+COMPLETED: 1754_DCC_Type1_OneFast
+======================================================================
+Diego Turing:    0 (0.0000%)
+Shaberi Total:   0 (0.0000%)
+  Type-I:        0
+  Type-II:       0
+  Hopf:          0
+
+Saved to:
+  results/1754_DCC_Type1_OneFast_1mio.pkl
+  results/1754_DCC_Type1_OneFast_1mio.csv
+======================================================================
+Finished job 22 at Fri 24 Apr 02:44:58 BST 2026
+
+====================================
+CPU Time used: 01:23:46
+CPU Percent: 98%
+Memory usage: 546196kb
+Approx Power usage: 0.0166
+Walltime usage: 01:27:00
+
+====================================

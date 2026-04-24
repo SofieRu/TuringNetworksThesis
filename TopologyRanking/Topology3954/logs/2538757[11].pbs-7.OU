@@ -1,0 +1,36 @@
+Starting job 11 at Fri 24 Apr 01:10:44 BST 2026
+Starting LHS_3954_CDD_Type1: dU=10.0, dV=1.0, dW=1.0, n_samples=1,000,000
+[LHS_3954_CDD_Type1] 100,000/1,000,000 | Stable: 95180 | Diego: 8 | Shaberi: 8
+[LHS_3954_CDD_Type1] 200,000/1,000,000 | Stable: 190103 | Diego: 24 | Shaberi: 24
+[LHS_3954_CDD_Type1] 300,000/1,000,000 | Stable: 285166 | Diego: 36 | Shaberi: 36
+[LHS_3954_CDD_Type1] 400,000/1,000,000 | Stable: 380343 | Diego: 53 | Shaberi: 53
+[LHS_3954_CDD_Type1] 500,000/1,000,000 | Stable: 475497 | Diego: 65 | Shaberi: 65
+[LHS_3954_CDD_Type1] 600,000/1,000,000 | Stable: 570769 | Diego: 78 | Shaberi: 78
+[LHS_3954_CDD_Type1] 700,000/1,000,000 | Stable: 665900 | Diego: 97 | Shaberi: 97
+[LHS_3954_CDD_Type1] 800,000/1,000,000 | Stable: 760988 | Diego: 111 | Shaberi: 111
+[LHS_3954_CDD_Type1] 900,000/1,000,000 | Stable: 856080 | Diego: 125 | Shaberi: 125
+[LHS_3954_CDD_Type1] 1,000,000/1,000,000 | Stable: 951296 | Diego: 135 | Shaberi: 135
+
+======================================================================
+COMPLETED: LHS_3954_CDD_Type1
+======================================================================
+Diego Turing:    135 (0.0135%)
+Shaberi Total:   135 (0.0135%)
+  Type-I:        135
+  Type-II:       0
+  Hopf:          0
+
+Saved to:
+  results/LHS_3954_CDD_Type1_1mio.pkl
+  results/LHS_3954_CDD_Type1_1mio.csv
+======================================================================
+Finished job 11 at Fri 24 Apr 02:49:49 BST 2026
+
+====================================
+CPU Time used: 01:34:07
+CPU Percent: 96%
+Memory usage: 577664kb
+Approx Power usage: 0.0188
+Walltime usage: 01:39:08
+
+====================================

@@ -1,0 +1,36 @@
+Starting job 31 at Fri 24 Apr 01:17:44 BST 2026
+Starting 1754_DCI_Type2: dU=1.0, dV=0.0, dW=0.0, n_samples=1,000,000
+[1754_DCI_Type2] 100,000/1,000,000 | Stable: 98478 | Diego: 1506 | Shaberi: 1506
+[1754_DCI_Type2] 200,000/1,000,000 | Stable: 196894 | Diego: 3040 | Shaberi: 3040
+[1754_DCI_Type2] 300,000/1,000,000 | Stable: 295298 | Diego: 4533 | Shaberi: 4533
+[1754_DCI_Type2] 400,000/1,000,000 | Stable: 393751 | Diego: 6018 | Shaberi: 6018
+[1754_DCI_Type2] 500,000/1,000,000 | Stable: 492192 | Diego: 7510 | Shaberi: 7510
+[1754_DCI_Type2] 600,000/1,000,000 | Stable: 590728 | Diego: 8999 | Shaberi: 8999
+[1754_DCI_Type2] 700,000/1,000,000 | Stable: 689254 | Diego: 10437 | Shaberi: 10437
+[1754_DCI_Type2] 800,000/1,000,000 | Stable: 787663 | Diego: 11915 | Shaberi: 11915
+[1754_DCI_Type2] 900,000/1,000,000 | Stable: 886092 | Diego: 13367 | Shaberi: 13367
+[1754_DCI_Type2] 1,000,000/1,000,000 | Stable: 984576 | Diego: 14919 | Shaberi: 14919
+
+======================================================================
+COMPLETED: 1754_DCI_Type2
+======================================================================
+Diego Turing:    14919 (1.4919%)
+Shaberi Total:   14919 (1.4919%)
+  Type-I:        0
+  Type-II:       14919
+  Hopf:          0
+
+Saved to:
+  results/1754_DCI_Type2_1mio.pkl
+  results/1754_DCI_Type2_1mio.csv
+======================================================================
+Finished job 31 at Fri 24 Apr 02:43:17 BST 2026
+
+====================================
+CPU Time used: 01:23:26
+CPU Percent: 98%
+Memory usage: 546296kb
+Approx Power usage: 0.0166
+Walltime usage: 01:25:36
+
+====================================
