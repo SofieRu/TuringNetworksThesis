@@ -233,18 +233,15 @@ DIFFUSION_CONFIGS = {
     # # DCD: A=Destable, B=Compl., C=Destable
     # 29: {"name": "3954_DCD_Type1",          "dU": 1.0,  "dV": 10.0, "dW": 1.0},
     # 30: {"name": "3954_DCD_Type1_Control",  "dU": 1.0,  "dV": 1.0,  "dW": 1.0},
-    
     # 31: {"name": "3954_DCD_Type2_Equal",    "dU": 1.0,  "dV": 0.0,  "dW": 1.0},
     # 32: {"name": "3954_DCD_Type2_Unequal1", "dU": 0.1,  "dV": 0.0,  "dW": 1.0},
     # 33: {"name": "3954_DCD_Type2_Unequal2", "dU": 1.0,  "dV": 0.0,  "dW": 10.0},
-    
     # 34: {"name": "3954_DCD_Type3_Equal",    "dU": 0.0,  "dV": 1.0,  "dW": 1.0},   
     # 35: {"name": "3954_DCD_Type3_Unequal1", "dU": 0.0,  "dV": 0.1,  "dW": 1.0},
     # 36: {"name": "3954_DCD_Type3_Unequal2", "dU": 0.0,  "dV": 1.0,  "dW": 10.0},
     # 37: {"name": "3954_DCD_Type3_Var",      "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
     
 }
-
 
 # MAIN ANALYSIS FUNCTION
 
@@ -320,10 +317,15 @@ def run_analysis(config_id, n_samples):
                   f"Diego: {diego_turing} | Shaberi: {shaberi_total}")
     
     # Calculate robustness
-    rob_diego = 100 * diego_turing / stable_without_diffusion if stable_without_diffusion > 0 else 0.0
-    rob_shaberi_total = 100 * shaberi_total / stable_without_diffusion if stable_without_diffusion > 0 else 0.0
-    rob_shaberi_type_I = 100 * shaberi_type_I / stable_without_diffusion if stable_without_diffusion > 0 else 0.0
-    rob_shaberi_excl_II = 100 * (shaberi_type_I + shaberi_hopf) / stable_without_diffusion if stable_without_diffusion > 0 else 0.0
+    rob_diego = 100 * diego_turing / n_samples
+    rob_shaberi_total = 100 * shaberi_total / n_samples
+    rob_shaberi_type_I = 100 * shaberi_type_I / n_samples
+    rob_shaberi_excl_II = 100 * (shaberi_type_I + shaberi_hopf) / n_samples
+
+    # rob_diego = 100 * diego_turing / stable_without_diffusion if stable_without_diffusion > 0 else 0.0
+    # rob_shaberi_total = 100 * shaberi_total / stable_without_diffusion if stable_without_diffusion > 0 else 0.0
+    # rob_shaberi_type_I = 100 * shaberi_type_I / stable_without_diffusion if stable_without_diffusion > 0 else 0.0
+    # rob_shaberi_excl_II = 100 * (shaberi_type_I + shaberi_hopf) / stable_without_diffusion if stable_without_diffusion > 0 else 0.0
     
     results = {
         "config_name": config_name,
@@ -358,7 +360,7 @@ if __name__ == "__main__":
     results = run_analysis(config_id, n_samples)
     
     # Save as pickle (for Python)
-    output_pkl = f"results/{results['config_name']}_{n_samples//1000}k.pkl"
+    output_pkl = f"results/{results['config_name']}_1mio.pkl"
     with open(output_pkl, 'wb') as f:
         pickle.dump(results, f)
     
@@ -382,7 +384,7 @@ if __name__ == "__main__":
         'rob_shaberi_type_I': results['rob_shaberi_type_I'],
         'rob_shaberi_excl_II': results['rob_shaberi_excl_II'],
     }
-    output_csv = f"results/{results['config_name']}_{n_samples//1000}k.csv"
+    output_csv = f"results/{results['config_name']}_1mio.csv"
     pd.DataFrame([results_flat]).to_csv(output_csv, index=False)
     
     # Print summary
