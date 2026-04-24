@@ -7,9 +7,8 @@ import pandas as pd
 # have to run this first: module load matplotlib/3.9.2-gfbf-2024a, module load SciPy-bundle/2024.05-gfbf-2024a
 
 # Find all pickle files
-#result_files = sorted(glob.glob('results/*.pkl'))
-result_files = sorted(glob.glob('results/*_1000k.pkl'))
-
+#result_files = sorted(glob.glob('results/*_1000k.pkl'))
+result_files = sorted(glob.glob('results/LHS_3954_*_1mio.pkl'))
 
 # Load all results
 all_results = []
@@ -49,5 +48,5 @@ print(df[cols].to_string(index=False))
 print("="*120)
 
 # Save as CSV for Excel
-df.to_csv('3954_results_summary.csv', index=False)
-print("\nSaved to: 3954_results_summary.csv")
+df.to_csv('3954_lhs_results_summary.csv', index=False)
+print("\nSaved to: 3954_lhs_results_summary.csv")
