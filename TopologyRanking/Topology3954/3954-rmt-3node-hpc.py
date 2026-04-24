@@ -209,9 +209,7 @@ DIFFUSION_CONFIGS = {
 }
 
 #full range sigma values but to test we do less values
-#SIGMA_VALUES = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 3.6, 3.8, 4.0]
-SIGMA_VALUES = [0.2, 0.6, 1.0, 1.4, 1.8, 2.0, 2.4, 2.8, 3.2, 3.6, 3.8, 4.0, 6.0, 8.0, 10.0]
-
+SIGMA_VALUES = [0.1, 0.2, 0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 3.6, 3.8, 4.0, 6.0, 8.0, 10.0]
 
 # MAIN ANALYSIS FUNCTION
 
@@ -273,7 +271,7 @@ def run_analysis(config_id, n_samples):
         rob_shaberi_total = 100 * shaberi_total / n_samples
         rob_shaberi_type_I = 100 * shaberi_type_I / n_samples
         rob_shaberi_excl_II = 100 * (shaberi_type_I + shaberi_hopf) / n_samples
-        
+
         # rob_diego = 100 * diego_turing / stable if stable > 0 else 0.0
         # rob_shaberi_total = 100 * shaberi_total / stable if stable > 0 else 0.0
         # rob_shaberi_type_I = 100 * shaberi_type_I / stable if stable > 0 else 0.0
