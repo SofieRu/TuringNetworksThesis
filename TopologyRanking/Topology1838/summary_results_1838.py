@@ -6,7 +6,7 @@ import pandas as pd
 # Find all pickle files
 #result_files = sorted(glob.glob('results/*.pkl'))
 # result_files = sorted(glob.glob('results/*_1000k.pkl'))
-result_files = sorted(glob.glob('results/LHS_3954_*_1mio.pkl'))
+result_files = sorted(glob.glob('results/LHS_1838_*.pkl'))
 
 # Load all results
 all_results = []
