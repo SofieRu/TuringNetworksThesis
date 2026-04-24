@@ -7,7 +7,7 @@ import numpy as np
 
 # have to run this first: module load matplotlib/3.9.2-gfbf-2024a
 
-CSV = "1754_lhs_results_extended_1mio.csv"
+CSV = "1754_lhs_results_corrected_1mio.csv"
 OUT_DIR = Path("plots")
 OUT_DIR.mkdir(exist_ok=True)
 
@@ -23,7 +23,6 @@ plt.rcParams.update({
     "axes.spines.right": False,
 })
 
-
 TYPE_COLORS = {
     "Type1": "#444EA6",
     "Type2": "#AE2BA1",
@@ -35,7 +34,6 @@ def save(fig, name):
         fig.savefig(OUT_DIR / f"{name}.{ext}", bbox_inches="tight", dpi=300)
     plt.close(fig)
     print(f"Saved to plots/{name}.svg")
-
 
 def load_data():
     df = pd.read_csv(CSV)
