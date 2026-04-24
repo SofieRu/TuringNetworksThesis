@@ -1,0 +1,36 @@
+Starting job 7 at Fri 24 Apr 08:31:54 BST 2026
+Starting LHS_1754_CDD_Type3_Unequal1: dU=10.0, dV=1.0, dW=0.0, n_samples=1,000,000
+[LHS_1754_CDD_Type3_Unequal1] 100,000/1,000,000 | Stable: 98478 | Diego: 315 | Shaberi: 315
+[LHS_1754_CDD_Type3_Unequal1] 200,000/1,000,000 | Stable: 196894 | Diego: 662 | Shaberi: 662
+[LHS_1754_CDD_Type3_Unequal1] 300,000/1,000,000 | Stable: 295298 | Diego: 991 | Shaberi: 991
+[LHS_1754_CDD_Type3_Unequal1] 400,000/1,000,000 | Stable: 393751 | Diego: 1304 | Shaberi: 1304
+[LHS_1754_CDD_Type3_Unequal1] 500,000/1,000,000 | Stable: 492192 | Diego: 1630 | Shaberi: 1630
+[LHS_1754_CDD_Type3_Unequal1] 600,000/1,000,000 | Stable: 590728 | Diego: 1951 | Shaberi: 1951
+[LHS_1754_CDD_Type3_Unequal1] 700,000/1,000,000 | Stable: 689254 | Diego: 2254 | Shaberi: 2254
+[LHS_1754_CDD_Type3_Unequal1] 800,000/1,000,000 | Stable: 787663 | Diego: 2573 | Shaberi: 2573
+[LHS_1754_CDD_Type3_Unequal1] 900,000/1,000,000 | Stable: 886092 | Diego: 2893 | Shaberi: 2893
+[LHS_1754_CDD_Type3_Unequal1] 1,000,000/1,000,000 | Stable: 984576 | Diego: 3196 | Shaberi: 3196
+
+======================================================================
+COMPLETED: LHS_1754_CDD_Type3_Unequal1
+======================================================================
+Diego Turing:    3196 (0.3196%)
+Shaberi Total:   3196 (0.3196%)
+  Type-I:        2770
+  Type-II:       426
+  Hopf:          0
+
+Saved to:
+  results/LHS_1754_CDD_Type3_Unequal1_1mio.pkl
+  results/LHS_1754_CDD_Type3_Unequal1_1mio.csv
+======================================================================
+Finished job 7 at Fri 24 Apr 09:59:21 BST 2026
+
+====================================
+CPU Time used: 01:24:38
+CPU Percent: 99%
+Memory usage: 546188kb
+Approx Power usage: 0.016799999999999995
+Walltime usage: 01:27:30
+
+====================================

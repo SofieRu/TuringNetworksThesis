@@ -1,0 +1,36 @@
+Starting job 1 at Fri 24 Apr 08:27:15 BST 2026
+Starting LHS_1838_DDC_Type1_Control: dU=1.0, dV=0.0, dW=1.0, n_samples=1,000,000
+[LHS_1838_DDC_Type1_Control] 100,000/1,000,000 | Stable: 99753 | Diego: 0 | Shaberi: 0
+[LHS_1838_DDC_Type1_Control] 200,000/1,000,000 | Stable: 199500 | Diego: 0 | Shaberi: 0
+[LHS_1838_DDC_Type1_Control] 300,000/1,000,000 | Stable: 299282 | Diego: 0 | Shaberi: 0
+[LHS_1838_DDC_Type1_Control] 400,000/1,000,000 | Stable: 399080 | Diego: 0 | Shaberi: 0
+[LHS_1838_DDC_Type1_Control] 500,000/1,000,000 | Stable: 498864 | Diego: 0 | Shaberi: 0
+[LHS_1838_DDC_Type1_Control] 600,000/1,000,000 | Stable: 598687 | Diego: 0 | Shaberi: 0
+[LHS_1838_DDC_Type1_Control] 700,000/1,000,000 | Stable: 698475 | Diego: 0 | Shaberi: 0
+[LHS_1838_DDC_Type1_Control] 800,000/1,000,000 | Stable: 798266 | Diego: 1 | Shaberi: 1
+[LHS_1838_DDC_Type1_Control] 900,000/1,000,000 | Stable: 898043 | Diego: 1 | Shaberi: 1
+[LHS_1838_DDC_Type1_Control] 1,000,000/1,000,000 | Stable: 997795 | Diego: 1 | Shaberi: 1
+
+======================================================================
+COMPLETED: LHS_1838_DDC_Type1_Control
+======================================================================
+Diego Turing:    1 (0.0001%)
+Shaberi Total:   1 (0.0001%)
+  Type-I:        1
+  Type-II:       0
+  Hopf:          0
+
+Saved to:
+  results/LHS_1838_DDC_Type1_Control_1mio.pkl
+  results/LHS_1838_DDC_Type1_Control_1mio.csv
+======================================================================
+Finished job 1 at Fri 24 Apr 09:51:29 BST 2026
+
+====================================
+CPU Time used: 01:21:30
+CPU Percent: 99%
+Memory usage: 556460kb
+Approx Power usage: 0.016200000000000003
+Walltime usage: 01:24:17
+
+====================================

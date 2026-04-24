@@ -1,0 +1,36 @@
+Starting job 21 at Fri 24 Apr 08:31:41 BST 2026
+Starting LHS_1754_DCC_Type1: dU=1.0, dV=10.0, dW=10.0, n_samples=1,000,000
+[LHS_1754_DCC_Type1] 100,000/1,000,000 | Stable: 98478 | Diego: 0 | Shaberi: 0
+[LHS_1754_DCC_Type1] 200,000/1,000,000 | Stable: 196894 | Diego: 0 | Shaberi: 0
+[LHS_1754_DCC_Type1] 300,000/1,000,000 | Stable: 295298 | Diego: 0 | Shaberi: 0
+[LHS_1754_DCC_Type1] 400,000/1,000,000 | Stable: 393751 | Diego: 0 | Shaberi: 0
+[LHS_1754_DCC_Type1] 500,000/1,000,000 | Stable: 492192 | Diego: 0 | Shaberi: 0
+[LHS_1754_DCC_Type1] 600,000/1,000,000 | Stable: 590728 | Diego: 0 | Shaberi: 0
+[LHS_1754_DCC_Type1] 700,000/1,000,000 | Stable: 689254 | Diego: 0 | Shaberi: 0
+[LHS_1754_DCC_Type1] 800,000/1,000,000 | Stable: 787663 | Diego: 0 | Shaberi: 0
+[LHS_1754_DCC_Type1] 900,000/1,000,000 | Stable: 886092 | Diego: 0 | Shaberi: 0
+[LHS_1754_DCC_Type1] 1,000,000/1,000,000 | Stable: 984576 | Diego: 0 | Shaberi: 0
+
+======================================================================
+COMPLETED: LHS_1754_DCC_Type1
+======================================================================
+Diego Turing:    0 (0.0000%)
+Shaberi Total:   0 (0.0000%)
+  Type-I:        0
+  Type-II:       0
+  Hopf:          0
+
+Saved to:
+  results/LHS_1754_DCC_Type1_1mio.pkl
+  results/LHS_1754_DCC_Type1_1mio.csv
+======================================================================
+Finished job 21 at Fri 24 Apr 10:01:13 BST 2026
+
+====================================
+CPU Time used: 01:28:32
+CPU Percent: 98%
+Memory usage: 546204kb
+Approx Power usage: 0.0176
+Walltime usage: 01:29:35
+
+====================================
