@@ -7,7 +7,8 @@ import numpy as np
 
 # have to run this first: module load matplotlib/3.9.2-gfbf-2024a, module load SciPy-bundle/2024.05-gfbf-2024a
 
-CSV = "3954_lhs_results_curated_1mio.csv"
+# CSV = "3954_lhs_results_curated_1mio.csv"
+CSV = "3954_lhs_results_corrected_1mio.csv"
 OUT_DIR = Path("plots")
 OUT_DIR.mkdir(exist_ok=True)
 
