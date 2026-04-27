@@ -339,7 +339,6 @@ def run_analysis(config_id, n_samples):
     rob_diego = 100 * diego_turing / n_samples
     rob_shaberi_total = 100 * shaberi_total / n_samples
     rob_shaberi_type_I = 100 * shaberi_type_I / n_samples
-    rob_shaberi_excl_II = 100 * (shaberi_type_I + shaberi_hopf) / n_samples
 
     # rob_diego = 100 * diego_turing / stable_without_diffusion if stable_without_diffusion > 0 else 0.0
     # rob_shaberi_total = 100 * shaberi_total / stable_without_diffusion if stable_without_diffusion > 0 else 0.0
@@ -361,7 +360,6 @@ def run_analysis(config_id, n_samples):
         "rob_diego": rob_diego,
         "rob_shaberi_total": rob_shaberi_total,
         "rob_shaberi_type_I": rob_shaberi_type_I,
-        "rob_shaberi_excl_II": rob_shaberi_excl_II,
     }
     
     return results
@@ -401,7 +399,6 @@ if __name__ == "__main__":
         'rob_diego': results['rob_diego'],
         'rob_shaberi_total': results['rob_shaberi_total'],
         'rob_shaberi_type_I': results['rob_shaberi_type_I'],
-        'rob_shaberi_excl_II': results['rob_shaberi_excl_II'],
     }
     output_csv = f"results/{results['config_name']}_1mio.csv"
     pd.DataFrame([results_flat]).to_csv(output_csv, index=False)

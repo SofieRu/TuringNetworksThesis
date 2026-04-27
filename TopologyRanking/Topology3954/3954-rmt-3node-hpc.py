@@ -270,7 +270,6 @@ def run_analysis(config_id, n_samples):
         rob_diego = 100 * diego_turing / n_samples
         rob_shaberi_total = 100 * shaberi_total / n_samples
         rob_shaberi_type_I = 100 * shaberi_type_I / n_samples
-        rob_shaberi_excl_II = 100 * (shaberi_type_I + shaberi_hopf) / n_samples
 
         # rob_diego = 100 * diego_turing / stable if stable > 0 else 0.0
         # rob_shaberi_total = 100 * shaberi_total / stable if stable > 0 else 0.0
@@ -290,7 +289,6 @@ def run_analysis(config_id, n_samples):
             "rob_diego": rob_diego,
             "rob_shaberi_total": rob_shaberi_total,
             "rob_shaberi_type_I": rob_shaberi_type_I,
-            "rob_shaberi_excl_II": rob_shaberi_excl_II,
         }
         
         results_by_sigma.append(sigma_result)
@@ -345,7 +343,6 @@ if __name__ == "__main__":
             'rob_diego': sigma_result['rob_diego'],
             'rob_shaberi_total': sigma_result['rob_shaberi_total'],
             'rob_shaberi_type_I': sigma_result['rob_shaberi_type_I'],
-            'rob_shaberi_excl_II': sigma_result['rob_shaberi_excl_II'],
         }
         csv_rows.append(row)
     
