@@ -5,16 +5,18 @@ import seaborn as sns
 import pandas as pd
 
 CSVS = {
-    "#3954": "TopologyRanking/Topology3954/3954_lhs_results_corrected_1mio.csv",
-    "#1754": "TopologyRanking/Topology1754/1754_lhs_results_corrected_1mio.csv",
-    "#1823": "TopologyRanking/Topology1823/1823_results_summary_corrected.csv",
-    "#1838": "TopologyRanking/Topology1838/1838_results_summary.csv",
+    "#1754": "Topology1754/1754_lhs_results_corrected_1mio.csv",
+    "#1823": "Topology1823/1823_results_summary_corrected.csv",
+    "#1838": "Topology1838/1838_results_summary.csv",
+    "#3954": "Topology3954/3954_lhs_results_corrected_1mio.csv",
 }
-OUT_DIR = Path("TopologyRanking/ResultPlots")
+
+OUT_DIR = Path("ResultPlots")
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 
 # have to run this first: module load matplotlib/3.9.2-gfbf-2024a
 # have to run this first: module load SciPy-bundle/2024.05-gfbf-2024a
+# have to run this first: pip install seaborn --user
 
 plt.style.use("seaborn-v0_8-whitegrid")
 plt.rcParams.update({
@@ -35,11 +37,10 @@ TYPE_COLORS = {
 }
 
 def save(fig, name):
-    for ext in ("svg", "png"):
+    for ext in ("png",):
         fig.savefig(OUT_DIR / f"{name}.{ext}", bbox_inches="tight", dpi=300)
     plt.close(fig)
-    print(f"Saved → {OUT_DIR}/{name}.svg / .png")
-
+    print(f"Saved to {OUT_DIR}/{name}.png")
 
 def load_all():
     dfs = []
@@ -58,8 +59,8 @@ def fig1_heatmap(df):
     pivot = (
         df.groupby(["topology_id", "turing_type"])["rob_shaberi_total"]
         .max()
-        .unstack("turing_type")
-        .reindex(columns=["Type1", "Type2", "Type3"])
+        .unstack("topology_id")
+        .reindex(index=["Type1", "Type2", "Type3"])
     )
 
     fig, ax = plt.subplots(figsize=(7, 4))
@@ -67,14 +68,14 @@ def fig1_heatmap(df):
         pivot,
         annot=True,
         fmt=".4f",
-        cmap="YlOrRd",
+        cmap="YlGnBu",
         linewidths=0.5,
         linecolor="white",
         ax=ax,
         cbar_kws={"label": "Max robustness (rob_shaberi_total)"},
     )
-    ax.set_xlabel("Turing Type", fontsize=11)
-    ax.set_ylabel("Topology", fontsize=11)
+    ax.set_xlabel("Topology", fontsize=11)
+    ax.set_ylabel("Turing Type", fontsize=11)
     ax.set_title(
         "Max robustness per topology and Turing Type LHS comparison",
         fontsize=12, loc="left", pad=10,
