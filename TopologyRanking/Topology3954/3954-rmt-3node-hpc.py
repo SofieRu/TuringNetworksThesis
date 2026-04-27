@@ -145,7 +145,7 @@ def is_turing_shaberi(J, eigs_0, DU, DV, DW, tol=1e-9):
 
 	# STEP 2: Scan k, record dispersion
 	D = np.diag([DU, DV, DW])
-	k_values = np.arange(0.01, 10.01, 0.01)
+	k_values = np.arange(0.01, 10.01, 0.1)
 
 	max_real = np.empty(len(k_values))
 	imag_at_max = np.empty(len(k_values))
