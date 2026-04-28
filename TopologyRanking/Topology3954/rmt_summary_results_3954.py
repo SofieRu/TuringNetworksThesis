@@ -39,7 +39,6 @@ for filepath in result_files:
                 'rob_diego': sigma_result['rob_diego'],
                 'rob_shaberi_total': sigma_result['rob_shaberi_total'],
                 'rob_shaberi_type_I': sigma_result['rob_shaberi_type_I'],
-                'rob_shaberi_excl_II': sigma_result['rob_shaberi_excl_II'],
             }
             all_rows.append(row)
 
