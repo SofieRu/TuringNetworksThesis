@@ -49,7 +49,9 @@ Go to VS Code Terminal:
 ```bash
 cd ~/TuringNetworksThesis
 
-module load Python/3.12.3-GCCcore-13.3.0
+module load matplotlib/3.9.2-gfbf-2024a
+
+module load SciPy-bundle/2024.05-gfbf-2024a
 
 source ~/venvs/thesis/bin/activate
 ```
