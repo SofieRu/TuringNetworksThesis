@@ -82,7 +82,7 @@ def fig1_heatmap(df):
     )
     fig.tight_layout()
     save(fig, "compare_fig1_heatmap")
-
+    
 
 
 
