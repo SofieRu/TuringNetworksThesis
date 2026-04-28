@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
-CSV     = "3954_rmt_results_prelim_100k.csv"
+CSV     = "3954_rmt_results_summary.csv"
 OUT_DIR = Path("plots")
 OUT_DIR.mkdir(exist_ok=True)
 
@@ -23,16 +23,16 @@ plt.rcParams.update({
 })
 
 TYPE_COLORS = {
-    "Type1": "#4C72B0",
-    "Type2": "#DD8452",
-    "Type3": "#55A868",
-}
+    "Type1": "#444EA6",
+    "Type2": "#AE2BA1",
+    "Type3": "#3FA051",
+} 
 
 def save(fig, name):
-    for ext in ("svg", "png"):
+    for ext in ("png",):
         fig.savefig(OUT_DIR / f"{name}.{ext}", bbox_inches="tight", dpi=300)
     plt.close(fig)
-    print(f"Saved to plots/{name}.svg / .png")
+    print(f"Saved to plots/{name}.png")
 
 
 def load_data():
@@ -154,7 +154,7 @@ def fig3_corrected_overview(df):
         subset = df[df["config_name"] == cfg].sort_values("sigma")
         ax_rob.plot(
             subset["sigma"],
-            subset["shaberi_total"],
+            subset["shaberi_type_I"],  # CHANGED subset["rob_corrected"] to subset["shaberi_type_I"]!! CHANGE BACK LATER IF NEEDED
             color="#A325A9",
             linewidth=1,
             #alpha=0.6,     # keep there if you want: it shows where values cluster so it gets thicker if there is another value exactly like that bc then they are on top of each other but if we dont want thicker lines just remove it
@@ -195,7 +195,7 @@ def fig4_dotplot_fixed_sigma(df, sigma_val=1.0):
  
     types = ["Type1", "Type2", "Type3"]
     for i, t in enumerate(types):
-        t_data = subset[subset["turing_type"] == t]["rob_shaberi_total"]
+        t_data = subset[subset["turing_type"] == t]["rob_shaberi_type_I"]  # CHANGED from "rob_shaberi_total" to "rob_shaberi_type_I"!! CHANGE BACK LATER IF NEEDED
         jitter = [i + random.uniform(-0.15, 0.15) for _ in t_data]
         ax.scatter(
             jitter,
@@ -230,8 +230,8 @@ def fig4_dotplot_fixed_sigma(df, sigma_val=1.0):
 def fig5_grouped_topology(df, sigma_val=1.0):
 
     # Option A: raw Shaberi count (absolute number of Turing instabilities)
-    METRIC     = "shaberi_total"
-    METRIC_LABEL = "Number of Turing instabilities (shaberi_total)"
+    METRIC     = "shaberi_type_I"
+    METRIC_LABEL = "Number of Turing instabilities (shaberi_type_I)"  # CHANGED from "shaberi_total" to "shaberi_type_I"!! CHANGE BACK LATER IF NEEDED
  
     # Option B: inflated robustness score (shaberi / stable steady states)
     # METRIC     = "rob_shaberi_total"

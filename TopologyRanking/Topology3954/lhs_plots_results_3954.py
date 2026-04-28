@@ -33,10 +33,10 @@ TYPE_COLORS = {
 } 
 
 def save(fig, name):
-    for ext in ("svg", "png"):
+    for ext in ("png",):
         fig.savefig(OUT_DIR / f"{name}.{ext}", bbox_inches="tight", dpi=300)
     plt.close(fig)
-    print(f"Saved to plots/{name}.svg")
+    print(f"Saved to plots/{name}.png")
 
 
 def load_data():
