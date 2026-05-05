@@ -192,52 +192,42 @@ def is_turing_shaberi(J, eigs_0, DU, DV, DW):
 DIFFUSION_CONFIGS = {
     # CDD: A=Complementary, B=Destable, C=Destable
     0:  {"name": "LHS_1754_CDD_Type1",          "dU": 10.0, "dV": 1.0,  "dW": 1.0},
-    1:  {"name": "LHS_1754_CDD_Type1_Control",  "dU": 1.0,  "dV": 1.0,  "dW": 1.0},   
+    1:  {"name": "LHS_1754_CDD_Type1_Var1",     "dU": 10.0, "dV": 1.0,  "dW": 0.0},
+    2:  {"name": "LHS_1754_CDD_Type1_Var2",     "dU": 10.0, "dV": 0.0,  "dW": 1.0},
+    3:  {"name": "LHS_1754_CDD_Type1_Control",  "dU": 1.0,  "dV": 1.0,  "dW": 1.0},
     
-    2:  {"name": "LHS_1754_CDD_Type2_Equal",    "dU": 0.0,  "dV": 1.0,  "dW": 1.0},
-    3:  {"name": "LHS_1754_CDD_Type2_Unequal1", "dU": 0.0,  "dV": 0.1,  "dW": 1.0},
-    4:  {"name": "LHS_1754_CDD_Type2_Unequal2", "dU": 0.0,  "dV": 1.0,  "dW": 10.0},
-    5:  {"name": "LHS_1754_CDD_Type2_Limit",    "dU": 0.0,  "dV": 0.1,  "dW": 0.1},
+    4:  {"name": "LHS_1754_CDD_Type2_Equal",    "dU": 0.0,  "dV": 1.0,  "dW": 1.0},
+    5:  {"name": "LHS_1754_CDD_Type2_Unequal1", "dU": 0.0,  "dV": 0.1,  "dW": 1.0},
+    6:  {"name": "LHS_1754_CDD_Type2_Unequal2", "dU": 0.0,  "dV": 1.0,  "dW": 0.1},
+    7:  {"name": "LHS_1754_CDD_Type2_Unequal3", "dU": 0.0,  "dV": 1.0,  "dW": 10.0},
+    8:  {"name": "LHS_1754_CDD_Type2_Unequal4", "dU": 0.0,  "dV": 10.0, "dW": 1.0},
     
-    6:  {"name": "LHS_1754_CDD_Type3_Equal",    "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
-    7:  {"name": "LHS_1754_CDD_Type3_Unequal1", "dU": 10.0, "dV": 1.0,  "dW": 0.0},
-    8:  {"name": "LHS_1754_CDD_Type3_Unequal2", "dU": 1.0,  "dV": 0.1,  "dW": 0.0},
-    9:  {"name": "LHS_1754_CDD_Type3_Limit",    "dU": 0.1,  "dV": 0.1,  "dW": 0.0},
+    9:  {"name": "LHS_1754_CDD_Type3_Equal",    "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
+    10: {"name": "LHS_1754_CDD_Type3_Unequal1", "dU": 10.0, "dV": 1.0,  "dW": 0.0},
+    11: {"name": "LHS_1754_CDD_Type3_Unequal2", "dU": 1.0,  "dV": 0.1,  "dW": 0.0},
+    12: {"name": "LHS_1754_CDD_Type3_Unequal3", "dU": 0.1,  "dV": 1.0,  "dW": 0.0},
+    13: {"name": "LHS_1754_CDD_Type3_Unequal4", "dU": 1.0,  "dV": 10.0, "dW": 0.0},
+    14: {"name": "LHS_1754_CDD_Type3_Var1",     "dU": 1.0,  "dV": 0.0,  "dW": 1.0},
+    15: {"name": "LHS_1754_CDD_Type3_Var2",     "dU": 1.0,  "dV": 0.0,  "dW": 0.0},
     
     # CCD: A=Compl., B=Compl., C=Destable
-    10: {"name": "LHS_1754_CCD_Type1",          "dU": 10.0, "dV": 10.0, "dW": 1.0},
-    11: {"name": "LHS_1754_CCD_Type1_OneFast",  "dU": 10.0, "dV": 1.0,  "dW": 1.0},
-    12: {"name": "LHS_1754_CCD_Type1_Control",  "dU": 1.0,  "dV": 1.0,  "dW": 1.0},
+    16: {"name": "LHS_1754_CCD_Type1",          "dU": 10.0, "dV": 10.0, "dW": 1.0},
+    17: {"name": "LHS_1754_CCD_Type1_Var1",     "dU": 10.0, "dV": 0.0,  "dW": 1.0},
+    18: {"name": "LHS_1754_CCD_Type1_Var2",     "dU": 0.0,  "dV": 10.0, "dW": 1.0},
+    19: {"name": "LHS_1754_CCD_Type1_Control",  "dU": 1.0,  "dV": 1.0,  "dW": 1.0},
     
-    13: {"name": "LHS_1754_CCD_Type2_Equal",    "dU": 1.0,  "dV": 0.0,  "dW": 1.0},
-    14: {"name": "LHS_1754_CCD_Type2_Unequal1", "dU": 0.1,  "dV": 0.0,  "dW": 1.0},
-    15: {"name": "LHS_1754_CCD_Type2_Unequal2", "dU": 1.0,  "dV": 0.0,  "dW": 10.0},
-    16: {"name": "LHS_1754_CCD_Type2_Limit",    "dU": 0.1,  "dV": 0.0,  "dW": 0.1},
+    20: {"name": "LHS_1754_CCD_Type2_Equal",    "dU": 0.0,  "dV": 1.0,  "dW": 1.0},
+    21: {"name": "LHS_1754_CCD_Type2_Unequal1", "dU": 0.0,  "dV": 1.0,  "dW": 10.0},
+    22: {"name": "LHS_1754_CCD_Type2_Unequal2", "dU": 0.0,  "dV": 0.1,  "dW": 1.0},
+    23: {"name": "LHS_1754_CCD_Type2_Unequal3", "dU": 0.0,  "dV": 1.0,  "dW": 0.1},
+    24: {"name": "LHS_1754_CCD_Type2_Var1",     "dU": 1.0,  "dV": 0.0,  "dW": 1.0},
+    25: {"name": "LHS_1754_CCD_Type2_Var2",     "dU": 0.0,  "dV": 0.0,  "dW": 1.0},
     
-    17: {"name": "LHS_1754_CCD_Type3_Equal",    "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
-    18: {"name": "LHS_1754_CCD_Type3_Unequal1", "dU": 0.1,  "dV": 1.0,  "dW": 0.0},
-    19: {"name": "LHS_1754_CCD_Type3_Unequal2", "dU": 1.0,  "dV": 10.0, "dW": 0.0},
-    20: {"name": "LHS_1754_CCD_Type3_Limit",    "dU": 0.1,  "dV": 0.1,  "dW": 0.0},
-    
-    # DCC: A=Destable, B=Compl., C=Compl.
-    21: {"name": "LHS_1754_DCC_Type1",          "dU": 1.0,  "dV": 10.0, "dW": 10.0},
-    22: {"name": "LHS_1754_DCC_Type1_OneFast",  "dU": 1.0,  "dV": 1.0,  "dW": 10.0},
-    23: {"name": "LHS_1754_DCC_Type1_Control",  "dU": 1.0,  "dV": 1.0,  "dW": 1.0}, 
-
-    24: {"name": "LHS_1754_DCC_Type2_Equal",    "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
-    25: {"name": "LHS_1754_DCC_Type2_Unequal1", "dU": 10.0, "dV": 1.0,  "dW": 0.0},
-    26: {"name": "LHS_1754_DCC_Type2_Unequal2", "dU": 1.0,  "dV": 0.1,  "dW": 0.0},
-    27: {"name": "LHS_1754_DCC_Type2_Limit",    "dU": 0.1,  "dV": 0.1,  "dW": 0.0},
-
-    28: {"name": "LHS_1754_DCC_Type3_Equal",    "dU": 0.0,  "dV": 1.0,  "dW": 1.0},
-    29: {"name": "LHS_1754_DCC_Type3_Limit",    "dU": 0.0,  "dV": 0.1,  "dW": 0.1},
-
-    # # DCI: A=Destable, B=Compl., C=Immobile
-    # 30: {"name": "LHS_1754_DCI_Type1",          "dU": 1.0,  "dV": 10.0, "dW": 0.0},
-    # 31: {"name": "LHS_1754_DCI_Type2",          "dU": 1.0,  "dV": 0.0,  "dW": 0.0},
-    # 32: {"name": "LHS_1754_DCI_Type2_Limit",    "dU": 0.1,  "dV": 0.0,  "dW": 0.0},
-    # 33: {"name": "LHS_1754_DCI_Type3",          "dU": 0.0,  "dV": 1.0,  "dW": 0.0},
-    # 34: {"name": "LHS_1754_DCI_Type3_Limit",    "dU": 0.0,  "dV": 0.1,  "dW": 0.0},
+    26: {"name": "LHS_1754_CCD_Type3_Equal",    "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
+    27: {"name": "LHS_1754_CCD_Type3_Unequal1", "dU": 0.1,  "dV": 1.0,  "dW": 0.0},
+    28: {"name": "LHS_1754_CCD_Type3_Unequal2", "dU": 1.0,  "dV": 10.0, "dW": 0.0},
+    29: {"name": "LHS_1754_CCD_Type3_Unequal3", "dU": 1.0,  "dV": 0.1,  "dW": 0.0},
+    30: {"name": "LHS_1754_CCD_Type3_Unqeual4", "dU": 10.0, "dV": 1.0,  "dW": 0.0},
 }
 
 # MAIN ANALYSIS FUNCTION
