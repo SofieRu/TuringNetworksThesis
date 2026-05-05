@@ -137,7 +137,7 @@ def fig3_corrected_overview(df):
     df = df.copy()
     # df["rob_corrected"] = df["shaberi_total"] / df["n_samples"]
 
-    fig, ax_stable = plt.subplots(figsize=(12, 6))
+    fig, ax_stable = plt.subplots(figsize=(12, 7))
 
     # Left y-axis: stable count (dashed black)
     stable = df.groupby("sigma")["stable_without_diffusion"].first()
@@ -154,13 +154,13 @@ def fig3_corrected_overview(df):
         subset = df[df["config_name"] == cfg].sort_values("sigma")
         ax_rob.plot(
             subset["sigma"],
-            subset["shaberi_type_I"],  # CHANGED subset["rob_corrected"] to subset["shaberi_type_I"]!! CHANGE BACK LATER IF NEEDED
-            color="#A325A9",
+            subset["rob_shaberi_type_I"],  # CHANGED subset["rob_corrected"] to subset["shaberi_type_I"]!! CHANGE BACK LATER IF NEEDED
+            color="#931C99",
             linewidth=1,
             #alpha=0.6,     # keep there if you want: it shows where values cluster so it gets thicker if there is another value exactly like that bc then they are on top of each other but if we dont want thicker lines just remove it
-            label="Number of stable steady states for all configurations" if i == 0 else "",
+            label="Robustness Score for all configurations for Type I TI" if i == 0 else "",
         )
-    ax_rob.set_ylabel("Number of Turing instabilities (shaberi_total)", fontsize=11)
+    ax_rob.set_ylabel("RobuTuring instabilities (rob_shaberi_type_I)", fontsize=11)
     ax_rob.spines["right"].set_visible(True)
     ax_rob.spines["top"].set_visible(False)
     ax_rob.yaxis.grid(False)
@@ -174,6 +174,28 @@ def fig3_corrected_overview(df):
     lines1, labels1 = ax_stable.get_legend_handles_labels()
     lines2, labels2 = ax_rob.get_legend_handles_labels()
     ax_stable.legend(lines1 + lines2, labels1 + labels2, frameon=False, loc="upper center", bbox_to_anchor=(0.5, -0.12), ncol=2)
+
+    # Inset: zoomed view sigma 0.1 to 1.0
+    # ax_inset = ax_stable.inset_axes([0.55, 0.55, 0.4, 0.35])  # [x, y, width, height] in axes coords
+    ax_inset = ax_stable.inset_axes([0.72, 0.6, 0.25, 0.35])
+    ax_inset.set_facecolor("white")
+    ax_inset.patch.set_alpha(1.0)
+    ax_inset.set_zorder(ax_rob.get_zorder() + 1)
+    ax_stable.patch.set_visible(False)
+
+    zoom = df[df["sigma"] <= 1.0]
+    for i, cfg in enumerate(zoom["config_name"].unique()):
+        subset = zoom[zoom["config_name"] == cfg].sort_values("sigma")
+        ax_inset.plot(subset["sigma"], subset["rob_shaberi_type_I"],
+                    color="#931C99", linewidth=1)
+
+    ax_inset.set_xlabel("σ", fontsize=8)
+    ax_inset.set_ylabel("Robustness", fontsize=8)
+    # ax_inset.set_title("σ = 0.1 – 1.0", fontsize=8)
+    ax_inset.tick_params(labelsize=7)
+    # ax_inset.yaxis.grid(True, color="#dddddd", linewidth=0.7)
+    ax_inset.yaxis.grid(False)
+    ax_inset.xaxis.grid(False)
 
     fig.tight_layout()
     save(fig, "3954_rmt_fig3_corrected_overview")
@@ -208,7 +230,7 @@ def fig4_dotplot_fixed_sigma(df, sigma_val=1.0):
  
     ax.set_xticks([0, 1, 2])
     ax.set_xticklabels(["Type 1", "Type 2", "Type 3"], fontsize=11)
-    ax.set_ylabel("Robustness (rob_shaberi_total)", fontsize=11)
+    ax.set_ylabel("Robustness (rob_shaberi_type_I)", fontsize=11)
     ax.set_title(
         f"Topology #3954 RMT – Robustness by Turing Type at σ = {sigma_val}",
         fontsize=12, loc="left", pad=10,
