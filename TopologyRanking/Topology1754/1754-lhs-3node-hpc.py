@@ -88,7 +88,7 @@ def is_turing_diego(J, DU, DV, DW):
     
     # SUPPOSED TO BE 0.01 STEP, BUT INCREASED TO 0.1 FOR SPEED, CHANGE BACK LATER 
     D = np.diag([DU, DV, DW])
-    for k in np.arange(0.01, 10.01, 0.1):
+    for k in np.arange(0.01, 10.01, 0.01):
         M = J - k**2 * D
         a1 = -np.trace(M)
         a2 = (M[0,0]*M[1,1] - M[0,1]*M[1,0] +
@@ -100,13 +100,57 @@ def is_turing_diego(J, DU, DV, DW):
             return True
     return False
 
+
+
+
+#  Essentially the same as before, but with the new 3-step logic so more comments and more detailed return values for Shaberi's method.
+# def is_turing_shaberi(J, eigs_0, DU, DV, DW):
+#     if np.max(np.real(eigs_0)) >= 0:
+#         return None
+    
+#     # SUPPOSED TO BE 0.01 STEP, BUT INCREASED TO 0.1 FOR SPEED, CHANGE BACK LATER 
+#     D = np.diag([DU, DV, DW])
+#     k_values = np.arange(0.01, 10.01, 0.01)
+    
+#     has_instability = False
+#     is_oscillatory = False
+    
+#     for k in k_values:
+#         M = J - k**2 * D
+#         eigs_k = np.linalg.eigvals(M)
+        
+#         if np.max(np.real(eigs_k)) > 0:
+#             has_instability = True
+            
+#             unstable_eigs = eigs_k[np.real(eigs_k) > 0]
+#             if np.any(np.abs(np.imag(unstable_eigs)) > 1e-8):
+#                 is_oscillatory = True
+#                 break
+    
+#     if not has_instability:
+#         return None
+    
+#     if is_oscillatory:
+#         return 'Hopf'
+    
+#     k_high_values = np.linspace(10, 50, 20)
+#     for k in k_high_values:
+#         M = J - k**2 * D
+#         eigs_k = np.linalg.eigvals(M)
+#         if np.max(np.real(eigs_k)) < 0:
+#             return 'Type-I'
+    
+#     return 'Type-II'
+
+
 def is_turing_shaberi(J, eigs_0, DU, DV, DW):
+    # STEP 1: Stability at k=0
     if np.max(np.real(eigs_0)) >= 0:
         return None
     
-    # SUPPOSED TO BE 0.01 STEP, BUT INCREASED TO 0.1 FOR SPEED, CHANGE BACK LATER 
+    # STEP 2: Check for instability with diffusion, # SUPPOSED TO BE 0.01 STEP, BUT INCREASED TO 0.1 FOR SPEED, CHANGE BACK LATER 
     D = np.diag([DU, DV, DW])
-    k_values = np.arange(0.01, 10.01, 0.1)
+    k_values = np.arange(0.01, 10.01, 0.01)
     
     has_instability = False
     is_oscillatory = False
@@ -129,14 +173,19 @@ def is_turing_shaberi(J, eigs_0, DU, DV, DW):
     if is_oscillatory:
         return 'Hopf'
     
+    # STEP 3: Check RESTABILIZATION (Shaberi's method)
     k_high_values = np.linspace(10, 50, 20)
     for k in k_high_values:
         M = J - k**2 * D
         eigs_k = np.linalg.eigvals(M)
         if np.max(np.real(eigs_k)) < 0:
-            return 'Type-I'
+            return 'Type-I'  # Restabilizes
     
-    return 'Type-II'
+    return 'Type-II'  # Doesn't restabilize
+
+
+
+
 
 # DIFFUSION CONFIGURATIONS
 
@@ -183,14 +232,12 @@ DIFFUSION_CONFIGS = {
     28: {"name": "LHS_1754_DCC_Type3_Equal",    "dU": 0.0,  "dV": 1.0,  "dW": 1.0},
     29: {"name": "LHS_1754_DCC_Type3_Limit",    "dU": 0.0,  "dV": 0.1,  "dW": 0.1},
 
-    # DCI: A=Destable, B=Compl., C=Immobile
-    30: {"name": "LHS_1754_DCI_Type1",          "dU": 1.0,  "dV": 10.0, "dW": 0.0},
-
-    31: {"name": "LHS_1754_DCI_Type2",          "dU": 1.0,  "dV": 0.0,  "dW": 0.0},
-    32: {"name": "LHS_1754_DCI_Type2_Limit",    "dU": 0.1,  "dV": 0.0,  "dW": 0.0},
-
-    33: {"name": "LHS_1754_DCI_Type3",          "dU": 0.0,  "dV": 1.0,  "dW": 0.0},
-    34: {"name": "LHS_1754_DCI_Type3_Limit",    "dU": 0.0,  "dV": 0.1,  "dW": 0.0},
+    # # DCI: A=Destable, B=Compl., C=Immobile
+    # 30: {"name": "LHS_1754_DCI_Type1",          "dU": 1.0,  "dV": 10.0, "dW": 0.0},
+    # 31: {"name": "LHS_1754_DCI_Type2",          "dU": 1.0,  "dV": 0.0,  "dW": 0.0},
+    # 32: {"name": "LHS_1754_DCI_Type2_Limit",    "dU": 0.1,  "dV": 0.0,  "dW": 0.0},
+    # 33: {"name": "LHS_1754_DCI_Type3",          "dU": 0.0,  "dV": 1.0,  "dW": 0.0},
+    # 34: {"name": "LHS_1754_DCI_Type3_Limit",    "dU": 0.0,  "dV": 0.1,  "dW": 0.0},
 }
 
 # MAIN ANALYSIS FUNCTION
