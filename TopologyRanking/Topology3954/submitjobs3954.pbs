@@ -1,8 +1,8 @@
 #!/bin/bash
-#PBS -J 0-37
+#PBS -J 0-52
 #PBS -l select=1:ncpus=1:mem=16gb
-#PBS -l walltime=20:00:00
-#PBS -N rmt_3954
+#PBS -l walltime=22:00:00
+#PBS -N lhs_3954
 #PBS -o logs/
 #PBS -e logs/
 
@@ -19,5 +19,5 @@ mkdir -p logs
 
 # Run Python script with array index
 echo "Starting job ${PBS_ARRAY_INDEX} at $(date)"
-python 3954-rmt-3node-hpc.py $PBS_ARRAY_INDEX
+python 3954-lhs-3node-hpc.py $PBS_ARRAY_INDEX
 echo "Finished job ${PBS_ARRAY_INDEX} at $(date)"
