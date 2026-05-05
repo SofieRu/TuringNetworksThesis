@@ -88,7 +88,7 @@ def is_turing_diego(J, DU, DV, DW):
     
     # SUPPOSED TO BE 0.01 STEP, BUT INCREASED TO 0.1 FOR SPEED, CHANGE BACK LATER 
     D = np.diag([DU, DV, DW])
-    for k in np.arange(0.01, 10.01, 0.1):   
+    for k in np.arange(0.01, 10.01, 0.01):   
         M = J - k**2 * D
         a1 = -np.trace(M)
         a2 = (M[0,0]*M[1,1] - M[0,1]*M[1,0] +
@@ -109,7 +109,7 @@ def is_turing_shaberi(J, eigs_0, DU, DV, DW):
     # STEP 2: Check for instability with diffusion
     # SUPPOSED TO BE 0.01 STEP, BUT INCREASED TO 0.1 FOR SPEED, CHANGE BACK LATER
     D = np.diag([DU, DV, DW])
-    k_values = np.arange(0.01, 10.01, 0.1)
+    k_values = np.arange(0.01, 10.01, 0.01)
     
     has_instability = False
     is_oscillatory = False

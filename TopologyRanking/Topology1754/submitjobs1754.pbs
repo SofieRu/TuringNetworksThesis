@@ -1,7 +1,7 @@
 #!/bin/bash
-#PBS -J 0-34
+#PBS -J 0-30
 #PBS -l select=1:ncpus=1:mem=16gb
-#PBS -l walltime=06:00:00
+#PBS -l walltime=22:00:00
 #PBS -N lhs_1754
 #PBS -o logs/
 #PBS -e logs/
@@ -16,12 +16,6 @@ cd $PBS_O_WORKDIR
 # Create output directories
 mkdir -p results
 mkdir -p logs
-
-# Verify Python script exists
-if [ ! -f "1754-lhs-3node-hpc.py" ]; then
-    echo "ERROR: 1754-lhs-3node-hpc.py not found in $PBS_O_WORKDIR"
-    exit 1
-fi
 
 # Run Python script with array index
 echo "Starting job ${PBS_ARRAY_INDEX} at $(date)"

@@ -70,6 +70,8 @@ def compute_jacobian(state, params):
     
     return J
 
+
+
 # TURING DETECTION METHODS
 
 def is_turing_diego(J, DU, DV, DW):
@@ -84,7 +86,7 @@ def is_turing_diego(J, DU, DV, DW):
     
     # SUPPOSED TO BE 0.01 STEP, BUT INCREASED TO 0.1 FOR SPEED, CHANGE BACK LATER 
     D = np.diag([DU, DV, DW])
-    for k in np.arange(0.01, 10.01, 0.1):   
+    for k in np.arange(0.01, 10.01, 0.01):   
         M = J - k**2 * D
         a1 = -np.trace(M)
         a2 = (M[0,0]*M[1,1] - M[0,1]*M[1,0] +
@@ -98,88 +100,83 @@ def is_turing_diego(J, DU, DV, DW):
 
 
 
-
-
-################## OLD VERSION ?? #################################
-
-# def is_turing_shaberi(J, eigs_0, DU, DV, DW):
-#     # STEP 1: Check stability at k=0
-#     if np.max(np.real(eigs_0)) >= 0:
-#         return None
+def is_turing_shaberi(J, eigs_0, DU, DV, DW):
+    # STEP 1: Stability at k=0
+    if np.max(np.real(eigs_0)) >= 0:
+        return None
     
-#     # STEP 2: Check for instability with diffusion
-#     # SUPPOSED TO BE 0.01 STEP, BUT INCREASED TO 0.1 FOR SPEED, CHANGE BACK LATER
-#     D = np.diag([DU, DV, DW])
-#     k_values = np.arange(0.01, 10.01, 0.1)
+    # STEP 2: Check for instability with diffusion, # SUPPOSED TO BE 0.01 STEP, BUT INCREASED TO 0.1 FOR SPEED, CHANGE BACK LATER 
+    D = np.diag([DU, DV, DW])
+    k_values = np.arange(0.01, 10.01, 0.01)
     
-#     has_instability = False
-#     is_oscillatory = False
+    has_instability = False
+    is_oscillatory = False
     
-#     for k in k_values:
-#         M = J - k**2 * D
-#         eigs_k = np.linalg.eigvals(M)
+    for k in k_values:
+        M = J - k**2 * D
+        eigs_k = np.linalg.eigvals(M)
         
-#         if np.max(np.real(eigs_k)) > 0:
-#             has_instability = True
+        if np.max(np.real(eigs_k)) > 0:
+            has_instability = True
             
-#             unstable_eigs = eigs_k[np.real(eigs_k) > 0]
-#             if np.any(np.abs(np.imag(unstable_eigs)) > 1e-8):
-#                 is_oscillatory = True
-#                 break
+            unstable_eigs = eigs_k[np.real(eigs_k) > 0]
+            if np.any(np.abs(np.imag(unstable_eigs)) > 1e-8):
+                is_oscillatory = True
+                break
     
-#     if not has_instability:
-#         return None
+    if not has_instability:
+        return None
     
-#     if is_oscillatory:
-#         return 'Hopf'
+    if is_oscillatory:
+        return 'Hopf'
     
-#     # STEP 3: Type I vs Type II
-#     k_high_values = np.linspace(10, 50, 20)
-#     for k in k_high_values:
-#         M = J - k**2 * D
-#         eigs_k = np.linalg.eigvals(M)
-#         if np.max(np.real(eigs_k)) < 0:
-#             return 'Type-I'
+    # STEP 3: Check RESTABILIZATION (Shaberi's method)
+    k_high_values = np.linspace(10, 50, 20)
+    for k in k_high_values:
+        M = J - k**2 * D
+        eigs_k = np.linalg.eigvals(M)
+        if np.max(np.real(eigs_k)) < 0:
+            return 'Type-I'  # Restabilizes
     
-#     return 'Type-II'
+    return 'Type-II'  # Doesn't restabilize
 
-######### NEW VERSIONS #########
 
-def is_turing_shaberi(J, eigs_0, DU, DV, DW, tol=1e-9):
-	# STEP 1: Stability at k=0
-	if np.max(np.real(eigs_0)) >= -tol:
-		return None
+# ######### NEW VERSIONS, which is not shaberi accurate so we use the old and accurate one! #########
 
-	# STEP 2: Scan k, record dispersion
-	D = np.diag([DU, DV, DW])
-	k_values = np.arange(0.01, 10.01, 0.1)
+# def is_turing_shaberi(J, eigs_0, DU, DV, DW, tol=1e-9):
+# 	# STEP 1: Stability at k=0
+# 	if np.max(np.real(eigs_0)) >= -tol:
+# 		return None
 
-	max_real = np.empty(len(k_values))
-	imag_at_max = np.empty(len(k_values))
+# 	# STEP 2: Scan k, record dispersion
+# 	D = np.diag([DU, DV, DW])
+# 	k_values = np.arange(0.01, 10.01, 0.1)
 
-	for i, k in enumerate(k_values):
-		eigs_k = np.linalg.eigvals(J - k**2 * D)
-		idx = np.argmax(np.real(eigs_k))
-		max_real[i] = np.real(eigs_k[idx])
-		imag_at_max[i] = np.imag(eigs_k[idx])
+# 	max_real = np.empty(len(k_values))
+# 	imag_at_max = np.empty(len(k_values))
 
-	# No instability with diffusion
-	if np.max(max_real) <= tol:
-		return None
+# 	for i, k in enumerate(k_values):
+# 		eigs_k = np.linalg.eigvals(J - k**2 * D)
+# 		idx = np.argmax(np.real(eigs_k))
+# 		max_real[i] = np.real(eigs_k[idx])
+# 		imag_at_max[i] = np.imag(eigs_k[idx])
 
-	peak_idx = int(np.argmax(max_real))
+# 	# No instability with diffusion
+# 	if np.max(max_real) <= tol:
+# 		return None
 
-	# Exclude oscillatory instability
-	if np.abs(imag_at_max[peak_idx]) > 1e-8:
-		return "Hopf"
+# 	peak_idx = int(np.argmax(max_real))
 
-	# Type II if the maximum is at the high-k boundary
-	if peak_idx >= len(k_values) - 2:
-		return "Type-II"
+# 	# Exclude oscillatory instability
+# 	if np.abs(imag_at_max[peak_idx]) > 1e-8:
+# 		return "Hopf"
 
-	# Scholes-style Type I = Ia + Ib
-	return "Type-I"
+# 	# Type II if the maximum is at the high-k boundary
+# 	if peak_idx >= len(k_values) - 2:
+# 		return "Type-II"
 
+# 	# Scholes-style Type I = Ia + Ib
+# 	return "Type-I"
 
 
 
