@@ -1,0 +1,36 @@
+Starting job 0 at Tue  5 May 16:14:32 BST 2026
+Starting LHS_3954_DCC_Type1: dU=1.0, dV=10.0, dW=10.0, n_samples=1,000,000
+[LHS_3954_DCC_Type1] 100,000/1,000,000 | Stable: 95180 | Diego: 10 | Shaberi: 10
+[LHS_3954_DCC_Type1] 200,000/1,000,000 | Stable: 190103 | Diego: 25 | Shaberi: 25
+[LHS_3954_DCC_Type1] 300,000/1,000,000 | Stable: 285166 | Diego: 37 | Shaberi: 37
+[LHS_3954_DCC_Type1] 400,000/1,000,000 | Stable: 380343 | Diego: 46 | Shaberi: 46
+[LHS_3954_DCC_Type1] 500,000/1,000,000 | Stable: 475497 | Diego: 59 | Shaberi: 59
+[LHS_3954_DCC_Type1] 600,000/1,000,000 | Stable: 570769 | Diego: 71 | Shaberi: 71
+[LHS_3954_DCC_Type1] 700,000/1,000,000 | Stable: 665900 | Diego: 81 | Shaberi: 81
+[LHS_3954_DCC_Type1] 800,000/1,000,000 | Stable: 760988 | Diego: 92 | Shaberi: 92
+[LHS_3954_DCC_Type1] 900,000/1,000,000 | Stable: 856080 | Diego: 103 | Shaberi: 103
+[LHS_3954_DCC_Type1] 1,000,000/1,000,000 | Stable: 951296 | Diego: 111 | Shaberi: 111
+
+======================================================================
+COMPLETED: LHS_3954_DCC_Type1
+======================================================================
+Diego Turing:    111 (0.0111%)
+Shaberi Total:   111 (0.0111%)
+  Type-I:        111
+  Type-II:       0
+  Hopf:          0
+
+Saved to:
+  results/LHS_3954_DCC_Type1_1mio.pkl
+  results/LHS_3954_DCC_Type1_1mio.csv
+======================================================================
+Finished job 0 at Wed  6 May 03:51:45 BST 2026
+
+====================================
+CPU Time used: 11:26:42
+CPU Percent: 99%
+Memory usage: 577668kb
+Approx Power usage: 0.1372
+Walltime usage: 11:37:20
+
+====================================

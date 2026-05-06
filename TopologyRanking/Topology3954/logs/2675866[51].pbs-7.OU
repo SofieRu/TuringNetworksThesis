@@ -1,0 +1,36 @@
+Starting job 51 at Tue  5 May 16:15:57 BST 2026
+Starting LHS_3954_DCI_Type3_Unequal1: dU=0.0, dV=0.1, dW=0.0, n_samples=1,000,000
+[LHS_3954_DCI_Type3_Unequal1] 100,000/1,000,000 | Stable: 95180 | Diego: 616 | Shaberi: 647
+[LHS_3954_DCI_Type3_Unequal1] 200,000/1,000,000 | Stable: 190103 | Diego: 1172 | Shaberi: 1246
+[LHS_3954_DCI_Type3_Unequal1] 300,000/1,000,000 | Stable: 285166 | Diego: 1699 | Shaberi: 1809
+[LHS_3954_DCI_Type3_Unequal1] 400,000/1,000,000 | Stable: 380343 | Diego: 2249 | Shaberi: 2384
+[LHS_3954_DCI_Type3_Unequal1] 500,000/1,000,000 | Stable: 475497 | Diego: 2851 | Shaberi: 3014
+[LHS_3954_DCI_Type3_Unequal1] 600,000/1,000,000 | Stable: 570769 | Diego: 3407 | Shaberi: 3601
+[LHS_3954_DCI_Type3_Unequal1] 700,000/1,000,000 | Stable: 665900 | Diego: 3940 | Shaberi: 4173
+[LHS_3954_DCI_Type3_Unequal1] 800,000/1,000,000 | Stable: 760988 | Diego: 4566 | Shaberi: 4844
+[LHS_3954_DCI_Type3_Unequal1] 900,000/1,000,000 | Stable: 856080 | Diego: 5138 | Shaberi: 5455
+[LHS_3954_DCI_Type3_Unequal1] 1,000,000/1,000,000 | Stable: 951296 | Diego: 5687 | Shaberi: 6039
+
+======================================================================
+COMPLETED: LHS_3954_DCI_Type3_Unequal1
+======================================================================
+Diego Turing:    5687 (0.5687%)
+Shaberi Total:   6039 (0.6039%)
+  Type-I:        0
+  Type-II:       5690
+  Hopf:          349
+
+Saved to:
+  results/LHS_3954_DCI_Type3_Unequal1_1mio.pkl
+  results/LHS_3954_DCI_Type3_Unequal1_1mio.csv
+======================================================================
+Finished job 51 at Wed  6 May 04:41:26 BST 2026
+
+====================================
+CPU Time used: 12:16:46
+CPU Percent: 99%
+Memory usage: 578060kb
+Approx Power usage: 0.14720000000000003
+Walltime usage: 12:25:40
+
+====================================

@@ -1,0 +1,36 @@
+Starting job 1 at Tue  5 May 15:21:21 BST 2026
+Starting LHS_1823_CDD_Type1_Var1: dU=10.0, dV=1.0, dW=1.0, n_samples=1,000,000
+[LHS_1823_CDD_Type1_Var1] 100,000/1,000,000 | Stable: 99284 | Diego: 0 | Shaberi: 0
+[LHS_1823_CDD_Type1_Var1] 200,000/1,000,000 | Stable: 198581 | Diego: 0 | Shaberi: 0
+[LHS_1823_CDD_Type1_Var1] 300,000/1,000,000 | Stable: 297825 | Diego: 0 | Shaberi: 0
+[LHS_1823_CDD_Type1_Var1] 400,000/1,000,000 | Stable: 397106 | Diego: 1 | Shaberi: 1
+[LHS_1823_CDD_Type1_Var1] 500,000/1,000,000 | Stable: 496391 | Diego: 1 | Shaberi: 1
+[LHS_1823_CDD_Type1_Var1] 600,000/1,000,000 | Stable: 595679 | Diego: 2 | Shaberi: 2
+[LHS_1823_CDD_Type1_Var1] 700,000/1,000,000 | Stable: 694931 | Diego: 2 | Shaberi: 2
+[LHS_1823_CDD_Type1_Var1] 800,000/1,000,000 | Stable: 794285 | Diego: 2 | Shaberi: 2
+[LHS_1823_CDD_Type1_Var1] 900,000/1,000,000 | Stable: 893513 | Diego: 2 | Shaberi: 2
+[LHS_1823_CDD_Type1_Var1] 1,000,000/1,000,000 | Stable: 992778 | Diego: 2 | Shaberi: 2
+
+======================================================================
+COMPLETED: LHS_1823_CDD_Type1_Var1
+======================================================================
+Diego Turing:    2 (0.0002%)
+Shaberi Total:   2 (0.0002%)
+  Type-I:        2
+  Type-II:       0
+  Hopf:          0
+
+Saved to:
+  results/LHS_1823_CDD_Type1_Var1_1mio.pkl
+  results/LHS_1823_CDD_Type1_Var1_1mio.csv
+======================================================================
+Finished job 1 at Wed  6 May 03:58:26 BST 2026
+
+====================================
+CPU Time used: 12:28:01
+CPU Percent: 99%
+Memory usage: 546196kb
+Approx Power usage: 0.14959999999999998
+Walltime usage: 12:37:12
+
+====================================

@@ -1,0 +1,36 @@
+Starting job 16 at Tue  5 May 15:24:47 BST 2026
+Starting LHS_1838_DDC_Type3_Var1: dU=0.0, dV=0.0, dW=1.0, n_samples=1,000,000
+[LHS_1838_DDC_Type3_Var1] 100,000/1,000,000 | Stable: 99753 | Diego: 13 | Shaberi: 13
+[LHS_1838_DDC_Type3_Var1] 200,000/1,000,000 | Stable: 199500 | Diego: 18 | Shaberi: 18
+[LHS_1838_DDC_Type3_Var1] 300,000/1,000,000 | Stable: 299282 | Diego: 33 | Shaberi: 33
+[LHS_1838_DDC_Type3_Var1] 400,000/1,000,000 | Stable: 399080 | Diego: 46 | Shaberi: 46
+[LHS_1838_DDC_Type3_Var1] 500,000/1,000,000 | Stable: 498864 | Diego: 54 | Shaberi: 54
+[LHS_1838_DDC_Type3_Var1] 600,000/1,000,000 | Stable: 598687 | Diego: 74 | Shaberi: 74
+[LHS_1838_DDC_Type3_Var1] 700,000/1,000,000 | Stable: 698475 | Diego: 88 | Shaberi: 88
+[LHS_1838_DDC_Type3_Var1] 800,000/1,000,000 | Stable: 798266 | Diego: 102 | Shaberi: 102
+[LHS_1838_DDC_Type3_Var1] 900,000/1,000,000 | Stable: 898043 | Diego: 119 | Shaberi: 119
+[LHS_1838_DDC_Type3_Var1] 1,000,000/1,000,000 | Stable: 997795 | Diego: 130 | Shaberi: 130
+
+======================================================================
+COMPLETED: LHS_1838_DDC_Type3_Var1
+======================================================================
+Diego Turing:    130 (0.0130%)
+Shaberi Total:   130 (0.0130%)
+  Type-I:        0
+  Type-II:       130
+  Hopf:          0
+
+Saved to:
+  results/LHS_1838_DDC_Type3_Var1_1mio.pkl
+  results/LHS_1838_DDC_Type3_Var1_1mio.csv
+======================================================================
+Finished job 16 at Wed  6 May 03:13:23 BST 2026
+
+====================================
+CPU Time used: 11:38:44
+CPU Percent: 99%
+Memory usage: 546224kb
+Approx Power usage: 0.1396
+Walltime usage: 11:48:42
+
+====================================

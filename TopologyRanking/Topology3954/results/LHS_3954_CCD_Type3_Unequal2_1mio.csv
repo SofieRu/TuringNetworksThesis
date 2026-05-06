@@ -1,2 +1,2 @@
-config_name,config_id,dU,dV,dW,n_samples,steady_states,stable_without_diffusion,diego_turing,shaberi_total,shaberi_type_I,shaberi_type_II,shaberi_hopf,rob_diego,rob_shaberi_total,rob_shaberi_type_I,rob_shaberi_excl_II
-LHS_3954_CCD_Type3_Unequal2,30,10.0,1.0,0.0,1000000,969615,951296,2764,2835,2832,3,0,0.2764,0.2835,0.2832,0.2832
+config_name,config_id,dU,dV,dW,n_samples,steady_states,stable_without_diffusion,diego_turing,shaberi_total,shaberi_type_I,shaberi_type_II,shaberi_hopf,rob_diego,rob_shaberi_total,rob_shaberi_type_I
+LHS_3954_CCD_Type3_Unequal2,42,1.0,0.1,0.0,1000000,969615,951296,2837,2837,2543,294,0,0.2837,0.2837,0.2543

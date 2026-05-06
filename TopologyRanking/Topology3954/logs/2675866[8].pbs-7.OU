@@ -1,0 +1,36 @@
+Starting job 8 at Tue  5 May 16:14:16 BST 2026
+Starting LHS_3954_DCC_Type2_Unequal4: dU=1.0, dV=10.0, dW=0.0, n_samples=1,000,000
+[LHS_3954_DCC_Type2_Unequal4] 100,000/1,000,000 | Stable: 95180 | Diego: 44 | Shaberi: 46
+[LHS_3954_DCC_Type2_Unequal4] 200,000/1,000,000 | Stable: 190103 | Diego: 85 | Shaberi: 88
+[LHS_3954_DCC_Type2_Unequal4] 300,000/1,000,000 | Stable: 285166 | Diego: 120 | Shaberi: 124
+[LHS_3954_DCC_Type2_Unequal4] 400,000/1,000,000 | Stable: 380343 | Diego: 158 | Shaberi: 163
+[LHS_3954_DCC_Type2_Unequal4] 500,000/1,000,000 | Stable: 475497 | Diego: 195 | Shaberi: 200
+[LHS_3954_DCC_Type2_Unequal4] 600,000/1,000,000 | Stable: 570769 | Diego: 244 | Shaberi: 251
+[LHS_3954_DCC_Type2_Unequal4] 700,000/1,000,000 | Stable: 665900 | Diego: 281 | Shaberi: 289
+[LHS_3954_DCC_Type2_Unequal4] 800,000/1,000,000 | Stable: 760988 | Diego: 328 | Shaberi: 337
+[LHS_3954_DCC_Type2_Unequal4] 900,000/1,000,000 | Stable: 856080 | Diego: 366 | Shaberi: 375
+[LHS_3954_DCC_Type2_Unequal4] 1,000,000/1,000,000 | Stable: 951296 | Diego: 403 | Shaberi: 413
+
+======================================================================
+COMPLETED: LHS_3954_DCC_Type2_Unequal4
+======================================================================
+Diego Turing:    403 (0.0403%)
+Shaberi Total:   413 (0.0413%)
+  Type-I:        109
+  Type-II:       293
+  Hopf:          11
+
+Saved to:
+  results/LHS_3954_DCC_Type2_Unequal4_1mio.pkl
+  results/LHS_3954_DCC_Type2_Unequal4_1mio.csv
+======================================================================
+Finished job 8 at Wed  6 May 03:31:59 BST 2026
+
+====================================
+CPU Time used: 11:11:12
+CPU Percent: 99%
+Memory usage: 577916kb
+Approx Power usage: 0.13419999999999999
+Walltime usage: 11:17:49
+
+====================================

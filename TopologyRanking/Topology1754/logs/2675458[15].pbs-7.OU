@@ -1,0 +1,36 @@
+Starting job 15 at Tue  5 May 15:20:03 BST 2026
+Starting LHS_1754_CDD_Type3_Var2: dU=1.0, dV=0.0, dW=0.0, n_samples=1,000,000
+[LHS_1754_CDD_Type3_Var2] 100,000/1,000,000 | Stable: 98478 | Diego: 1506 | Shaberi: 1506
+[LHS_1754_CDD_Type3_Var2] 200,000/1,000,000 | Stable: 196894 | Diego: 3040 | Shaberi: 3040
+[LHS_1754_CDD_Type3_Var2] 300,000/1,000,000 | Stable: 295298 | Diego: 4533 | Shaberi: 4533
+[LHS_1754_CDD_Type3_Var2] 400,000/1,000,000 | Stable: 393751 | Diego: 6018 | Shaberi: 6018
+[LHS_1754_CDD_Type3_Var2] 500,000/1,000,000 | Stable: 492192 | Diego: 7510 | Shaberi: 7510
+[LHS_1754_CDD_Type3_Var2] 600,000/1,000,000 | Stable: 590728 | Diego: 9000 | Shaberi: 9000
+[LHS_1754_CDD_Type3_Var2] 700,000/1,000,000 | Stable: 689254 | Diego: 10438 | Shaberi: 10438
+[LHS_1754_CDD_Type3_Var2] 800,000/1,000,000 | Stable: 787663 | Diego: 11916 | Shaberi: 11916
+[LHS_1754_CDD_Type3_Var2] 900,000/1,000,000 | Stable: 886092 | Diego: 13369 | Shaberi: 13369
+[LHS_1754_CDD_Type3_Var2] 1,000,000/1,000,000 | Stable: 984576 | Diego: 14922 | Shaberi: 14922
+
+======================================================================
+COMPLETED: LHS_1754_CDD_Type3_Var2
+======================================================================
+Diego Turing:    14922 (1.4922%)
+Shaberi Total:   14922 (1.4922%)
+  Type-I:        0
+  Type-II:       14922
+  Hopf:          0
+
+Saved to:
+  results/LHS_1754_CDD_Type3_Var2_1mio.pkl
+  results/LHS_1754_CDD_Type3_Var2_1mio.csv
+======================================================================
+Finished job 15 at Wed  6 May 03:45:00 BST 2026
+
+====================================
+CPU Time used: 12:13:46
+CPU Percent: 99%
+Memory usage: 546284kb
+Approx Power usage: 0.1466
+Walltime usage: 12:25:06
+
+====================================
