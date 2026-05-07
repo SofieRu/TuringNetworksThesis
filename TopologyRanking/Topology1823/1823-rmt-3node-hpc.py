@@ -255,12 +255,12 @@ if __name__ == "__main__":
         sys.exit(1)
     
     config_id = int(sys.argv[1])
-    n_samples = 100_000  # 1M samples per sigma value
+    n_samples = 1_000_000  # 1M samples per sigma value
     
     results = run_analysis(config_id, n_samples)
     
     # Save as pickle
-    output_pkl = f"results/{results['config_name']}_{n_samples//1000}k.pkl"
+    output_pkl = f"results/{results['config_name']}_1mio.pkl"
     with open(output_pkl, 'wb') as f:
         pickle.dump(results, f)
     
@@ -287,7 +287,7 @@ if __name__ == "__main__":
         }
         csv_rows.append(row)
     
-    output_csv = f"results/{results['config_name']}_{n_samples//1000}k.csv"
+    output_csv = f"results/{results['config_name']}_1mio.csv"
     pd.DataFrame(csv_rows).to_csv(output_csv, index=False)
     
     # Print summary

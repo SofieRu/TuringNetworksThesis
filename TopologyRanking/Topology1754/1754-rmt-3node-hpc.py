@@ -218,7 +218,7 @@ DIFFUSION_CONFIGS = {
 
 
 #full range sigma values but to test we do less values
-SIGMA_VALUES = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.8, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 3.6, 3.8, 4.0, 5.0, 6.0, 7.0 , 8.0, 9.0, 10.0]
+SIGMA_VALUES = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.8, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 3.6, 3.8, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]
 
 # MAIN ANALYSIS FUNCTION
 
@@ -323,12 +323,12 @@ if __name__ == "__main__":
         sys.exit(1)
     
     config_id = int(sys.argv[1])
-    n_samples = 100_000  # 1M samples per sigma value
+    n_samples = 1_000_000  # 1M samples per sigma value
     
     results = run_analysis(config_id, n_samples)
     
     # Save as pickle
-    output_pkl = f"results/{results['config_name']}_{n_samples//1000}k.pkl"
+    output_pkl = f"results/{results['config_name']}_1mio.pkl"
     with open(output_pkl, 'wb') as f:
         pickle.dump(results, f)
     
@@ -355,7 +355,7 @@ if __name__ == "__main__":
         }
         csv_rows.append(row)
     
-    output_csv = f"results/{results['config_name']}_{n_samples//1000}k.csv"
+    output_csv = f"results/{results['config_name']}_1mio.csv"
     pd.DataFrame(csv_rows).to_csv(output_csv, index=False)
     
     # Print summary
