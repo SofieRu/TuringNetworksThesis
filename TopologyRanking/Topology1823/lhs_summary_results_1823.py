@@ -6,7 +6,7 @@ import pandas as pd
 # Find all pickle files
 #result_files = sorted(glob.glob('results/*.pkl'))
 # result_files = sorted(glob.glob('results/*_1000k.pkl'))
-result_files = sorted(glob.glob('results/LHS_1838_*.pkl'))
+result_files = sorted(glob.glob('results/LHS_1823_*_1mio.pkl'))
 
 # Load all results
 all_results = []
@@ -40,11 +40,11 @@ cols = [
 
 # Print table
 print("\n" + "="*120)
-print("TOPOLOGY #1838 - TURING PATTERN ROBUSTNESS SUMMARY")
+print("TOPOLOGY #1823 - TURING PATTERN ROBUSTNESS SUMMARY")
 print("="*120)
 print(df[cols].to_string(index=False))
 print("="*120)
 
 # Save as CSV for Excel
-df.to_csv('1838_results_summary.csv', index=False)
-print("\nSaved to: 1838_results_summary.csv")
+df.to_csv('1823_lhs_results_summary.csv', index=False)
+print("\nSaved to: 1823_lhs_results_summary.csv")

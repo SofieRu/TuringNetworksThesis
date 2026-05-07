@@ -150,8 +150,8 @@ def is_turing_shaberi(J, eigs_0, DU, DV, DW):
 DIFFUSION_CONFIGS = {
     # DDC: A=Destable, B=Destable, C=Destable
     0:  {"name": "LHS_1838_DDC_Type1",          "dU": 1.0,  "dV": 0.0,  "dW": 10.0},
-    1:  {"name": "LHS_1838_DDC_Var1",           "dU": 1.0,  "dV": 1.0,  "dW": 10.0},
-    2:  {"name": "LHS_1838_DDC_Var2",           "dU": 0.0,  "dV": 1.0,  "dW": 10.0},
+    1:  {"name": "LHS_1838_DDC_Type1_Var1",     "dU": 1.0,  "dV": 1.0,  "dW": 10.0},
+    2:  {"name": "LHS_1838_DDC_Type1_Var2",     "dU": 0.0,  "dV": 1.0,  "dW": 10.0},
     3:  {"name": "LHS_1838_DDC_Type1_Control",  "dU": 1.0,  "dV": 0.0,  "dW": 1.0},
 
     4:  {"name": "LHS_1838_DDC_Type2_Equal",    "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
