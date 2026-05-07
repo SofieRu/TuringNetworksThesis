@@ -1,2 +1,0 @@
-config_name,config_id,dU,dV,dW,n_samples,steady_states,stable_without_diffusion,diego_turing,shaberi_total,shaberi_type_I,shaberi_type_II,shaberi_hopf,rob_diego,rob_shaberi_total,rob_shaberi_type_I
-LHS_3954_CCD_Type3_Unequal1,41,0.1,1.0,0.0,1000000,969615,951296,404,414,110,293,11,0.0404,0.0414,0.011
