@@ -227,7 +227,7 @@ DIFFUSION_CONFIGS = {
     27: {"name": "LHS_1754_CCD_Type3_Unequal1", "dU": 0.1,  "dV": 1.0,  "dW": 0.0},
     28: {"name": "LHS_1754_CCD_Type3_Unequal2", "dU": 1.0,  "dV": 10.0, "dW": 0.0},
     29: {"name": "LHS_1754_CCD_Type3_Unequal3", "dU": 1.0,  "dV": 0.1,  "dW": 0.0},
-    30: {"name": "LHS_1754_CCD_Type3_Unqeual4", "dU": 10.0, "dV": 1.0,  "dW": 0.0},
+    30: {"name": "LHS_1754_CCD_Type3_Unequal4", "dU": 10.0, "dV": 1.0,  "dW": 0.0},
 }
 
 # MAIN ANALYSIS FUNCTION

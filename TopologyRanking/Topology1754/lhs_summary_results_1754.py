@@ -1,7 +1,4 @@
 #!/usr/bin/env python3
-"""
-Load all pickle results and create summary table
-"""
 import pickle
 import glob
 import pandas as pd
