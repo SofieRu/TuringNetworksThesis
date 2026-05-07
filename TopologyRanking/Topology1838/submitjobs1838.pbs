@@ -1,8 +1,8 @@
 #!/bin/bash
 #PBS -J 0-17
 #PBS -l select=1:ncpus=1:mem=16gb
-#PBS -l walltime=22:00:00
-#PBS -N lhs_1838
+#PBS -l walltime=33:00:00
+#PBS -N rmt_1838
 #PBS -o logs/
 #PBS -e logs/
 
@@ -18,12 +18,12 @@ mkdir -p results
 mkdir -p logs
 
 # Verify Python script exists
-if [ ! -f "1838-lhs-3node-hpc.py" ]; then
-    echo "ERROR: 1838-lhs-3node-hpc.py not found in $PBS_O_WORKDIR"
+if [ ! -f "1838-rmt-3node-hpc.py" ]; then
+    echo "ERROR: 1838-rmt-3node-hpc.py not found in $PBS_O_WORKDIR"
     exit 1
 fi
 
 # Run Python script with array index
 echo "Starting job ${PBS_ARRAY_INDEX} at $(date)"
-python 1838-lhs-3node-hpc.py $PBS_ARRAY_INDEX
+python 1838-rmt-3node-hpc.py $PBS_ARRAY_INDEX
 echo "Finished job ${PBS_ARRAY_INDEX} at $(date)"
