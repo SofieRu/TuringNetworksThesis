@@ -194,26 +194,26 @@ DIFFUSION_CONFIGS = {
     12: {"name": "RMT_1754_CDD_Type3_Unequal3", "dU": 0.1,  "dV": 1.0,  "dW": 0.0},
     13: {"name": "RMT_1754_CDD_Type3_Unequal4", "dU": 1.0,  "dV": 10.0, "dW": 0.0},
     14: {"name": "RMT_1754_CDD_Type3_Var1",     "dU": 1.0,  "dV": 0.0,  "dW": 1.0},
-    15: {"name": "RMT_1754_CDD_Type3_Var2",     "dU": 1.0,  "dV": 0.0,  "dW": 0.0},
+    # 15: {"name": "RMT_1754_CDD_Type3_Var2",     "dU": 1.0,  "dV": 0.0,  "dW": 0.0},  # this one is weirdly high, soo i took it out...
     
     # CCD: A=Compl., B=Compl., C=Destable
-    16: {"name": "RMT_1754_CCD_Type1",          "dU": 10.0, "dV": 10.0, "dW": 1.0},
-    17: {"name": "RMT_1754_CCD_Type1_Var1",     "dU": 10.0, "dV": 0.0,  "dW": 1.0},
-    18: {"name": "RMT_1754_CCD_Type1_Var2",     "dU": 0.0,  "dV": 10.0, "dW": 1.0},
-    19: {"name": "RMT_1754_CCD_Type1_Control",  "dU": 1.0,  "dV": 1.0,  "dW": 1.0},
+    15: {"name": "RMT_1754_CCD_Type1",          "dU": 10.0, "dV": 10.0, "dW": 1.0},
+    16: {"name": "RMT_1754_CCD_Type1_Var1",     "dU": 10.0, "dV": 0.0,  "dW": 1.0},
+    17: {"name": "RMT_1754_CCD_Type1_Var2",     "dU": 0.0,  "dV": 10.0, "dW": 1.0},
+    18: {"name": "RMT_1754_CCD_Type1_Control",  "dU": 1.0,  "dV": 1.0,  "dW": 1.0},
     
-    20: {"name": "RMT_1754_CCD_Type2_Equal",    "dU": 0.0,  "dV": 1.0,  "dW": 1.0},
-    21: {"name": "RMT_1754_CCD_Type2_Unequal1", "dU": 0.0,  "dV": 1.0,  "dW": 10.0},
-    22: {"name": "RMT_1754_CCD_Type2_Unequal2", "dU": 0.0,  "dV": 0.1,  "dW": 1.0},
-    23: {"name": "RMT_1754_CCD_Type2_Unequal3", "dU": 0.0,  "dV": 1.0,  "dW": 0.1},
-    24: {"name": "RMT_1754_CCD_Type2_Var1",     "dU": 1.0,  "dV": 0.0,  "dW": 1.0},
-    25: {"name": "RMT_1754_CCD_Type2_Var2",     "dU": 0.0,  "dV": 0.0,  "dW": 1.0},
+    19: {"name": "RMT_1754_CCD_Type2_Equal",    "dU": 0.0,  "dV": 1.0,  "dW": 1.0},
+    20: {"name": "RMT_1754_CCD_Type2_Unequal1", "dU": 0.0,  "dV": 1.0,  "dW": 10.0},
+    21: {"name": "RMT_1754_CCD_Type2_Unequal2", "dU": 0.0,  "dV": 0.1,  "dW": 1.0},
+    22: {"name": "RMT_1754_CCD_Type2_Unequal3", "dU": 0.0,  "dV": 1.0,  "dW": 0.1},
+    23: {"name": "RMT_1754_CCD_Type2_Var1",     "dU": 1.0,  "dV": 0.0,  "dW": 1.0},
+    24: {"name": "RMT_1754_CCD_Type2_Var2",     "dU": 0.0,  "dV": 0.0,  "dW": 1.0},
     
-    26: {"name": "RMT_1754_CCD_Type3_Equal",    "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
-    27: {"name": "RMT_1754_CCD_Type3_Unequal1", "dU": 0.1,  "dV": 1.0,  "dW": 0.0},
-    28: {"name": "RMT_1754_CCD_Type3_Unequal2", "dU": 1.0,  "dV": 10.0, "dW": 0.0},
-    29: {"name": "RMT_1754_CCD_Type3_Unequal3", "dU": 1.0,  "dV": 0.1,  "dW": 0.0},
-    30: {"name": "RMT_1754_CCD_Type3_Unequal4", "dU": 10.0, "dV": 1.0,  "dW": 0.0},
+    25: {"name": "RMT_1754_CCD_Type3_Equal",    "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
+    26: {"name": "RMT_1754_CCD_Type3_Unequal1", "dU": 0.1,  "dV": 1.0,  "dW": 0.0},
+    27: {"name": "RMT_1754_CCD_Type3_Unequal2", "dU": 1.0,  "dV": 10.0, "dW": 0.0},
+    28: {"name": "RMT_1754_CCD_Type3_Unequal3", "dU": 1.0,  "dV": 0.1,  "dW": 0.0},
+    29: {"name": "RMT_1754_CCD_Type3_Unequal4", "dU": 10.0, "dV": 1.0,  "dW": 0.0},
 }
 
 

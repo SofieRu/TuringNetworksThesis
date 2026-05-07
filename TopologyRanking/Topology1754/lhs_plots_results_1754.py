@@ -7,7 +7,7 @@ import numpy as np
 
 # have to run this first: module load matplotlib/3.9.2-gfbf-2024a
 
-CSV = "1754_lhs_results_corrected_1mio.csv"
+CSV = "1754_lhs_results_final_1mio.csv"
 OUT_DIR = Path("plots")
 OUT_DIR.mkdir(exist_ok=True)
 
@@ -25,21 +25,21 @@ plt.rcParams.update({
 
 TYPE_COLORS = {
     "Type1": "#444EA6",
-    "Type2": "#AE2BA1",
+    "Type2": "#B11EA2",
     "Type3": "#3FA051",
 }
 
 def save(fig, name):
-    for ext in ("svg", "png"):
+    for ext in ("png",):
         fig.savefig(OUT_DIR / f"{name}.{ext}", bbox_inches="tight", dpi=300)
     plt.close(fig)
-    print(f"Saved to plots/{name}.svg")
+    print(f"Saved to plots/{name}.png")
 
 def load_data():
     df = pd.read_csv(CSV)
 
     # Extract topology (DCC / CDD / CCD …) and Turing type (Type1/2/3)
-    df["topology"]    = df["config_name"].str.extract(r"1754_([A-Z]+)_")
+    df["topology"]    = df["config_name"].str.extract(r"LHS_1754_([A-Z]+)_")
     df["turing_type"] = df["config_name"].str.extract(r"(Type[123])")
 
     return df
