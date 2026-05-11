@@ -1,0 +1,36 @@
+Starting job 17 at Thu  7 May 13:22:37 BST 2026
+Starting LHS_1754_CCD_Type2_Equal: dU=0.0, dV=1.0, dW=1.0, n_samples=1,000,000
+[LHS_1754_CCD_Type2_Equal] 100,000/1,000,000 | Stable: 98478 | Diego: 0 | Shaberi: 0
+[LHS_1754_CCD_Type2_Equal] 200,000/1,000,000 | Stable: 196894 | Diego: 0 | Shaberi: 0
+[LHS_1754_CCD_Type2_Equal] 300,000/1,000,000 | Stable: 295298 | Diego: 0 | Shaberi: 0
+[LHS_1754_CCD_Type2_Equal] 400,000/1,000,000 | Stable: 393751 | Diego: 0 | Shaberi: 0
+[LHS_1754_CCD_Type2_Equal] 500,000/1,000,000 | Stable: 492192 | Diego: 0 | Shaberi: 0
+[LHS_1754_CCD_Type2_Equal] 600,000/1,000,000 | Stable: 590728 | Diego: 0 | Shaberi: 0
+[LHS_1754_CCD_Type2_Equal] 700,000/1,000,000 | Stable: 689254 | Diego: 0 | Shaberi: 0
+[LHS_1754_CCD_Type2_Equal] 800,000/1,000,000 | Stable: 787663 | Diego: 0 | Shaberi: 0
+[LHS_1754_CCD_Type2_Equal] 900,000/1,000,000 | Stable: 886092 | Diego: 0 | Shaberi: 0
+[LHS_1754_CCD_Type2_Equal] 1,000,000/1,000,000 | Stable: 984576 | Diego: 0 | Shaberi: 0
+
+======================================================================
+COMPLETED: LHS_1754_CCD_Type2_Equal
+======================================================================
+Diego Turing:    0 (0.0000%)
+Shaberi Total:   0 (0.0000%)
+  Type-I:        0
+  Type-II:       0
+  Hopf:          0
+
+Saved to:
+  results/LHS_1754_CCD_Type2_Equal_1mio.pkl
+  results/LHS_1754_CCD_Type2_Equal_1mio.csv
+======================================================================
+Finished job 17 at Fri  8 May 01:20:34 BST 2026
+
+====================================
+CPU Time used: 11:50:02
+CPU Percent: 99%
+Memory usage: 551120kb
+Approx Power usage: 0.142
+Walltime usage: 11:58:12
+
+====================================
