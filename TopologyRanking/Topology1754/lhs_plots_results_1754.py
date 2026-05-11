@@ -180,40 +180,40 @@ def fig3_grouped_topology(df):
 
 
 
-##################################### FIGURE 4: Scatter Plot Shaberi vs Diego Robustness across Type 1 to 3 #####################################
+# ##################################### FIGURE 4: Scatter Plot Shaberi vs Diego Robustness across Type 1 to 3 #####################################
 
-def fig4_diego_vs_shaberi(df):
-    fig, ax = plt.subplots(figsize=(6, 5))
+# def fig4_diego_vs_shaberi(df):
+#     fig, ax = plt.subplots(figsize=(6, 5))
  
-    for t in ["Type1", "Type2", "Type3"]:
-        subset = df[df["turing_type"] == t]
-        ax.scatter(
-            subset["rob_diego"],
-            subset["rob_shaberi_total"],
-            color=TYPE_COLORS[t],
-            label=t,
-            s=80,
-            edgecolors="white",
-            linewidths=0.5,
-        )
+#     for t in ["Type1", "Type2", "Type3"]:
+#         subset = df[df["turing_type"] == t]
+#         ax.scatter(
+#             subset["rob_diego"],
+#             subset["rob_shaberi_total"],
+#             color=TYPE_COLORS[t],
+#             label=t,
+#             s=80,
+#             edgecolors="white",
+#             linewidths=0.5,
+#         )
  
-    lim = df[["rob_diego", "rob_shaberi_total"]].max().max() * 1.05 # 1:1 line
-    ax.plot([0, lim], [0, lim], color="#444444", linewidth=0.8,
-            linestyle="--", label="1:1 line")
-    ax.set_xlim(0, lim)
-    ax.set_ylim(0, lim)
+#     lim = df[["rob_diego", "rob_shaberi_total"]].max().max() * 1.05 # 1:1 line
+#     ax.plot([0, lim], [0, lim], color="#444444", linewidth=0.8,
+#             linestyle="--", label="1:1 line")
+#     ax.set_xlim(0, lim)
+#     ax.set_ylim(0, lim)
  
-    ax.set_xlabel("Robustness Score using Characteristic Polynomial (Diego)", fontsize=11)
-    ax.set_ylabel("Robustness Score using Eigenvalues (Shaberi)", fontsize=11)
-    ax.set_title(
-        "Robustness Scores Diego vs Shaberi for #1754\n(Latin Hypercube Sampling, 1 million simulations)",
-        fontsize=12, loc="left", pad=10,
-    )
-    ax.legend(title="Turing Type", frameon=False,
-              loc="upper center", bbox_to_anchor=(0.5, -0.15), ncol=4)
+#     ax.set_xlabel("Robustness Score using Characteristic Polynomial (Diego)", fontsize=11)
+#     ax.set_ylabel("Robustness Score using Eigenvalues (Shaberi)", fontsize=11)
+#     ax.set_title(
+#         "Robustness Scores Diego vs Shaberi for #1754\n(Latin Hypercube Sampling, 1 million simulations)",
+#         fontsize=12, loc="left", pad=10,
+#     )
+#     ax.legend(title="Turing Type", frameon=False,
+#               loc="upper center", bbox_to_anchor=(0.5, -0.15), ncol=4)
  
-    fig.tight_layout()
-    save(fig, "1754_lhs_fig4_diego_vs_shaberi")
+#     fig.tight_layout()
+#     save(fig, "1754_lhs_fig4_diego_vs_shaberi")
 
 
 
@@ -226,4 +226,4 @@ df = load_data()
 fig1_overview(df)
 fig2_dotplot(df)
 fig3_grouped_topology(df)
-fig4_diego_vs_shaberi(df)
+# fig4_diego_vs_shaberi(df)
