@@ -225,10 +225,81 @@ def fig4_diego_vs_shaberi(df):
 
 
 
+
+
+def fig2_raincloud(df):
+    from scipy.stats import gaussian_kde
+
+    random.seed(42)
+    types  = ["Type1", "Type2", "Type3"]
+    labels = ["Type 1", "Type 2", "Type 3"]
+
+    fig, ax = plt.subplots(figsize=(8, 6))
+
+    for i, (t, label) in enumerate(zip(types, labels)):
+        subset = df[df["turing_type"] == t]["rob_shaberi_total"].dropna().values
+
+        if len(subset) < 2:
+            continue
+
+        color = TYPE_COLORS[t]
+
+        # ── Half violin (left side) ───────────────────────────────────────────
+        #kde    = gaussian_kde(subset, bw_method=0.4)
+        kde    = gaussian_kde(subset, bw_method=0.3)
+        #y_range = np.linspace(subset.min(), subset.max(), 200)
+        y_range = np.linspace(subset.min() - subset.std()*0.6, subset.max() + subset.std()*0.6, 200)
+        kde_vals = kde(y_range)
+        kde_vals = kde_vals / kde_vals.max() * 0.35  # normalise width
+
+        ax.fill_betweenx(y_range, i - kde_vals, i, color=color, alpha=0.9, linewidth=0)
+
+        # ── Mean line ─────────────────────────────────────────────────────────
+        ax.hlines(subset.mean(), i - 0.38, i, color="black", linewidth=2, zorder=4)
+
+        # ── Jittered dots (right side) ────────────────────────────────────────
+        for val in subset:
+            jitter = i + random.uniform(0.05, 0.35)
+            marker = "^" if any(
+                "Unequal" in row["config_name"]
+                for _, row in df[(df["turing_type"] == t) &
+                                 (df["rob_shaberi_total"] == val)].iterrows()
+            ) else "o"
+            ax.scatter(jitter, val, color=color, marker=marker,
+                       s=50, edgecolors="white", linewidths=0.4, alpha=0.9, zorder=3)
+
+    ax.set_xticks(range(len(types)))
+    ax.set_xticklabels(labels, fontsize=11)
+    ax.set_ylabel("Robustness Score (rob_shaberi_total)", fontsize=11)
+    ax.set_title(
+        "Robustness distribution by Turing Type for #1754\n"
+        "(Latin Hypercube Sampling, 1 million simulations)",
+        fontsize=12, loc="left", pad=10,
+    )
+    ax.xaxis.grid(False)
+    ax.set_xlim(-0.5, len(types) - 0.5)
+
+    # Legend
+    import matplotlib.lines as mlines
+    handles = [
+        mlines.Line2D([], [], color="#888888", marker="o", linestyle="None",
+                      markersize=7, markeredgecolor="white", label="Equal"),
+        mlines.Line2D([], [], color="#888888", marker="^", linestyle="None",
+                      markersize=7, markeredgecolor="white", label="Unequal"),
+    ]
+    ax.legend(handles=handles, title="Diffusion", frameon=False,
+              loc="upper center", bbox_to_anchor=(0.5, -0.10), ncol=2)
+
+    fig.tight_layout()
+    save(fig, "1754_lhs_fig2_raincloud")
+
+
+
 ########### RUN THE WHOLE THING ############
 
 df = load_data()
 fig1_overview(df)
 fig2_dotplot(df)
+fig2_raincloud(df)
 fig3_grouped_topology(df)
 fig4_diego_vs_shaberi(df)

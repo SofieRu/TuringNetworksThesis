@@ -4,8 +4,12 @@ import matplotlib.patches as mpatches
 import pandas as pd
 import random
 import numpy as np
+import ast
+import matplotlib.lines as mlines
 
 # have to run this first: module load matplotlib/3.9.2-gfbf-2024a
+# have to run this first: module load SciPy-bundle/2024.05-gfbf-2024a
+# have to run this first: pip install seaborn --user
 
 CSV = "1754_lhs_results_final_1mio.csv"
 OUT_DIR = Path("plots")
@@ -24,9 +28,9 @@ plt.rcParams.update({
 })
 
 TYPE_COLORS = {
-    "Type1": "#444EA6",
-    "Type2": "#B11EA2",
-    "Type3": "#3FA051",
+    "Type1": "#1F2881",
+    "Type2": "#980F7B",
+    "Type3": "#187529",
 }
 
 def save(fig, name):
@@ -43,6 +47,8 @@ def load_data():
     df["turing_type"] = df["config_name"].str.extract(r"(Type[123])")
 
     return df
+
+
 
 ##################################### FIGURE 1: Overview bar chart #####################################
 
@@ -101,49 +107,46 @@ def fig1_overview(df):
 ##################################### FIGURE 2: Scatter of Type 1 to Type 3 #####################################
 
 
-def fig2_dotplot(df):
-    random.seed(42)
+# def fig2_dotplot(df):
+#     random.seed(42)
  
-    fig, ax = plt.subplots(figsize=(7, 4))
+#     fig, ax = plt.subplots(figsize=(7, 4))
  
-    types = ["Type1", "Type2", "Type3"]
+#     types = ["Type1", "Type2", "Type3"]
  
-    for i, t in enumerate(types):
-        subset = df[df["turing_type"] == t]["rob_shaberi_total"]
-        # add small random jitter on x so dots don't stack
-        jitter = [i + random.uniform(-0.15, 0.15) for _ in subset]
-        ax.scatter(
-            jitter,
-            subset,
-            color=TYPE_COLORS[t],
-            s=80,
-            edgecolors="white",
-            linewidths=0.5,
-            zorder=3,
-        )
+#     for i, t in enumerate(types):
+#         subset = df[df["turing_type"] == t]["rob_shaberi_total"]
+#         # add small random jitter on x so dots don't stack
+#         jitter = [i + random.uniform(-0.15, 0.15) for _ in subset]
+#         ax.scatter(
+#             jitter,
+#             subset,
+#             color=TYPE_COLORS[t],
+#             s=80,
+#             edgecolors="white",
+#             linewidths=0.5,
+#             zorder=3,
+#         )
  
-    ax.set_xticks([0, 1, 2])
-    ax.set_xticklabels(["Type 1", "Type 2", "Type 3"], fontsize=11)
-    ax.set_ylabel("Robustness Score (in %, Shaberi Method)", fontsize=11)
-    ax.set_title(
-        "Robustness Scores by Turing Type for #1754\n(Latin Hypercube Sampling, 1 million simulations)",
-        fontsize=12, loc="left", pad=10,
-    )
-    ax.xaxis.grid(False)
-    ax.set_xlim(-0.5, 2.5)
+#     ax.set_xticks([0, 1, 2])
+#     ax.set_xticklabels(["Type 1", "Type 2", "Type 3"], fontsize=11)
+#     ax.set_ylabel("Robustness Score (in %, Shaberi Method)", fontsize=11)
+#     ax.set_title(
+#         "Robustness Scores by Turing Type for #1754\n(Latin Hypercube Sampling, 1 million simulations)",
+#         fontsize=12, loc="left", pad=10,
+#     )
+#     ax.xaxis.grid(False)
+#     ax.set_xlim(-0.5, 2.5)
  
-    fig.tight_layout()
-    save(fig, "1754_lhs_fig2_dotplot")
-
-
+#     fig.tight_layout()
+#     save(fig, "1754_lhs_fig2_dotplot")
 
 
 
 def fig2_new_dotplot(df):
-    import matplotlib.lines as mlines
     random.seed(42)
 
-    fig, ax = plt.subplots(figsize=(7, 4))
+    fig, ax = plt.subplots(figsize=(6, 4))
 
     types = ["Type1", "Type2", "Type3"]
 
@@ -151,7 +154,7 @@ def fig2_new_dotplot(df):
         subset = df[df["turing_type"] == t]
         for _, row in subset.iterrows():
             marker = "^" if "Unequal" in row["config_name"] else "o"
-            jitter = i + random.uniform(-0.15, 0.15)
+            jitter = i + random.uniform(-0.2, 0.2)
             ax.scatter(
                 jitter,
                 row["rob_shaberi_total"],
@@ -174,13 +177,11 @@ def fig2_new_dotplot(df):
     ax.set_xlim(-0.5, 2.5)
 
     handles = [
-        mlines.Line2D([], [], color="#888888", marker="o", linestyle="None",
-                      markersize=7, markeredgecolor="white", label="Equal"),
-        mlines.Line2D([], [], color="#888888", marker="^", linestyle="None",
-                      markersize=7, markeredgecolor="white", label="Unequal"),
+        mlines.Line2D([], [], color="#313131", marker="o", linestyle="None", markersize=7, markeredgecolor="white", label="Equal"),
+        mlines.Line2D([], [], color="#313131", marker="^", linestyle="None", markersize=7, markeredgecolor="white", label="Unequal"),
     ]
-    ax.legend(handles=handles, title="Diffusion", frameon=False,
-              loc="upper center", bbox_to_anchor=(0.5, -0.12), ncol=2)
+
+    ax.legend(handles=handles, title="Diffusion", frameon=False, loc="center right", bbox_to_anchor=(1.3, 0.5), ncol=1)
 
     fig.tight_layout()
     save(fig, "1754_lhs_fig2_new_dotplot")
@@ -273,11 +274,15 @@ def fig3_grouped_topology(df):
 
 
 
+
+
+
+
 ########### RUN THE WHOLE THING ############
 
 df = load_data()
 fig1_overview(df)
-fig2_dotplot(df)
+# fig2_dotplot(df)
 fig2_new_dotplot(df)
 fig3_grouped_topology(df)
 # fig4_diego_vs_shaberi(df)

@@ -357,9 +357,6 @@ def fig_phase_interpolated_3954(df):
 
 
 
-
-
-
 def fig_ratio_sensitivity(df):
     import matplotlib.lines as mlines
 
