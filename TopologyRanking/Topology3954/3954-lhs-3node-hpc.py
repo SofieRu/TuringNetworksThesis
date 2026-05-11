@@ -228,7 +228,7 @@ DIFFUSION_CONFIGS = {
     # CCD: A=Compl., B=Compl., C=Destable
     27: {"name": "LHS_3954_CCD_Type1",          "dU": 10.0, "dV": 10.0, "dW": 1.0},
     28: {"name": "LHS_3954_CCD_Type1_Var1",     "dU": 10.0, "dV": 0.0,  "dW": 1.0},
-    29: {"name": "LHS_3954_CCD_Type1_Var2",     "dU": 0.0,  "dV": 10.0, "dW": 1.0},
+    29: {"name": "LHS_3954_CCD_Type1_Var2",     "dU": 0.0,  "dV": 10.0, "dW": 1.0}, # this is really high so maybe take it out, makes type I higher -> LHS_3954_CCD_Type1_Var2,29,"{'dU': 0.0, 'dV': 10.0, 'dW': 1.0}",1000000,969615,951296,6758,6758,1,6746,11,0.6758,0.6758,0.0001
     30: {"name": "LHS_3954_CCD_Type1_Control",  "dU": 1.0,  "dV": 1.0,  "dW": 1.0},
     
     31: {"name": "LHS_3954_CCD_Type2_Equal",    "dU": 0.0,  "dV": 1.0,  "dW": 1.0},

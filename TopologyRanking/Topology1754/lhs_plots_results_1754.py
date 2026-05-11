@@ -138,6 +138,59 @@ def fig2_dotplot(df):
 
 
 
+
+def fig2_new_dotplot(df):
+    import matplotlib.lines as mlines
+    random.seed(42)
+
+    fig, ax = plt.subplots(figsize=(7, 4))
+
+    types = ["Type1", "Type2", "Type3"]
+
+    for i, t in enumerate(types):
+        subset = df[df["turing_type"] == t]
+        for _, row in subset.iterrows():
+            marker = "^" if "Unequal" in row["config_name"] else "o"
+            jitter = i + random.uniform(-0.15, 0.15)
+            ax.scatter(
+                jitter,
+                row["rob_shaberi_total"],
+                color=TYPE_COLORS[t],
+                marker=marker,
+                s=80,
+                edgecolors="white",
+                linewidths=0.5,
+                zorder=3,
+            )
+
+    ax.set_xticks([0, 1, 2])
+    ax.set_xticklabels(["Type 1", "Type 2", "Type 3"], fontsize=11)
+    ax.set_ylabel("Robustness Score (in %, Shaberi Method)", fontsize=11)
+    ax.set_title(
+        "Robustness Scores by Turing Type for #1754\n(Latin Hypercube Sampling, 1 million simulations)",
+        fontsize=12, loc="left", pad=10,
+    )
+    ax.xaxis.grid(False)
+    ax.set_xlim(-0.5, 2.5)
+
+    handles = [
+        mlines.Line2D([], [], color="#888888", marker="o", linestyle="None",
+                      markersize=7, markeredgecolor="white", label="Equal"),
+        mlines.Line2D([], [], color="#888888", marker="^", linestyle="None",
+                      markersize=7, markeredgecolor="white", label="Unequal"),
+    ]
+    ax.legend(handles=handles, title="Diffusion", frameon=False,
+              loc="upper center", bbox_to_anchor=(0.5, -0.12), ncol=2)
+
+    fig.tight_layout()
+    save(fig, "1754_lhs_fig2_new_dotplot")
+
+
+
+
+
+
+
 ##################################### FIGURE 3: Grouped bars, max robustness per topology × type #####################################
 
 def fig3_grouped_topology(df):
@@ -225,5 +278,6 @@ def fig3_grouped_topology(df):
 df = load_data()
 fig1_overview(df)
 fig2_dotplot(df)
+fig2_new_dotplot(df)
 fig3_grouped_topology(df)
 # fig4_diego_vs_shaberi(df)

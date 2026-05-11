@@ -3,27 +3,25 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
-
-CSVS = {
-    "#1754": "Topology1754/1754_lhs_results_corrected_1mio.csv",
-    "#1823": "Topology1823/1823_results_summary_corrected.csv",
-    "#1838": "Topology1838/1838_results_summary.csv",
-    "#3954": "Topology3954/3954_lhs_results_corrected_1mio.csv",
-}
-
-# CSVS = {
-#     "#1754": "Topology1754/1754_lhs_results_corrected_1mio.csv",
-#     "#1823": "Topology1823/1823_results_summary_corrected.csv",
-#     "#1838": "Topology1838/1838_results_summary.csv",
-#     "#3954": "Topology3954/3954_lhs_results_newshaberi_1mio.csv",
-# }
-
-OUT_DIR = Path("ResultPlots")
-OUT_DIR.mkdir(parents=True, exist_ok=True)
+import ast
+import matplotlib.cm as cm
+import matplotlib.colors as mcolors
 
 # have to run this first: module load matplotlib/3.9.2-gfbf-2024a
 # have to run this first: module load SciPy-bundle/2024.05-gfbf-2024a
 # have to run this first: pip install seaborn --user
+
+CSVS = {
+    "#1754": "Topology1754/1754_lhs_results_final_1mio.csv",
+    "#1823": "Topology1823/1823_lhs_results_final_1mio.csv",
+    "#1838": "Topology1838/1838_lhs_results_final_1mio.csv",
+    "#3954": "Topology3954/3954_lhs_results_final_1mio.csv",
+}
+
+# for both 3954 and 1754 i got rid of _CCD_Type1_Var1/2 bc the values were really high and kinda did not match the rest but later if it does match then we can put it back in and see if it changes the results
+
+OUT_DIR = Path("ResultPlots")
+OUT_DIR.mkdir(parents=True, exist_ok=True)
 
 plt.style.use("seaborn-v0_8-whitegrid")
 plt.rcParams.update({
@@ -43,6 +41,13 @@ TYPE_COLORS = {
     "Type3": "#3FA051",
 } 
 
+TOPO_MARKERS = {
+    "#1754": "o",
+    "#1823": "s",
+    "#1838": "^",
+    "#3954": "D",
+}
+
 def save(fig, name):
     for ext in ("png",):
         fig.savefig(OUT_DIR / f"{name}.{ext}", bbox_inches="tight", dpi=300)
@@ -56,8 +61,22 @@ def load_all():
         df = df[~df["config_name"].str.contains("OneFast|Control|Limit")]
         df["topology_id"]  = topo_id
         df["turing_type"]  = df["config_name"].str.extract(r"(Type[123])")
+        parsed = df["diffusion"].apply(parse_diff)
+        df["dU"] = parsed.apply(lambda d: d.get("dU"))
+        df["dV"] = parsed.apply(lambda d: d.get("dV"))
+        df["dW"] = parsed.apply(lambda d: d.get("dW"))
         dfs.append(df)
     return pd.concat(dfs, ignore_index=True)
+
+def parse_diff(s):
+    try:
+        return ast.literal_eval(s.replace("\u2018", "'").replace("\u2019", "'"))
+    except:
+        return {"dU": None, "dV": None, "dW": None}
+
+
+
+
 
 
 ########## FIGURE 1: Heatmap – Max robustness per topology × Turing Type ##########
@@ -94,94 +113,318 @@ def fig1_heatmap(df):
 
 
 
-
-########## FIGURE 2: Dumbbell plot Mean vs Max robustness per topology ##########
+def fig_3d_scatter(df):
+    df = df.dropna(subset=["dU", "dV", "dW"])
  
-def fig2_dumbbell(df):
-    topos   = ["#1754", "#1823", "#1838", "#3954"]
-    means   = [df[df["topology_id"] == t]["rob_shaberi_total"].mean() for t in topos]
-    maxes   = [df[df["topology_id"] == t]["rob_shaberi_total"].max()  for t in topos]
+    fig = plt.figure(figsize=(10, 7))
+    ax  = fig.add_subplot(111, projection="3d")
  
-    fig, ax = plt.subplots(figsize=(8, 5))
- 
-    for i, (topo, mean, maxi) in enumerate(zip(topos, means, maxes)):
-        # connecting line
-        ax.plot([mean, maxi], [i, i], color="#aaaaaa", linewidth=2, zorder=1)
-        # mean dot
-        ax.scatter(mean, i, color="#194386", s=100, zorder=2, label="Mean" if i == 0 else "")
-        # max dot
-        ax.scatter(maxi, i, color="#229F2B", s=100, zorder=2, label="Max"  if i == 0 else "")
- 
-    ax.set_yticks(range(len(topos)))
-    ax.set_yticklabels(topos, fontsize=11)
-    ax.set_xlabel("Robustness (rob_shaberi_total)", fontsize=11)
-    ax.set_title(
-        "Mean vs max robustness per topology, LHS comparison",
-        fontsize=12, loc="left", pad=10,
-    )
-    ax.yaxis.grid(False)
-    ax.legend(frameon=False, loc="upper center", bbox_to_anchor=(0.5, -0.12), ncol=2)
- 
-    fig.tight_layout()
-    save(fig, "compare_fig2_dumbbell")
-
-
-
-
-########## FIGURE 3: BASIC PLOT TO COMPARE ROBUSTNESS ##########
-
-# ITS SUPPOSED TO BE rob_shaberi_type_I but i let it at type total for now bc i am confuseddddd :////
- 
-def fig3_best_config_bar(df):
-    topos = ["#1754", "#1823", "#1838", "#3954"]
- 
-    best_configs = []
-    for t in topos:
-        subset  = df[df["topology_id"] == t]
-        idx     = subset["rob_shaberi_total"].idxmax()
-        best_configs.append({
-            "topology_id" : t,
-            "rob"         : subset.loc[idx, "rob_shaberi_total"],
-            "config_name" : subset.loc[idx, "config_name"],
-        })
- 
-    labels   = [d["topology_id"]  for d in best_configs]
-    values   = [d["rob"]          for d in best_configs]
-    configs  = [d["config_name"]  for d in best_configs]
- 
-    fig, ax = plt.subplots(figsize=(9, 5))
- 
-    bars = ax.bar(
-        labels,
-        values,
-        color="#1F4E99",
-        edgecolor="white",
-        linewidth=0.5,
-        width=0.5,
+    cmap = cm.YlGnBu
+    norm = mcolors.Normalize(
+        vmin=df["rob_shaberi_total"].min(),
+        vmax=df["rob_shaberi_total"].max(),
     )
  
-    # Annotate each bar with the config name
-    for bar, cfg in zip(bars, configs):
-        # strip the topology prefix to keep it short
-        short = cfg.split("_", 2)[-1]   # e.g. "DCC_Type2_Unequal1"
-        ax.text(
-            bar.get_x() + bar.get_width() / 2,
-            bar.get_height() + 0.002,
-            short,
-            ha="center", va="bottom",
-            fontsize=8, color="#444444",
+    for topo, marker in TOPO_MARKERS.items():
+        sub = df[df["topology_id"] == topo]
+        sc  = ax.scatter(
+            sub["dU"], sub["dV"], sub["dW"],
+            c=sub["rob_shaberi_total"],
+            cmap=cmap, norm=norm,
+            marker=marker,
+            s=100,
+            edgecolors="white",
+            linewidths=0.4,
+            label=topo,
         )
  
-    ax.set_ylabel("Max robustness (rob_shaberi_total)", fontsize=11)
+    ax.set_xlabel("dU", fontsize=10, labelpad=8)
+    ax.set_ylabel("dV", fontsize=10, labelpad=8)
+    ax.set_zlabel("dW", fontsize=10, labelpad=8)
     ax.set_title(
-        "Highest robustness score per topology – LHS comparison",
+        "3D diffusion rate space coloured by robustness – all topologies",
+        fontsize=11, pad=12,
+    )
+ 
+    # colourbar
+    sm = cm.ScalarMappable(cmap=cmap, norm=norm)
+    sm.set_array([])
+    fig.colorbar(sm, ax=ax, fraction=0.02, pad=0.1,
+                 label="Robustness (rob_shaberi_total)")
+ 
+    # marker legend
+    ax.legend(title="Topology", frameon=False, loc="upper left")
+ 
+    plt.tight_layout()
+    for ext in ("png",):
+        fig.savefig(OUT_DIR / f"explore_3d_scatter.{ext}", bbox_inches="tight", dpi=300)
+    print("Saved → ResultPlots/explore_3d_scatter.png")
+    plt.show()   # keeps it interactive so you can rotate in VS Code
+
+
+
+
+
+
+########## FIGURE 6: Stacked absolute bar – Type I vs II vs Hopf composition ##########
+
+def fig6_pattern_composition(df):
+    df = df.copy()
+
+    # UNCOMMENT to exclude Unequal diffusion configurations
+    #df = df[~df["config_name"].str.contains("Unequal")]
+
+    topos = ["#1754", "#1823", "#1838", "#3954"]
+    types = ["Type1", "Type2", "Type3"]
+ 
+    PATTERN_COLORS = {
+        "Type I"  : "#0F99A0",
+        "Type II" : "#DE2CAC",
+        "Hopf"    : "#AAAD17",
+    }
+ 
+    import matplotlib.patches as mpatches
+ 
+    # aggregate: max robustness and pattern counts per topology × turing type
+    grouped = df.groupby(["topology_id", "turing_type"]).agg(
+        rob    = ("rob_shaberi_total", "max"),
+        type_I = ("shaberi_type_I",   "sum"),
+        type_II= ("shaberi_type_II",  "sum"),
+        hopf   = ("shaberi_hopf",     "sum"),
+    )
+ 
+    fig, ax = plt.subplots(figsize=(11, 6))
+ 
+    n_topos = len(topos)
+    width   = 0.15
+    gap     = 0.8
+ 
+    for i, t in enumerate(types):
+        for j, topo in enumerate(topos):
+            try:
+                row = grouped.loc[(topo, t)]
+            except KeyError:
+                continue
+ 
+            rob   = row["rob"]
+            total = row["type_I"] + row["type_II"] + row["hopf"]
+            if total == 0 or rob == 0:
+                continue
+ 
+            # split robustness proportionally by pattern type
+            f1 = row["type_I"]  / total * rob
+            f2 = row["type_II"] / total * rob
+            fh = row["hopf"]    / total * rob
+ 
+            x = i * gap + (j - n_topos / 2 + 0.5) * width
+ 
+            ax.bar(x, f1,      width=width, color=PATTERN_COLORS["Type I"],  edgecolor="white", linewidth=0.3)
+            ax.bar(x, f2,      width=width, color=PATTERN_COLORS["Type II"], edgecolor="white", linewidth=0.3, bottom=f1)
+            ax.bar(x, fh,      width=width, color=PATTERN_COLORS["Hopf"],    edgecolor="white", linewidth=0.3, bottom=f1+f2)
+ 
+            ax.text(x, -0.019, topo, ha="right", va="top", fontsize=7, rotation=45)
+ 
+    ax.set_xticks([i * gap for i in range(len(types))])
+    ax.set_xticklabels(types, fontsize=11)
+    ax.set_ylabel("Robustness (rob_shaberi_total)", fontsize=11)
+    ax.set_title(
+        "Type I dominates in Turing Type 1 – Type II and Hopf drive Type 2/3 robustness",
         fontsize=12, loc="left", pad=10,
     )
     ax.xaxis.grid(False)
  
+    handles = [mpatches.Patch(color=c, label=l) for l, c in PATTERN_COLORS.items()]
+    ax.legend(handles=handles, title="Pattern type", frameon=False,
+              loc="upper center", bbox_to_anchor=(0.5, -0.18), ncol=3)
+ 
     fig.tight_layout()
-    save(fig, "compare_fig3_best_config_bar")
+    save(fig, "compare_fig6_pattern_composition")
 
+
+
+
+def fig_pseudo_phase_3954(df):
+    import matplotlib.cm as cm
+    import matplotlib.colors as mcolors
+
+    sub = df[df["topology_id"] == "#3954"].copy()
+
+    cmap = cm.YlGnBu
+    norm = mcolors.Normalize(
+        vmin=sub["rob_shaberi_total"].min(),
+        vmax=sub["rob_shaberi_total"].max(),
+    )
+
+    pairs = [("dU", "dV"), ("dU", "dW"), ("dV", "dW")]
+    fig, axes = plt.subplots(1, 3, figsize=(12, 4))
+
+    for ax, (xvar, yvar) in zip(axes, pairs):
+        sc = ax.scatter(
+            sub[xvar],
+            sub[yvar],
+            c=sub["rob_shaberi_total"],
+            cmap=cmap,
+            norm=norm,
+            s=300,
+            edgecolors="#444444",
+            linewidths=0.5,
+        )
+        ax.set_xlabel(xvar, fontsize=11)
+        ax.set_ylabel(yvar, fontsize=11)
+        ax.set_xscale("symlog", linthresh=0.1)
+        ax.set_yscale("symlog", linthresh=0.1)
+        ax.xaxis.grid(False)
+        ax.set_title(f"{xvar} vs {yvar}", fontsize=11)
+
+    cbar = fig.colorbar(sc, ax=axes, fraction=0.02, pad=0.02)
+    cbar.set_label("Robustness (rob_shaberi_total)", fontsize=10)
+
+    fig.suptitle(
+        "Topology #3954 – Pseudo phase diagram across diffusion rate combinations",
+        fontsize=12, x=0.01, ha="left",
+    )
+
+    fig.tight_layout()
+    save(fig, "3954_pseudo_phase_diagram")
+
+
+
+
+
+
+
+
+def fig_phase_interpolated_3954(df):
+    from scipy.interpolate import griddata
+    import matplotlib.cm as cm
+    import numpy as np
+
+    sub = df[df["topology_id"] == "#3954"].dropna(subset=["dU", "dV", "dW"]).copy()
+
+    pairs = [("dU", "dV"), ("dU", "dW"), ("dV", "dW")]
+    fig, axes = plt.subplots(1, 3, figsize=(15, 5))
+
+    for ax, (xvar, yvar) in zip(axes, pairs):
+        x   = sub[xvar].values
+        y   = sub[yvar].values
+        rob = sub["rob_shaberi_total"].values
+
+        # grid for interpolation — use log spacing to match symlog axis
+        # but handle 0 separately
+        x_vals = np.unique(x)
+        y_vals = np.unique(y)
+        xi = np.linspace(x.min(), x.max(), 200)
+        yi = np.linspace(y.min(), y.max(), 200)
+        xi_grid, yi_grid = np.meshgrid(xi, yi)
+
+        # interpolate onto grid
+        zi = griddata(
+            points=(x, y),
+            values=rob,
+            xi=(xi_grid, yi_grid),
+            method="cubic",     # smooth interpolation
+            fill_value=0,
+        )
+        zi = np.clip(zi, 0, None)  # no negative values
+
+        # filled contour plot
+        cf = ax.contourf(xi_grid, yi_grid, zi, levels=20, cmap="YlGnBu")
+        # overlay actual data points
+        ax.scatter(x, y, c=rob, cmap="YlGnBu",
+                   edgecolors="#444444", linewidths=0.8, s=80, zorder=3,
+                   vmin=rob.min(), vmax=rob.max())
+
+        ax.set_xlabel(xvar, fontsize=11)
+        ax.set_ylabel(yvar, fontsize=11)
+        ax.set_title(f"{xvar} vs {yvar}", fontsize=11)
+        ax.xaxis.grid(False)
+
+    cbar = fig.colorbar(cf, ax=axes, fraction=0.02, pad=0.02)
+    cbar.set_label("Robustness (rob_shaberi_total)", fontsize=10)
+
+    fig.suptitle(
+        "Topology #3954 – Interpolated phase diagram across diffusion rate combinations\n"
+        "(note: surface interpolated between discrete measurements)",
+        fontsize=11, x=0.01, ha="left",
+    )
+
+    fig.tight_layout()
+    save(fig, "3954_phase_interpolated")
+
+
+
+
+
+
+
+
+
+
+def fig_ratio_sensitivity(df):
+    import matplotlib.lines as mlines
+
+    df = df[df["topology_id"].isin(["#3954", "#1754"])].copy()
+
+    # only Type3 configs (dW = 0, two immobile)
+    df = df[df["turing_type"] == "Type3"]
+
+    # classify diffusion ratio from config name
+    def ratio_label(name):
+        if "Unequal1" in name:
+            return "Unequal1\n(10:1)"
+        elif "Unequal2" in name:
+            return "Unequal2\n(1:10)"
+        elif "Equal" in name:
+            return "Equal\n(1:1)"
+        else:
+            return None
+
+    df["ratio"] = df["config_name"].apply(ratio_label)
+    df = df.dropna(subset=["ratio"])
+
+    ratio_order = ["Equal\n(1:1)", "Unequal1\n(10:1)", "Unequal2\n(1:10)"]
+    topos = ["#3954", "#1754"]
+
+    fig, axes = plt.subplots(1, 2, figsize=(10, 5), sharey=True)
+
+    for ax, topo in zip(axes, topos):
+        sub = df[df["topology_id"] == topo]
+
+        # one line per topology variant (e.g. DCC, CDD, CCD)
+        sub["topo_variant"] = sub["config_name"].str.extract(r"(?:LHS|RMT)_\d+_([A-Z]+)_")
+        variants = sub["topo_variant"].dropna().unique()
+
+        for var in variants:
+            var_data = sub[sub["topo_variant"] == var]
+            vals = [
+                var_data[var_data["ratio"] == r]["rob_shaberi_total"].mean()
+                for r in ratio_order
+            ]
+            ax.plot(
+                ratio_order, vals,
+                marker="o", linewidth=1.5,
+                markersize=7, markeredgecolor="white", markeredgewidth=0.5,
+                label=var,
+            )
+
+        ax.set_title(topo, fontsize=11)
+        ax.set_xlabel("Diffusion ratio", fontsize=11)
+        ax.xaxis.grid(False)
+
+    axes[0].set_ylabel("Robustness (rob_shaberi_total)", fontsize=11)
+
+    fig.suptitle(
+        "Type 3 – Robustness sensitivity to diffusion ratio in #3954 and #1754",
+        fontsize=12, x=0.01, ha="left",
+    )
+
+    # shared legend
+    handles, labels = axes[0].get_legend_handles_labels()
+    fig.legend(handles, labels, title="Topology variant", frameon=False,
+               loc="upper center", bbox_to_anchor=(0.5, -0.02), ncol=len(handles))
+
+    fig.tight_layout()
+    save(fig, "compare_ratio_sensitivity_type3")
 
 
 
@@ -190,5 +433,8 @@ def fig3_best_config_bar(df):
 
 df = load_all()
 fig1_heatmap(df)
-fig2_dumbbell(df)
-fig3_best_config_bar(df)
+fig_3d_scatter(df)
+fig6_pattern_composition(df)
+fig_pseudo_phase_3954(df)
+fig_phase_interpolated_3954(df)
+fig_ratio_sensitivity(df)
