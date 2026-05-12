@@ -185,76 +185,113 @@ def is_turing_shaberi(J, eigs_0, DU, DV, DW):
 # DIFFUSION CONFIGURATIONS
 # EXTENDED VERSION
 
+# DIFFUSION_CONFIGS = {
+#     # DCC: A=Destable, B=Complementary, C=Complementary
+#     0:  {"name": "LHS_3954_DCC_Type1",          "dU": 1.0,  "dV": 10.0, "dW": 10.0},
+#     1:  {"name": "LHS_3954_DCC_Type1_Var1",     "dU": 1.0,  "dV": 0.0,  "dW": 10.0},
+#     2:  {"name": "LHS_3954_DCC_Type1_Var2",     "dU": 1.0,  "dV": 10.0, "dW": 0.0},
+#     3:  {"name": "LHS_3954_DCC_Type1_Control",  "dU": 1.0,  "dV": 1.0,  "dW": 1.0},
+    
+#     4:  {"name": "LHS_3954_DCC_Type2_Equal",    "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
+#     5:  {"name": "LHS_3954_DCC_Type2_Unequal1", "dU": 1.0,  "dV": 0.1,  "dW": 0.0},
+#     6:  {"name": "LHS_3954_DCC_Type2_Unequal2", "dU": 10.0, "dV": 1.0,  "dW": 0.0},
+#     7:  {"name": "LHS_3954_DCC_Type2_Unequal3", "dU": 0.1,  "dV": 1.0,  "dW": 0.0},
+#     8:  {"name": "LHS_3954_DCC_Type2_Unequal4", "dU": 1.0,  "dV": 10.0, "dW": 0.0},
+#     # 9:  {"name": "LHS_3954_DCC_Type2_Var1",     "dU": 1.0,  "dV": 0.0,  "dW": 0.0}, # no 1,0,0 if not necessary bc freezing both leads to salt and pepper/turing filters 
+
+#     9:  {"name": "LHS_3954_DCC_Type3_Equal",    "dU": 0.0,  "dV": 1.0,  "dW": 1.0},
+#     10: {"name": "LHS_3954_DCC_Type3_Unequal1", "dU": 0.0,  "dV": 0.1,  "dW": 1.0},
+#     11: {"name": "LHS_3954_DCC_Type3_Unequal2", "dU": 0.0,  "dV": 1.0,  "dW": 0.1},
+#     12: {"name": "LHS_3954_DCC_Type3_Unequal3", "dU": 0.0,  "dV": 1.0,  "dW": 10.0},
+#     13: {"name": "LHS_3954_DCC_Type3_Unequal4", "dU": 0.0,  "dV": 10.0, "dW": 1.0},
+    
+#     # CDD: A=Complementary, B=Destable, C=Destable
+#     14: {"name": "LHS_3954_CDD_Type1",          "dU": 10.0, "dV": 1.0,  "dW": 1.0},
+#     #15: {"name": "LHS_3954_CDD_Type1_Var1",     "dU": 10.0, "dV": 1.0,  "dW": 0.0}, # for type I all destabilising nodes have to be mobile
+#     #16: {"name": "LHS_3954_CDD_Type1_Var2",     "dU": 10.0, "dV": 0.0,  "dW": 1.0}, # for type I all destabilising nodes have to be mobile
+#     15: {"name": "LHS_3954_CDD_Type1_Control",  "dU": 1.0,  "dV": 1.0,  "dW": 1.0},   
+    
+#     16: {"name": "LHS_3954_CDD_Type2_Equal",    "dU": 0.0,  "dV": 1.0,  "dW": 1.0},
+#     17: {"name": "LHS_3954_CDD_Type2_Unequal1", "dU": 0.0,  "dV": 0.1,  "dW": 1.0},
+#     18: {"name": "LHS_3954_CDD_Type2_Unequal2", "dU": 0.0,  "dV": 1.0,  "dW": 0.1},
+#     19: {"name": "LHS_3954_CDD_Type2_Unequal3", "dU": 0.0,  "dV": 1.0,  "dW": 10.0},
+#     20: {"name": "LHS_3954_CDD_Type2_Unequal4", "dU": 0.0,  "dV": 10.0, "dW": 1.0},
+    
+#     21: {"name": "LHS_3954_CDD_Type3_Equal",    "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
+#     22: {"name": "LHS_3954_CDD_Type3_Unequal1", "dU": 1.0,  "dV": 0.1,  "dW": 0.0},
+#     23: {"name": "LHS_3954_CDD_Type3_Unequal2", "dU": 0.1,  "dV": 1.0,  "dW": 0.0},
+#     24: {"name": "LHS_3954_CDD_Type3_Unequal3", "dU": 10.0, "dV": 1.0,  "dW": 0.0},
+#     25: {"name": "LHS_3954_CDD_Type3_Unequal4", "dU": 1.0,  "dV": 10.0, "dW": 0.0},
+#     # 29: {"name": "LHS_3954_CDD_Type3_Var1",     "dU": 1.0,  "dV": 0.0,  "dW": 0.0}, # this one is weirdly high, soo i took it out...leads to turing filters
+#     26: {"name": "LHS_3954_CDD_Type3_Var1",     "dU": 1.0,  "dV": 0.0,  "dW": 1.0},
+    
+#     # CCD: A=Compl., B=Compl., C=Destable
+#     27: {"name": "LHS_3954_CCD_Type1",          "dU": 10.0, "dV": 10.0, "dW": 1.0},
+#     28: {"name": "LHS_3954_CCD_Type1_Var1",     "dU": 10.0, "dV": 0.0,  "dW": 1.0},
+#     29: {"name": "LHS_3954_CCD_Type1_Var2",     "dU": 0.0,  "dV": 10.0, "dW": 1.0}, # this is really high so maybe take it out, makes type I higher -> LHS_3954_CCD_Type1_Var2,29,"{'dU': 0.0, 'dV': 10.0, 'dW': 1.0}",1000000,969615,951296,6758,6758,1,6746,11,0.6758,0.6758,0.0001
+#     30: {"name": "LHS_3954_CCD_Type1_Control",  "dU": 1.0,  "dV": 1.0,  "dW": 1.0},
+    
+#     31: {"name": "LHS_3954_CCD_Type2_Equal",    "dU": 0.0,  "dV": 1.0,  "dW": 1.0},
+#     32: {"name": "LHS_3954_CCD_Type2_Unequal1", "dU": 0.0,  "dV": 0.1,  "dW": 1.0},
+#     33: {"name": "LHS_3954_CCD_Type2_Unequal2", "dU": 0.0,  "dV": 1.0,  "dW": 0.1},
+#     34: {"name": "LHS_3954_CCD_Type2_Unequal3", "dU": 0.0,  "dV": 1.0,  "dW": 10.0},
+#     35: {"name": "LHS_3954_CCD_Type2_Unequal4", "dU": 0.0,  "dV": 10.0, "dW": 1.0},
+    
+#     36: {"name": "LHS_3954_CCD_Type3_Equal",    "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
+#     37: {"name": "LHS_3954_CCD_Type3_Unequal1", "dU": 0.1,  "dV": 1.0,  "dW": 0.0},
+#     38: {"name": "LHS_3954_CCD_Type3_Unequal2", "dU": 1.0,  "dV": 0.1,  "dW": 0.0},
+#     39: {"name": "LHS_3954_CCD_Type3_Unequal3", "dU": 10.0, "dV": 1.0,  "dW": 0.0},
+#     40: {"name": "LHS_3954_CCD_Type3_Unequal4", "dU": 1.0,  "dV": 10.0, "dW": 0.0},
+
+#     # DCI: A=Destable, B=Compl., C=Immobile
+#     41: {"name": "LHS_3954_DCI_Type1",          "dU": 1.0,  "dV": 10.0, "dW": 0.0},
+#     42: {"name": "LHS_3954_DCI_Type1_Control",  "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
+
+#     43: {"name": "LHS_3954_DCI_Type2_Equal",    "dU": 1.0,  "dV": 0.0,  "dW": 0.0},
+#     44: {"name": "LHS_3954_DCI_Type2_Unequal1", "dU": 0.1,  "dV": 0.0,  "dW": 0.0},
+#     45: {"name": "LHS_3954_DCI_Type2_Unequal2", "dU": 10.0, "dV": 0.0,  "dW": 0.0},
+
+#     46: {"name": "LHS_3954_DCI_Type3_Equal",    "dU": 0.0,  "dV": 1.0,  "dW": 0.0},
+#     47: {"name": "LHS_3954_DCI_Type3_Unequal1", "dU": 0.0,  "dV": 0.1,  "dW": 0.0},
+#     48: {"name": "LHS_3954_DCI_Type3_Unequal2", "dU": 0.0,  "dV": 10.0, "dW": 0.0},
+# }
+
+
+
 DIFFUSION_CONFIGS = {
-    # DCC: A=Destable, B=Complementary, C=Complementary
-    0:  {"name": "LHS_3954_DCC_Type1",          "dU": 1.0,  "dV": 10.0, "dW": 10.0},
-    1:  {"name": "LHS_3954_DCC_Type1_Var1",     "dU": 1.0,  "dV": 0.0,  "dW": 10.0},
-    2:  {"name": "LHS_3954_DCC_Type1_Var2",     "dU": 1.0,  "dV": 10.0, "dW": 0.0},
-    3:  {"name": "LHS_3954_DCC_Type1_Control",  "dU": 1.0,  "dV": 1.0,  "dW": 1.0},
-    
-    4:  {"name": "LHS_3954_DCC_Type2_Equal",    "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
-    5:  {"name": "LHS_3954_DCC_Type2_Unequal1", "dU": 1.0,  "dV": 0.1,  "dW": 0.0},
-    6:  {"name": "LHS_3954_DCC_Type2_Unequal2", "dU": 10.0, "dV": 1.0,  "dW": 0.0},
-    7:  {"name": "LHS_3954_DCC_Type2_Unequal3", "dU": 0.1,  "dV": 1.0,  "dW": 0.0},
-    8:  {"name": "LHS_3954_DCC_Type2_Unequal4", "dU": 1.0,  "dV": 10.0, "dW": 0.0},
-    # 9:  {"name": "LHS_3954_DCC_Type2_Var1",     "dU": 1.0,  "dV": 0.0,  "dW": 0.0}, # no 1,0,0 if not necessary bc freezing both leads to salt and pepper/turing filters 
+    0:  {"name": "NEW_LHS_3954_Type1_V1_Equal",     "dU": 10.0, "dV": 1.0,  "dW": 1.0},
+    1:  {"name": "NEW_LHS_3954_Type1_V1_Control",   "dU": 1.0,  "dV": 1.0,  "dW": 1.0},
+    2:  {"name": "NEW_LHS_3954_Type1_V2_Equal",     "dU": 1.0,  "dV": 10.0, "dW": 1.0},
+    3:  {"name": "NEW_LHS_3954_Type1_V3_Equal",     "dU": 1.0,  "dV": 1.0,  "dW": 10.0},
+    4:  {"name": "NEW_LHS_3954_Type1_V4_Equal",     "dU": 1.0,  "dV": 10.0, "dW": 10.0},
 
-    9:  {"name": "LHS_3954_DCC_Type3_Equal",    "dU": 0.0,  "dV": 1.0,  "dW": 1.0},
-    10: {"name": "LHS_3954_DCC_Type3_Unequal1", "dU": 0.0,  "dV": 0.1,  "dW": 1.0},
-    11: {"name": "LHS_3954_DCC_Type3_Unequal2", "dU": 0.0,  "dV": 1.0,  "dW": 0.1},
-    12: {"name": "LHS_3954_DCC_Type3_Unequal3", "dU": 0.0,  "dV": 1.0,  "dW": 10.0},
-    13: {"name": "LHS_3954_DCC_Type3_Unequal4", "dU": 0.0,  "dV": 10.0, "dW": 1.0},
-    
-    # CDD: A=Complementary, B=Destable, C=Destable
-    14: {"name": "LHS_3954_CDD_Type1",          "dU": 10.0, "dV": 1.0,  "dW": 1.0},
-    #15: {"name": "LHS_3954_CDD_Type1_Var1",     "dU": 10.0, "dV": 1.0,  "dW": 0.0}, # for type I all destabilising nodes have to be mobile
-    #16: {"name": "LHS_3954_CDD_Type1_Var2",     "dU": 10.0, "dV": 0.0,  "dW": 1.0}, # for type I all destabilising nodes have to be mobile
-    15: {"name": "LHS_3954_CDD_Type1_Control",  "dU": 1.0,  "dV": 1.0,  "dW": 1.0},   
-    
-    16: {"name": "LHS_3954_CDD_Type2_Equal",    "dU": 0.0,  "dV": 1.0,  "dW": 1.0},
-    17: {"name": "LHS_3954_CDD_Type2_Unequal1", "dU": 0.0,  "dV": 0.1,  "dW": 1.0},
-    18: {"name": "LHS_3954_CDD_Type2_Unequal2", "dU": 0.0,  "dV": 1.0,  "dW": 0.1},
-    19: {"name": "LHS_3954_CDD_Type2_Unequal3", "dU": 0.0,  "dV": 1.0,  "dW": 10.0},
-    20: {"name": "LHS_3954_CDD_Type2_Unequal4", "dU": 0.0,  "dV": 10.0, "dW": 1.0},
-    
-    21: {"name": "LHS_3954_CDD_Type3_Equal",    "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
-    22: {"name": "LHS_3954_CDD_Type3_Unequal1", "dU": 1.0,  "dV": 0.1,  "dW": 0.0},
-    23: {"name": "LHS_3954_CDD_Type3_Unequal2", "dU": 0.1,  "dV": 1.0,  "dW": 0.0},
-    24: {"name": "LHS_3954_CDD_Type3_Unequal3", "dU": 10.0, "dV": 1.0,  "dW": 0.0},
-    25: {"name": "LHS_3954_CDD_Type3_Unequal4", "dU": 1.0,  "dV": 10.0, "dW": 0.0},
-    # 29: {"name": "LHS_3954_CDD_Type3_Var1",     "dU": 1.0,  "dV": 0.0,  "dW": 0.0}, # this one is weirdly high, soo i took it out...leads to turing filters
-    26: {"name": "LHS_3954_CDD_Type3_Var1",     "dU": 1.0,  "dV": 0.0,  "dW": 1.0},
-    
-    # CCD: A=Compl., B=Compl., C=Destable
-    27: {"name": "LHS_3954_CCD_Type1",          "dU": 10.0, "dV": 10.0, "dW": 1.0},
-    28: {"name": "LHS_3954_CCD_Type1_Var1",     "dU": 10.0, "dV": 0.0,  "dW": 1.0},
-    29: {"name": "LHS_3954_CCD_Type1_Var2",     "dU": 0.0,  "dV": 10.0, "dW": 1.0}, # this is really high so maybe take it out, makes type I higher -> LHS_3954_CCD_Type1_Var2,29,"{'dU': 0.0, 'dV': 10.0, 'dW': 1.0}",1000000,969615,951296,6758,6758,1,6746,11,0.6758,0.6758,0.0001
-    30: {"name": "LHS_3954_CCD_Type1_Control",  "dU": 1.0,  "dV": 1.0,  "dW": 1.0},
-    
-    31: {"name": "LHS_3954_CCD_Type2_Equal",    "dU": 0.0,  "dV": 1.0,  "dW": 1.0},
-    32: {"name": "LHS_3954_CCD_Type2_Unequal1", "dU": 0.0,  "dV": 0.1,  "dW": 1.0},
-    33: {"name": "LHS_3954_CCD_Type2_Unequal2", "dU": 0.0,  "dV": 1.0,  "dW": 0.1},
-    34: {"name": "LHS_3954_CCD_Type2_Unequal3", "dU": 0.0,  "dV": 1.0,  "dW": 10.0},
-    35: {"name": "LHS_3954_CCD_Type2_Unequal4", "dU": 0.0,  "dV": 10.0, "dW": 1.0},
-    
-    36: {"name": "LHS_3954_CCD_Type3_Equal",    "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
-    37: {"name": "LHS_3954_CCD_Type3_Unequal1", "dU": 0.1,  "dV": 1.0,  "dW": 0.0},
-    38: {"name": "LHS_3954_CCD_Type3_Unequal2", "dU": 1.0,  "dV": 0.1,  "dW": 0.0},
-    39: {"name": "LHS_3954_CCD_Type3_Unequal3", "dU": 10.0, "dV": 1.0,  "dW": 0.0},
-    40: {"name": "LHS_3954_CCD_Type3_Unequal4", "dU": 1.0,  "dV": 10.0, "dW": 0.0},
+    5:  {"name": "NEW_LHS_3954_Type2_V1_Equal",     "dU": 1.0,  "dV": 0.0,  "dW": 1.0},
+    6:  {"name": "NEW_LHS_3954_Type2_V1_Unequal1",  "dU": 1.0,  "dV": 0.0,  "dW": 5.0},
+    7:  {"name": "NEW_LHS_3954_Type2_V1_Unequal2",  "dU": 5.0,  "dV": 0.0,  "dW": 1.0},
+    8:  {"name": "NEW_LHS_3954_Type2_V1_Unequal3",  "dU": 1.0,  "dV": 0.0,  "dW": 0.1},
+    9:  {"name": "NEW_LHS_3954_Type2_V1_Unequal4",  "dU": 0.1,  "dV": 0.0,  "dW": 1.0},
 
-    # DCI: A=Destable, B=Compl., C=Immobile
-    41: {"name": "LHS_3954_DCI_Type1",          "dU": 1.0,  "dV": 10.0, "dW": 0.0},
-    42: {"name": "LHS_3954_DCI_Type1_Control",  "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
+    10: {"name": "NEW_LHS_3954_Type2_V2_Equal",     "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
+    11: {"name": "NEW_LHS_3954_Type2_V2_Unequal1",  "dU": 5.0,  "dV": 1.0,  "dW": 0.0},
+    12: {"name": "NEW_LHS_3954_Type2_V2_Unequal2",  "dU": 1.0,  "dV": 5.0,  "dW": 0.0},
+    13: {"name": "NEW_LHS_3954_Type2_V2_Unequal3",  "dU": 1.0,  "dV": 0.1,  "dW": 0.0},
+    14: {"name": "NEW_LHS_3954_Type2_V2_Unequal4",  "dU": 0.1,  "dV": 1.0,  "dW": 0.0},
 
-    43: {"name": "LHS_3954_DCI_Type2_Equal",    "dU": 1.0,  "dV": 0.0,  "dW": 0.0},
-    44: {"name": "LHS_3954_DCI_Type2_Unequal1", "dU": 0.1,  "dV": 0.0,  "dW": 0.0},
-    45: {"name": "LHS_3954_DCI_Type2_Unequal2", "dU": 10.0, "dV": 0.0,  "dW": 0.0},
+    15: {"name": "NEW_LHS_3954_Type2_V3_Equal",     "dU": 0.0,  "dV": 1.0,  "dW": 1.0},
 
-    46: {"name": "LHS_3954_DCI_Type3_Equal",    "dU": 0.0,  "dV": 1.0,  "dW": 0.0},
-    47: {"name": "LHS_3954_DCI_Type3_Unequal1", "dU": 0.0,  "dV": 0.1,  "dW": 0.0},
-    48: {"name": "LHS_3954_DCI_Type3_Unequal2", "dU": 0.0,  "dV": 10.0, "dW": 0.0},
+    16: {"name": "NEW_LHS_3954_Type3_V1_Equal",    "dU": 0.0,  "dV": 1.0,  "dW": 0.0},
+    17: {"name": "NEW_LHS_3954_Type3_V2_Equal",    "dU": 0.0,  "dV": 1.0,  "dW": 1.0},
+    18: {"name": "NEW_LHS_3954_Type3_V3_Equal",     "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
+
+    19: {"name": "NEW_LHS_3954_Type3_V4_Equal",     "dU": 1.0,  "dV": 0.0,  "dW": 0.0},
+    20: {"name": "NEW_LHS_3954_Type3_V4_Unequal1",  "dU": 0.1,  "dV": 0.0,  "dW": 0.0},
+    21: {"name": "NEW_LHS_3954_Type3_V4_Unequal2",  "dU": 10.0, "dV": 0.0,  "dW": 0.0},
 }
+
+
+
+
+
 
 # MAIN ANALYSIS FUNCTION
 
