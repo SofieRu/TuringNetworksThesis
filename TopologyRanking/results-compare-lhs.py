@@ -178,9 +178,9 @@ def fig6_pattern_composition(df):
     types = ["Type1", "Type2", "Type3"]
  
     PATTERN_COLORS = {
-        "Type I"  : "#0F99A0",
-        "Type II" : "#DE2CAC",
-        "Hopf"    : "#AAAD17",
+        "Type I"  : "#32A5AB",
+        "Type II" : "#9243A8",
+        "Hopf"    : "#C7C93C",
     }
  
     import matplotlib.patches as mpatches
@@ -193,11 +193,11 @@ def fig6_pattern_composition(df):
         hopf   = ("shaberi_hopf",     "sum"),
     )
  
-    fig, ax = plt.subplots(figsize=(11, 6))
+    fig, ax = plt.subplots(figsize=(10, 5))
  
     n_topos = len(topos)
-    width   = 0.15
-    gap     = 0.8
+    width   = 0.16
+    gap     = 0.7
  
     for i, t in enumerate(types):
         for j, topo in enumerate(topos):
@@ -228,15 +228,15 @@ def fig6_pattern_composition(df):
     ax.set_xticklabels(types, fontsize=11)
     ax.set_ylabel("Robustness (rob_shaberi_total)", fontsize=11)
     ax.set_title(
-        "Type I dominates in Turing Type 1 – Type II and Hopf drive Type 2/3 robustness",
+        "Type I is mainly in Turing Type 1, Type II and Hopf drive Type 2/3 robustness",
         fontsize=12, loc="left", pad=10,
     )
     ax.xaxis.grid(False)
  
     handles = [mpatches.Patch(color=c, label=l) for l, c in PATTERN_COLORS.items()]
-    ax.legend(handles=handles, title="Pattern type", frameon=False,
-              loc="upper center", bbox_to_anchor=(0.5, -0.18), ncol=3)
- 
+    #ax.legend(handles=handles, title="Pattern type", frameon=False, loc="upper center", bbox_to_anchor=(0.5, -0.18), ncol=3)
+    ax.legend(handles=handles, title="Pattern type", frameon=False, loc="center right", bbox_to_anchor=(1.15, 0.5), ncol=1)
+    
     fig.tight_layout()
     save(fig, "compare_fig6_pattern_composition")
 
