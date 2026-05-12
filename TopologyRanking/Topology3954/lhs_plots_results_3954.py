@@ -4,14 +4,16 @@ import matplotlib.patches as mpatches
 import pandas as pd
 import random
 import numpy as np
+import ast
+import matplotlib.lines as mlines
 
-# have to run this first: module load matplotlib/3.9.2-gfbf-2024a, module load SciPy-bundle/2024.05-gfbf-2024a
+# have to run this first: module load matplotlib/3.9.2-gfbf-2024a
+# have to run this first: module load SciPy-bundle/2024.05-gfbf-2024a
+# have to run this first: pip install seaborn --user
 
-# CSV = "3954_lhs_results_curated_1mio.csv"
 CSV = "3954_lhs_results_final_1mio.csv"
 OUT_DIR = Path("plots")
 OUT_DIR.mkdir(exist_ok=True)
-
 
 plt.style.use("seaborn-v0_8-whitegrid")
 plt.rcParams.update({
@@ -105,28 +107,29 @@ def fig1_overview(df):
 
 ##################################### FIGURE 2: Scatter of Type 1 to Type 3 #####################################
 
-
 def fig2_dotplot(df):
     random.seed(42)
- 
+
     fig, ax = plt.subplots(figsize=(7, 4))
- 
+
     types = ["Type1", "Type2", "Type3"]
- 
+
     for i, t in enumerate(types):
-        subset = df[df["turing_type"] == t]["rob_shaberi_total"]
-        # add small random jitter on x so dots don't stack
-        jitter = [i + random.uniform(-0.15, 0.15) for _ in subset]
-        ax.scatter(
-            jitter,
-            subset,
-            color=TYPE_COLORS[t],
-            s=80,
-            edgecolors="white",
-            linewidths=0.5,
-            zorder=3,
-        )
- 
+        subset = df[df["turing_type"] == t]
+        for _, row in subset.iterrows():
+            marker = "^" if "Unequal" in row["config_name"] else "o"
+            jitter = i + random.uniform(-0.2, 0.2)
+            ax.scatter(
+                jitter,
+                row["rob_shaberi_total"],
+                color=TYPE_COLORS[t],
+                marker=marker,
+                s=80,
+                edgecolors="white",
+                linewidths=0.5,
+                zorder=3,
+            )
+
     ax.set_xticks([0, 1, 2])
     ax.set_xticklabels(["Type 1", "Type 2", "Type 3"], fontsize=11)
     ax.set_ylabel("Robustness Score (in %, Shaberi Method)", fontsize=11)
@@ -136,11 +139,88 @@ def fig2_dotplot(df):
     )
     ax.xaxis.grid(False)
     ax.set_xlim(-0.5, 2.5)
- 
+
+    handles = [
+        mlines.Line2D([], [], color="#313131", marker="o", linestyle="None", markersize=7, markeredgecolor="white", label="Equal"),
+        mlines.Line2D([], [], color="#313131", marker="^", linestyle="None", markersize=7, markeredgecolor="white", label="Unequal"),
+    ]
+
+    ax.legend(handles=handles, title="Diffusion", frameon=False, loc="center right", bbox_to_anchor=(1.3, 0.5), ncol=1)
+
     fig.tight_layout()
     save(fig, "3954_lhs_fig2_dotplot")
 
 
+
+
+def fig2_raincloud(df):
+    from scipy.stats import gaussian_kde
+
+    random.seed(42)
+    types  = ["Type1", "Type2", "Type3"]
+    labels = ["Type 1", "Type 2", "Type 3"]
+
+    fig, ax = plt.subplots(figsize=(9.5, 6))
+
+    for i, (t, label) in enumerate(zip(types, labels)):
+        subset = df[df["turing_type"] == t]["rob_shaberi_total"].dropna().values
+
+        if len(subset) < 2:
+            continue
+
+        color = TYPE_COLORS[t]
+
+        # ── Half violin (left side) ───────────────────────────────────────────
+        #kde    = gaussian_kde(subset, bw_method=0.4)
+        kde    = gaussian_kde(subset, bw_method=0.3)
+        #y_range = np.linspace(subset.min(), subset.max(), 200)
+        y_range = np.linspace(subset.min() - subset.std()*0.5, subset.max() + subset.std()*0.5, 200)
+        kde_vals = kde(y_range)
+        kde_vals = kde_vals / kde_vals.max() * 0.35  # normalise width
+
+        ax.fill_betweenx(y_range, i - kde_vals, i, color=color, alpha=1.0, linewidth=0)
+
+        # ── Mean line ─────────────────────────────────────────────────────────
+
+        mean_val     = subset.mean()
+        kde_at_mean  = kde(mean_val)[0]
+        kde_at_mean  = kde_at_mean / kde_vals.max() * 0.35  # same normalisation as the cloud
+        
+        ax.hlines(subset.mean(), i - 0.35, i, color="white", linewidth=1.5, zorder=4)
+        #ax.hlines(subset.mean(), i - 0.33, i, color="black", linewidth=1.5, zorder=4)
+
+        # ── Jittered dots (right side) ────────────────────────────────────────
+        for val in subset:
+            jitter = i + random.uniform(0.08, 0.35)
+            marker = "^" if any(
+                "Unequal" in row["config_name"]
+                for _, row in df[(df["turing_type"] == t) &
+                                 (df["rob_shaberi_total"] == val)].iterrows()
+            ) else "o"
+            ax.scatter(jitter, val, color=color, marker=marker, s=95, edgecolors="white", linewidths=0.4, zorder=3)
+
+    ax.set_xticks(range(len(types)))
+    ax.set_xticklabels(labels, fontsize=11)
+    ax.set_ylabel("Robustness Score (rob_shaberi_total)", fontsize=12)
+    ax.set_title(
+        "Robustness distribution by Turing Type for #3954\n"
+        "(Latin Hypercube Sampling, 1 million simulations)",
+        fontsize=13, loc="left", pad=10,
+    )
+    ax.xaxis.grid(False)
+    #ax.yaxis.grid(False)
+    ax.set_xlim(-0.5, len(types) - 0.5)
+
+    # Legend
+    handles = [
+        mlines.Line2D([], [], color="#313131", marker="o", linestyle="None", markersize=8, markeredgecolor="white", label="Equal"),
+        mlines.Line2D([], [], color="#313131", marker="^", linestyle="None", markersize=8, markeredgecolor="white", label="Unequal"),
+    ]
+
+    ax.legend(handles=handles, title="Diffusion", frameon=False, loc="center right", bbox_to_anchor=(1.2, 0.5), ncol=1)
+
+    fig.tight_layout()
+    save(fig, "3954_lhs_fig2_raincloud")
 
 
 ##################################### FIGURE 3: Grouped bars, max robustness per topology × type #####################################
@@ -227,71 +307,7 @@ def fig4_diego_vs_shaberi(df):
 
 
 
-def fig2_raincloud(df):
-    from scipy.stats import gaussian_kde
 
-    random.seed(42)
-    types  = ["Type1", "Type2", "Type3"]
-    labels = ["Type 1", "Type 2", "Type 3"]
-
-    fig, ax = plt.subplots(figsize=(8, 6))
-
-    for i, (t, label) in enumerate(zip(types, labels)):
-        subset = df[df["turing_type"] == t]["rob_shaberi_total"].dropna().values
-
-        if len(subset) < 2:
-            continue
-
-        color = TYPE_COLORS[t]
-
-        # ── Half violin (left side) ───────────────────────────────────────────
-        #kde    = gaussian_kde(subset, bw_method=0.4)
-        kde    = gaussian_kde(subset, bw_method=0.3)
-        #y_range = np.linspace(subset.min(), subset.max(), 200)
-        y_range = np.linspace(subset.min() - subset.std()*0.6, subset.max() + subset.std()*0.6, 200)
-        kde_vals = kde(y_range)
-        kde_vals = kde_vals / kde_vals.max() * 0.35  # normalise width
-
-        ax.fill_betweenx(y_range, i - kde_vals, i, color=color, alpha=0.9, linewidth=0)
-
-        # ── Mean line ─────────────────────────────────────────────────────────
-        ax.hlines(subset.mean(), i - 0.38, i, color="black", linewidth=2, zorder=4)
-
-        # ── Jittered dots (right side) ────────────────────────────────────────
-        for val in subset:
-            jitter = i + random.uniform(0.05, 0.35)
-            marker = "^" if any(
-                "Unequal" in row["config_name"]
-                for _, row in df[(df["turing_type"] == t) &
-                                 (df["rob_shaberi_total"] == val)].iterrows()
-            ) else "o"
-            ax.scatter(jitter, val, color=color, marker=marker,
-                       s=50, edgecolors="white", linewidths=0.4, alpha=0.9, zorder=3)
-
-    ax.set_xticks(range(len(types)))
-    ax.set_xticklabels(labels, fontsize=11)
-    ax.set_ylabel("Robustness Score (rob_shaberi_total)", fontsize=11)
-    ax.set_title(
-        "Robustness distribution by Turing Type for #1754\n"
-        "(Latin Hypercube Sampling, 1 million simulations)",
-        fontsize=12, loc="left", pad=10,
-    )
-    ax.xaxis.grid(False)
-    ax.set_xlim(-0.5, len(types) - 0.5)
-
-    # Legend
-    import matplotlib.lines as mlines
-    handles = [
-        mlines.Line2D([], [], color="#888888", marker="o", linestyle="None",
-                      markersize=7, markeredgecolor="white", label="Equal"),
-        mlines.Line2D([], [], color="#888888", marker="^", linestyle="None",
-                      markersize=7, markeredgecolor="white", label="Unequal"),
-    ]
-    ax.legend(handles=handles, title="Diffusion", frameon=False,
-              loc="upper center", bbox_to_anchor=(0.5, -0.10), ncol=2)
-
-    fig.tight_layout()
-    save(fig, "1754_lhs_fig2_raincloud")
 
 
 

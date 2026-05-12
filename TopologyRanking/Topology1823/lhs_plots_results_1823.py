@@ -11,7 +11,7 @@ import matplotlib.lines as mlines
 # have to run this first: module load SciPy-bundle/2024.05-gfbf-2024a
 # have to run this first: pip install seaborn --user
 
-CSV = "1754_lhs_results_final_1mio.csv"
+CSV = "1823_lhs_results_final_1mio.csv"
 OUT_DIR = Path("plots")
 OUT_DIR.mkdir(exist_ok=True)
 
@@ -43,7 +43,7 @@ def load_data():
     df = pd.read_csv(CSV)
 
     # Extract topology (DCC / CDD / CCD …) and Turing type (Type1/2/3)
-    df["topology"]    = df["config_name"].str.extract(r"LHS_1754_([A-Z]+)_")
+    df["topology"]    = df["config_name"].str.extract(r"LHS_1823_([A-Z]+)_")
     df["turing_type"] = df["config_name"].str.extract(r"(Type[123])")
 
     return df
@@ -68,7 +68,7 @@ def fig1_overview(df):
 
     ax.set_xticks(range(len(df)))
     ax.set_xticklabels(
-        df["config_name"].str.replace("1754_", "", regex=False),
+        df["config_name"].str.replace("1823_", "", regex=False),
         rotation=55,
         ha="right",
         fontsize=8,
@@ -76,7 +76,7 @@ def fig1_overview(df):
 
     ax.set_ylabel("Robustness Score (in %)", fontsize=11)
     ax.set_title(
-        "Robustness of Topologies for #1754\n(Latin Hypercube Sampling, 1 million simulations)",
+        "Robustness of Topologies for #1823\n(Latin Hypercube Sampling, 1 million simulations)",
         fontsize=12, loc="left", pad=10,
     )
     ax.spines[["top", "right"]].set_visible(False)
@@ -100,7 +100,7 @@ def fig1_overview(df):
     ax.legend(handles=handles, title="Turing Type", frameon=False, loc="upper center", bbox_to_anchor=(0.5, -0.4), ncol=3)
 
     fig.tight_layout()
-    save(fig, "1754_lhs_fig1_overview_bar_detail")
+    save(fig, "1823_lhs_fig1_overview_bar_detail")
 
 
 
@@ -132,7 +132,7 @@ def fig1_overview(df):
 #     ax.set_xticklabels(["Type 1", "Type 2", "Type 3"], fontsize=11)
 #     ax.set_ylabel("Robustness Score (in %, Shaberi Method)", fontsize=11)
 #     ax.set_title(
-#         "Robustness Scores by Turing Type for #1754\n(Latin Hypercube Sampling, 1 million simulations)",
+#         "Robustness Scores by Turing Type for #1823\n(Latin Hypercube Sampling, 1 million simulations)",
 #         fontsize=12, loc="left", pad=10,
 #     )
 #     ax.xaxis.grid(False)
@@ -142,11 +142,10 @@ def fig1_overview(df):
 #     save(fig, "1754_lhs_fig2_dotplot")
 
 
-
-def fig2_new_dotplot(df):
+def fig2_dotplot(df):
     random.seed(42)
 
-    fig, ax = plt.subplots(figsize=(6, 4))
+    fig, ax = plt.subplots(figsize=(7, 4))
 
     types = ["Type1", "Type2", "Type3"]
 
@@ -167,11 +166,11 @@ def fig2_new_dotplot(df):
             )
 
     ax.set_xticks([0, 1, 2])
-    ax.set_xticklabels(["Type 1", "Type 2", "Type 3"], fontsize=12)
-    ax.set_ylabel("Robustness Score (in %, Shaberi Method)", fontsize=12)
+    ax.set_xticklabels(["Type 1", "Type 2", "Type 3"], fontsize=11)
+    ax.set_ylabel("Robustness Score (in %, Shaberi Method)", fontsize=11)
     ax.set_title(
-        "Robustness Scores by Turing Type for #1754\n(Latin Hypercube Sampling, 1 million simulations)",
-        fontsize=13, loc="left", pad=10,
+        "Robustness Scores by Turing Type for #1823\n(Latin Hypercube Sampling, 1 million simulations)",
+        fontsize=12, loc="left", pad=10,
     )
     ax.xaxis.grid(False)
     ax.set_xlim(-0.5, 2.5)
@@ -184,54 +183,7 @@ def fig2_new_dotplot(df):
     ax.legend(handles=handles, title="Diffusion", frameon=False, loc="center right", bbox_to_anchor=(1.3, 0.5), ncol=1)
 
     fig.tight_layout()
-    save(fig, "1754_lhs_fig2_new_dotplot")
-
-
-
-
-
-
-
-##################################### FIGURE 3: Grouped bars, max robustness per topology × type #####################################
-
-def fig3_grouped_topology(df):
- 
-    fig, ax = plt.subplots(figsize=(9, 5))
-
-    topos = df["topology"].dropna().unique()
-    types = ["Type1", "Type2", "Type3"]
-    x     = np.arange(len(topos))
-    w     = 0.25
- 
-    for i, t in enumerate(types):
-        vals = [
-            df[(df["topology"] == topo) & (df["turing_type"] == t)]["rob_shaberi_total"].max()
-            for topo in topos
-        ]
-        ax.bar(
-            x + (i - 1) * w,
-            vals,
-            width=w,
-            color=TYPE_COLORS[t],
-            label=t,
-            edgecolor="white",
-            linewidth=0.5,
-        )
- 
-    ax.set_xticks(x)
-    ax.set_xticklabels(topos, fontsize=11)
-    ax.set_ylabel("Max Robustness Score (in %, Shaberi Method)", fontsize=11)
-    ax.set_title(
-        "Max robustness for #1754 Topology\n(Latin Hypercube Sampling, 1 million simulations)",
-        fontsize=12, loc="left", pad=10,
-    )
-    ax.xaxis.grid(False)
-    ax.legend(title="Turing Type", frameon=False,
-              loc="upper center", bbox_to_anchor=(0.5, -0.12), ncol=3)
- 
-    fig.tight_layout()
-    save(fig, "1754_lhs_fig3_grouped_topology")
-
+    save(fig, "1823_lhs_fig2_dotplot")
 
 
 # ##################################### FIGURE 4: Scatter Plot Shaberi vs Diego Robustness across Type 1 to 3 #####################################
@@ -282,7 +234,5 @@ def fig3_grouped_topology(df):
 
 df = load_data()
 fig1_overview(df)
-# fig2_dotplot(df)
-fig2_new_dotplot(df)
-fig3_grouped_topology(df)
+fig2_dotplot(df)
 # fig4_diego_vs_shaberi(df)
