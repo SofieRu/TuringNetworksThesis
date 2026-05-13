@@ -281,7 +281,7 @@ DIFFUSION_CONFIGS = {
 
     16: {"name": "NEW_LHS_3954_Type3_V1_Equal",    "dU": 0.0,  "dV": 1.0,  "dW": 0.0},
     17: {"name": "NEW_LHS_3954_Type3_V2_Equal",    "dU": 0.0,  "dV": 1.0,  "dW": 1.0},
-    18: {"name": "NEW_LHS_3954_Type3_V3_Equal",     "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
+    18: {"name": "NEW_LHS_3954_Type3_V3_Equal",    "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
 
     19: {"name": "NEW_LHS_3954_Type3_V4_Equal",     "dU": 1.0,  "dV": 0.0,  "dW": 0.0},
     20: {"name": "NEW_LHS_3954_Type3_V4_Unequal1",  "dU": 0.1,  "dV": 0.0,  "dW": 0.0},
@@ -289,6 +289,7 @@ DIFFUSION_CONFIGS = {
 }
 
 
+# add one version where node W is always immobile so like DCI, also 100 i think is type 2 when node w is immobile but not sure could also be type 3 when we freeze the entire destabilising cycle so VW??
 
 
 
