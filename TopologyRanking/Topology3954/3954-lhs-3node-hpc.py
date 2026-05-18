@@ -87,7 +87,7 @@ def is_turing_diego(J, DU, DV, DW):
     
     # SUPPOSED TO BE 0.01 STEP, BUT INCREASED TO 0.1 FOR SPEED, CHANGE BACK LATER 
     D = np.diag([DU, DV, DW])
-    for k in np.arange(0.01, 10.01, 0.01):   
+    for k in np.arange(0.01, 10.01, 0.1):   
         M = J - k**2 * D
         a1 = -np.trace(M)
         a2 = (M[0,0]*M[1,1] - M[0,1]*M[1,0] +
@@ -108,7 +108,7 @@ def is_turing_shaberi(J, eigs_0, DU, DV, DW):
     
     # STEP 2: Check for instability with diffusion, # SUPPOSED TO BE 0.01 STEP, BUT INCREASED TO 0.1 FOR SPEED, CHANGE BACK LATER 
     D = np.diag([DU, DV, DW])
-    k_values = np.arange(0.01, 10.01, 0.01)
+    k_values = np.arange(0.01, 10.01, 0.1)
     
     has_instability = False
     is_oscillatory = False
@@ -391,7 +391,7 @@ def run_analysis(config_id, n_samples):
     rob_diego = 100 * diego_turing / n_samples
     rob_shaberi_total = 100 * shaberi_total / n_samples
     rob_shaberi_type_I = 100 * shaberi_type_I / n_samples
-    
+
     results = {
         "config_name": config_name,
         "config_id": config_id,
