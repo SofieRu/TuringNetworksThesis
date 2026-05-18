@@ -3,10 +3,10 @@ import numpy as np
 import sys
 import pickle
 import os
-import pandas as pd
+from scipy.linalg import eig
 from scipy.optimize import fsolve
 from scipy.stats import qmc
-import heapq
+import pandas as pd
 
 # Create directories (for local testing)
 os.makedirs("results", exist_ok=True)
@@ -70,7 +70,6 @@ def compute_jacobian(state, params):
     J[2, 2] = beta_w * dH_act(w, K_ww) * hill_inhibition(u, K_uw) * hill_inhibition(v, K_vw) - delta_w
     
     return J
-
 
 
 # TURING DETECTION METHODS
@@ -184,80 +183,6 @@ def is_turing_shaberi(J, eigs_0, DU, DV, DW):
 ##############################################
 
 # DIFFUSION CONFIGURATIONS
-# EXTENDED VERSION
-
-# DIFFUSION_CONFIGS = {
-#     # DCC: A=Destable, B=Complementary, C=Complementary
-#     0:  {"name": "LHS_3954_DCC_Type1",          "dU": 1.0,  "dV": 10.0, "dW": 10.0},
-#     1:  {"name": "LHS_3954_DCC_Type1_Var1",     "dU": 1.0,  "dV": 0.0,  "dW": 10.0},
-#     2:  {"name": "LHS_3954_DCC_Type1_Var2",     "dU": 1.0,  "dV": 10.0, "dW": 0.0},
-#     3:  {"name": "LHS_3954_DCC_Type1_Control",  "dU": 1.0,  "dV": 1.0,  "dW": 1.0},
-    
-#     4:  {"name": "LHS_3954_DCC_Type2_Equal",    "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
-#     5:  {"name": "LHS_3954_DCC_Type2_Unequal1", "dU": 1.0,  "dV": 0.1,  "dW": 0.0},
-#     6:  {"name": "LHS_3954_DCC_Type2_Unequal2", "dU": 10.0, "dV": 1.0,  "dW": 0.0},
-#     7:  {"name": "LHS_3954_DCC_Type2_Unequal3", "dU": 0.1,  "dV": 1.0,  "dW": 0.0},
-#     8:  {"name": "LHS_3954_DCC_Type2_Unequal4", "dU": 1.0,  "dV": 10.0, "dW": 0.0},
-#     # 9:  {"name": "LHS_3954_DCC_Type2_Var1",     "dU": 1.0,  "dV": 0.0,  "dW": 0.0}, # no 1,0,0 if not necessary bc freezing both leads to salt and pepper/turing filters 
-
-#     9:  {"name": "LHS_3954_DCC_Type3_Equal",    "dU": 0.0,  "dV": 1.0,  "dW": 1.0},
-#     10: {"name": "LHS_3954_DCC_Type3_Unequal1", "dU": 0.0,  "dV": 0.1,  "dW": 1.0},
-#     11: {"name": "LHS_3954_DCC_Type3_Unequal2", "dU": 0.0,  "dV": 1.0,  "dW": 0.1},
-#     12: {"name": "LHS_3954_DCC_Type3_Unequal3", "dU": 0.0,  "dV": 1.0,  "dW": 10.0},
-#     13: {"name": "LHS_3954_DCC_Type3_Unequal4", "dU": 0.0,  "dV": 10.0, "dW": 1.0},
-    
-#     # CDD: A=Complementary, B=Destable, C=Destable
-#     14: {"name": "LHS_3954_CDD_Type1",          "dU": 10.0, "dV": 1.0,  "dW": 1.0},
-#     #15: {"name": "LHS_3954_CDD_Type1_Var1",     "dU": 10.0, "dV": 1.0,  "dW": 0.0}, # for type I all destabilising nodes have to be mobile
-#     #16: {"name": "LHS_3954_CDD_Type1_Var2",     "dU": 10.0, "dV": 0.0,  "dW": 1.0}, # for type I all destabilising nodes have to be mobile
-#     15: {"name": "LHS_3954_CDD_Type1_Control",  "dU": 1.0,  "dV": 1.0,  "dW": 1.0},   
-    
-#     16: {"name": "LHS_3954_CDD_Type2_Equal",    "dU": 0.0,  "dV": 1.0,  "dW": 1.0},
-#     17: {"name": "LHS_3954_CDD_Type2_Unequal1", "dU": 0.0,  "dV": 0.1,  "dW": 1.0},
-#     18: {"name": "LHS_3954_CDD_Type2_Unequal2", "dU": 0.0,  "dV": 1.0,  "dW": 0.1},
-#     19: {"name": "LHS_3954_CDD_Type2_Unequal3", "dU": 0.0,  "dV": 1.0,  "dW": 10.0},
-#     20: {"name": "LHS_3954_CDD_Type2_Unequal4", "dU": 0.0,  "dV": 10.0, "dW": 1.0},
-    
-#     21: {"name": "LHS_3954_CDD_Type3_Equal",    "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
-#     22: {"name": "LHS_3954_CDD_Type3_Unequal1", "dU": 1.0,  "dV": 0.1,  "dW": 0.0},
-#     23: {"name": "LHS_3954_CDD_Type3_Unequal2", "dU": 0.1,  "dV": 1.0,  "dW": 0.0},
-#     24: {"name": "LHS_3954_CDD_Type3_Unequal3", "dU": 10.0, "dV": 1.0,  "dW": 0.0},
-#     25: {"name": "LHS_3954_CDD_Type3_Unequal4", "dU": 1.0,  "dV": 10.0, "dW": 0.0},
-#     # 29: {"name": "LHS_3954_CDD_Type3_Var1",     "dU": 1.0,  "dV": 0.0,  "dW": 0.0}, # this one is weirdly high, soo i took it out...leads to turing filters
-#     26: {"name": "LHS_3954_CDD_Type3_Var1",     "dU": 1.0,  "dV": 0.0,  "dW": 1.0},
-    
-#     # CCD: A=Compl., B=Compl., C=Destable
-#     27: {"name": "LHS_3954_CCD_Type1",          "dU": 10.0, "dV": 10.0, "dW": 1.0},
-#     28: {"name": "LHS_3954_CCD_Type1_Var1",     "dU": 10.0, "dV": 0.0,  "dW": 1.0},
-#     29: {"name": "LHS_3954_CCD_Type1_Var2",     "dU": 0.0,  "dV": 10.0, "dW": 1.0}, # this is really high so maybe take it out, makes type I higher -> LHS_3954_CCD_Type1_Var2,29,"{'dU': 0.0, 'dV': 10.0, 'dW': 1.0}",1000000,969615,951296,6758,6758,1,6746,11,0.6758,0.6758,0.0001
-#     30: {"name": "LHS_3954_CCD_Type1_Control",  "dU": 1.0,  "dV": 1.0,  "dW": 1.0},
-    
-#     31: {"name": "LHS_3954_CCD_Type2_Equal",    "dU": 0.0,  "dV": 1.0,  "dW": 1.0},
-#     32: {"name": "LHS_3954_CCD_Type2_Unequal1", "dU": 0.0,  "dV": 0.1,  "dW": 1.0},
-#     33: {"name": "LHS_3954_CCD_Type2_Unequal2", "dU": 0.0,  "dV": 1.0,  "dW": 0.1},
-#     34: {"name": "LHS_3954_CCD_Type2_Unequal3", "dU": 0.0,  "dV": 1.0,  "dW": 10.0},
-#     35: {"name": "LHS_3954_CCD_Type2_Unequal4", "dU": 0.0,  "dV": 10.0, "dW": 1.0},
-    
-#     36: {"name": "LHS_3954_CCD_Type3_Equal",    "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
-#     37: {"name": "LHS_3954_CCD_Type3_Unequal1", "dU": 0.1,  "dV": 1.0,  "dW": 0.0},
-#     38: {"name": "LHS_3954_CCD_Type3_Unequal2", "dU": 1.0,  "dV": 0.1,  "dW": 0.0},
-#     39: {"name": "LHS_3954_CCD_Type3_Unequal3", "dU": 10.0, "dV": 1.0,  "dW": 0.0},
-#     40: {"name": "LHS_3954_CCD_Type3_Unequal4", "dU": 1.0,  "dV": 10.0, "dW": 0.0},
-
-#     # DCI: A=Destable, B=Compl., C=Immobile
-#     41: {"name": "LHS_3954_DCI_Type1",          "dU": 1.0,  "dV": 10.0, "dW": 0.0},
-#     42: {"name": "LHS_3954_DCI_Type1_Control",  "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
-
-#     43: {"name": "LHS_3954_DCI_Type2_Equal",    "dU": 1.0,  "dV": 0.0,  "dW": 0.0},
-#     44: {"name": "LHS_3954_DCI_Type2_Unequal1", "dU": 0.1,  "dV": 0.0,  "dW": 0.0},
-#     45: {"name": "LHS_3954_DCI_Type2_Unequal2", "dU": 10.0, "dV": 0.0,  "dW": 0.0},
-
-#     46: {"name": "LHS_3954_DCI_Type3_Equal",    "dU": 0.0,  "dV": 1.0,  "dW": 0.0},
-#     47: {"name": "LHS_3954_DCI_Type3_Unequal1", "dU": 0.0,  "dV": 0.1,  "dW": 0.0},
-#     48: {"name": "LHS_3954_DCI_Type3_Unequal2", "dU": 0.0,  "dV": 10.0, "dW": 0.0},
-# }
-
-
 
 DIFFUSION_CONFIGS = {
     0:  {"name": "NEW_LHS_3954_Type1_V1_Equal",     "dU": 10.0, "dV": 1.0,  "dW": 1.0},
@@ -289,15 +214,13 @@ DIFFUSION_CONFIGS = {
     21: {"name": "NEW_LHS_3954_Type3_V4_Unequal2",  "dU": 10.0, "dV": 0.0,  "dW": 0.0},
 }
 
-
 # add one version where node W is always immobile so like DCI, also 100 i think is type 2 when node w is immobile but not sure could also be type 3 when we freeze the entire destabilising cycle so VW??
-
 
 
 
 # MAIN ANALYSIS FUNCTION
 
-def run_analysis(config_id, n_samples):
+def run_analysis(config_id, n_samples, save_successful_params=False, max_successful=2):
     
     config = DIFFUSION_CONFIGS[config_id]
     DU, DV, DW = config["dU"], config["dV"], config["dW"]
@@ -322,10 +245,6 @@ def run_analysis(config_id, n_samples):
         log_max = np.log10(param_ranges[i][1])
         params_log[:, i] = 10**(log_min + samples[:, i] * (log_max - log_min))
     
-    # Heap to keep the N strongest Type-I hits (min-heap on max_re_eig)
-    n_save = 5
-    type_I_heap = []  # entries: (max_re_eig, sample_idx, params, steady_state)
-
     # Initialize counters
     steady_states = 0
     stable_without_diffusion = 0
@@ -334,6 +253,9 @@ def run_analysis(config_id, n_samples):
     shaberi_type_I = 0
     shaberi_type_II = 0
     shaberi_hopf = 0
+
+    # NEW: List to collect ALL successful parameters
+    successful_params = [] if save_successful_params else None
     
     # Main loop
     np.random.seed(42)
@@ -363,19 +285,8 @@ def run_analysis(config_id, n_samples):
                     if turing_type == 'Type-I':
                         shaberi_type_I += 1
 
-                        # Compute max Re(lambda) over dispersion for ranking
-                        D = np.diag([DU, DV, DW])
-                        max_re_eig = -np.inf
-                        for k in np.arange(0.01, 10.01, 0.01):
-                            eigs_k = np.linalg.eigvals(J - k**2 * D)
-                            max_re = max(max_re, np.max(np.real(eigs_k)))
-                        
-                        # Keep best n_save
-                        entry = (max_re, i, params.copy(), steady.copy())
-                        if len(type_I_heap) < n_save:
-                            heapq.heappush(type_I_heap, entry)
-                        else:
-                            heapq.heappushpop(type_I_heap, entry)
+                        if save_successful_params:
+                            successful_params.append({'params_array': params.copy(), 'steady_state': steady_states.copy(), 'max_eigenvalue': float(np.max(np.real(eigs_0)))})
 
                     elif turing_type == 'Type-II':
                         shaberi_type_II += 1
@@ -387,6 +298,11 @@ def run_analysis(config_id, n_samples):
             print(f"[{config_name}] {i+1:,}/{n_samples:,} | Stable: {stable_without_diffusion} | "
                   f"Diego: {diego_turing} | Shaberi: {shaberi_total}")
     
+    # NEW: After loop, select BEST parameter sets (most stable)
+    if save_successful_params and len(successful_params) > 0:
+        successful_params.sort(key=lambda x: x['max_eigenvalue'])  # Sort by most negative max eigenvalue
+        successful_params = successful_params[:max_successful]  # Keep only top N
+
     # Calculate robustness
     rob_diego = 100 * diego_turing / n_samples
     rob_shaberi_total = 100 * shaberi_total / n_samples
@@ -409,26 +325,35 @@ def run_analysis(config_id, n_samples):
         "rob_shaberi_type_I": rob_shaberi_type_I,
     }
 
-    # Sort heap descending (strongest first) and store
-    type_I_hits = sorted(type_I_heap, key=lambda x: x[0], reverse=True)
-    results["type_I_hits"] = [{"rank": rank, "max_re_eig": entry[0], "sample_idx": entry[1], "params": entry[2], "steady_state": entry[3]} for rank, entry in enumerate(type_I_hits)]
-    
+    # NEW: Add successful parameters if they were saved
+    if save_successful_params and successful_params:
+        results['successful_params'] = successful_params
+        results['n_successful_saved'] = len(successful_params)
+
     return results
 
 # ACTUAL HPC CODE TO RUN ALL CONFIGURATIONS
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("Usage: python run_lhs_3node.py <config_id>")
+        print("Usage: python 3954-lhs-3node-hpc.py <config_id> [--save-params] [--n-to-save=N]")
         sys.exit(1)
     
     config_id = int(sys.argv[1])
     n_samples = 1_000_000  # 500K samples for Phase 1 and then increase to 1 million
     
-    results = run_analysis(config_id, n_samples)
+    # NEW: Check for parameter saving flags
+    save_successful_params = '--save-params' in sys.argv
+    max_successful = 2  # Default to saving top 2 parameter sets
+
+    for arg in sys.argv:
+        if arg.startswith('--n-to-save='):
+            max_successful = int(arg.split('=')[1])
+    
+    results = run_analysis(config_id, n_samples, save_successful_params, max_successful)
     
     # Save as pickle (for Python)
-    output_pkl = f"results/{results['config_name']}_1mio.pkl"
+    output_pkl = f"results/{results['config_name']}_1mio_with_params.pkl"
     with open(output_pkl, 'wb') as f:
         pickle.dump(results, f)
     
@@ -451,28 +376,10 @@ if __name__ == "__main__":
         'rob_shaberi_total': results['rob_shaberi_total'],
         'rob_shaberi_type_I': results['rob_shaberi_type_I'],
     }
-    output_csv = f"results/{results['config_name']}_1mio.csv"
+    output_csv = f"results/{results['config_name']}_1mio_with_params.csv"
     pd.DataFrame([results_flat]).to_csv(output_csv, index=False)
-    
-
-    # Save Type-I hits as CSV (parameter sets for Obj 2 spatial analysis)
-    if results["type_I_hits"]:
-        hits_df = pd.DataFrame([{
-            'config_name': results['config_name'],
-            'rank': h['rank'],
-            'max_re_eig': h['max_re_eig'],
-            'sample_idx': h['sample_idx'],
-            **{f"p{i}": v for i, v in enumerate(h["params"])},
-            "u_ss": h["steady_state"][0],
-            "v_ss": h["steady_state"][1],
-            "w_ss": h["steady_state"][2],
-        } for h in results["type_I_hits"]])
-        hits_df.to_csv(f"results/{results['config_name']}_type_I_hits.csv", index=False)
 
     # Print summary
-    print(f"\n{'='*70}")
-    print(f"COMPLETED: {results['config_name']}")
-    print(f"{'='*70}")
     print(f"Diego Turing:    {results['diego_turing']} ({results['rob_diego']:.4f}%)")
     print(f"Shaberi Total:   {results['shaberi_total']} ({results['rob_shaberi_total']:.4f}%)")
     print(f"  Type-I:        {results['shaberi_type_I']}")
