@@ -2,6 +2,7 @@
 import numpy as np
 from scipy.optimize import fsolve
 
+# have to run this first: module load SciPy-bundle/2024.05-gfbf-2024a
 
 # FUNCTIONS FROM OBJECTIVE 1 (HILL FUNCTIONS, ODE SYSTEM, STEADY STATE FINDING, JACOBIAN)
 
@@ -101,37 +102,26 @@ def is_turing_shaberi(J, eigs_0, DU, DV, DW):
     return 'Type-II'  # Doesn't restabilize
 
 
-
-
-
-
-
-
-
-
-
-
-
-
+# PARAMETRS FOR HOMOGENOUS RING
 
 baseline_params = np.array([
     0.1,   # alpha_u
     1.0,   # beta_u
-    0.5,   # K_uu (u self-activation)
-    0.5,   # K_vu (v inhibits u)
+    0.9,   # K_uu (u self-activation)
+    0.3,   # K_vu (v inhibits u)
     0.8,   # delta_u
     
     0.1,   # alpha_v
     1.2,   # beta_v
-    0.5,   # K_uv (u activates v)
-    0.5,   # K_wv (w inhibits v)
+    0.2,   # K_uv (u activates v)
+    0.3,   # K_wv (w inhibits v)
     1.0,   # delta_v
     
     0.1,   # alpha_w
     1.0,   # beta_w
     0.5,   # K_ww (w self-activation)
-    0.5,   # K_uw (u inhibits w)
-    0.5,   # K_vw (v inhibits w)
+    0.3,   # K_uw (u inhibits w)
+    0.3,   # K_vw (v inhibits w)
     0.9    # delta_w
 ])
 
@@ -142,6 +132,59 @@ hopping = {
     'h_v': 1.0,
     'h_w': 0.0,
 }
+
+
+
+
+# FUNCTION TO BUILD JACOBIAN FOR RING OF IDENTICAL CELLS
+
+# Parameters: 
+# N_cells: number of cells (e.g., 10)
+# steady_state: [u*, v*, w*] from single cell
+# params: your parameter array
+# hopping: dict with h_u, h_v, h_w
+
+def build_ring_jacobian_homogeneous(N_cells, steady_state, params, hopping):
+    # Get local 3×3 Jacobian (same for all cells)
+    J_local = compute_jacobian(steady_state, params)
+    
+    # Extract hopping rates
+    h_u = hopping['h_u']
+    h_v = hopping['h_v']
+    h_w = hopping['h_w']
+    
+    # Build big matrix
+    size = 3 * N_cells  # 30 for N=10
+    J_ring = np.zeros((size, size))
+    
+    for i in range(N_cells):
+        # Starting row/col for cell i
+        idx = 3 * i
+        
+        # Put local Jacobian in diagonal block
+        J_ring[idx:idx+3, idx:idx+3] = J_local.copy()
+        
+        # Add hopping terms (molecules leaving this cell)
+        J_ring[idx,   idx]   -= 2*h_u  # u leaves to both neighbors
+        J_ring[idx+1, idx+1] -= 2*h_v  # v leaves
+        J_ring[idx+2, idx+2] -= 2*h_w  # w leaves
+        
+        # Neighbors in a ring
+        left = (i - 1) % N_cells
+        right = (i + 1) % N_cells
+        
+        # Coupling FROM left neighbor
+        J_ring[idx,   3*left]   += h_u
+        J_ring[idx+1, 3*left+1] += h_v
+        J_ring[idx+2, 3*left+2] += h_w
+        
+        # Coupling FROM right neighbor
+        J_ring[idx,   3*right]   += h_u
+        J_ring[idx+1, 3*right+1] += h_v
+        J_ring[idx+2, 3*right+2] += h_w
+    
+    return J_ring
+
 
 
 
@@ -176,3 +219,30 @@ if __name__ == "__main__":
             print("\nSUCCESS! Baseline parameters work.")
         else:
             print("\nParameters don't work. Need to adjust.")
+
+
+
+# if turing == 'Type-I':
+#     print("\n" + "="*70)
+#     print("STEP 2: Building homogeneous ring")
+#     print("="*70)
+    
+#     N_cells = 10
+    
+#     # Build ring Jacobian
+#     J_ring = build_ring_jacobian_homogeneous(N_cells, steady_state, baseline_params, hopping)
+    
+#     print(f"Ring Jacobian size: {J_ring.shape}")
+    
+#     # Check eigenvalues
+#     eigs_ring = np.linalg.eigvals(J_ring)
+#     max_real_ring = np.max(np.real(eigs_ring))
+    
+#     print(f"Max eigenvalue (ring): {max_real_ring:.6f}")
+#     print(f"Ring shows instability? {max_real_ring > 0}")
+    
+#     if max_real_ring > 0:
+#         print("\n✓ SUCCESS! Ring shows Turing instability!")
+#         print("Ready for Step 3: Add heterogeneity")
+#     else:
+#         print("\n✗ Ring is stable (no instability)")
