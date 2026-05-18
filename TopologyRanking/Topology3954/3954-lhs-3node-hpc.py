@@ -6,6 +6,7 @@ import os
 import pandas as pd
 from scipy.optimize import fsolve
 from scipy.stats import qmc
+import heapq
 
 # Create directories (for local testing)
 os.makedirs("results", exist_ok=True)
@@ -321,6 +322,10 @@ def run_analysis(config_id, n_samples):
         log_max = np.log10(param_ranges[i][1])
         params_log[:, i] = 10**(log_min + samples[:, i] * (log_max - log_min))
     
+    # Heap to keep the N strongest Type-I hits (min-heap on max_re_eig)
+    n_save = 5
+    type_I_heap = []  # entries: (max_re_eig, sample_idx, params, steady_state)
+
     # Initialize counters
     steady_states = 0
     stable_without_diffusion = 0
@@ -357,6 +362,21 @@ def run_analysis(config_id, n_samples):
                     shaberi_total += 1
                     if turing_type == 'Type-I':
                         shaberi_type_I += 1
+
+                        # Compute max Re(lambda) over dispersion for ranking
+                        D = np.diag([DU, DV, DW])
+                        max_re_eig = -np.inf
+                        for k in np.arange(0.01, 10.01, 0.01):
+                            eigs_k = np.linalg.eigvals(J - k**2 * D)
+                            max_re = max(max_re, np.max(np.real(eigs_k)))
+                        
+                        # Keep best n_save
+                        entry = (max_re, i, params.copy(), steady.copy())
+                        if len(type_I_heap) < n_save:
+                            heapq.heappush(type_I_heap, entry)
+                        else:
+                            heapq.heappushpop(type_I_heap, entry)
+
                     elif turing_type == 'Type-II':
                         shaberi_type_II += 1
                     elif turing_type == 'Hopf':
@@ -393,6 +413,10 @@ def run_analysis(config_id, n_samples):
         "rob_shaberi_total": rob_shaberi_total,
         "rob_shaberi_type_I": rob_shaberi_type_I,
     }
+
+    # Sort heap descending (strongest first) and store
+    type_I_hits = sorted(type_I_heap, key=lambda x: x[0], reverse=True)
+    results["type_I_hits"] = [{"rank": rank, "max_re_eig": entry[0], "sample_idx": entry[1], "params": entry[2], "steady_state": entry[3]} for rank, entry in enumerate(type_I_hits)]
     
     return results
 
@@ -435,6 +459,21 @@ if __name__ == "__main__":
     output_csv = f"results/{results['config_name']}_1mio.csv"
     pd.DataFrame([results_flat]).to_csv(output_csv, index=False)
     
+
+    # Save Type-I hits as CSV (parameter sets for Obj 2 spatial analysis)
+    if results["type_I_hits"]:
+        hits_df = pd.DataFrame([{
+            'config_name': results['config_name'],
+            'rank': h['rank'],
+            'max_re_eig': h['max_re_eig'],
+            'sample_idx': h['sample_idx'],
+            **{f"p{i}": v for i, v in enumerate(h["params"])},
+            "u_ss": h["steady_state"][0],
+            "v_ss": h["steady_state"][1],
+            "w_ss": h["steady_state"][2],
+        } for h in results["type_I_hits"]])
+        hits_df.to_csv(f"results/{results['config_name']}_type_I_hits.csv", index=False)
+
     # Print summary
     print(f"\n{'='*70}")
     print(f"COMPLETED: {results['config_name']}")
@@ -448,3 +487,5 @@ if __name__ == "__main__":
     print(f"  {output_pkl}")
     print(f"  {output_csv}")
     print(f"{'='*70}")
+
+
