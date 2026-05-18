@@ -286,7 +286,17 @@ def run_analysis(config_id, n_samples, save_successful_params=False, max_success
                         shaberi_type_I += 1
 
                         if save_successful_params:
-                            successful_params.append({'params_array': params.copy(), 'steady_state': steady_states.copy(), 'max_eigenvalue': float(np.max(np.real(eigs_0)))})
+                            D = np.diag([DU, DV, DW])
+                            max_growth_rate = -np.inf
+
+                            for k in np.arange(0.01, 10.01, 0.1):
+                                M = J - k**2 * D
+                                eigs_k = np.linalg.eigvals(M)
+                                max_real_k = np.max(np.real(eigs_k))
+                                if max_real_k > max_growth_rate:
+                                    max_growth_rate = max_real_k
+
+                            successful_params.append({'params_array': params.copy(), 'steady_state': steady.copy(), 'max_growth_rate': float(max_growth_rate)})
 
                     elif turing_type == 'Type-II':
                         shaberi_type_II += 1
@@ -300,7 +310,7 @@ def run_analysis(config_id, n_samples, save_successful_params=False, max_success
     
     # NEW: After loop, select BEST parameter sets (most stable)
     if save_successful_params and len(successful_params) > 0:
-        successful_params.sort(key=lambda x: x['max_eigenvalue'])  # Sort by most negative max eigenvalue
+        successful_params.sort(key=lambda x: x['max_growth_rate'], reverse=True)  # Sort by most negative max growth rate
         successful_params = successful_params[:max_successful]  # Keep only top N
 
     # Calculate robustness
