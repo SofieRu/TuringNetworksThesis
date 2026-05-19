@@ -1,0 +1,32 @@
+Starting job 4 at Tue 19 May 15:13:40 BST 2026
+Starting NEW_LHS_3954_Type1_V4_Equal: dU=1.0, dV=10.0, dW=10.0, n_samples=1,000,000
+[NEW_LHS_3954_Type1_V4_Equal] 100,000/1,000,000 | Stable: 95180 | Diego: 7 | Shaberi: 7
+[NEW_LHS_3954_Type1_V4_Equal] 200,000/1,000,000 | Stable: 190103 | Diego: 21 | Shaberi: 21
+[NEW_LHS_3954_Type1_V4_Equal] 300,000/1,000,000 | Stable: 285166 | Diego: 31 | Shaberi: 31
+[NEW_LHS_3954_Type1_V4_Equal] 400,000/1,000,000 | Stable: 380343 | Diego: 38 | Shaberi: 38
+[NEW_LHS_3954_Type1_V4_Equal] 500,000/1,000,000 | Stable: 475497 | Diego: 49 | Shaberi: 49
+[NEW_LHS_3954_Type1_V4_Equal] 600,000/1,000,000 | Stable: 570769 | Diego: 58 | Shaberi: 58
+[NEW_LHS_3954_Type1_V4_Equal] 700,000/1,000,000 | Stable: 665900 | Diego: 66 | Shaberi: 66
+[NEW_LHS_3954_Type1_V4_Equal] 800,000/1,000,000 | Stable: 760988 | Diego: 77 | Shaberi: 77
+[NEW_LHS_3954_Type1_V4_Equal] 900,000/1,000,000 | Stable: 856080 | Diego: 87 | Shaberi: 87
+[NEW_LHS_3954_Type1_V4_Equal] 1,000,000/1,000,000 | Stable: 951296 | Diego: 94 | Shaberi: 94
+Diego Turing:    94 (0.0094%)
+Shaberi Total:   94 (0.0094%)
+  Type-I:        94
+  Type-II:       0
+  Hopf:          0
+
+Saved to:
+  results/NEW_LHS_3954_Type1_V4_Equal_1mio_with_params.pkl
+  results/NEW_LHS_3954_Type1_V4_Equal_1mio_with_params.csv
+======================================================================
+Finished job 4 at Tue 19 May 16:43:59 BST 2026
+
+====================================
+CPU Time used: 01:28:01
+CPU Percent: 99%
+Memory usage: 597716kb
+Approx Power usage: 0.0176
+Walltime usage: 01:30:25
+
+====================================

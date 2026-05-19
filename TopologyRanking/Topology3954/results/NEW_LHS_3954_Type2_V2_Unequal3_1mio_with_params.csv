@@ -1,2 +1,2 @@
 config_name,config_id,dU,dV,dW,n_samples,steady_states,stable_without_diffusion,diego_turing,shaberi_total,shaberi_type_I,shaberi_type_II,shaberi_hopf,rob_diego,rob_shaberi_total,rob_shaberi_type_I
-NEW_LHS_3954_Type2_V2_Unequal3,13,1.0,0.1,0.0,100000,96952,95166,302,302,270,32,0,0.302,0.302,0.27
+NEW_LHS_3954_Type2_V2_Unequal3,13,1.0,0.1,0.0,1000000,969615,951296,2828,2828,2534,294,0,0.2828,0.2828,0.2534
