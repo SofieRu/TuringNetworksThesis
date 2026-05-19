@@ -104,35 +104,47 @@ def is_turing_shaberi(J, eigs_0, DU, DV, DW):
 
 # PARAMETRS FOR HOMOGENOUS RING
 
+# config_name,config_id,dU,dV,dW,param_rank,max_growth_rate,alpha_u,beta_u,K_uu,K_vu,delta_u,alpha_v,beta_v,K_uv,K_wv,delta_v,alpha_w,beta_w,K_ww,K_uw,K_vw,delta_w,u_star,v_star,w_star
+# NEW_LHS_3954_Type2_V2_Unequal3,13,1.0,0.1,0.0,1,0.142536425011953,0.007077433094880293,1.4462479436287767,0.09245163265235273,0.26723942500123793,0.2436592755887972,0.005889422851713758,8.605716327777886,0.09207924851486214,0.12961324370483618,0.7777816957281338,0.0038604827469243463,1.6570791267318754,0.030767002915064585,0.9136856426323211,0.2649648697111866,0.18465525821355344,0.11797954202781268,1.697547444477265,0.22705338297596256
+
 baseline_params = np.array([
-    0.1,   # alpha_u
-    1.0,   # beta_u
-    0.9,   # K_uu (u self-activation)
-    0.3,   # K_vu (v inhibits u)
-    0.8,   # delta_u
+    # u parameters
+    0.007077433094880293,   # alpha_u
+    1.4462479436287767,     # beta_u
+    0.09245163265235273,    # K_uu
+    0.26723942500123793,    # K_vu
+    0.2436592755887972,     # delta_u
     
-    0.1,   # alpha_v
-    1.2,   # beta_v
-    0.2,   # K_uv (u activates v)
-    0.3,   # K_wv (w inhibits v)
-    1.0,   # delta_v
+    # v parameters
+    0.005889422851713758,   # alpha_v
+    8.605716327777886,      # beta_v
+    0.09207924851486214,    # K_uv
+    0.12961324370483618,    # K_wv
+    0.7777816957281338,     # delta_v
     
-    0.1,   # alpha_w
-    1.0,   # beta_w
-    0.5,   # K_ww (w self-activation)
-    0.3,   # K_uw (u inhibits w)
-    0.3,   # K_vw (v inhibits w)
-    0.9    # delta_w
+    # w parameters
+    0.0038604827469243463,  # alpha_w
+    1.6570791267318754,     # beta_w
+    0.030767002915064585,   # K_ww
+    0.9136856426323211,     # K_uw
+    0.2649648697111866,     # K_vw
+    0.18465525821355344     # delta_w
 ])
 
 
-# hopping rates (diffusion combination that leads to highest robustness)
+# hopping rates (diffusion combination that leads to highest robustness), can we also take unequal diffusion or do we jsut use 1,1,0 instead of 1,0.1,0???
 hopping = {
     'h_u': 1.0,
-    'h_v': 1.0,
+    'h_v': 0.1,
     'h_w': 0.0,
 }
 
+# Known steady state (for verification)
+steady_state_expected = np.array([
+    0.11797954202781268,    # u*
+    1.697547444477265,      # v*
+    0.22705338297596256     # w*
+])
 
 
 
@@ -187,39 +199,22 @@ def build_ring_jacobian_homogeneous(N_cells, steady_state, params, hopping):
 
 
 
-
-
-
 # TESTING THE FUNCTIONS
 
-if __name__ == "__main__":
+residuals = ode_system(steady_state_expected, baseline_params)
+print(f"Residuals: {np.max(np.abs(residuals)):.2e} (should be ~0)")
 
-    # Find steady state
-    steady_state = find_steady_state(baseline_params)
-    
-    if steady_state is None:
-        print("\nERROR: Could not find steady state!")
-    else:
-        print(f"\nSteady state: u={steady_state[0]:.3f}, v={steady_state[1]:.3f}, w={steady_state[2]:.3f}")
-        
-        # Compute Jacobian
-        J = compute_jacobian(steady_state, baseline_params)
-        
-        # Check stability
-        eigs = np.linalg.eigvals(J)
-        max_real = np.max(np.real(eigs))
-        print(f"Max eigenvalue (no diffusion): {max_real:.6f}")
-        print(f"Stable? {max_real < 0}")
-        
-        # Check Turing
-        turing = is_turing_shaberi(J, eigs, hopping['h_u'], hopping['h_v'], hopping['h_w'])
-        print(f"Turing type: {turing}")
-        
-        if turing == 'Type-I':
-            print("\nSUCCESS! Baseline parameters work.")
-        else:
-            print("\nParameters don't work. Need to adjust.")
+# Compute Jacobian at THIS steady state
+J = compute_jacobian(steady_state_expected, baseline_params)
 
+# Check stability
+eigs = np.linalg.eigvals(J)
+print(f"Max eigenvalue: {np.max(np.real(eigs)):.6f}")
+print(f"Stable? {np.max(np.real(eigs)) < 0}")
+
+# Check Turing
+turing = is_turing_shaberi(J, eigs, hopping['h_u'], hopping['h_v'], hopping['h_w'])
+print(f"Turing? {turing}")
 
 
 # if turing == 'Type-I':
