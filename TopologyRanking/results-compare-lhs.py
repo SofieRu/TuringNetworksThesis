@@ -327,7 +327,7 @@ def fig_3d_parameter_space_comparison():
     
     # Choose two configs to compare (e.g., low vs high robustness)
     config_a = 13  # High robustness
-    config_b = 2   # Different diffusion config
+    config_b = 10   # Different diffusion config
     
     df_a = df_params[df_params['config_id'] == config_a]
     df_b = df_params[df_params['config_id'] == config_b]
