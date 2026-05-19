@@ -199,43 +199,169 @@ def build_ring_jacobian_homogeneous(N_cells, steady_state, params, hopping):
 
 
 
+
+
+# FUNCTION TO BUILD JACOBIAN FOR RING OF DIFFERENT CELLS (PARAMETER HETEROGENEITY)
+
+# Parameters: 
+
+# Build (3N)×(3N) Jacobian for ring with parameter heterogeneity
+# - N_cells: number of cells (10)
+# - baseline_params: mean parameter values (16-element array)
+# - hopping: dict with h_u, h_v, h_w
+# - CV: coefficient of variation (e.g., 0.1 = 10% variation)
+
+# Returns:
+# - J_ring: 30×30 Jacobian matrix
+# - steady_states: list of 10 steady states (one per cell)
+# - params_list: list of 10 parameter arrays (one per cell)
+
+def build_ring_jacobian_heterogeneous(N_cells, baseline_params, hopping, CV):
+    # Generate perturbed parameters for each cell
+    params_list = []
+    for i in range(N_cells):
+        # Multiplicative noise: param_i = baseline × (1 + ε)
+        # where ε ~ N(0, CV²)
+        noise = np.random.normal(0, CV, size=16)
+        params_i = baseline_params * (1 + noise)
+        
+        # Make sure all parameters stay positive
+        params_i = np.maximum(params_i, 1e-6)
+        
+        params_list.append(params_i)
+    
+    # Find steady state for each cell
+    steady_states = []
+    for i, params_i in enumerate(params_list):
+        ss_i = find_steady_state(params_i)  # NOW we use this!
+        
+        if ss_i is None:
+            # If can't find steady state, use baseline as fallback
+            ss_i = find_steady_state(baseline_params)
+        
+        steady_states.append(ss_i)
+    
+    # Build the big Jacobian
+    h_u = hopping['h_u']
+    h_v = hopping['h_v']
+    h_w = hopping['h_w']
+    
+    size = 3 * N_cells
+    J_ring = np.zeros((size, size))
+    
+    for i in range(N_cells):
+        idx = 3 * i
+        
+        # Local Jacobian (DIFFERENT for each cell now!)
+        J_local = compute_jacobian(steady_states[i], params_list[i])
+        J_ring[idx:idx+3, idx:idx+3] = J_local
+        
+        # Hopping (same as before)
+        J_ring[idx, idx] -= 2*h_u
+        J_ring[idx+1, idx+1] -= 2*h_v
+        J_ring[idx+2, idx+2] -= 2*h_w
+        
+        # Coupling
+        left = (i - 1) % N_cells
+        right = (i + 1) % N_cells
+        
+        J_ring[idx, 3*left] += h_u
+        J_ring[idx+1, 3*left+1] += h_v
+        J_ring[idx+2, 3*left+2] += h_w
+        
+        J_ring[idx, 3*right] += h_u
+        J_ring[idx+1, 3*right+1] += h_v
+        J_ring[idx+2, 3*right+2] += h_w
+    
+    return J_ring, steady_states, params_list
+
+
+
+
+
+
 # TESTING THE FUNCTIONS
 
 residuals = ode_system(steady_state_expected, baseline_params)
-print("\nSTEP 1: Check if we get Turing instability from single cell Jacobian")
-print(f"Residuals: {np.max(np.abs(residuals)):.2e} (should be ~0)")
+# print("\nSTEP 1: Check if we get Turing instability from single cell Jacobian")
+# print(f"Residuals: {np.max(np.abs(residuals)):.2e} (should be ~0)")
 
 # Compute Jacobian at THIS steady state
 J = compute_jacobian(steady_state_expected, baseline_params)
 
 # Check stability
 eigs = np.linalg.eigvals(J)
-print(f"Max eigenvalue: {np.max(np.real(eigs)):.6f}")
-print(f"Stable? {np.max(np.real(eigs)) < 0}")
+# print(f"Max eigenvalue: {np.max(np.real(eigs)):.6f}")
+# print(f"Stable? {np.max(np.real(eigs)) < 0}")
 
 # Check Turing
 turing = is_turing_shaberi(J, eigs, hopping['h_u'], hopping['h_v'], hopping['h_w'])
-print(f"Turing? {turing}")
+# print(f"Turing? {turing}")
 
 
 if turing == 'Type-I':
-    print("\nSTEP 2: Building homogeneous ring")
+    #print("\nSTEP 2: Building homogeneous ring")
     
     N_cells = 10
     
     # Build ring Jacobian (use known steady state)
     J_ring = build_ring_jacobian_homogeneous(N_cells, steady_state_expected, baseline_params, hopping)
     
-    print(f"Ring Jacobian size: {J_ring.shape}")
+    #print(f"Ring Jacobian size: {J_ring.shape}")
     
     # Check eigenvalues
     eigs_ring = np.linalg.eigvals(J_ring)
     max_real_ring = np.max(np.real(eigs_ring))
     
-    print(f"Max eigenvalue (ring): {max_real_ring:.6f}")
-    print(f"Ring shows instability? {max_real_ring > 0}")
+    #print(f"Max eigenvalue (ring): {max_real_ring:.6f}")
+    #print(f"Ring shows instability? {max_real_ring > 0}")
     
     if max_real_ring > 0:
         print("\nSUCCESS! Ring shows Turing instability!")
     else:
         print("\nRing is stable (no instability)")
+
+
+
+
+
+
+print("\n" + "="*70)
+print("STEP 3: HETEROGENEOUS RING (SINGLE TEST)")
+print("="*70)
+
+# Test with one realization at CV = 0.1
+CV = 0.1
+np.random.seed(42)  # For reproducibility
+
+J_hetero, steady_states_hetero, params_hetero = build_ring_jacobian_heterogeneous(
+    N_cells=10,
+    baseline_params=baseline_params,
+    hopping=hopping,
+    CV=CV
+)
+
+print(f"CV = {CV} (10% variation)")
+print(f"Heterogeneous Jacobian size: {J_hetero.shape}")
+
+# Check eigenvalues
+eigs_hetero = np.linalg.eigvals(J_hetero)
+max_real_hetero = np.max(np.real(eigs_hetero))
+
+print(f"\nHomogeneous max eigenvalue: {max_real_ring:.6f}")
+print(f"Heterogeneous max eigenvalue: {max_real_hetero:.6f}")
+print(f"Change: {max_real_hetero - max_real_ring:.6f}")
+
+print(f"\nHeterogeneous still unstable? {max_real_hetero > 0}")
+
+if max_real_hetero > 0:
+    print("✓ Still shows Turing instability with 10% variation!")
+else:
+    print("✗ Turing instability lost with 10% variation")
+
+# Show parameter variation across cells
+print(f"\nParameter variation example (beta_u across 10 cells):")
+beta_u_values = [params_hetero[i][1] for i in range(10)]
+print(f"  Mean: {np.mean(beta_u_values):.4f}")
+print(f"  Std:  {np.std(beta_u_values):.4f}")
+print(f"  CV:   {np.std(beta_u_values)/np.mean(beta_u_values):.4f} (should be ~0.1)")
