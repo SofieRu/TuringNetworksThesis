@@ -1,0 +1,23 @@
+Starting job 7 at Mon 18 May 23:54:54 BST 2026
+Starting NEW_LHS_3954_Type2_V1_Unequal2: dU=5.0, dV=0.0, dW=1.0, n_samples=100,000
+[NEW_LHS_3954_Type2_V1_Unequal2] 100,000/100,000 | Stable: 95166 | Diego: 21 | Shaberi: 21
+Diego Turing:    21 (0.0210%)
+Shaberi Total:   21 (0.0210%)
+  Type-I:        21
+  Type-II:       0
+  Hopf:          0
+
+Saved to:
+  results/NEW_LHS_3954_Type2_V1_Unequal2_1mio_with_params.pkl
+  results/NEW_LHS_3954_Type2_V1_Unequal2_1mio_with_params.csv
+======================================================================
+Finished job 7 at Tue 19 May 00:07:26 BST 2026
+
+====================================
+CPU Time used: 00:09:58
+CPU Percent: 98%
+Memory usage: 164436kb
+Approx Power usage: 0.0017999999999999997
+Walltime usage: 00:12:49
+
+====================================

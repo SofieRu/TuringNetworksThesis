@@ -345,7 +345,7 @@ def run_analysis(config_id, n_samples, save_successful_params=False, max_success
 # ACTUAL HPC CODE TO RUN ALL CONFIGURATIONS
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
+    if len(sys.argv) < 2:
         print("Usage: python 3954-lhs-3node-hpc.py <config_id> [--save-params] [--n-to-save=N]")
         sys.exit(1)
     
