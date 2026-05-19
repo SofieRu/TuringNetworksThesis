@@ -202,6 +202,7 @@ def build_ring_jacobian_homogeneous(N_cells, steady_state, params, hopping):
 # TESTING THE FUNCTIONS
 
 residuals = ode_system(steady_state_expected, baseline_params)
+print("\nSTEP 1: Check if we get Turing instability from single cell Jacobian")
 print(f"Residuals: {np.max(np.abs(residuals)):.2e} (should be ~0)")
 
 # Compute Jacobian at THIS steady state
@@ -217,27 +218,24 @@ turing = is_turing_shaberi(J, eigs, hopping['h_u'], hopping['h_v'], hopping['h_w
 print(f"Turing? {turing}")
 
 
-# if turing == 'Type-I':
-#     print("\n" + "="*70)
-#     print("STEP 2: Building homogeneous ring")
-#     print("="*70)
+if turing == 'Type-I':
+    print("\nSTEP 2: Building homogeneous ring")
     
-#     N_cells = 10
+    N_cells = 10
     
-#     # Build ring Jacobian
-#     J_ring = build_ring_jacobian_homogeneous(N_cells, steady_state, baseline_params, hopping)
+    # Build ring Jacobian (use known steady state)
+    J_ring = build_ring_jacobian_homogeneous(N_cells, steady_state_expected, baseline_params, hopping)
     
-#     print(f"Ring Jacobian size: {J_ring.shape}")
+    print(f"Ring Jacobian size: {J_ring.shape}")
     
-#     # Check eigenvalues
-#     eigs_ring = np.linalg.eigvals(J_ring)
-#     max_real_ring = np.max(np.real(eigs_ring))
+    # Check eigenvalues
+    eigs_ring = np.linalg.eigvals(J_ring)
+    max_real_ring = np.max(np.real(eigs_ring))
     
-#     print(f"Max eigenvalue (ring): {max_real_ring:.6f}")
-#     print(f"Ring shows instability? {max_real_ring > 0}")
+    print(f"Max eigenvalue (ring): {max_real_ring:.6f}")
+    print(f"Ring shows instability? {max_real_ring > 0}")
     
-#     if max_real_ring > 0:
-#         print("\n✓ SUCCESS! Ring shows Turing instability!")
-#         print("Ready for Step 3: Add heterogeneity")
-#     else:
-#         print("\n✗ Ring is stable (no instability)")
+    if max_real_ring > 0:
+        print("\nSUCCESS! Ring shows Turing instability!")
+    else:
+        print("\nRing is stable (no instability)")
