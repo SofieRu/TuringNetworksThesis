@@ -538,3 +538,164 @@ with open('objective2_cv_sweep_results.pkl', 'wb') as f:
     pickle.dump(output_data, f)
 
 print(f"\nResults saved to: objective2_cv_sweep_results.pkl")
+
+
+
+
+
+
+# BACKUP FOR THE VERSION WHERE WE CAN DIRECTLY COMPARE THE DIFFERENT VARIATIONS (LINE PLOT)
+
+# print("\n" + "="*70)
+# print("STEP 4: MONTE CARLO - CV SWEEP (TRAJECTORY VERSION)")
+# print("="*70)
+
+# # Settings
+# CV_values = [0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4]
+# n_trials = 1000
+# N_cells = 10
+
+# # Storage
+# results_by_cv = {cv: {'eigenvalues': [], 'turing_count': 0} for cv in CV_values}
+# trajectories = []  # NEW: Store each realization's trajectory across all CVs
+
+# print(f"Running {n_trials} realizations across {len(CV_values)} CV values...")
+# print("This will take ~10-15 minutes...\n")
+
+# # OUTER LOOP: Each realization (same base noise pattern)
+# for trial in range(n_trials):
+    
+#     # Generate ONE base noise pattern for this realization
+#     base_noise = np.random.normal(0, 1, size=16)
+    
+#     trajectory = {'trial': trial, 'cv_values': [], 'eigenvalues': []}
+    
+#     # INNER LOOP: Scale this noise by each CV value
+#     for CV in CV_values:
+        
+#         if CV == 0:
+#             # Homogeneous - no noise
+#             J_ring = build_ring_jacobian_homogeneous(
+#                 N_cells=N_cells,
+#                 steady_state=steady_state,
+#                 params=baseline_params,
+#                 hopping=hopping
+#             )
+#         else:
+#             # Heterogeneous - scale base noise by CV
+#             noise = base_noise * CV
+            
+#             # Apply noise to parameters for each cell
+#             params_list = []
+#             steady_states = []
+            
+#             for i in range(N_cells):
+#                 params_i = baseline_params * (1 + noise)
+#                 params_i = np.maximum(params_i, 1e-6)  # Keep positive
+#                 params_list.append(params_i)
+                
+#                 ss_i = find_steady_state(params_i)
+#                 if ss_i is None:
+#                     ss_i = find_steady_state(baseline_params)
+#                 steady_states.append(ss_i)
+            
+#             # Build heterogeneous Jacobian manually
+#             h_u = hopping['h_u']
+#             h_v = hopping['h_v']
+#             h_w = hopping['h_w']
+            
+#             size = 3 * N_cells
+#             J_ring = np.zeros((size, size))
+            
+#             for i in range(N_cells):
+#                 idx = 3 * i
+#                 J_local = compute_jacobian(steady_states[i], params_list[i])
+#                 J_ring[idx:idx+3, idx:idx+3] = J_local
+                
+#                 J_ring[idx, idx] -= 2*h_u
+#                 J_ring[idx+1, idx+1] -= 2*h_v
+#                 J_ring[idx+2, idx+2] -= 2*h_w
+                
+#                 left = (i - 1) % N_cells
+#                 right = (i + 1) % N_cells
+                
+#                 J_ring[idx, 3*left] += h_u
+#                 J_ring[idx+1, 3*left+1] += h_v
+#                 J_ring[idx+2, 3*left+2] += h_w
+                
+#                 J_ring[idx, 3*right] += h_u
+#                 J_ring[idx+1, 3*right+1] += h_v
+#                 J_ring[idx+2, 3*right+2] += h_w
+        
+#         # Get eigenvalues
+#         eigs = np.linalg.eigvals(J_ring)
+#         max_real = np.max(np.real(eigs))
+        
+#         # Store in results
+#         results_by_cv[CV]['eigenvalues'].append(max_real)
+#         if max_real > 0:
+#             results_by_cv[CV]['turing_count'] += 1
+        
+#         # Store in trajectory
+#         trajectory['cv_values'].append(CV)
+#         trajectory['eigenvalues'].append(max_real)
+    
+#     trajectories.append(trajectory)
+    
+#     # Progress
+#     if (trial + 1) % 100 == 0:
+#         print(f"  Completed {trial+1}/{n_trials} realizations...")
+
+# # Calculate statistics for each CV
+# results_summary = []
+# for CV in CV_values:
+#     eigenvalues = np.array(results_by_cv[CV]['eigenvalues'])
+#     turing_count = results_by_cv[CV]['turing_count']
+    
+#     result = {
+#         'CV': CV,
+#         'mean_eig': np.mean(eigenvalues),
+#         'std_eig': np.std(eigenvalues),
+#         'median_eig': np.median(eigenvalues),
+#         'min_eig': np.min(eigenvalues),
+#         'max_eig': np.max(eigenvalues),
+#         'turing_count': turing_count,
+#         'robustness': 100 * turing_count / n_trials,
+#         'all_eigenvalues': eigenvalues
+#     }
+#     results_summary.append(result)
+    
+#     print(f"\nCV = {CV}:")
+#     print(f"  Mean Re(λ): {result['mean_eig']:.6f} ± {result['std_eig']:.6f}")
+#     print(f"  Robustness: {result['robustness']:.1f}% ({turing_count}/{n_trials})")
+
+# # Print summary table
+# print("\n" + "="*70)
+# print("SUMMARY TABLE")
+# print("="*70)
+# print(f"{'CV':<6} {'Mean Re(λ)':<15} {'Std':<12} {'Robustness':<12} {'Turing Count'}")
+# print("-"*70)
+
+# for r in results_summary:
+#     print(f"{r['CV']:<6.2f} {r['mean_eig']:<15.6f} {r['std_eig']:<12.6f} "
+#           f"{r['robustness']:<12.1f} {r['turing_count']}/{n_trials}")
+
+# print("="*70)
+
+# # Save results
+# import pickle
+# output_data = {
+#     'results': results_summary,
+#     'trajectories': trajectories,  # NEW: Individual trajectories!
+#     'baseline_params': baseline_params,
+#     'hopping': hopping,
+#     'n_trials': n_trials,
+#     'config_id': 13,
+#     'config_name': 'NEW_LHS_3954_Type2_V2_Unequal3'
+# }
+
+# with open('objective2_cv_sweep_results.pkl', 'wb') as f:
+#     pickle.dump(output_data, f)
+
+# print(f"\nResults saved to: objective2_cv_sweep_results.pkl")
+# print("="*70)
