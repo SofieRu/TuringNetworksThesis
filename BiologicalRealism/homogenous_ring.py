@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 import numpy as np
 from scipy.optimize import fsolve
+import pandas as pd
+import pickle
 
 # have to run this first: module load SciPy-bundle/2024.05-gfbf-2024a
 
@@ -102,49 +104,85 @@ def is_turing_shaberi(J, eigs_0, DU, DV, DW):
     return 'Type-II'  # Doesn't restabilize
 
 
-# PARAMETRS FOR HOMOGENOUS RING
+
+# PARAMETRS FOR HOMOGENOUS RING (EXAMPLE)
 
 # config_name,config_id,dU,dV,dW,param_rank,max_growth_rate,alpha_u,beta_u,K_uu,K_vu,delta_u,alpha_v,beta_v,K_uv,K_wv,delta_v,alpha_w,beta_w,K_ww,K_uw,K_vw,delta_w,u_star,v_star,w_star
 # NEW_LHS_3954_Type2_V2_Unequal3,13,1.0,0.1,0.0,1,0.142536425011953,0.007077433094880293,1.4462479436287767,0.09245163265235273,0.26723942500123793,0.2436592755887972,0.005889422851713758,8.605716327777886,0.09207924851486214,0.12961324370483618,0.7777816957281338,0.0038604827469243463,1.6570791267318754,0.030767002915064585,0.9136856426323211,0.2649648697111866,0.18465525821355344,0.11797954202781268,1.697547444477265,0.22705338297596256
 
+# baseline_params = np.array([
+#     # u parameters
+#     0.007077433094880293,   # alpha_u
+#     1.4462479436287767,     # beta_u
+#     0.09245163265235273,    # K_uu
+#     0.26723942500123793,    # K_vu
+#     0.2436592755887972,     # delta_u
+#     # v parameters
+#     0.005889422851713758,   # alpha_v
+#     8.605716327777886,      # beta_v
+#     0.09207924851486214,    # K_uv
+#     0.12961324370483618,    # K_wv
+#     0.7777816957281338,     # delta_v
+#     # w parameters
+#     0.0038604827469243463,  # alpha_w
+#     1.6570791267318754,     # beta_w
+#     0.030767002915064585,   # K_ww
+#     0.9136856426323211,     # K_uw
+#     0.2649648697111866,     # K_vw
+#     0.18465525821355344     # delta_w
+# ])
+
+# # hopping rates (diffusion combination that leads to highest robustness), can we also take unequal diffusion or do we jsut use 1,1,0 instead of 1,0.1,0???
+# hopping = {
+#     'h_u': 1.0,
+#     'h_v': 0.1,
+#     'h_w': 0.0,
+# }
+
+# # Known steady state (for verification)
+# steady_state_expected = np.array([
+#     0.11797954202781268,    # u*
+#     1.697547444477265,      # v*
+#     0.22705338297596256     # w*
+# ])
+
+
+# CHANGE THIS TO TEST DIFFERENT CONFIGS:
+CONFIG_TO_TEST = 13 
+
+# Load parameters from CSV
+df_params = pd.read_csv('../TopologyRanking/Topology3954/3954_NEW_lhs_results_parameters.csv')
+
+# Get the best parameter set for this config
+config_data = df_params[(df_params['config_id'] == CONFIG_TO_TEST) & (df_params['param_rank'] == 1)]
+
+if len(config_data) == 0:
+    print(f"ERROR: No parameters found for config {CONFIG_TO_TEST}!")
+    exit(1)
+
+# Extract parameters
+row = config_data.iloc[0]
+
 baseline_params = np.array([
-    # u parameters
-    0.007077433094880293,   # alpha_u
-    1.4462479436287767,     # beta_u
-    0.09245163265235273,    # K_uu
-    0.26723942500123793,    # K_vu
-    0.2436592755887972,     # delta_u
-    
-    # v parameters
-    0.005889422851713758,   # alpha_v
-    8.605716327777886,      # beta_v
-    0.09207924851486214,    # K_uv
-    0.12961324370483618,    # K_wv
-    0.7777816957281338,     # delta_v
-    
-    # w parameters
-    0.0038604827469243463,  # alpha_w
-    1.6570791267318754,     # beta_w
-    0.030767002915064585,   # K_ww
-    0.9136856426323211,     # K_uw
-    0.2649648697111866,     # K_vw
-    0.18465525821355344     # delta_w
+    row['alpha_u'], row['beta_u'], row['K_uu'], row['K_vu'], row['delta_u'],
+    row['alpha_v'], row['beta_v'], row['K_uv'], row['K_wv'], row['delta_v'],
+    row['alpha_w'], row['beta_w'], row['K_ww'], row['K_uw'], row['K_vw'], row['delta_w']
 ])
 
+steady_state_expected = np.array([row['u_star'], row['v_star'], row['w_star']])
 
-# hopping rates (diffusion combination that leads to highest robustness), can we also take unequal diffusion or do we jsut use 1,1,0 instead of 1,0.1,0???
 hopping = {
-    'h_u': 1.0,
-    'h_v': 0.1,
-    'h_w': 0.0,
+    'h_u': row['dU'],
+    'h_v': row['dV'],
+    'h_w': row['dW'],
 }
 
-# Known steady state (for verification)
-steady_state_expected = np.array([
-    0.11797954202781268,    # u*
-    1.697547444477265,      # v*
-    0.22705338297596256     # w*
-])
+print(f"Testing config {CONFIG_TO_TEST}: {row['config_name']}")
+print(f"Max growth rate from Obj 1: {row['max_growth_rate']:.6f}")
+
+
+
+###########################################
 
 
 
@@ -199,8 +237,6 @@ def build_ring_jacobian_homogeneous(N_cells, steady_state, params, hopping):
 
 
 
-
-
 # FUNCTION TO BUILD JACOBIAN FOR RING OF DIFFERENT CELLS (PARAMETER HETEROGENEITY)
 
 # Parameters: 
@@ -216,32 +252,109 @@ def build_ring_jacobian_homogeneous(N_cells, steady_state, params, hopping):
 # - steady_states: list of 10 steady states (one per cell)
 # - params_list: list of 10 parameter arrays (one per cell)
 
-def build_ring_jacobian_heterogeneous(N_cells, baseline_params, hopping, CV):
-    # Generate perturbed parameters for each cell
-    params_list = []
-    for i in range(N_cells):
-        # Multiplicative noise: param_i = baseline × (1 + ε)
-        # where ε ~ N(0, CV²)
-        noise = np.random.normal(0, CV, size=16)
-        params_i = baseline_params * (1 + noise)
-        
-        # Make sure all parameters stay positive
-        params_i = np.maximum(params_i, 1e-6)
-        
-        params_list.append(params_i)
+# OLD VERSION 
+# def build_ring_jacobian_heterogeneous(N_cells, baseline_params, hopping, CV):
     
-    # Find steady state for each cell
+#     # Generate perturbed parameters for each cell
+#     params_list = []
+#     steady_states = []
+
+#     # for i in range(N_cells):
+#     #     # Multiplicative noise: param_i = baseline × (1 + ε)
+#     #     # where ε ~ N(0, CV²)
+#     #     noise = np.random.normal(0, CV, size=16)
+#     #     params_i = baseline_params * (1 + noise)
+        
+#     #     # Make sure all parameters stay positive
+#     #     params_i = np.maximum(params_i, 1e-6)
+        
+#     #     params_list.append(params_i)
+
+#     for i in range(N_cells):
+#         sigma = np.sqrt(np.log(1 + CV**2))
+#         mu = -sigma**2 / 2  # Keeps mean at 1
+#         noise_factors = np.random.lognormal(mu, sigma, size=16)
+#         params_i = baseline_params * noise_factors
+#         params_list.append(params_i)
+    
+#     # Find steady state for each cell
+#     for i, params_i in enumerate(params_list):
+#         ss_i = find_steady_state(params_i)  # NOW we use this!
+        
+#         if ss_i is None:
+#             # If can't find steady state, use baseline as fallback -> HAVE TO FIX LATER NOT SURE WHICH WAY IS CORRECT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+#             #ss_i = find_steady_state(baseline_params)
+
+#             params_i = baseline_params.copy()
+#             ss_i = steady_state_expected.copy()
+        
+#         steady_states.append(ss_i)
+    
+#     # Build the big Jacobian
+#     h_u = hopping['h_u']
+#     h_v = hopping['h_v']
+#     h_w = hopping['h_w']
+    
+#     size = 3 * N_cells
+#     J_ring = np.zeros((size, size))
+    
+#     for i in range(N_cells):
+#         idx = 3 * i
+        
+#         # Local Jacobian (DIFFERENT for each cell now!)
+#         J_local = compute_jacobian(steady_states[i], params_list[i])
+#         J_ring[idx:idx+3, idx:idx+3] = J_local
+        
+#         # Hopping (same as before)
+#         J_ring[idx, idx] -= 2*h_u
+#         J_ring[idx+1, idx+1] -= 2*h_v
+#         J_ring[idx+2, idx+2] -= 2*h_w
+        
+#         # Coupling
+#         left = (i - 1) % N_cells
+#         right = (i + 1) % N_cells
+        
+#         J_ring[idx, 3*left] += h_u
+#         J_ring[idx+1, 3*left+1] += h_v
+#         J_ring[idx+2, 3*left+2] += h_w
+        
+#         J_ring[idx, 3*right] += h_u
+#         J_ring[idx+1, 3*right+1] += h_v
+#         J_ring[idx+2, 3*right+2] += h_w
+    
+#     return J_ring, steady_states, params_list
+
+
+
+def build_ring_jacobian_heterogeneous(N_cells, baseline_params, hopping, CV):
+    
+    # Generate perturbed parameters AND find steady states
+    params_list = []
     steady_states = []
-    for i, params_i in enumerate(params_list):
-        ss_i = find_steady_state(params_i)  # NOW we use this!
+    
+    # Lognormal parameters
+    sigma = np.sqrt(np.log(1 + CV**2))
+    mu = -sigma**2 / 2
+    
+    for i in range(N_cells):
+        # Generate noise
+        noise_factors = np.random.lognormal(mu, sigma, size=16)
+        params_i = baseline_params * noise_factors
+        
+        # Try to find steady state
+        ss_i = find_steady_state(params_i)
         
         if ss_i is None:
-            # If can't find steady state, use baseline as fallback
-            ss_i = find_steady_state(baseline_params)
+            # Can't find steady state - revert to wild-type
+            params_i = baseline_params.copy()  # Use baseline params
+            ss_i = steady_state_expected.copy()          # Use baseline steady state
         
+        # Append MATCHED pair
+        params_list.append(params_i)
         steady_states.append(ss_i)
     
-    # Build the big Jacobian
+    # Build Jacobian (rest stays the same)
     h_u = hopping['h_u']
     h_v = hopping['h_v']
     h_w = hopping['h_w']
@@ -252,11 +365,11 @@ def build_ring_jacobian_heterogeneous(N_cells, baseline_params, hopping, CV):
     for i in range(N_cells):
         idx = 3 * i
         
-        # Local Jacobian (DIFFERENT for each cell now!)
+        # Local Jacobian with MATCHED params and steady state
         J_local = compute_jacobian(steady_states[i], params_list[i])
         J_ring[idx:idx+3, idx:idx+3] = J_local
         
-        # Hopping (same as before)
+        # Hopping
         J_ring[idx, idx] -= 2*h_u
         J_ring[idx+1, idx+1] -= 2*h_v
         J_ring[idx+2, idx+2] -= 2*h_w
@@ -277,6 +390,12 @@ def build_ring_jacobian_heterogeneous(N_cells, baseline_params, hopping, CV):
 
 
 
+
+
+
+
+
+###########################################
 
 
 
@@ -446,8 +565,11 @@ print("\n" + "="*70)
 print("STEP 4: MONTE CARLO - CV SWEEP")
 print("="*70)
 
+# NEW: Set seed for reproducibility
+np.random.seed(42)  # ← ADD THIS LINE!
+
 # Settings
-n_trials = 1000
+n_trials = 5000
 N_cells = 10
 
 # Storage for all CV values
@@ -523,22 +645,24 @@ for r in results_by_cv:
 
 print("="*70)
 
+
 # Save results to file
-import pickle
 output_data = {
     'results': results_by_cv,
     'baseline_params': baseline_params,
     'hopping': hopping,
     'n_trials': n_trials,
-    'config_id': 13,
-    'config_name': 'NEW_LHS_3954_Type2_V2_Unequal3'
+    'config_id': CONFIG_TO_TEST,
+    'config_name': row['config_name']
 }
 
-with open('objective2_cv_sweep_results.pkl', 'wb') as f:
+output_file = f'objective2_cv_sweep_config{CONFIG_TO_TEST}.pkl'
+
+with open(output_file, 'wb') as f:
     pickle.dump(output_data, f)
 
-print(f"\nResults saved to: objective2_cv_sweep_results.pkl")
-
+print(f"\nResults saved to: {output_file}")
+print(f"Config: {row['config_name']}")
 
 
 
