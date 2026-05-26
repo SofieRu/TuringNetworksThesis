@@ -254,7 +254,7 @@ def build_ring_jacobian_homogeneous(N_cells, steady_state, params, hopping):
 
 # OLD VERSION 
 # def build_ring_jacobian_heterogeneous(N_cells, baseline_params, hopping, CV):
-    
+
 #     # Generate perturbed parameters for each cell
 #     params_list = []
 #     steady_states = []
@@ -569,7 +569,7 @@ print("="*70)
 np.random.seed(42)  # ← ADD THIS LINE!
 
 # Settings
-n_trials = 5000
+n_trials = 1000
 N_cells = 10
 
 # Storage for all CV values

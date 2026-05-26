@@ -26,6 +26,10 @@ min_eigs = np.array(min_eigs)
 max_eigs = np.array(max_eigs)
 std_eigs = np.array(std_eigs)
 
+# ========================================================================================================================================================
+#                                                              BIOLOGICAL REALISM PLOTS
+# ========================================================================================================================================================
+
 # ============================================================================
 # FIGURE 1: SIMPLIFIED: Mean with full range
 # ============================================================================
@@ -55,8 +59,6 @@ plt.savefig('fig1_mean_range_vs_cv.png', dpi=300, bbox_inches='tight')
 print("Saved: fig1_mean_range_vs_cv.png")
 plt.show()
 
-
-#############
 
 # ============================================================================
 # FIGURE 2: BOXPLOT: Distribution of Re(λ) at each CV
@@ -101,8 +103,6 @@ ax.grid(True, alpha=0.3, axis='y')
 plt.tight_layout()
 plt.savefig('fig2_boxplot_cv_sweep.png', dpi=300, bbox_inches='tight')
 print("Saved: fig2_boxplot_cv_sweep.png")
-
-################
 
 
 
@@ -158,3 +158,97 @@ plt.show()
 #     ratio = std_eigs[i] / mean_eigs[i] if mean_eigs[i] > 0 else 0
 #     print(f"CV={cv:.2f}: Mean={mean_eigs[i]:.4f}, Std={std_eigs[i]:.4f}, "
 #           f"Ratio={ratio:.4f}")
+
+
+
+
+
+# ========================================================================================================================================================
+#                                                              SENSITIVITY ANALYSIS PLOTS
+# ========================================================================================================================================================
+
+# ============================================================================
+# FIGURE 4: SENSITIVITY ANALYSIS
+# ============================================================================
+
+with open('sensitivity_results_config13.pkl', 'rb') as f:
+    sens_data = pickle.load(f)
+
+param_names = sens_data['param_names']
+sensitivities = sens_data['sensitivities']
+
+# Better parameter labels
+PARAM_LABELS = {
+    'alpha_u': 'u basal production',
+    'beta_u': 'u regulated production',
+    'K_uu': 'u self-activation (K)',
+    'K_vu': 'v-u inhibition (K)',
+    'delta_u': 'u degradation',
+    'alpha_v': 'v basal production',
+    'beta_v': 'v regulated production',
+    'K_uv': 'u-v activation (K)',
+    'K_wv': 'w-v inhibition (K)',
+    'delta_v': 'v degradation',
+    'alpha_w': 'w basal production',
+    'beta_w': 'w regulated production',
+    'K_ww': 'w self-activation (K)',
+    'K_uw': 'u-w inhibition (K)',
+    'K_vw': 'v-w inhibition (K)',
+    'delta_w': 'w degradation'
+    }
+
+# Sort by sensitivity
+sorted_indices = np.argsort(sensitivities)[::-1]
+sorted_names = [param_names[i] for i in sorted_indices]
+sorted_labels = [PARAM_LABELS[name] for name in sorted_names]
+sorted_sens = [sensitivities[i] for i in sorted_indices]
+
+# Create plot
+fig, ax = plt.subplots(figsize=(12, 7))
+
+# Create bars
+bars = ax.bar(range(len(sorted_labels)), sorted_sens, color='steelblue', alpha=0.7)
+
+# Color top 3 (stiff) in red
+for i in range(min(3, len(bars))):
+    bars[i].set_color('purple')
+    bars[i].set_alpha(0.7)
+
+# Color bottom 3 (sloppy) in gray
+for i in range(max(0, len(bars)-3), len(bars)):
+    bars[i].set_color('silver')
+    bars[i].set_alpha(0.8)
+
+# Labels
+ax.set_xticks(range(len(sorted_labels)))
+ax.set_xticklabels(sorted_labels, rotation=45, ha='right', fontsize=10)
+ax.set_ylabel('Change in Turing Growth Rate\nper 10% Parameter Change\n(log scale)', fontsize=12)
+ax.set_title('Parameter Sensitivity: Which Parameters Control Turing Patterns?\n' 'Stiff = Critical, Sloppy = Tolerant', fontsize=13, pad=15)
+
+# Log scale
+ax.set_yscale('log')
+ax.grid(True, alpha=0.3, axis='y', which='both')
+
+# Legend
+from matplotlib.patches import Patch
+legend_elements = [
+    Patch(facecolor='purple', alpha=0.7, label='Stiff (critical)'),
+    Patch(facecolor='steelblue', alpha=0.7, label='Moderate'),
+    Patch(facecolor='silver', alpha=0.8, label='Sloppy (tolerant)')
+]
+ax.legend(handles=legend_elements, loc='upper right', fontsize=11)
+
+# Annotation
+ratio = sorted_sens[0] / sorted_sens[-1]
+# ax.text(0.02, 0.98, 
+#         f'Stiffest: {sorted_labels[0]}\nS = {sorted_sens[0]:.3f}\n\n'
+#         f'Sloppiest: {sorted_labels[-1]}\nS = {sorted_sens[-1]:.5f}\n\n'
+#         f'Ratio: {ratio:.0f}',
+#         transform=ax.transAxes,
+#         fontsize=10,
+#         verticalalignment='top',
+#         bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.8))
+
+plt.tight_layout()
+plt.savefig('sensitivity_stiff_vs_sloppy.png', dpi=300, bbox_inches='tight')
+print("Saved: sensitivity_stiff_vs_sloppy.png")
