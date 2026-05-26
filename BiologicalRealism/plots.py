@@ -207,33 +207,35 @@ sorted_sens = [sensitivities[i] for i in sorted_indices]
 fig, ax = plt.subplots(figsize=(12, 7))
 
 # Create bars
-bars = ax.bar(range(len(sorted_labels)), sorted_sens, color='steelblue', alpha=0.7)
+bars = ax.bar(range(len(sorted_labels)), sorted_sens, color='steelblue', alpha=0.9)
 
 # Color top 3 (stiff) in red
 for i in range(min(3, len(bars))):
-    bars[i].set_color('purple')
-    bars[i].set_alpha(0.7)
+    bars[i].set_color('mediumvioletred')
+    bars[i].set_alpha(0.9)
 
 # Color bottom 3 (sloppy) in gray
 for i in range(max(0, len(bars)-3), len(bars)):
     bars[i].set_color('silver')
-    bars[i].set_alpha(0.8)
+    bars[i].set_alpha(0.9)
 
 # Labels
 ax.set_xticks(range(len(sorted_labels)))
 ax.set_xticklabels(sorted_labels, rotation=45, ha='right', fontsize=10)
-ax.set_ylabel('Change in Turing Growth Rate\nper 10% Parameter Change\n(log scale)', fontsize=12)
-ax.set_title('Parameter Sensitivity: Which Parameters Control Turing Patterns?\n' 'Stiff = Critical, Sloppy = Tolerant', fontsize=13, pad=15)
+ax.set_ylabel('Change in Turing Growth Rate per 10% Parameter Change (log scale)', fontsize=12)
+ax.set_title('Parameter Sensitivity Analysis: Stiff vs Sloppy\nWhich Parameters Control Turing Patterns?', fontsize=13, pad=15)
 
-# Log scale
+# Only 4 clean tick marks
+# ax.set_yticks([0.001, 0.01, 0.1, 1.0])
+# ax.set_yticklabels(['0.001', '0.01', '0.1', '1.0'])
 ax.set_yscale('log')
-ax.grid(True, alpha=0.3, axis='y', which='both')
+ax.grid(True, alpha=0.3, axis='y', which='major')
 
 # Legend
 from matplotlib.patches import Patch
 legend_elements = [
-    Patch(facecolor='purple', alpha=0.7, label='Stiff (critical)'),
-    Patch(facecolor='steelblue', alpha=0.7, label='Moderate'),
+    Patch(facecolor='mediumvioletred', alpha=0.8, label='Stiff (critical)'),
+    Patch(facecolor='steelblue', alpha=0.8, label='Moderate'),
     Patch(facecolor='silver', alpha=0.8, label='Sloppy (tolerant)')
 ]
 ax.legend(handles=legend_elements, loc='upper right', fontsize=11)
