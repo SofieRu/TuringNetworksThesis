@@ -254,3 +254,22 @@ ratio = sorted_sens[0] / sorted_sens[-1]
 plt.tight_layout()
 plt.savefig('sensitivity_stiff_vs_sloppy.png', dpi=300, bbox_inches='tight')
 print("Saved: sensitivity_stiff_vs_sloppy.png")
+
+
+# ANOTHER TYPE OF PLOT
+
+# Group by node
+u_params = ['alpha_u', 'beta_u', 'K_uu', 'K_vu', 'delta_u']
+v_params = ['alpha_v', 'beta_v', 'K_uv', 'K_wv', 'delta_v']
+w_params = ['alpha_w', 'beta_w', 'K_ww', 'K_uw', 'K_vw', 'delta_w']
+
+# Sum sensitivities per node
+u_total = sum(sensitivities[i] for i, p in enumerate(param_names) if p in u_params)
+v_total = sum(sensitivities[i] for i, p in enumerate(param_names) if p in v_params)
+w_total = sum(sensitivities[i] for i, p in enumerate(param_names) if p in w_params)
+
+fig, ax = plt.subplots(figsize=(7, 5))
+ax.bar(['u (activator)', 'v (inhibitor)', 'w (immobile)'], 
+       [u_total, v_total, w_total], color=['green', 'blue', 'purple'])
+ax.set_ylabel('Total Sensitivity')
+ax.set_title('Which Gene Controls Pattern Formation?')
