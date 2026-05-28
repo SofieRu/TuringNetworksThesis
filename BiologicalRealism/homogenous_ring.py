@@ -560,7 +560,6 @@ if turing == 'Type-I':
 
 
 
-
 print("\n" + "="*70)
 print("STEP 4: MONTE CARLO - CV SWEEP")
 print("="*70)
@@ -644,7 +643,6 @@ for r in results_by_cv:
           f"{r['robustness']:<12.1f} {r['turing_count']}/{n_trials}")
 
 print("="*70)
-
 
 # Save results to file
 output_data = {
