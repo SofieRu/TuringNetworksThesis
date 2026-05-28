@@ -59,15 +59,12 @@ def compute_jacobian(state, params):
     alpha_w, beta_w, K_ww, K_uw, K_vw, delta_w = params[9:15]
     
     J = np.zeros((3, 3))
-    
     J[0, 0] = -delta_u                             # NO self-activation term
     J[0, 1] = beta_u * dH_inh(v, K_vu)
     J[0, 2] = 0
-    
     J[1, 0] = beta_v * dH_act(u, K_uv) * hill_inhibition(w, K_wv)
     J[1, 1] = -delta_v
     J[1, 2] = beta_v * hill_activation(u, K_uv) * dH_inh(w, K_wv)
-    
     J[2, 0] = beta_w * hill_activation(w, K_ww) * dH_inh(u, K_uw) * hill_inhibition(v, K_vw)
     J[2, 1] = beta_w * hill_activation(w, K_ww) * hill_inhibition(u, K_uw) * dH_inh(v, K_vw)
     J[2, 2] = beta_w * dH_act(w, K_ww) * hill_inhibition(u, K_uw) * hill_inhibition(v, K_vw) - delta_w
@@ -258,21 +255,10 @@ DIFFUSION_CONFIGS = {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 # MAIN ANALYSIS FUNCTION
 
-def run_analysis(config_id, n_samples):
-    
+def run_analysis(config_id, n_samples, save_successful_params=False, max_successful=10000):
+
     config = DIFFUSION_CONFIGS[config_id]
     DU, DV, DW = config["dU"], config["dV"], config["dW"]
     config_name = config["name"]
@@ -305,6 +291,9 @@ def run_analysis(config_id, n_samples):
     shaberi_type_II = 0
     shaberi_hopf = 0
     
+     # NEW: List to collect ALL successful parameters
+    successful_params = [] if save_successful_params else None
+
     # Main loop
     np.random.seed(42)
     for i in range(n_samples):
@@ -320,35 +309,50 @@ def run_analysis(config_id, n_samples):
             if np.max(np.real(eigs_0)) < 0:
                 stable_without_diffusion += 1
                 
+                # Diego (uses trace/det only)
                 if is_turing_diego(J, DU, DV, DW):
                     diego_turing += 1
                 
+                # Shaberi (reuses eigs_0)
                 turing_type = is_turing_shaberi(J, eigs_0, DU, DV, DW)
                 
                 if turing_type is not None:
                     shaberi_total += 1
                     if turing_type == 'Type-I':
                         shaberi_type_I += 1
+
+                        if save_successful_params:
+                            D = np.diag([DU, DV, DW])
+                            max_growth_rate = -np.inf
+
+                            for k in np.arange(0.01, 10.01, 0.1):
+                                M = J - k**2 * D
+                                eigs_k = np.linalg.eigvals(M)
+                                max_real_k = np.max(np.real(eigs_k))
+                                if max_real_k > max_growth_rate:
+                                    max_growth_rate = max_real_k
+
+                            successful_params.append({'params_array': params.copy(), 'steady_state': steady.copy(), 'max_growth_rate': float(max_growth_rate)})
+
                     elif turing_type == 'Type-II':
                         shaberi_type_II += 1
                     elif turing_type == 'Hopf':
                         shaberi_hopf += 1
-        
+
         if (i + 1) % 100000 == 0:
             print(f"[{config_name}] {i+1:,}/{n_samples:,} | Stable: {stable_without_diffusion} | "
                   f"Diego: {diego_turing} | Shaberi: {shaberi_total}")
+    
+    # NEW: After loop, select BEST parameter sets (most stable)
+    if save_successful_params and len(successful_params) > 0:
+        successful_params.sort(key=lambda x: x['max_growth_rate'], reverse=True)  # Sort by most negative max growth rate
+        #successful_params = successful_params[:max_successful]  # CHANGE Keep only top N
     
     # Calculate robustness
     rob_diego = 100 * diego_turing / n_samples
     rob_shaberi_total = 100 * shaberi_total / n_samples
     rob_shaberi_type_I = 100 * shaberi_type_I / n_samples
-    rob_shaberi_excl_II = 100 * (shaberi_type_I + shaberi_hopf) / n_samples
 
-    # rob_diego = 100 * diego_turing / stable_without_diffusion if stable_without_diffusion > 0 else 0.0
-    # rob_shaberi_total = 100 * shaberi_total / stable_without_diffusion if stable_without_diffusion > 0 else 0.0
-    # rob_shaberi_type_I = 100 * shaberi_type_I / stable_without_diffusion if stable_without_diffusion > 0 else 0.0
-    # rob_shaberi_excl_II = 100 * (shaberi_type_I + shaberi_hopf) / stable_without_diffusion if stable_without_diffusion > 0 else 0.0
-    
     results = {
         "config_name": config_name,
         "config_id": config_id,
@@ -364,8 +368,12 @@ def run_analysis(config_id, n_samples):
         "rob_diego": rob_diego,
         "rob_shaberi_total": rob_shaberi_total,
         "rob_shaberi_type_I": rob_shaberi_type_I,
-        "rob_shaberi_excl_II": rob_shaberi_excl_II,
     }
+    
+    # NEW: Add successful parameters if they were saved
+    if save_successful_params and successful_params:
+        results['successful_params'] = successful_params
+        results['n_successful_saved'] = len(successful_params)
     
     return results
 
@@ -373,16 +381,24 @@ def run_analysis(config_id, n_samples):
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("Usage: python 1754-lhs-3node-hpc.py <config_id>")
+        print("Usage: python 1754-lhs-3node-hpc.py <config_id> [--save-params] [--n-to-save=N]")
         sys.exit(1)
     
     config_id = int(sys.argv[1])
-    n_samples = 1_000_000
+    n_samples = 100_000 # change later to 1_000_000
+
+    # NEW: Check for parameter saving flags
+    save_successful_params = '--save-params' in sys.argv
+    max_successful = 10000  # Default to saving top 2 parameter sets
+
+    for arg in sys.argv:
+        if arg.startswith('--n-to-save='):
+            max_successful = int(arg.split('=')[1])
     
-    results = run_analysis(config_id, n_samples)
+    results = run_analysis(config_id, n_samples, save_successful_params, max_successful)
     
     # Save as pickle
-    output_pkl = f"results/{results['config_name']}_1mio.pkl"
+    output_pkl = f"results/{results['config_name']}_1mio_with_params.pkl"
     with open(output_pkl, 'wb') as f:
         pickle.dump(results, f)
     
@@ -404,15 +420,11 @@ if __name__ == "__main__":
         'rob_diego': results['rob_diego'],
         'rob_shaberi_total': results['rob_shaberi_total'],
         'rob_shaberi_type_I': results['rob_shaberi_type_I'],
-        'rob_shaberi_excl_II': results['rob_shaberi_excl_II'],
     }
-    output_csv = f"results/{results['config_name']}_1mio.csv"
+    output_csv = f"results/{results['config_name']}_1mio_with_params.csv"
     pd.DataFrame([results_flat]).to_csv(output_csv, index=False)
     
     # Print summary
-    print(f"\n{'='*70}")
-    print(f"COMPLETED: {results['config_name']}")
-    print(f"{'='*70}")
     print(f"Diego Turing:    {results['diego_turing']} ({results['rob_diego']:.4f}%)")
     print(f"Shaberi Total:   {results['shaberi_total']} ({results['rob_shaberi_total']:.4f}%)")
     print(f"  Type-I:        {results['shaberi_type_I']}")
@@ -421,4 +433,3 @@ if __name__ == "__main__":
     print(f"\nSaved to:")
     print(f"  {output_pkl}")
     print(f"  {output_csv}")
-    print(f"{'='*70}")

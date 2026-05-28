@@ -326,7 +326,6 @@ def build_ring_jacobian_homogeneous(N_cells, steady_state, params, hopping):
 #     return J_ring, steady_states, params_list
 
 
-
 def build_ring_jacobian_heterogeneous(N_cells, baseline_params, hopping, CV):
     
     # Generate perturbed parameters AND find steady states
@@ -661,6 +660,7 @@ with open(output_file, 'wb') as f:
 
 print(f"\nResults saved to: {output_file}")
 print(f"Config: {row['config_name']}")
+
 
 
 

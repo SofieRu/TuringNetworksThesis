@@ -220,7 +220,7 @@ DIFFUSION_CONFIGS = {
 
 # MAIN ANALYSIS FUNCTION
 
-def run_analysis(config_id, n_samples, save_successful_params=False, max_successful=2):
+def run_analysis(config_id, n_samples, save_successful_params=False, max_successful=10000):
     
     config = DIFFUSION_CONFIGS[config_id]
     DU, DV, DW = config["dU"], config["dV"], config["dW"]
@@ -354,7 +354,7 @@ if __name__ == "__main__":
     
     # NEW: Check for parameter saving flags
     save_successful_params = '--save-params' in sys.argv
-    max_successful = 2  # Default to saving top 2 parameter sets
+    max_successful = 10000  # Default to saving top 2 parameter sets
 
     for arg in sys.argv:
         if arg.startswith('--n-to-save='):
@@ -398,6 +398,3 @@ if __name__ == "__main__":
     print(f"\nSaved to:")
     print(f"  {output_pkl}")
     print(f"  {output_csv}")
-    print(f"{'='*70}")
-
-

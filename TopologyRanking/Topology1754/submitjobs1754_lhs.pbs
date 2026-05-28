@@ -19,5 +19,5 @@ mkdir -p logs
 
 # Run Python script with array index
 echo "Starting job ${PBS_ARRAY_INDEX} at $(date)"
-python 1754-lhs-3node-hpc.py ${PBS_ARRAY_INDEX}
+python 1754-lhs-3node-hpc.py ${PBS_ARRAY_INDEX} --save-params --n-to-save=10000
 echo "Finished job ${PBS_ARRAY_INDEX} at $(date)"
