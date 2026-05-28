@@ -148,7 +148,7 @@ def is_turing_shaberi(J, eigs_0, DU, DV, DW):
 
 
 # CHANGE THIS TO TEST DIFFERENT CONFIGS:
-CONFIG_TO_TEST = 13 
+CONFIG_TO_TEST = 10 #13 is the highest for 3954 and 10 is a lot lower with 0.0359 max Type I
 
 # Load parameters from CSV
 df_params = pd.read_csv('../TopologyRanking/Topology3954/3954_NEW_lhs_results_parameters.csv')
@@ -574,7 +574,7 @@ N_cells = 10
 results_by_cv = []
 
 # Loop over CV values
-for CV in [0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4]:
+for CV in [0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7]:
     print(f"\n{'='*70}")
     print(f"CV = {CV}")
     print(f"{'='*70}")
@@ -653,7 +653,7 @@ output_data = {
     'config_name': row['config_name']
 }
 
-output_file = f'objective2_cv_sweep_config{CONFIG_TO_TEST}.pkl'
+output_file = f'3954_cv_sweep_low_config{CONFIG_TO_TEST}.pkl'
 
 with open(output_file, 'wb') as f:
     pickle.dump(output_data, f)
