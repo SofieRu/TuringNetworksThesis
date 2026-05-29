@@ -34,9 +34,9 @@ def ode_system(state, params):
     
     return [du, dv, dw]
 
-def find_steady_state(params, n_attempts=10):
+def find_steady_state(params, n_attempts=100): # was 10 
     for _ in range(n_attempts):
-        initial_guess = np.random.uniform(0.01, 10.0, 3)
+        initial_guess = np.random.uniform(0.01, 10.0, 3) # np.random.uniform(0.001, 50.0, 3) bc broader range
         sol = fsolve(ode_system, initial_guess, args=(params,), full_output=True)
         steady_state, info, ier, msg = sol
         residuals = ode_system(steady_state, params)
