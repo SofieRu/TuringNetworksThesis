@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 # have to run this first: pip install seaborn --user
 
 # Load results
-with open('objective2_cv_sweep_config13.pkl', 'rb') as f:
+with open('3954_cv_sweep_low_config4.pkl', 'rb') as f: # CHANGE HERE BASED ON FILE
     data = pickle.load(f)
 
 results = data['results']
@@ -49,14 +49,14 @@ ax.axhline(y=0, color='red', linestyle='--', linewidth=2, label='Turing threshol
 # Labels
 ax.set_xlabel('CV (Coefficient of Variation)', fontsize=13)
 ax.set_ylabel('Max Re(λ)', fontsize=13)
-ax.set_title('Turing Growth Rate vs Parameter Heterogeneity\n'
-             'Config 13: dU=1.0, dV=0.1, dW=0.0', fontsize=13, pad=15)
+ax.set_title('3954 Turing Growth Rate vs Parameter Heterogeneity\n'
+             'Config 4: dU=1.0, dV=0.1, dW=0.0', fontsize=13, pad=15)
 ax.legend(fontsize=11, loc='upper left')
 ax.grid(True, alpha=0.3)
 
 plt.tight_layout()
-plt.savefig('fig1_mean_range_vs_cv.png', dpi=300, bbox_inches='tight')
-print("Saved: fig1_mean_range_vs_cv.png")
+plt.savefig('config4_fig1_mean_range_vs_cv.png', dpi=300, bbox_inches='tight') # CHANGE HERE BASED ON FILE
+print("Saved: config4_fig1_mean_range_vs_cv.png")
 plt.show()
 
 
@@ -81,8 +81,8 @@ bp = ax.boxplot(all_eigenvalues,
 
 # Color boxes
 for patch in bp['boxes']:
-    patch.set_facecolor('purple')
-    patch.set_alpha(0.3)
+    patch.set_facecolor('palevioletred')
+    patch.set_alpha(1.0)
 
 # Horizontal line at Re(λ) = 0 (Turing threshold)
 ax.axhline(y=0, color='red', linestyle='--', linewidth=2, 
@@ -93,16 +93,16 @@ ax.set_xticks(range(len(CV_values)))
 ax.set_xticklabels([f'{cv:.2f}' for cv in CV_values])
 ax.set_xlabel('CV (Coefficient of Variation)', fontsize=13)
 ax.set_ylabel('Max Re(λ)', fontsize=13)
-ax.set_title('Distribution of Turing Growth Rates Under Parameter Heterogeneity\n'
-             'Config 13: dU=1.0, dV=0.1, dW=0.0 (1000 trials per CV)', 
+ax.set_title('3954 Distribution of Turing Growth Rates Under Parameter Heterogeneity\n'
+             'Config 4: dU=1.0, dV=0.1, dW=0.0 (1000 trials per CV)', 
              fontsize=13, pad=15)
 
 ax.legend(fontsize=9, framealpha=0.9)  # Was fontsize=11
 ax.grid(True, alpha=0.3, axis='y')
 
 plt.tight_layout()
-plt.savefig('fig2_boxplot_cv_sweep.png', dpi=300, bbox_inches='tight')
-print("Saved: fig2_boxplot_cv_sweep.png")
+plt.savefig('config4_fig2_boxplot_cv_sweep.png', dpi=300, bbox_inches='tight') # CHANGE HERE BASED ON FILE
+print("Saved: config4_fig2_boxplot_cv_sweep.png")
 
 
 
@@ -110,45 +110,45 @@ print("Saved: fig2_boxplot_cv_sweep.png")
 # FIGURE 3: MEAN VS STD PLOT
 # ============================================================================
 
-fig, ax = plt.subplots(figsize=(8, 8))
+# fig, ax = plt.subplots(figsize=(8, 8))
 
-# Plot data points
-ax.plot(mean_eigs, std_eigs, 'o-', markersize=10, linewidth=2, 
-        color='darkblue', label='Observed')
+# # Plot data points
+# ax.plot(mean_eigs, std_eigs, 'o-', markersize=10, linewidth=2, 
+#         color='darkblue', label='Observed')
 
-# Reference line: std = mean (Poisson-like)
-max_val = max(mean_eigs.max(), std_eigs.max())
-ax.plot([0, max_val], [0, max_val], '--', color='red', linewidth=2,
-        label='Std = Mean (Poisson)', alpha=0.7)
+# # Reference line: std = mean (Poisson-like)
+# max_val = max(mean_eigs.max(), std_eigs.max())
+# ax.plot([0, max_val], [0, max_val], '--', color='red', linewidth=2,
+#         label='Std = Mean (Poisson)', alpha=0.7)
 
-# Annotate each point with CV value
-for i, cv in enumerate(CV_values):
-    ax.annotate(f'CV={cv:.2f}', 
-                xy=(mean_eigs[i], std_eigs[i]),
-                xytext=(5, 5), textcoords='offset points',
-                fontsize=9, alpha=0.7)
+# # Annotate each point with CV value
+# for i, cv in enumerate(CV_values):
+#     ax.annotate(f'CV={cv:.2f}', 
+#                 xy=(mean_eigs[i], std_eigs[i]),
+#                 xytext=(5, 5), textcoords='offset points',
+#                 fontsize=9, alpha=0.7)
 
-# Labels
-ax.set_xlabel('Mean Re(λ)', fontsize=13)
-ax.set_ylabel('Std Re(λ)', fontsize=13)
-ax.set_title('Mean-Variance Relationship\n'
-             'Config 13: dU=1.0, dV=0.1, dW=0.0', fontsize=13, pad=15)
-ax.legend(fontsize=11)
-ax.grid(True, alpha=0.3)
-ax.set_aspect('equal')  # Makes it easier to see if slope = 1
+# # Labels
+# ax.set_xlabel('Mean Re(λ)', fontsize=13)
+# ax.set_ylabel('Std Re(λ)', fontsize=13)
+# ax.set_title('3954 Mean-Variance Relationship\n'
+#              'Config 4: dU=1.0, dV=0.1, dW=0.0', fontsize=13, pad=15)
+# ax.legend(fontsize=11)
+# ax.grid(True, alpha=0.3)
+# ax.set_aspect('equal')  # Makes it easier to see if slope = 1
 
-# Compute slope (fit line through origin)
-slope = np.sum(mean_eigs * std_eigs) / np.sum(mean_eigs**2)
-ax.plot([0, max_val], [0, slope*max_val], ':', color='green', linewidth=2,
-        label=f'Best fit: Std = {slope:.2f} × Mean', alpha=0.7)
+# # Compute slope (fit line through origin)
+# slope = np.sum(mean_eigs * std_eigs) / np.sum(mean_eigs**2)
+# ax.plot([0, max_val], [0, slope*max_val], ':', color='green', linewidth=2,
+#         label=f'Best fit: Std = {slope:.2f} × Mean', alpha=0.7)
 
-# Update legend
-ax.legend(fontsize=10)
+# # Update legend
+# ax.legend(fontsize=10)
 
-plt.tight_layout()
-plt.savefig('fig3_mean_vs_std.png', dpi=300, bbox_inches='tight')
-print("Saved: fig3_mean_vs_std.png")
-plt.show()
+# plt.tight_layout()
+# plt.savefig('config4_fig3_mean_vs_std.png', dpi=300, bbox_inches='tight')
+# print("Saved: config4_fig3_mean_vs_std.png")
+# plt.show()
 
 # Print relationship
 # print("\n" + "="*70)
@@ -171,7 +171,7 @@ plt.show()
 # FIGURE 4: SENSITIVITY ANALYSIS
 # ============================================================================
 
-with open('sensitivity_results_config13.pkl', 'rb') as f:
+with open('sensitivity_results_config4.pkl', 'rb') as f: # CHANGE HERE BASED ON FILE
     sens_data = pickle.load(f)
 
 param_names = sens_data['param_names']
@@ -223,7 +223,7 @@ for i in range(max(0, len(bars)-3), len(bars)):
 ax.set_xticks(range(len(sorted_labels)))
 ax.set_xticklabels(sorted_labels, rotation=45, ha='right', fontsize=10)
 ax.set_ylabel('Change in Turing Growth Rate per 10% Parameter Change (log scale)', fontsize=12)
-ax.set_title('Parameter Sensitivity Analysis: Stiff vs Sloppy\nWhich Parameters Control Turing Patterns?', fontsize=13, pad=15)
+ax.set_title('3954 Parameter Sensitivity Analysis: Stiff vs Sloppy\nWhich Parameters Control Turing Patterns?', fontsize=13, pad=15)
 
 # Only 4 clean tick marks
 # ax.set_yticks([0.001, 0.01, 0.1, 1.0])
@@ -252,8 +252,8 @@ ratio = sorted_sens[0] / sorted_sens[-1]
 #         bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.8))
 
 plt.tight_layout()
-plt.savefig('sensitivity_stiff_vs_sloppy.png', dpi=300, bbox_inches='tight')
-print("Saved: sensitivity_stiff_vs_sloppy.png")
+plt.savefig('config4_sensitivity_stiff_vs_sloppy.png', dpi=300, bbox_inches='tight') # CHANGE HERE BASED ON FILE
+print("Saved: config4_sensitivity_stiff_vs_sloppy.png")
 
 
 # ANOTHER TYPE OF PLOT
@@ -272,4 +272,4 @@ fig, ax = plt.subplots(figsize=(7, 5))
 ax.bar(['u (activator)', 'v (inhibitor)', 'w (immobile)'], 
        [u_total, v_total, w_total], color=['green', 'blue', 'purple'])
 ax.set_ylabel('Total Sensitivity')
-ax.set_title('Which Gene Controls Pattern Formation?')
+ax.set_title('3954 Which Gene Controls Pattern Formation?')

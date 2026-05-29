@@ -291,7 +291,7 @@ def run_analysis(config_id, n_samples, save_successful_params=False, max_success
     shaberi_type_II = 0
     shaberi_hopf = 0
     
-     # NEW: List to collect ALL successful parameters
+    # NEW: List to collect ALL successful parameters
     successful_params = [] if save_successful_params else None
 
     # Main loop

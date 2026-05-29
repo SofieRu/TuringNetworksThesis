@@ -2,10 +2,9 @@
 import numpy as np
 import pickle
 import pandas as pd
-import matplotlib.pyplot as plt
 from homogenous_ring import (
     CONFIG_TO_TEST,
-    build_ring_jacobian_homogeneous,
+    build_ring_jacobian_homogeneous, # CHECK WHY WE USE HOMOEGENOUS HERE AND NOT HETEROGENEOUS
     compute_jacobian,
     steady_state_expected,
     baseline_params,
