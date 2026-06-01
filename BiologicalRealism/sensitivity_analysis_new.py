@@ -91,6 +91,11 @@ J_baseline = build_ring_jacobian_homogeneous(N_cells, steady_state_expected, bas
 eigs_baseline = np.linalg.eigvals(J_baseline)
 baseline_output = np.max(np.real(eigs_baseline))
 
+if baseline_output <= 0:
+    print(f"WARNING: Baseline ring max Re(λ) = {baseline_output:.6f} ≤ 0")
+    print("This config does not exhibit Turing instability in the discrete ring.")
+    print("Sensitivity analysis will measure response around a stable point, not a Turing peak.")
+
 print(f"Config: {config_name} (id {CONFIG_TO_TEST})")
 print(f"Baseline steady state: {steady_state_expected}")
 print(f"Baseline max Re(λ): {baseline_output:.6f}")

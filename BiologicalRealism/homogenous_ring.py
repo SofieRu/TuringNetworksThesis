@@ -70,7 +70,7 @@ def is_turing_shaberi(J, eigs_0, DU, DV, DW):
     
     # STEP 2: Check for instability with diffusion, # SUPPOSED TO BE 0.01 STEP, BUT INCREASED TO 0.1 FOR SPEED, CHANGE BACK LATER 
     D = np.diag([DU, DV, DW])
-    k_values = np.arange(0.01, 10.01, 0.1)
+    k_values = np.arange(0.01, 10.01, 0.01)  # Δk = 0.01 per Shaberi et al., before i had np.arange(0.01, 10.01, 0.1)
     
     has_instability = False
     is_oscillatory = False
@@ -418,29 +418,38 @@ eigs = np.linalg.eigvals(J)
 turing = is_turing_shaberi(J, eigs, hopping['h_u'], hopping['h_v'], hopping['h_w'])
 # print(f"Turing? {turing}")
 
+# if turing == 'Type-I':
+#     #print("\nSTEP 2: Building homogeneous ring")
+    
+#     N_cells = 10
+    
+#     # Build ring Jacobian (use known steady state)
+#     J_ring = build_ring_jacobian_homogeneous(N_cells, steady_state_expected, baseline_params, hopping)
+    
+#     #print(f"Ring Jacobian size: {J_ring.shape}")
+    
+#     # Check eigenvalues
+#     eigs_ring = np.linalg.eigvals(J_ring)
+#     max_real_ring = np.max(np.real(eigs_ring))
+    
+#     #print(f"Max eigenvalue (ring): {max_real_ring:.6f}")
+#     #print(f"Ring shows instability? {max_real_ring > 0}")
+    
+#     # if max_real_ring > 0:
+#     #     print("\nSUCCESS! Ring shows Turing instability!")
+#     # else:
+#     #     print("\nRing is stable (no instability)")
+
 if turing == 'Type-I':
-    #print("\nSTEP 2: Building homogeneous ring")
-    
     N_cells = 10
-    
-    # Build ring Jacobian (use known steady state)
     J_ring = build_ring_jacobian_homogeneous(N_cells, steady_state_expected, baseline_params, hopping)
-    
-    #print(f"Ring Jacobian size: {J_ring.shape}")
-    
-    # Check eigenvalues
     eigs_ring = np.linalg.eigvals(J_ring)
     max_real_ring = np.max(np.real(eigs_ring))
-    
-    #print(f"Max eigenvalue (ring): {max_real_ring:.6f}")
-    #print(f"Ring shows instability? {max_real_ring > 0}")
-    
-    # if max_real_ring > 0:
-    #     print("\nSUCCESS! Ring shows Turing instability!")
-    # else:
-    #     print("\nRing is stable (no instability)")
-
-
+    print(f"Homogeneous ring baseline Re(λ) = {max_real_ring:.6f}")
+    if max_real_ring < 0:
+        print("WARNING: Ring baseline is stable (continuous Turing peak between discrete k_m values)")
+else:
+    print(f"WARNING: This config is not Type-I in continuous analysis (got: {turing})")
 
 # print("\n" + "="*70)
 # print("STEP 3: HETEROGENEOUS RING (SINGLE TEST)")
