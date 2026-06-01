@@ -110,9 +110,9 @@ for i, param_name in enumerate(PARAM_NAMES):
     # avg_sensitivity = (sensitivity_plus + sensitivity_minus) / 2
     avg_sensitivity = np.nanmean([sensitivity_plus, sensitivity_minus])
     
-    print(f"+10%: Δ={change_plus:.6f}, S={sensitivity_plus:.6f}")
-    print(f"-10%: Δ={change_minus:.6f}, S={sensitivity_minus:.6f}")
-    print(f"Average: {avg_sensitivity:.6f}\n")
+    # print(f"+10%: Δ={change_plus:.6f}, S={sensitivity_plus:.6f}")
+    # print(f"-10%: Δ={change_minus:.6f}, S={sensitivity_minus:.6f}")
+    # print(f"Average: {avg_sensitivity:.6f}\n")
 
 # Average sensitivities
 # sensitivities = [(s_plus + s_minus)/2 for s_plus, s_minus in zip(sensitivities_plus, sensitivities_minus)]
