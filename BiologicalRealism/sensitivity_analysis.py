@@ -13,7 +13,6 @@ from homogenous_ring import (
     find_steady_state,
 )
 
-
 # have to run this first: module load SciPy-bundle/2024.05-gfbf-2024a
 # have to run this first: module load matplotlib/3.9.2-gfbf-2024a
 # run using: python sensitivity_analysis.py
@@ -22,7 +21,7 @@ from homogenous_ring import (
 # ONE-AT-A-TIME SENSITIVITY ANALYSIS
 # ============================================================================
 
-PERTURBATION = 0.05  # ±5% perturbation per parameter (was 0.10)
+PERTURBATION = 0.1  # ±10% perturbation per parameter (was 0.10)
 
 PARAM_LABELS = {
     'alpha_u': 'u basal production',
@@ -68,6 +67,9 @@ for i, param_name in enumerate(PARAM_NAMES):
     # Find steady state with perturbed params
     ss_plus = find_steady_state(test_params_plus)
     
+    if ss_plus is not None:
+        print(f"    ss_plus = {ss_plus}")
+
     if ss_plus is None:
         # Can't find steady state - use baseline
         # params_i = baseline_params.copy()
@@ -91,6 +93,9 @@ for i, param_name in enumerate(PARAM_NAMES):
     test_params_minus[i] = test_params_minus[i] * (1 - PERTURBATION)
     
     ss_minus = find_steady_state(test_params_minus)
+
+    if ss_minus is not None:
+        print(f"    ss_minus = {ss_minus}")
 
     if ss_minus is None:
         # ss_minus = steady_state_expected.copy()
