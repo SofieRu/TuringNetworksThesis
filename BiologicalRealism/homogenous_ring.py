@@ -148,8 +148,8 @@ def is_turing_shaberi(J, eigs_0, DU, DV, DW):
 
 
 # CHANGE THIS TO TEST DIFFERENT CONFIGS:
-CONFIG_TO_TEST = 7 #13 is the highest for 3954 and 10 is a lot lower with 0.0359 max Type I --> COMPARE 13 and 2 or 4 !!! for thesis i think?
-CONFIG_LABEL = "low"  # or "low" — change this once when you switch configs
+CONFIG_TO_TEST = 13 #13 is the highest for 3954 and 10 is a lot lower with 0.0359 max Type I --> COMPARE 13 and 2 or 4 !!! for thesis i think?
+CONFIG_LABEL = "high"  # or "low" — change this once when you switch configs
 
 # Load parameters from CSV
 df_params = pd.read_csv('../TopologyRanking/Topology3954/3954_NEW_lhs_results_parameters.csv')
