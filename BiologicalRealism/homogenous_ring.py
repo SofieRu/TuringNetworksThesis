@@ -418,28 +418,6 @@ eigs = np.linalg.eigvals(J)
 turing = is_turing_shaberi(J, eigs, hopping['h_u'], hopping['h_v'], hopping['h_w'])
 # print(f"Turing? {turing}")
 
-# if turing == 'Type-I':
-#     #print("\nSTEP 2: Building homogeneous ring")
-    
-#     N_cells = 10
-    
-#     # Build ring Jacobian (use known steady state)
-#     J_ring = build_ring_jacobian_homogeneous(N_cells, steady_state_expected, baseline_params, hopping)
-    
-#     #print(f"Ring Jacobian size: {J_ring.shape}")
-    
-#     # Check eigenvalues
-#     eigs_ring = np.linalg.eigvals(J_ring)
-#     max_real_ring = np.max(np.real(eigs_ring))
-    
-#     #print(f"Max eigenvalue (ring): {max_real_ring:.6f}")
-#     #print(f"Ring shows instability? {max_real_ring > 0}")
-    
-#     # if max_real_ring > 0:
-#     #     print("\nSUCCESS! Ring shows Turing instability!")
-#     # else:
-#     #     print("\nRing is stable (no instability)")
-
 if turing == 'Type-I':
     N_cells = 10
     J_ring = build_ring_jacobian_homogeneous(N_cells, steady_state_expected, baseline_params, hopping)
@@ -451,124 +429,6 @@ if turing == 'Type-I':
 else:
     print(f"WARNING: This config is not Type-I in continuous analysis (got: {turing})")
 
-# print("\n" + "="*70)
-# print("STEP 3: HETEROGENEOUS RING (SINGLE TEST)")
-# print("="*70)
-
-# # Test with one realization at CV = 0.1
-# CV = 0.1
-# np.random.seed(42)  # For reproducibility
-
-# J_hetero, steady_states_hetero, params_hetero = build_ring_jacobian_heterogeneous(
-#     N_cells=10,
-#     baseline_params=baseline_params,
-#     hopping=hopping,
-#     CV=CV
-# )
-
-# print(f"CV = {CV} (10% variation)")
-# print(f"Heterogeneous Jacobian size: {J_hetero.shape}")
-
-# # Check eigenvalues
-# eigs_hetero = np.linalg.eigvals(J_hetero)
-# max_real_hetero = np.max(np.real(eigs_hetero))
-
-# print(f"\nHomogeneous max eigenvalue: {max_real_ring:.6f}")
-# print(f"Heterogeneous max eigenvalue: {max_real_hetero:.6f}")
-# print(f"Change: {max_real_hetero - max_real_ring:.6f}")
-
-# print(f"\nHeterogeneous still unstable? {max_real_hetero > 0}")
-
-# if max_real_hetero > 0:
-#     print("✓ Still shows Turing instability with 10% variation!")
-# else:
-#     print("✗ Turing instability lost with 10% variation")
-
-# # Show parameter variation across cells
-# print(f"\nParameter variation example (beta_u across 10 cells):")
-# beta_u_values = [params_hetero[i][1] for i in range(10)]
-# print(f"  Mean: {np.mean(beta_u_values):.4f}")
-# print(f"  Std:  {np.std(beta_u_values):.4f}")
-# print(f"  CV:   {np.std(beta_u_values)/np.mean(beta_u_values):.4f} (should be ~0.1)")
-
-
-
-# # Settings
-# CV = 0.1
-# n_trials = 1000
-# N_cells = 10
-
-# # Storage
-# max_eigenvalues = []
-# turing_count = 0
-
-# # Monte Carlo loop
-# for trial in range(n_trials):
-#     # Build heterogeneous ring with different random noise each time
-#     J_hetero, steady_states_hetero, params_hetero = build_ring_jacobian_heterogeneous(
-#         N_cells=N_cells,
-#         baseline_params=baseline_params,
-#         hopping=hopping,
-#         CV=CV
-#     )
-    
-#     # Get eigenvalues
-#     eigs = np.linalg.eigvals(J_hetero)
-#     max_real = np.max(np.real(eigs))
-    
-#     # Store
-#     max_eigenvalues.append(max_real)
-    
-#     # Check if still Turing-unstable
-#     if max_real > 0:
-#         turing_count += 1
-
-# # Convert to array
-# max_eigenvalues = np.array(max_eigenvalues)
-
-# # Calculate statistics
-# robustness = 100 * turing_count / n_trials
-# mean_eig = np.mean(max_eigenvalues)
-# std_eig = np.std(max_eigenvalues)
-# median_eig = np.median(max_eigenvalues)
-
-# # Print results
-# print("\n" + "="*70)
-# print("RESULTS")
-# print("="*70)
-# print(f"CV = {CV} (10% parameter variation)")
-# print(f"Trials: {n_trials}")
-# print(f"\nHomogeneous reference: max Re(λ) = {max_real_ring:.6f}")
-# print(f"\nHeterogeneous statistics:")
-# print(f"  Mean max Re(λ):   {mean_eig:.6f} ± {std_eig:.6f}")
-# print(f"  Median max Re(λ): {median_eig:.6f}")
-# print(f"  Min max Re(λ):    {np.min(max_eigenvalues):.6f}")
-# print(f"  Max max Re(λ):    {np.max(max_eigenvalues):.6f}")
-# print(f"\nRobustness:")
-# print(f"  Trials with Turing (Re(λ) > 0): {turing_count}/{n_trials}")
-# print(f"  Robustness: {robustness:.1f}%")
-# print(f"\nChange from homogeneous:")
-# print(f"  Δ mean Re(λ): {mean_eig - max_real_ring:.6f}")
-
-# # Simple histogram
-# print("\n" + "="*70)
-# print("DISTRIBUTION")
-# print("="*70)
-
-# bins = np.linspace(np.min(max_eigenvalues), np.max(max_eigenvalues), 20)
-# hist, bin_edges = np.histogram(max_eigenvalues, bins=bins)
-
-# print("Max Re(λ) distribution:")
-# for i in range(len(hist)):
-#     bar = '#' * int(hist[i] / 10)
-#     print(f"  {bin_edges[i]:7.4f} - {bin_edges[i+1]:7.4f} | {bar} ({hist[i]})")
-
-# print(f"\nVertical line at 0 would show Turing threshold")
-# print(f"Values > 0: Turing patterns survive")
-# print(f"Values < 0: Turing patterns lost")
-# print("="*70)
-
-
 
 print("\n" + "="*70)
 print("STEP 4: MONTE CARLO - CV SWEEP")
@@ -579,7 +439,7 @@ np.random.seed(42)  # ← ADD THIS LINE!
 
 # Settings
 n_trials = 1000
-N_cells = 10
+N_cells = 10 # for sanity check run with N = 5, 10 and 20
 
 # Storage for all CV values
 results_by_cv = []
@@ -640,11 +500,6 @@ results_by_cv = []
     
 #     print(f"  Mean Re(λ): {result['mean_eig']:.6f} ± {result['std_eig']:.6f}")
 #     print(f"  Robustness: {robustness:.1f}% ({turing_count}/{n_trials})")
-
-
-
-
-
 
 
 for CV in [0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4]:
@@ -753,7 +608,7 @@ output_data = {
     'config_name': row['config_name']
 }
 
-output_file = f'3954_cv_sweep_{CONFIG_LABEL}_config{CONFIG_TO_TEST}.pkl'
+output_file = f'3954_cv_sweep_{CONFIG_LABEL}_config{CONFIG_TO_TEST}_N{N_cells}.pkl'
 
 with open(output_file, 'wb') as f:
     pickle.dump(output_data, f)

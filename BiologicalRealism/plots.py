@@ -328,197 +328,6 @@ plot_sensitivity(sens_data_2, 'Config 2 (fragile)', 'config2_fig3_sensitivity.pn
 
 
 
-# ========================================================================================================================================================
-#                                                              BIFURCATION DIAGRAMS — COMBINED
-# ========================================================================================================================================================
-
-import matplotlib.pyplot as plt
-import pandas as pd
-import sys
-sys.path.append('.')
-from homogenous_ring import ode_system
-
-# Load both configs' baselines
-df_params = pd.read_csv('../TopologyRanking/Topology3954/3954_NEW_lhs_results_parameters.csv')
-
-def load_config(config_id):
-    row = df_params[(df_params['config_id'] == config_id) &
-                    (df_params['param_rank'] == 1)].iloc[0]
-    baseline_params = np.array([
-        row['alpha_u'], row['beta_u'], row['K_uu'], row['K_vu'], row['delta_u'],
-        row['alpha_v'], row['beta_v'], row['K_uv'], row['K_wv'], row['delta_v'],
-        row['alpha_w'], row['beta_w'], row['K_ww'], row['K_uw'], row['K_vw'], row['delta_w']
-    ])
-    baseline_ss = np.array([row['u_star'], row['v_star'], row['w_star']])
-    return baseline_params, baseline_ss
-
-params_13, ss_13 = load_config(13)
-params_2,  ss_2  = load_config(2)
-
-ALT_STATE_SEED = np.array([0.007, 0.003, 1.95])
-PARAM_INDEX = 2  # K_uu
-
-def sweep_bifurcation_eigenvalue(baseline_params, baseline_ss, hopping,
-                                  param_idx, sweep_range=(0.80, 1.20),
-                                  n_points=300, N_cells=10):
-    """Sweep K_uu and record (max Re(λ)) for both branches."""
-    baseline_val = baseline_params[param_idx]
-    sweep_factors = np.linspace(sweep_range[0], sweep_range[1], n_points)
-    branch_A_eig = []
-    branch_B_eig = []
-    
-    for factor in sweep_factors:
-        p = baseline_params.copy()
-        p[param_idx] = baseline_val * factor
-        
-        # Branch A: start from baseline
-        ss_A = fsolve(ode_system, baseline_ss, args=(p,))
-        if np.max(np.abs(ode_system(ss_A, p))) < 1e-8 and np.all(ss_A > 0):
-            if np.max(np.abs(ss_A - baseline_ss) / baseline_ss) < 0.5:
-                # Build homogeneous ring at this steady state and parameters
-                J_ring = build_ring_jacobian_homogeneous(N_cells, ss_A, p, hopping)
-                eig = np.max(np.real(np.linalg.eigvals(J_ring)))
-                branch_A_eig.append((factor, eig))
-        
-        # Branch B: start from alternative seed
-        ss_B = fsolve(ode_system, ALT_STATE_SEED, args=(p,))
-        if np.max(np.abs(ode_system(ss_B, p))) < 1e-8 and np.all(ss_B > 0):
-            if np.max(np.abs(ss_B - baseline_ss) / baseline_ss) > 0.5:
-                J_ring = build_ring_jacobian_homogeneous(N_cells, ss_B, p, hopping)
-                eig = np.max(np.real(np.linalg.eigvals(J_ring)))
-                branch_B_eig.append((factor, eig))
-    
-    return np.array(branch_A_eig), np.array(branch_B_eig)
-
-# Run sweeps for both
-branch_A_13, branch_B_13 = sweep_bifurcation_eigenvalue(params_13, ss_13, PARAM_INDEX)
-branch_A_2,  branch_B_2  = sweep_bifurcation_eigenvalue(params_2,  ss_2,  PARAM_INDEX)
-
-
-def plot_panel(ax, baseline_params, baseline_ss, branch_A, branch_B,
-               title, perturbation_label_pos='top'):
-    baseline_val = baseline_params[PARAM_INDEX]
-    
-    x_min = baseline_val * 0.78
-    x_max = baseline_val * 1.22
-    
-    y_vals = []
-    if len(branch_A) > 0:
-        y_vals.extend(branch_A[:, 1].tolist())
-    if len(branch_B) > 0:
-        y_vals.extend(branch_B[:, 1].tolist())
-    y_vals.append(baseline_ss[2])
-    
-    y_min = -0.05
-    y_max = max(y_vals) * 1.15 if y_vals else 2.2
-    
-    # ===== FIX: Only shade if there are GAPS within the swept range =====
-    # A real bifurcation means Branch A exists for part of the range but disappears.
-    # If Branch A spans nearly the full sweep, there's no bifurcation — no shading.
-    if len(branch_A) > 0:
-        branch_A_x = branch_A[:, 0] * baseline_val
-        a_left = branch_A_x.min()
-        a_right = branch_A_x.max()
-        sweep_width = x_max - x_min
-        
-        # Only mark as "bifurcation crossed" if Branch A leaves a significant gap
-        # within the swept range (more than 5% of sweep width on either side)
-        bifurcation_threshold = 0.05 * sweep_width
-        
-        has_left_bifurcation = (a_left - x_min) > bifurcation_threshold
-        has_right_bifurcation = (x_max - a_right) > bifurcation_threshold
-        
-        if has_left_bifurcation:
-            ax.axvspan(x_min, a_left, alpha=0.18, color='red', zorder=0)
-            # Star marker at bifurcation point
-            ax.plot(a_left, branch_A[np.argmin(branch_A_x), 1],
-                    marker='*', color='red', markersize=22,
-                    markeredgecolor='black', markeredgewidth=1,
-                    zorder=10, linestyle='None', label='Bifurcation point')
-        
-        if has_right_bifurcation:
-            ax.axvspan(a_right, x_max, alpha=0.18, color='red', zorder=0)
-            # Star marker
-            label_for_star = None if has_left_bifurcation else 'Bifurcation point'
-            ax.plot(a_right, branch_A[np.argmax(branch_A_x), 1],
-                    marker='*', color='red', markersize=22,
-                    markeredgecolor='black', markeredgewidth=1,
-                    zorder=10, linestyle='None', label=label_for_star)
-    
-    # ===== Plot the branches =====
-    if len(branch_A) > 0:
-        ax.plot(branch_A[:, 0] * baseline_val, branch_A[:, 1], '-',
-                color='darkblue', linewidth=3.5,
-                label='Branch A (baseline state)', zorder=5)
-    
-    if len(branch_B) > 0:
-        ax.plot(branch_B[:, 0] * baseline_val, branch_B[:, 1], '-',
-                color='darkred', linewidth=3.5,
-                label='Branch B (alternative state)', zorder=5)
-    
-    # ===== Mark baseline =====
-    ax.axvline(x=baseline_val, color='black', linestyle=':', linewidth=1.5,
-               alpha=0.7, zorder=3)
-    ax.plot(baseline_val, baseline_ss[2], 'o', color='black', markersize=11,
-            zorder=11, label='Baseline (working state)')
-    
-    # ===== Mark ±10% perturbation positions =====
-    for sign, label in [(+1, '+10%'), (-1, '−10%')]:
-        x_pert = baseline_val * (1 + sign * 0.10)
-        ax.axvline(x=x_pert, color='gray', linestyle='--', linewidth=1.5,
-                   alpha=0.6, zorder=2)
-        ax.text(x_pert, y_min + (y_max - y_min) * 0.03, label,
-                fontsize=10, color='dimgray', ha='center', va='bottom',
-                fontweight='bold')
-    
-    ax.set_xlim(x_min, x_max)
-    ax.set_ylim(y_min, y_max)
-    
-    ax.set_xlabel('K_uu (perturbed)', fontsize=12)
-    ax.set_ylabel('Steady-state w concentration (w*)', fontsize=12)
-    ax.set_title(title, fontsize=13, pad=10)
-    ax.grid(True, alpha=0.3)
-
-
-# ===== Build the figure =====
-fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 7))
-
-plot_panel(ax1, params_13, ss_13, branch_A_13, branch_B_13,
-           'Config 13 (robust)\nNo bifurcation: ±10% perturbation stays on Branch A')
-
-plot_panel(ax2, params_2, ss_2, branch_A_2, branch_B_2,
-           'Config 2 (fragile)\nBifurcation: ±10% perturbation forces jump to Branch B')
-
-# Add a single combined legend below both panels
-handles, labels = ax2.get_legend_handles_labels()
-# Add the red shading explanation
-from matplotlib.patches import Patch
-handles.append(Patch(facecolor='red', alpha=0.18, label='Branch A absent (bifurcation crossed)'))
-labels.append('Branch A absent (bifurcation crossed)')
-
-fig.legend(handles, labels, loc='lower center', ncol=5, fontsize=10,
-           bbox_to_anchor=(0.5, -0.02), frameon=True)
-
-# Overall title
-fig.suptitle('Bifurcation Diagram: Steady-State w* vs K_uu',
-             fontsize=15, y=1.00)
-
-plt.tight_layout(rect=[0, 0.05, 1, 0.98])
-plt.savefig('fig4_bifurcation_comparison.png', dpi=300, bbox_inches='tight')
-print("Saved: fig4_bifurcation_comparison.png")
-plt.close()
-
-
-
-
-
-
-
-# i get this error message: /BiologicalRealism/plots.py", line 394, in <module>
-#     branch_A_13, branch_B_13 = sweep_bifurcation_eigenvalue(params_13, ss_13, PARAM_INDEX)
-#                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-# TypeError: sweep_bifurcation_eigenvalue() missing 1 required positional argument: 'param_idx'
-
 
 
 
@@ -594,14 +403,12 @@ def sweep_bifurcation_eigenvalue(baseline_params, baseline_ss, hopping_dict,
 
 # ===== Run the sweeps =====
 print("Computing bifurcation sweep for config 13...")
-branch_A_13, branch_B_13 = sweep_bifurcation_eigenvalue(
-    params_13, ss_13, hopping_13, PARAM_INDEX)
+branch_A_13, branch_B_13 = sweep_bifurcation_eigenvalue(params_13, ss_13, hopping_13, PARAM_INDEX)
 print(f"  Branch A: {len(branch_A_13)} points")
 print(f"  Branch B: {len(branch_B_13)} points")
 
 print("Computing bifurcation sweep for config 2...")
-branch_A_2, branch_B_2 = sweep_bifurcation_eigenvalue(
-    params_2, ss_2, hopping_2, PARAM_INDEX)
+branch_A_2, branch_B_2 = sweep_bifurcation_eigenvalue(params_2, ss_2, hopping_2, PARAM_INDEX)
 print(f"  Branch A: {len(branch_A_2)} points")
 print(f"  Branch B: {len(branch_B_2)} points")
 
@@ -752,6 +559,342 @@ plt.close()
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# ========================================================================================================================================================
+#                                                              BIFURCATION DIAGRAMS — COMBINED
+# ========================================================================================================================================================
+
+import matplotlib.pyplot as plt
+import pandas as pd
+import sys
+sys.path.append('.')
+from homogenous_ring import ode_system
+
+# Load both configs' baselines
+df_params = pd.read_csv('../TopologyRanking/Topology3954/3954_NEW_lhs_results_parameters.csv')
+
+def load_config(config_id):
+    row = df_params[(df_params['config_id'] == config_id) &
+                    (df_params['param_rank'] == 1)].iloc[0]
+    baseline_params = np.array([
+        row['alpha_u'], row['beta_u'], row['K_uu'], row['K_vu'], row['delta_u'],
+        row['alpha_v'], row['beta_v'], row['K_uv'], row['K_wv'], row['delta_v'],
+        row['alpha_w'], row['beta_w'], row['K_ww'], row['K_uw'], row['K_vw'], row['delta_w']
+    ])
+    baseline_ss = np.array([row['u_star'], row['v_star'], row['w_star']])
+    return baseline_params, baseline_ss
+
+params_13, ss_13 = load_config(13)
+params_2,  ss_2  = load_config(2)
+
+ALT_STATE_SEED = np.array([0.007, 0.003, 1.95])
+PARAM_INDEX = 2  # K_uu
+
+def sweep_bifurcation_eigenvalue(baseline_params, baseline_ss, hopping,
+                                  param_idx, sweep_range=(0.80, 1.20),
+                                  n_points=300, N_cells=10):
+    """Sweep K_uu and record (max Re(λ)) for both branches."""
+    baseline_val = baseline_params[param_idx]
+    sweep_factors = np.linspace(sweep_range[0], sweep_range[1], n_points)
+    branch_A_eig = []
+    branch_B_eig = []
+    
+    for factor in sweep_factors:
+        p = baseline_params.copy()
+        p[param_idx] = baseline_val * factor
+        
+        # Branch A: start from baseline
+        ss_A = fsolve(ode_system, baseline_ss, args=(p,))
+        if np.max(np.abs(ode_system(ss_A, p))) < 1e-8 and np.all(ss_A > 0):
+            if np.max(np.abs(ss_A - baseline_ss) / baseline_ss) < 0.5:
+                # Build homogeneous ring at this steady state and parameters
+                J_ring = build_ring_jacobian_homogeneous(N_cells, ss_A, p, hopping)
+                eig = np.max(np.real(np.linalg.eigvals(J_ring)))
+                branch_A_eig.append((factor, eig))
+        
+        # Branch B: start from alternative seed
+        ss_B = fsolve(ode_system, ALT_STATE_SEED, args=(p,))
+        if np.max(np.abs(ode_system(ss_B, p))) < 1e-8 and np.all(ss_B > 0):
+            if np.max(np.abs(ss_B - baseline_ss) / baseline_ss) > 0.5:
+                J_ring = build_ring_jacobian_homogeneous(N_cells, ss_B, p, hopping)
+                eig = np.max(np.real(np.linalg.eigvals(J_ring)))
+                branch_B_eig.append((factor, eig))
+    
+    return np.array(branch_A_eig), np.array(branch_B_eig)
+
+# Run sweeps for both
+# branch_A_13, branch_B_13 = sweep_bifurcation_eigenvalue(params_13, ss_13, PARAM_INDEX)
+# branch_A_2,  branch_B_2  = sweep_bifurcation_eigenvalue(params_2,  ss_2,  PARAM_INDEX)
+
+branch_A_13, branch_B_13 = sweep_bifurcation_eigenvalue(params_13, ss_13, hopping_13, PARAM_INDEX)
+branch_A_2, branch_B_2 = sweep_bifurcation_eigenvalue(params_2, ss_2, hopping_2, PARAM_INDEX)
+
+
+print("Computing bifurcation sweep for config 13...")
+branch_A_13, branch_B_13 = sweep_bifurcation_eigenvalue(
+    params_13, ss_13, hopping_13, PARAM_INDEX)
+print(f"  Branch A: {len(branch_A_13)} points")
+print(f"  Branch B: {len(branch_B_13)} points")
+
+print("Computing bifurcation sweep for config 2...")
+branch_A_2, branch_B_2 = sweep_bifurcation_eigenvalue(
+    params_2, ss_2, hopping_2, PARAM_INDEX)
+print(f"  Branch A: {len(branch_A_2)} points")
+print(f"  Branch B: {len(branch_B_2)} points")
+
+def plot_panel(ax, baseline_params, baseline_ss, branch_A, branch_B,
+               title, perturbation_label_pos='top'):
+    baseline_val = baseline_params[PARAM_INDEX]
+    
+    x_min = baseline_val * 0.78
+    x_max = baseline_val * 1.22
+    
+    y_vals = []
+    if len(branch_A) > 0:
+        y_vals.extend(branch_A[:, 1].tolist())
+    if len(branch_B) > 0:
+        y_vals.extend(branch_B[:, 1].tolist())
+    y_vals.append(baseline_ss[2])
+    
+    y_min = -0.05
+    y_max = max(y_vals) * 1.15 if y_vals else 2.2
+    
+    # ===== FIX: Only shade if there are GAPS within the swept range =====
+    # A real bifurcation means Branch A exists for part of the range but disappears.
+    # If Branch A spans nearly the full sweep, there's no bifurcation — no shading.
+    if len(branch_A) > 0:
+        branch_A_x = branch_A[:, 0] * baseline_val
+        a_left = branch_A_x.min()
+        a_right = branch_A_x.max()
+        sweep_width = x_max - x_min
+        
+        # Only mark as "bifurcation crossed" if Branch A leaves a significant gap
+        # within the swept range (more than 5% of sweep width on either side)
+        bifurcation_threshold = 0.05 * sweep_width
+        
+        has_left_bifurcation = (a_left - x_min) > bifurcation_threshold
+        has_right_bifurcation = (x_max - a_right) > bifurcation_threshold
+        
+        if has_left_bifurcation:
+            ax.axvspan(x_min, a_left, alpha=0.18, color='red', zorder=0)
+            # Star marker at bifurcation point
+            ax.plot(a_left, branch_A[np.argmin(branch_A_x), 1],
+                    marker='*', color='red', markersize=22,
+                    markeredgecolor='black', markeredgewidth=1,
+                    zorder=10, linestyle='None', label='Bifurcation point')
+        
+        if has_right_bifurcation:
+            ax.axvspan(a_right, x_max, alpha=0.18, color='red', zorder=0)
+            # Star marker
+            label_for_star = None if has_left_bifurcation else 'Bifurcation point'
+            ax.plot(a_right, branch_A[np.argmax(branch_A_x), 1],
+                    marker='*', color='red', markersize=22,
+                    markeredgecolor='black', markeredgewidth=1,
+                    zorder=10, linestyle='None', label=label_for_star)
+    
+    # ===== Plot the branches =====
+    if len(branch_A) > 0:
+        ax.plot(branch_A[:, 0] * baseline_val, branch_A[:, 1], '-',
+                color='darkblue', linewidth=3.5,
+                label='Branch A (baseline state)', zorder=5)
+    
+    if len(branch_B) > 0:
+        ax.plot(branch_B[:, 0] * baseline_val, branch_B[:, 1], '-',
+                color='darkred', linewidth=3.5,
+                label='Branch B (alternative state)', zorder=5)
+    
+    # ===== Mark baseline =====
+    ax.axvline(x=baseline_val, color='black', linestyle=':', linewidth=1.5,
+               alpha=0.7, zorder=3)
+    ax.plot(baseline_val, baseline_ss[2], 'o', color='black', markersize=11,
+            zorder=11, label='Baseline (working state)')
+    
+    # ===== Mark ±10% perturbation positions =====
+    for sign, label in [(+1, '+10%'), (-1, '−10%')]:
+        x_pert = baseline_val * (1 + sign * 0.10)
+        ax.axvline(x=x_pert, color='gray', linestyle='--', linewidth=1.5,
+                   alpha=0.6, zorder=2)
+        ax.text(x_pert, y_min + (y_max - y_min) * 0.03, label,
+                fontsize=10, color='dimgray', ha='center', va='bottom',
+                fontweight='bold')
+    
+    ax.set_xlim(x_min, x_max)
+    ax.set_ylim(y_min, y_max)
+    
+    ax.set_xlabel('K_uu (perturbed)', fontsize=12)
+    ax.set_ylabel('Steady-state w concentration (w*)', fontsize=12)
+    ax.set_title(title, fontsize=13, pad=10)
+    ax.grid(True, alpha=0.3)
+
+
+# ===== Build the figure =====
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 7))
+
+plot_panel(ax1, params_13, ss_13, branch_A_13, branch_B_13,
+           'Config 13 (robust)\nNo bifurcation: ±10% perturbation stays on Branch A')
+
+plot_panel(ax2, params_2, ss_2, branch_A_2, branch_B_2,
+           'Config 2 (fragile)\nBifurcation: ±10% perturbation forces jump to Branch B')
+
+# Add a single combined legend below both panels
+handles, labels = ax2.get_legend_handles_labels()
+# Add the red shading explanation
+from matplotlib.patches import Patch
+handles.append(Patch(facecolor='red', alpha=0.18, label='Branch A absent (bifurcation crossed)'))
+labels.append('Branch A absent (bifurcation crossed)')
+
+fig.legend(handles, labels, loc='lower center', ncol=5, fontsize=10,
+           bbox_to_anchor=(0.5, -0.02), frameon=True)
+
+# Overall title
+fig.suptitle('Bifurcation Diagram: Steady-State w* vs K_uu',
+             fontsize=15, y=1.00)
+
+plt.tight_layout(rect=[0, 0.05, 1, 0.98])
+plt.savefig('fig4_bifurcation_comparison.png', dpi=300, bbox_inches='tight')
+print("Saved: fig4_bifurcation_comparison.png")
+plt.close()
+
+
+
+
+
+#FIGURE 4: BIFURCATION DIAGRAM (Re(λ) vs K_uu)
+
+# i get this error message: /BiologicalRealism/plots.py", line 394, in <module>
+#     branch_A_13, branch_B_13 = sweep_bifurcation_eigenvalue(params_13, ss_13, PARAM_INDEX)
+#                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+# TypeError: sweep_bifurcation_eigenvalue() missing 1 required positional argument: 'param_idx'
+
+
+
+
+
+
+
+
+
+
+# ========================================================================================================================================================
+#                                                  FIGURE 6: LOG DOT PLOT (Sethna-style visualisation)
+# ========================================================================================================================================================
+
+def plot_log_dot_panel(ax, sens_data, config_label):
+    """Plot one panel of the log-dot sensitivity figure."""
+    param_names = sens_data['param_names']
+    sensitivities = np.array(sens_data['sensitivities'])
+    sens_plus = np.array(sens_data['sensitivities_plus'])
+    sens_minus = np.array(sens_data['sensitivities_minus'])
+    
+    # Separate clean and NaN entries
+    nan_mask = np.isnan(sensitivities)
+    
+    # Sort clean values descending, NaN entries at the bottom
+    clean_idx = np.where(~nan_mask)[0]
+    nan_idx = np.where(nan_mask)[0]
+    clean_idx_sorted = clean_idx[np.argsort(sensitivities[clean_idx])[::-1]]
+    sorted_indices = np.concatenate([clean_idx_sorted, nan_idx])
+    
+    sorted_labels = [PARAM_LABELS[param_names[i]] for i in sorted_indices]
+    sorted_sens = sensitivities[sorted_indices]
+    sorted_is_nan = np.isnan(sorted_sens)
+    
+    n_total = len(sorted_labels)
+    n_clean = (~sorted_is_nan).sum()
+    
+    # X positions: 1 to N
+    x_positions = np.arange(1, n_total + 1)
+    
+    # Plot clean values as dots
+    clean_x = x_positions[~sorted_is_nan]
+    clean_y = sorted_sens[~sorted_is_nan]
+    
+    # Color: top 3 stiff, bottom 3 sloppy, rest middle
+    colors = ['steelblue'] * n_clean
+    for i in range(min(3, n_clean)):
+        colors[i] = 'mediumvioletred'
+    for i in range(max(0, n_clean - 3), n_clean):
+        colors[i] = 'silver'
+    
+    ax.scatter(clean_x, clean_y, c=colors, s=100, zorder=5,
+               edgecolors='black', linewidths=0.5)
+    
+    # Plot NaN entries at a distinct y-position (slightly below the minimum clean value)
+    if any(sorted_is_nan):
+        nan_y_position = max(1e-5, clean_y.min() / 10)  # one decade below the lowest clean value
+        nan_x = x_positions[sorted_is_nan]
+        ax.scatter(nan_x, [nan_y_position] * len(nan_x),
+                   c='lightgray', s=100, zorder=5,
+                   marker='X', edgecolors='darkred', linewidths=1.5)
+        # Label NaN markers
+        for x, label in zip(nan_x, [sorted_labels[i] for i in range(n_total) if sorted_is_nan[i]]):
+            ax.annotate('bifurcation', xy=(x, nan_y_position),
+                        xytext=(x, nan_y_position * 0.3), ha='center',
+                        fontsize=8, color='darkred', fontweight='bold')
+    
+    # X-axis labels (rotated parameter names)
+    ax.set_xticks(x_positions)
+    ax.set_xticklabels(sorted_labels, rotation=45, ha='right', fontsize=9)
+    
+    # Y-axis on log scale
+    ax.set_yscale('log')
+    
+    # Y-axis label
+    ax.set_ylabel('Sensitivity (log scale)', fontsize=11)
+    ax.set_title(config_label, fontsize=12, pad=8)
+    
+    # Show sensitivity range as text
+    if n_clean > 0:
+        sens_range = clean_y.max() / clean_y.min()
+        ax.text(0.98, 0.95, f'Range: ~{sens_range:.0f}×',
+                transform=ax.transAxes, ha='right', va='top',
+                fontsize=10, fontweight='bold',
+                bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.7))
+    
+    ax.grid(True, alpha=0.3, axis='y', which='major')
+
+
+# ===== Build the figure =====
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 6), sharey=True)
+
+plot_log_dot_panel(ax1, sens_data_13, 'Config 13 (robust)')
+plot_log_dot_panel(ax2, sens_data_2,  'Config 2 (fragile)')
+
+# Shared legend below
+legend_elements = [
+    plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='mediumvioletred',
+               markersize=10, markeredgecolor='black', label='Stiff (top 3)'),
+    plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='steelblue',
+               markersize=10, markeredgecolor='black', label='Moderate'),
+    plt.Line2D([0], [0], marker='o', color='w', markerfacecolor='silver',
+               markersize=10, markeredgecolor='black', label='Sloppy (bottom 3)'),
+    plt.Line2D([0], [0], marker='X', color='w', markerfacecolor='lightgray',
+               markersize=10, markeredgecolor='darkred', label='Bifurcation crossing'),
+]
+fig.legend(handles=legend_elements, loc='lower center', ncol=4,
+           fontsize=10, bbox_to_anchor=(0.5, -0.03), frameon=True)
+
+fig.suptitle('Sensitivity Spectrum: Stiff vs Sloppy Parameters',
+             fontsize=14, y=1.00)
+
+plt.tight_layout(rect=[0, 0.05, 1, 0.98])
+plt.savefig('fig6_sensitivity_log_dot.png', dpi=300, bbox_inches='tight')
+print("Saved: fig6_sensitivity_log_dot.png")
+plt.close()
 
 
 

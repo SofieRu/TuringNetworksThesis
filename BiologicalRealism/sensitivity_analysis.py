@@ -44,7 +44,7 @@ PARAM_LABELS = {
 
 PARAM_NAMES = ['alpha_u', 'beta_u', 'K_uu', 'K_vu', 'delta_u', 'alpha_v', 'beta_v', 'K_uv', 'K_wv', 'delta_v', 'alpha_w', 'beta_w', 'K_ww', 'K_uw', 'K_vw', 'delta_w']
 
-N_cells = 10
+N_cells = 10 # for sanity check run with N = 5, 10 and 20
 
 # Baseline output (max eigenvalue)
 J_baseline = build_ring_jacobian_homogeneous(N_cells, steady_state_expected, baseline_params, hopping)
