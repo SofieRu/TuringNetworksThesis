@@ -25,6 +25,9 @@ from homogenous_ring import (
 PERTURBATION = 0.10  # ±10% perturbation per parameter
 LOCAL_TOLERANCE = 0.5  # accept steady states within 50% of baseline (per component), sanity check might adjust later to 0.3 and 0.7?!!
 
+# CHANGE THIS FOR VARIATION
+N_cells = 20 # for sanity check run with N = 5, 10 and 20
+
 PARAM_LABELS = {
     'alpha_u': 'u basal production',
     'beta_u': 'u regulated production',
@@ -47,9 +50,6 @@ PARAM_LABELS = {
 }
 
 PARAM_NAMES = ['alpha_u', 'beta_u', 'K_uu', 'K_vu', 'delta_u','alpha_v', 'beta_v', 'K_uv', 'K_wv', 'delta_v','alpha_w', 'beta_w', 'K_ww', 'K_uw', 'K_vw', 'delta_w']
-
-N_cells = 10 # for sanity check run with N = 5, 10 and 20
-
 
 def find_steady_state_local(params, baseline_ss, tol=LOCAL_TOLERANCE):
     """Find steady state in the same basin as baseline_ss.
@@ -234,7 +234,7 @@ sensitivity_data = {
     'n_both_failed': int(n_both_failed),
 }
 
-output_file = f'sensitivity_results_NEW_config{CONFIG_TO_TEST}_N{N_cells}.pkl'
+output_file = f'3954_sensitivity_results_config{CONFIG_TO_TEST}_N{N_cells}.pkl'
 with open(output_file, 'wb') as f:
     pickle.dump(sensitivity_data, f)
 

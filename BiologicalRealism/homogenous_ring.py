@@ -104,7 +104,6 @@ def is_turing_shaberi(J, eigs_0, DU, DV, DW):
     return 'Type-II'  # Doesn't restabilize
 
 
-
 # PARAMETRS FOR HOMOGENOUS RING (EXAMPLE)
 
 # config_name,config_id,dU,dV,dW,param_rank,max_growth_rate,alpha_u,beta_u,K_uu,K_vu,delta_u,alpha_v,beta_v,K_uv,K_wv,delta_v,alpha_w,beta_w,K_ww,K_uw,K_vw,delta_w,u_star,v_star,w_star
@@ -238,95 +237,6 @@ def build_ring_jacobian_homogeneous(N_cells, steady_state, params, hopping):
 
 
 
-# FUNCTION TO BUILD JACOBIAN FOR RING OF DIFFERENT CELLS (PARAMETER HETEROGENEITY)
-
-# Parameters: 
-
-# Build (3N)×(3N) Jacobian for ring with parameter heterogeneity
-# - N_cells: number of cells (10)
-# - baseline_params: mean parameter values (16-element array)
-# - hopping: dict with h_u, h_v, h_w
-# - CV: coefficient of variation (e.g., 0.1 = 10% variation)
-
-# Returns:
-# - J_ring: 30×30 Jacobian matrix
-# - steady_states: list of 10 steady states (one per cell)
-# - params_list: list of 10 parameter arrays (one per cell)
-
-# OLD VERSION 
-# def build_ring_jacobian_heterogeneous(N_cells, baseline_params, hopping, CV):
-
-#     # Generate perturbed parameters for each cell
-#     params_list = []
-#     steady_states = []
-
-#     # for i in range(N_cells):
-#     #     # Multiplicative noise: param_i = baseline × (1 + ε)
-#     #     # where ε ~ N(0, CV²)
-#     #     noise = np.random.normal(0, CV, size=16)
-#     #     params_i = baseline_params * (1 + noise)
-        
-#     #     # Make sure all parameters stay positive
-#     #     params_i = np.maximum(params_i, 1e-6)
-        
-#     #     params_list.append(params_i)
-
-#     for i in range(N_cells):
-#         sigma = np.sqrt(np.log(1 + CV**2))
-#         mu = -sigma**2 / 2  # Keeps mean at 1
-#         noise_factors = np.random.lognormal(mu, sigma, size=16)
-#         params_i = baseline_params * noise_factors
-#         params_list.append(params_i)
-    
-#     # Find steady state for each cell
-#     for i, params_i in enumerate(params_list):
-#         ss_i = find_steady_state(params_i)  # NOW we use this!
-        
-#         if ss_i is None:
-#             # If can't find steady state, use baseline as fallback -> HAVE TO FIX LATER NOT SURE WHICH WAY IS CORRECT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-#             #ss_i = find_steady_state(baseline_params)
-
-#             params_i = baseline_params.copy()
-#             ss_i = steady_state_expected.copy()
-        
-#         steady_states.append(ss_i)
-    
-#     # Build the big Jacobian
-#     h_u = hopping['h_u']
-#     h_v = hopping['h_v']
-#     h_w = hopping['h_w']
-    
-#     size = 3 * N_cells
-#     J_ring = np.zeros((size, size))
-    
-#     for i in range(N_cells):
-#         idx = 3 * i
-        
-#         # Local Jacobian (DIFFERENT for each cell now!)
-#         J_local = compute_jacobian(steady_states[i], params_list[i])
-#         J_ring[idx:idx+3, idx:idx+3] = J_local
-        
-#         # Hopping (same as before)
-#         J_ring[idx, idx] -= 2*h_u
-#         J_ring[idx+1, idx+1] -= 2*h_v
-#         J_ring[idx+2, idx+2] -= 2*h_w
-        
-#         # Coupling
-#         left = (i - 1) % N_cells
-#         right = (i + 1) % N_cells
-        
-#         J_ring[idx, 3*left] += h_u
-#         J_ring[idx+1, 3*left+1] += h_v
-#         J_ring[idx+2, 3*left+2] += h_w
-        
-#         J_ring[idx, 3*right] += h_u
-#         J_ring[idx+1, 3*right+1] += h_v
-#         J_ring[idx+2, 3*right+2] += h_w
-    
-#     return J_ring, steady_states, params_list
-
-
 def build_ring_jacobian_heterogeneous(N_cells, baseline_params, hopping, CV):
     
     # Generate perturbed parameters AND find steady states
@@ -398,28 +308,29 @@ def build_ring_jacobian_heterogeneous(N_cells, baseline_params, hopping, CV):
 
 ###########################################
 
-
-
 # TESTING THE FUNCTIONS
-
 residuals = ode_system(steady_state_expected, baseline_params)
 # print("\nSTEP 1: Check if we get Turing instability from single cell Jacobian")
-# print(f"Residuals: {np.max(np.abs(residuals)):.2e} (should be ~0)")
 
 # Compute Jacobian at THIS steady state
 J = compute_jacobian(steady_state_expected, baseline_params)
 
 # Check stability
 eigs = np.linalg.eigvals(J)
-# print(f"Max eigenvalue: {np.max(np.real(eigs)):.6f}")
-# print(f"Stable? {np.max(np.real(eigs)) < 0}")
 
 # Check Turing
 turing = is_turing_shaberi(J, eigs, hopping['h_u'], hopping['h_v'], hopping['h_w'])
-# print(f"Turing? {turing}")
+
+print("\n" + "="*70)
+print("STEP 4: MONTE CARLO - CV SWEEP")
+print("="*70)
+
+# Settings, CHANGE HERE FOR VARIATION
+n_trials = 1000
+N_cells = 20 # for sanity check run with N = 5, 10 and 20, 30??
 
 if turing == 'Type-I':
-    N_cells = 10
+    # N_cells = 10
     J_ring = build_ring_jacobian_homogeneous(N_cells, steady_state_expected, baseline_params, hopping)
     eigs_ring = np.linalg.eigvals(J_ring)
     max_real_ring = np.max(np.real(eigs_ring))
@@ -430,18 +341,7 @@ else:
     print(f"WARNING: This config is not Type-I in continuous analysis (got: {turing})")
 
 
-print("\n" + "="*70)
-print("STEP 4: MONTE CARLO - CV SWEEP")
-print("="*70)
-
-# NEW: Set seed for reproducibility
-np.random.seed(42)  # ← ADD THIS LINE!
-
-# Settings
-n_trials = 1000
-N_cells = 10 # for sanity check run with N = 5, 10 and 20
-
-# Storage for all CV values
+np.random.seed(42)
 results_by_cv = []
 
 # # OLD VERSION: Loop over CV values
@@ -619,6 +519,107 @@ print(f"Config: {row['config_name']}")
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# FUNCTION TO BUILD JACOBIAN FOR RING OF DIFFERENT CELLS (PARAMETER HETEROGENEITY)
+
+# Parameters: 
+
+# Build (3N)×(3N) Jacobian for ring with parameter heterogeneity
+# - N_cells: number of cells (10)
+# - baseline_params: mean parameter values (16-element array)
+# - hopping: dict with h_u, h_v, h_w
+# - CV: coefficient of variation (e.g., 0.1 = 10% variation)
+
+# Returns:
+# - J_ring: 30×30 Jacobian matrix
+# - steady_states: list of 10 steady states (one per cell)
+# - params_list: list of 10 parameter arrays (one per cell)
+
+# OLD VERSION 
+# def build_ring_jacobian_heterogeneous(N_cells, baseline_params, hopping, CV):
+
+#     # Generate perturbed parameters for each cell
+#     params_list = []
+#     steady_states = []
+
+#     # for i in range(N_cells):
+#     #     # Multiplicative noise: param_i = baseline × (1 + ε)
+#     #     # where ε ~ N(0, CV²)
+#     #     noise = np.random.normal(0, CV, size=16)
+#     #     params_i = baseline_params * (1 + noise)
+        
+#     #     # Make sure all parameters stay positive
+#     #     params_i = np.maximum(params_i, 1e-6)
+        
+#     #     params_list.append(params_i)
+
+#     for i in range(N_cells):
+#         sigma = np.sqrt(np.log(1 + CV**2))
+#         mu = -sigma**2 / 2  # Keeps mean at 1
+#         noise_factors = np.random.lognormal(mu, sigma, size=16)
+#         params_i = baseline_params * noise_factors
+#         params_list.append(params_i)
+    
+#     # Find steady state for each cell
+#     for i, params_i in enumerate(params_list):
+#         ss_i = find_steady_state(params_i)  # NOW we use this!
+        
+#         if ss_i is None:
+#             # If can't find steady state, use baseline as fallback -> HAVE TO FIX LATER NOT SURE WHICH WAY IS CORRECT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+#             #ss_i = find_steady_state(baseline_params)
+
+#             params_i = baseline_params.copy()
+#             ss_i = steady_state_expected.copy()
+        
+#         steady_states.append(ss_i)
+    
+#     # Build the big Jacobian
+#     h_u = hopping['h_u']
+#     h_v = hopping['h_v']
+#     h_w = hopping['h_w']
+    
+#     size = 3 * N_cells
+#     J_ring = np.zeros((size, size))
+    
+#     for i in range(N_cells):
+#         idx = 3 * i
+        
+#         # Local Jacobian (DIFFERENT for each cell now!)
+#         J_local = compute_jacobian(steady_states[i], params_list[i])
+#         J_ring[idx:idx+3, idx:idx+3] = J_local
+        
+#         # Hopping (same as before)
+#         J_ring[idx, idx] -= 2*h_u
+#         J_ring[idx+1, idx+1] -= 2*h_v
+#         J_ring[idx+2, idx+2] -= 2*h_w
+        
+#         # Coupling
+#         left = (i - 1) % N_cells
+#         right = (i + 1) % N_cells
+        
+#         J_ring[idx, 3*left] += h_u
+#         J_ring[idx+1, 3*left+1] += h_v
+#         J_ring[idx+2, 3*left+2] += h_w
+        
+#         J_ring[idx, 3*right] += h_u
+#         J_ring[idx+1, 3*right+1] += h_v
+#         J_ring[idx+2, 3*right+2] += h_w
+    
+#     return J_ring, steady_states, params_list
 
 
 # BACKUP FOR THE VERSION WHERE WE CAN DIRECTLY COMPARE THE DIFFERENT VARIATIONS (LINE PLOT)
