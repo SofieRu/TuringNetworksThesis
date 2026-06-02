@@ -31,21 +31,19 @@ N_cells = 20 # for sanity check run with N = 5, 10 and 20
 PARAM_LABELS = {
     'alpha_u': 'u basal production',
     'beta_u': 'u regulated production',
-    'K_uu': 'u self-activation (K)',
-    'K_vu': 'v-u inhibition (K)',
+    'K_uu': 'u self-activation',
+    'K_vu': 'v to u inhibition',
     'delta_u': 'u degradation',
-    
     'alpha_v': 'v basal production',
     'beta_v': 'v regulated production',
-    'K_uv': 'u-v activation (K)',
-    'K_wv': 'w-v inhibition (K)',
+    'K_uv': 'u to v activation',
+    'K_wv': 'w to v inhibition',
     'delta_v': 'v degradation',
-    
     'alpha_w': 'w basal production',
     'beta_w': 'w regulated production',
-    'K_ww': 'w self-activation (K)',
-    'K_uw': 'u-w inhibition (K)',
-    'K_vw': 'v-w inhibition (K)',
+    'K_ww': 'w self-activation',
+    'K_uw': 'u to w inhibition',
+    'K_vw': 'v to w inhibition',
     'delta_w': 'w degradation'
 }
 

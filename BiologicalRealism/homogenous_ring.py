@@ -327,7 +327,7 @@ print("="*70)
 
 # Settings, CHANGE HERE FOR VARIATION
 n_trials = 1000
-N_cells = 20 # for sanity check run with N = 5, 10 and 20, 30??
+N_cells = 10 # for sanity check run with N = 5, 10 and 20, 30??
 
 if turing == 'Type-I':
     # N_cells = 10
