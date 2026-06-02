@@ -1,0 +1,21 @@
+Starting job 10 at Tue  2 Jun 17:31:55 BST 2026
+Starting NEW_LHS_3954_Type2_V2_Equal: dU=1.0, dV=1.0, dW=0.0, n_samples=1,000
+Diego Turing:    0 (0.0000%)
+Shaberi Total:   0 (0.0000%)
+  Type-I:        0
+  Type-II:       0
+  Hopf:          0
+
+Saved to:
+  results/NEW_LHS_3954_Type2_V2_Equal_1mio_with_params.pkl
+  results/NEW_LHS_3954_Type2_V2_Equal_1mio_with_params.csv
+Finished job 10 at Tue  2 Jun 17:32:19 BST 2026
+
+====================================
+CPU Time used: 00:00:00
+CPU Percent: 0%
+Memory usage: 0b
+Approx Power usage: 0.0
+Walltime usage: 00:00:43
+
+====================================

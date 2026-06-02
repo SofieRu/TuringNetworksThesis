@@ -21,17 +21,17 @@ from homogenous_ring import (
 
 ### Load results for #3954 ###
 # Config 13 (robust)
-with open('3954_cv_sweep_high_config13.pkl', 'rb') as f:
+with open('3954_cv_sweep_high_config13_N10.pkl', 'rb') as f:
     cv_data_13 = pickle.load(f)
 
-with open('sensitivity_results_NEW_config13.pkl', 'rb') as f:
+with open('3954_sensitivity_results_config13_N10.pkl', 'rb') as f:
     sens_data_13 = pickle.load(f)
 
 # Config 2 (fragile)
-with open('3954_cv_sweep_low_config2.pkl', 'rb') as f:
+with open('3954_cv_sweep_low_config2_N10.pkl', 'rb') as f:
     cv_data_2 = pickle.load(f)
 
-with open('sensitivity_results_NEW_config2.pkl', 'rb') as f:
+with open('3954_sensitivity_results_config2_N10.pkl', 'rb') as f:
     sens_data_2 = pickle.load(f)
 
 ### Extract data ###
@@ -977,6 +977,86 @@ plt.close()
 
 
 
+
+
+
+
+# ========================================================================================================================================================
+#                                                  FIGURE 5: ROBUSTNESS VS CV — N=10 vs N=20 COMPARISON
+# ========================================================================================================================================================
+
+# Load all four CV sweep pickles
+# (Adjust filenames to match what you actually have)
+with open('3954_cv_sweep_high_config13_N10.pkl', 'rb') as f:
+    cv13_N10_data = pickle.load(f)
+with open('3954_cv_sweep_high_config13_N20.pkl', 'rb') as f:
+    cv13_N20_data = pickle.load(f)
+with open('3954_cv_sweep_low_config2_N10.pkl', 'rb') as f:
+    cv2_N10_data = pickle.load(f)
+with open('3954_cv_sweep_low_config2_N20.pkl', 'rb') as f:
+    cv2_N20_data = pickle.load(f)
+
+# Extract robustness arrays using your existing helper
+cv13_N10 = extract_cv_arrays(cv13_N10_data)
+cv13_N20 = extract_cv_arrays(cv13_N20_data)
+cv2_N10  = extract_cv_arrays(cv2_N10_data)
+cv2_N20  = extract_cv_arrays(cv2_N20_data)
+
+# Build the 4-curve list
+robustness_curves = [
+    {
+        'label': '#3954 robust (config 13, N=10)',
+        'CV': cv13_N10['CV'], 'robustness': cv13_N10['robustness'],
+        'color': 'darkblue', 'marker': 'o', 'linestyle': '-',
+    },
+    {
+        'label': '#3954 robust (config 13, N=20)',
+        'CV': cv13_N20['CV'], 'robustness': cv13_N20['robustness'],
+        'color': 'darkblue', 'marker': 'o', 'linestyle': '--',
+    },
+    {
+        'label': '#3954 fragile (config 2, N=10)',
+        'CV': cv2_N10['CV'], 'robustness': cv2_N10['robustness'],
+        'color': 'crimson', 'marker': 's', 'linestyle': '-',
+    },
+    {
+        'label': '#3954 fragile (config 2, N=20)',
+        'CV': cv2_N20['CV'], 'robustness': cv2_N20['robustness'],
+        'color': 'crimson', 'marker': 's', 'linestyle': '--',
+    },
+]
+
+fig, ax = plt.subplots(figsize=(11, 6))
+
+for curve in robustness_curves:
+    ax.plot(curve['CV'], curve['robustness'],
+            marker=curve['marker'], color=curve['color'],
+            linestyle=curve['linestyle'],
+            linewidth=2.5, markersize=9,
+            label=curve['label'], zorder=3)
+
+ax.axhline(y=50, color='gray', linestyle=':', linewidth=1.5, alpha=0.7,
+           label='50% threshold', zorder=2)
+ax.axhline(y=0, color='black', linewidth=0.8, alpha=0.5, zorder=1)
+
+ax.set_xlabel('CV (Coefficient of Variation)', fontsize=13)
+ax.set_ylabel('Robustness (% of trials with Turing instability)', fontsize=13)
+ax.set_title('Robustness to Heterogeneity across Ring Sizes\n'
+             'Same qualitative behaviour at N=10 and N=20',
+             fontsize=13, pad=12)
+
+ax.set_xlim(-0.01, 0.42)
+ax.set_ylim(-5, 105)
+ax.set_yticks([0, 25, 50, 75, 100])
+ax.grid(True, alpha=0.3)
+
+# Legend split into two columns for readability
+ax.legend(fontsize=10, loc='center right', ncol=1, framealpha=0.95)
+
+plt.tight_layout()
+plt.savefig('fig5_robustness_vs_cv_N10_vs_N20.png', dpi=300, bbox_inches='tight')
+print("Saved: fig5_robustness_vs_cv_N10_vs_N20.png")
+plt.close()
 
 
 
