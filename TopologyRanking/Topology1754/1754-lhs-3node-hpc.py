@@ -385,7 +385,7 @@ if __name__ == "__main__":
         sys.exit(1)
     
     config_id = int(sys.argv[1])
-    n_samples = 100_000 # change later to 1_000_000
+    n_samples = 1_000_000 # change later to 1_000_000
 
     # NEW: Check for parameter saving flags
     save_successful_params = '--save-params' in sys.argv

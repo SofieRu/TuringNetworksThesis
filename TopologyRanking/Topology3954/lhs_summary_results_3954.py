@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-
 import pickle
 import glob
 import pandas as pd
@@ -43,7 +42,6 @@ df = df.sort_values('config_id', ascending=True)
 # Save as CSV for Excel
 df.to_csv('3954_NEW_lhs_results_summary.csv', index=False)
 print("\nSaved to: 3954_NEW_lhs_results_summary.csv")
-
 
 # PART 2: DETAILED CSV (one row per saved parameter set)
 

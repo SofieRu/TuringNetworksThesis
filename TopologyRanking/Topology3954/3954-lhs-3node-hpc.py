@@ -350,7 +350,7 @@ if __name__ == "__main__":
         sys.exit(1)
     
     config_id = int(sys.argv[1])
-    n_samples = 1_000  # 100K samples for Phase 1 and then increase to 1 million
+    n_samples = 1_000_000  # 1 million samples
     
     # NEW: Check for parameter saving flags
     save_successful_params = '--save-params' in sys.argv
