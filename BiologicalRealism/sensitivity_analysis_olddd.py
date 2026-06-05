@@ -3,7 +3,7 @@ import numpy as np
 import pickle
 import pandas as pd
 
-from homogenous_ring import (
+from heterogenous_ring_3954 import (
     CONFIG_TO_TEST,
     build_ring_jacobian_homogeneous,
     compute_jacobian,

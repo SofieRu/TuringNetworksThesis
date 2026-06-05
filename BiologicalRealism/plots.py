@@ -5,12 +5,12 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Patch
 from scipy.optimize import fsolve
 
-from homogenous_ring import (
+from heterogenous_ring_3954 import (
     hopping,
 )
 
 # for when we run bifurcation plots!!
-# from homogenous_ring import (
+# from heterogenous_ring_3954 import (
 #     CONFIG_TO_TEST,
 #     build_ring_jacobian_homogeneous,
 #     steady_state_expected,

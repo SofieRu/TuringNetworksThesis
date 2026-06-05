@@ -1,7 +1,6 @@
 # Quick standalone script, not part of main pipeline
 import numpy as np
-from homogenous_ring import (build_ring_jacobian_homogeneous, 
-                              compute_jacobian, ode_system)
+from heterogenous_ring_3954 import (build_ring_jacobian_homogeneous, compute_jacobian, ode_system)
 import pandas as pd
 
 # Load both configs
