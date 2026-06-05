@@ -37,7 +37,7 @@ PERTURBATION = 0.10  # ±10% perturbation per parameter
 LOCAL_TOLERANCE = 0.5  # accept steady states within 50% of baseline (per component), sanity check might adjust later to 0.3 and 0.7?!!
 
 # CHANGE THIS FOR VARIATION
-N_cells = 10 # for sanity check run with N = 5, 10 and 20
+N_cells = 20 # for sanity check run with N = 5, 10 and 20
 
 PARAM_LABELS = {
     'alpha_u': 'u basal production',
