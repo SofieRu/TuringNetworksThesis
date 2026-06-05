@@ -107,8 +107,8 @@ def is_turing_shaberi(J, eigs_0, DU, DV, DW):
 # PARAMETRS FOR HOMOGENOUS RING (EXAMPLE)
 
 # CHANGE THIS TO TEST DIFFERENT CONFIGS:
-CONFIG_TO_TEST = 12 # 12 is high, possible lows are 6, 7 
-CONFIG_LABEL = "high"  # or "low" — change this once when you switch configs
+CONFIG_TO_TEST = 6 # 12 is high, possible lows are 6, 7 
+CONFIG_LABEL = "low"  # or "low" — change this once when you switch configs
 
 # Load parameters from CSV
 df_params = pd.read_csv('../TopologyRanking/Topology1754/1754_NEW_lhs_results_parameters.csv')

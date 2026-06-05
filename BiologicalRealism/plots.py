@@ -37,6 +37,7 @@ with open('3954_cv_sweep_low_config2_N10.pkl', 'rb') as f:
 with open('3954_sensitivity_results_config2_N10.pkl', 'rb') as f:
     sens_data_2 = pickle.load(f)
 
+
 def extract_cv_arrays(cv_data):
     results = cv_data['results']
     CV_values = np.array([r['CV'] for r in results])
@@ -65,6 +66,8 @@ def diff_str(hopping):
 # ========================================================================================================================================================
 #                                                              BIOLOGICAL REALISM PLOTS
 # ========================================================================================================================================================
+
+################ TOPOLOGY 3954 ################
 
 # ============================================================================
 # FIGURE 1A: Mean with full range Config 13
@@ -196,6 +199,168 @@ plt.close()
 
 
 
+
+
+
+
+
+# Results for 1754
+with open('1754_cv_sweep_high_config12_N10.pkl', 'rb') as f:
+    cv_data_12 = pickle.load(f)
+
+with open('1754_sensitivity_results_config12_N10.pkl', 'rb') as f:
+    sens_data_12 = pickle.load(f)
+
+# Config 2 (fragile)
+# with open('1754_cv_sweep_low_config_N10.pkl', 'rb') as f:
+#     cv_data_7 = pickle.load(f)
+
+# with open('1754_sensitivity_results_config2_N10.pkl', 'rb') as f:
+#     sens_data_7 = pickle.load(f)
+
+cv12 = extract_cv_arrays(cv_data_12)
+# cv7 = extract_cv_arrays(cv_data_7)
+
+
+################ TOPOLOGY 1754 ################
+
+# ============================================================================
+# FIGURE 1A: Mean with full range Config 12
+# ============================================================================
+
+fig, ax = plt.subplots(figsize=(10, 6))
+
+# Fill FULL range (min to max)
+ax.fill_between(cv12['CV'], cv12['min'], cv12['max'], alpha=0.2, color='blue', label='Full range (min-max)', zorder=1)
+
+# plot mean line
+ax.plot(cv12['CV'], cv12['mean'], 'o-', color='darkblue', linewidth=2.5, markersize=8, label='Mean Re(λ)', zorder=3)
+
+# horizontal line at Re(λ) = 0
+ax.axhline(y=0, color='red', linestyle='--', linewidth=2, label='Turing threshold', zorder=2)
+
+# labels and title
+ax.set_xlabel('CV (Coefficient of Variation)', fontsize=12)
+ax.set_ylabel('Max Re(λ)', fontsize=12)
+ax.set_title(f'1754 Turing Growth Rate vs Parameter Heterogeneity\n'f'Config 12 (robust): {diff_str(cv12["hopping"])}', fontsize=12, pad=15)
+ax.legend(fontsize=11, loc='upper left')
+ax.grid(True, alpha=0.3)
+
+# save the plots
+plt.tight_layout()
+plt.savefig('config12_fig1_mean_range_vs_cv.png', dpi=300, bbox_inches='tight')
+print("Saved as config12_fig1_mean_range_vs_cv.png")
+plt.close()
+
+# ============================================================================
+# FIGURE 2A: BOXPLOT Config 12
+# ============================================================================
+
+fig, ax = plt.subplots(figsize=(12, 6))
+
+# Create boxplot
+
+bp = ax.boxplot(cv13['all'],
+                positions=range(len(cv13['CV'])),
+                widths=0.6,
+                patch_artist=True,
+                showfliers=True,
+                medianprops=dict(color='black', linewidth=1.5),
+                flierprops=dict(marker='o', markersize=3, alpha=0.3))
+
+# color boxes
+for patch in bp['boxes']:
+    patch.set_facecolor('slateblue')
+    patch.set_alpha(0.8)
+
+# horizontal line at Re(λ) = 0 (Turing threshold)
+ax.axhline(y=0, color='red', linestyle='--', linewidth=2, label='Turing threshold (Re(λ)=0)', zorder=10)
+
+ax.set_xticks(range(len(cv13['CV'])))
+ax.set_xticklabels([f'{cv:.2f}' for cv in cv13['CV']])
+ax.set_xlabel('CV (Coefficient of Variation)', fontsize=12)
+ax.set_ylabel('Max Re(λ)', fontsize=12)
+
+ax.set_title(f'3954 Distribution of Turing Growth Rates Under Parameter Heterogeneity\n'
+             f'Config 13 (robust): {diff_str(cv13["hopping"])}',
+             fontsize=12, pad=15)
+
+ax.legend(fontsize=9, framealpha=0.9)  # Was fontsize=11
+ax.grid(True, alpha=0.3, axis='y')
+
+plt.tight_layout()
+plt.savefig('config13_fig2_boxplot_cv_sweep.png', dpi=300, bbox_inches='tight')
+print("Saved: config13_fig2_boxplot_cv_sweep.png")
+plt.close()
+
+
+# # ============================================================================
+# # FIGURE 1B: Mean with full range — Config 2
+# # ============================================================================
+
+# fig, ax = plt.subplots(figsize=(10, 6))
+
+# ax.fill_between(cv2['CV'], cv2['min'], cv2['max'], alpha=0.2, color='blue', label='Full range (min-max)', zorder=1)
+# ax.plot(cv2['CV'], cv2['mean'], 'o-', color='darkblue', linewidth=2.5, markersize=8, label='Mean Re(λ)', zorder=3)
+# ax.axhline(y=0, color='red', linestyle='--', linewidth=2, label='Turing threshold', zorder=2)
+
+# ax.set_xlabel('CV (Coefficient of Variation)', fontsize=12)
+# ax.set_ylabel('Max Re(λ)', fontsize=12)
+# ax.set_title(f'3954 Turing Growth Rate vs Parameter Heterogeneity\n' f'Config 2 (fragile): {diff_str(cv2["hopping"])}', fontsize=12, pad=15)
+# ax.legend(fontsize=11, loc='upper left')
+# ax.grid(True, alpha=0.3)
+
+# plt.tight_layout()
+# plt.savefig('config2_fig1_mean_range_vs_cv.png', dpi=300, bbox_inches='tight')
+# print("Saved: config2_fig1_mean_range_vs_cv.png")
+# plt.close()
+
+# # ============================================================================
+# # FIGURE 2B: Boxplot — Config 2
+# # ============================================================================
+
+# fig, ax = plt.subplots(figsize=(12, 6))
+
+# bp = ax.boxplot(cv2['all'],
+#                 positions=range(len(cv2['CV'])),
+#                 widths=0.6,
+#                 patch_artist=True,
+#                 showfliers=True,
+#                 medianprops=dict(color='black', linewidth=1.5),
+#                 flierprops=dict(marker='o', markersize=3, alpha=0.3))
+
+# for patch in bp['boxes']:
+#     patch.set_facecolor('slateblue')
+#     patch.set_alpha(1.0)
+
+# ax.axhline(y=0, color='red', linestyle='--', linewidth=2, label='Turing threshold (Re(λ)=0)', zorder=10)
+
+# ax.set_xticks(range(len(cv2['CV'])))
+# ax.set_xticklabels([f'{cv:.2f}' for cv in cv2['CV']])
+# ax.set_xlabel('CV (Coefficient of Variation)', fontsize=12)
+# ax.set_ylabel('Max Re(λ)', fontsize=12)
+# ax.set_title(f'3954 Distribution of Turing Growth Rates Under Parameter Heterogeneity\n'
+#              f'Config 2 (fragile): {diff_str(cv2["hopping"])} — 1000 trials per CV',
+#              fontsize=12, pad=15)
+
+# ax.legend(fontsize=9, framealpha=0.9)
+# ax.grid(True, alpha=0.3, axis='y')
+
+# plt.tight_layout()
+# plt.savefig('config2_fig2_boxplot_cv_sweep.png', dpi=300, bbox_inches='tight')
+# print("Saved: config2_fig2_boxplot_cv_sweep.png")
+# plt.close()
+
+
+
+
+
+
+
+
+
+
+
 # ========================================================================================================================================================
 #                                                              SENSITIVITY ANALYSIS PLOTS
 # ========================================================================================================================================================
@@ -301,6 +466,7 @@ plot_sensitivity(sens_data_13, 'Config 13 (robust)', 'config13_fig3_sensitivity.
 
 plot_sensitivity(sens_data_2, 'Config 2 (fragile)', 'config2_fig3_sensitivity.png')
 
+plot_sensitivity(sens_data_12, 'Config 12 (robust)', 'config12_fig3_sensitivity.png')
 
 
 
@@ -322,11 +488,20 @@ with open('3954_cv_sweep_low_config2_N10.pkl', 'rb') as f:
 with open('3954_cv_sweep_low_config2_N20.pkl', 'rb') as f:
     cv2_N20_data = pickle.load(f)
 
+with open('1754_cv_sweep_low_config12_N10.pkl', 'rb') as f:
+    cv12_N10_data = pickle.load(f)
+with open('1754_cv_sweep_low_config12_N20.pkl', 'rb') as f:
+    cv12_N20_data = pickle.load(f)
+
+
+
 # Extract robustness arrays using your existing helper
 cv13_N10 = extract_cv_arrays(cv13_N10_data)
 cv13_N20 = extract_cv_arrays(cv13_N20_data)
 cv2_N10  = extract_cv_arrays(cv2_N10_data)
 cv2_N20  = extract_cv_arrays(cv2_N20_data)
+cv12_N10 = extract_cv_arrays(cv12_N10_data)
+cv12_N20 = extract_cv_arrays(cv12_N20_data)
 
 # Build the 4-curve list
 robustness_curves = [
@@ -350,6 +525,16 @@ robustness_curves = [
         'CV': cv2_N20['CV'], 'robustness': cv2_N20['robustness'],
         'color': 'crimson', 'marker': 's', 'linestyle': '--',
     },
+    {
+        'label': '#1754 robust (config 12, N=10)',
+        'CV': cv12_N10['CV'], 'robustness': cv12_N10['robustness'],
+        'color': 'darkgreen', 'marker': '^', 'linestyle': '-',
+    },
+    {
+        'label': '#1754 robust (config 12, N=20)',
+        'CV': cv12_N20['CV'], 'robustness': cv12_N20['robustness'],
+        'color': 'darkgreen', 'marker': '^', 'linestyle': '--',
+    }
 ]
 
 fig, ax = plt.subplots(figsize=(11, 6))
