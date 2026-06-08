@@ -270,6 +270,10 @@ DIFFUSION_CONFIGS = {
     # TYPE 3
     # freeze core destabilising nodes u and w
 
+    # node u immobile
+
+
+
     # equal (dV=dW)
     36: {"name": "NEW_LHS_3954_Type3_Uimm_VWSlow_Equal",        "dU": 0.0, "dV": 0.1,  "dW": 0.1},
     37: {"name": "NEW_LHS_3954_Type3_Uimm_VWControl_Equal",     "dU": 0.0, "dV": 1.0,  "dW": 1.0},
