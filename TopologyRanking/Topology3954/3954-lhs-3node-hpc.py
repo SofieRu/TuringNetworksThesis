@@ -259,7 +259,6 @@ DIFFUSION_CONFIGS = {
     24: {"name": "NEW_LHS_3954_Type2_VFreeze_Equal1",       "dU": 1.0,  "dV": 0.0,  "dW": 1.0},
     25: {"name": "NEW_LHS_3954_Type2_VFreeze_Equal2",       "dU": 0.1,  "dV": 0.0,  "dW": 0.1},
     26: {"name": "NEW_LHS_3954_Type2_VFreeze_Equal3",       "dU": 10.0, "dV": 0.0,  "dW": 10.0},
-
     27: {"name": "NEW_LHS_3954_Type2_VFreeze_Unequal1",     "dU": 0.1,  "dV": 0.0,  "dW": 1.0},
     28: {"name": "NEW_LHS_3954_Type2_VFreeze_Unequal2",     "dU": 1.0,  "dV": 0.0,  "dW": 0.1},
     29: {"name": "NEW_LHS_3954_Type2_VFreeze_Unequal3",     "dU": 0.1,  "dV": 0.0,  "dW": 10.0},
@@ -267,60 +266,46 @@ DIFFUSION_CONFIGS = {
     31: {"name": "NEW_LHS_3954_Type2_VFreeze_Unequal5",     "dU": 1.0,  "dV": 0.0,  "dW": 10.0},
     32: {"name": "NEW_LHS_3954_Type2_VFreeze_Unequal6",     "dU": 10.0, "dV": 0.0,  "dW": 1.0},
 
-    # TYPE 3
-    # freeze core destabilising nodes u and w
-
+    # TYPE 3 (freeze core destabilising nodes u and w)
     # node u immobile
+    33: {"name": "NEW_LHS_3954_Type3_UFreeze_Equal1",       "dU": 0.0, "dV": 1.0,  "dW": 1.0},
+    34: {"name": "NEW_LHS_3954_Type3_UFreeze_Equal2",       "dU": 0.0, "dV": 0.1,  "dW": 0.1},
+    35: {"name": "NEW_LHS_3954_Type3_UFreeze_Equal3",       "dU": 0.0, "dV": 10.0, "dW": 10.0},
+    36: {"name": "NEW_LHS_3954_Type3_UFreeze_Unequal1",     "dU": 0.0, "dV": 1.0,  "dW": 0.1},
+    37: {"name": "NEW_LHS_3954_Type3_UFreeze_Unequal2",     "dU": 0.0, "dV": 0.1,  "dW": 1.0},
+    38: {"name": "NEW_LHS_3954_Type3_UFreeze_Unequal3",     "dU": 0.0, "dV": 10.0, "dW": 1.0},
+    39: {"name": "NEW_LHS_3954_Type3_UFreeze_Unequal4",     "dU": 0.0, "dV": 1.0,  "dW": 10.0},
+    40: {"name": "NEW_LHS_3954_Type3_UFreeze_Unequal5",     "dU": 0.0, "dV": 0.1,  "dW": 10.0},
+    41: {"name": "NEW_LHS_3954_Type3_UFreeze_Unequal6",     "dU": 0.0, "dV": 10.0, "dW": 0.1},
 
+    # node w immobile
+    42: {"name": "NEW_LHS_3954_Type3_WFreeze_Equal1",       "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
+    43: {"name": "NEW_LHS_3954_Type3_WFreeze_Equal2",       "dU": 0.1,  "dV": 0.1,  "dW": 0.0},
+    44: {"name": "NEW_LHS_3954_Type3_WFreeze_Equal3",       "dU": 10.0, "dV": 10.0, "dW": 0.0},
+    45: {"name": "NEW_LHS_3954_Type3_WFreeze_Unequal1",     "dU": 1.0,  "dV": 0.1,  "dW": 0.0},
+    46: {"name": "NEW_LHS_3954_Type3_WFreeze_Unequal2",     "dU": 0.1,  "dV": 1.0,  "dW": 0.0},
+    47: {"name": "NEW_LHS_3954_Type3_WFreeze_Unequal3",     "dU": 10.0, "dV": 1.0,  "dW": 0.0},
+    48: {"name": "NEW_LHS_3954_Type3_WFreeze_Unequal4",     "dU": 1.0,  "dV": 10.0, "dW": 0.0},
+    49: {"name": "NEW_LHS_3954_Type3_WFreeze_Unequal5",     "dU": 0.1,  "dV": 10.0, "dW": 0.0},
+    50: {"name": "NEW_LHS_3954_Type3_WFreeze_Unequal6",     "dU": 10.0, "dV": 0.1,  "dW": 0.0},
 
+    # node u + w immobile
+    51: {"name": "NEW_LHS_3954_Type3_UWFreeze_Equal1",      "dU": 0.0,  "dV": 1.0,  "dW": 0.0},
+    52: {"name": "NEW_LHS_3954_Type3_UWFreeze_Equal2",      "dU": 0.0,  "dV": 0.1,  "dW": 0.0},
+    53: {"name": "NEW_LHS_3954_Type3_UWFreeze_Equal3",      "dU": 0.0,  "dV": 10.0, "dW": 0.0},
 
-    # equal (dV=dW)
-    36: {"name": "NEW_LHS_3954_Type3_Uimm_VWSlow_Equal",        "dU": 0.0, "dV": 0.1,  "dW": 0.1},
-    37: {"name": "NEW_LHS_3954_Type3_Uimm_VWControl_Equal",     "dU": 0.0, "dV": 1.0,  "dW": 1.0},
-    38: {"name": "NEW_LHS_3954_Type3_Uimm_VWFast_Equal",        "dU": 0.0, "dV": 10.0, "dW": 10.0},
+    # node v + w immobile
+    54: {"name": "NEW_LHS_3954_Type3_VWFreeze_Equal1",      "dU": 1.0,  "dV": 0.0, "dW": 0.0},
+    55: {"name": "NEW_LHS_3954_Type3_VWFreeze_Equal2",      "dU": 0.1,  "dV": 0.0, "dW": 0.0},
+    56: {"name": "NEW_LHS_3954_Type3_VWFreeze_Equal3",      "dU": 10.0, "dV": 0.0, "dW": 0.0},
 
-    # unequal (dV≠dW)
-    39: {"name": "NEW_LHS_3954_Type3_Uimm_V1_WSlow_Unequal",    "dU": 0.0, "dV": 1.0,  "dW": 0.1},
-    40: {"name": "NEW_LHS_3954_Type3_Uimm_VSlow_W1_Unequal",    "dU": 0.0, "dV": 0.1,  "dW": 1.0},
-    41: {"name": "NEW_LHS_3954_Type3_Uimm_VFast_W1_Unequal",    "dU": 0.0, "dV": 10.0, "dW": 1.0},
-    42: {"name": "NEW_LHS_3954_Type3_Uimm_V1_WFast_Unequal",    "dU": 0.0, "dV": 1.0,  "dW": 10.0},
-    43: {"name": "NEW_LHS_3954_Type3_Uimm_VSlow_WFast_Unequal", "dU": 0.0, "dV": 0.1,  "dW": 10.0},
-    44: {"name": "NEW_LHS_3954_Type3_Uimm_VFast_WSlow_Unequal", "dU": 0.0, "dV": 10.0, "dW": 0.1},
-
-    # TYPE 3 — pattern B: dW immobile (dW=0), dU and dV diffuse
-    # equal (dU=dV)
-    45: {"name": "NEW_LHS_3954_Type3_Wimm_UVSlow_Equal",        "dU": 0.1,  "dV": 0.1,  "dW": 0.0},
-    46: {"name": "NEW_LHS_3954_Type3_Wimm_UVControl_Equal",     "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
-    47: {"name": "NEW_LHS_3954_Type3_Wimm_UVFast_Equal",        "dU": 10.0, "dV": 10.0, "dW": 0.0},
-
-    # unequal (dU≠dV)
-    48: {"name": "NEW_LHS_3954_Type3_Wimm_U1_VSlow_Unequal",    "dU": 1.0,  "dV": 0.1,  "dW": 0.0},
-    49: {"name": "NEW_LHS_3954_Type3_Wimm_USlow_V1_Unequal",    "dU": 0.1,  "dV": 1.0,  "dW": 0.0},
-    50: {"name": "NEW_LHS_3954_Type3_Wimm_UFast_V1_Unequal",    "dU": 10.0, "dV": 1.0,  "dW": 0.0},
-    51: {"name": "NEW_LHS_3954_Type3_Wimm_U1_VFast_Unequal",    "dU": 1.0,  "dV": 10.0, "dW": 0.0},
-    52: {"name": "NEW_LHS_3954_Type3_Wimm_USlow_VFast_Unequal", "dU": 0.1,  "dV": 10.0, "dW": 0.0},
-    53: {"name": "NEW_LHS_3954_Type3_Wimm_UFast_VSlow_Unequal", "dU": 10.0, "dV": 0.1,  "dW": 0.0},
-
-    # TYPE 3 — pattern C: dU and dW immobile, only dV diffuses
-    54: {"name": "NEW_LHS_3954_Type3_UWimm_VSlow_Equal",        "dU": 0.0, "dV": 0.1,  "dW": 0.0},
-    55: {"name": "NEW_LHS_3954_Type3_UWimm_VControl_Equal",     "dU": 0.0, "dV": 1.0,  "dW": 0.0},
-    56: {"name": "NEW_LHS_3954_Type3_UWimm_VFast_Equal",        "dU": 0.0, "dV": 10.0, "dW": 0.0},
-
-    # TYPE 3 — pattern D: dV and dW immobile, only dU diffuses
-    57: {"name": "NEW_LHS_3954_Type3_VWimm_USlow_Equal",        "dU": 0.1,  "dV": 0.0, "dW": 0.0},
-    58: {"name": "NEW_LHS_3954_Type3_VWimm_UControl_Equal",     "dU": 1.0,  "dV": 0.0, "dW": 0.0},
-    59: {"name": "NEW_LHS_3954_Type3_VWimm_UFast_Equal",        "dU": 10.0, "dV": 0.0, "dW": 0.0},
-
-    # TYPE 3 — pattern E: dU and dV immobile, only dW diffuses
-    60: {"name": "NEW_LHS_3954_Type3_UVimm_WSlow_Equal",        "dU": 0.0, "dV": 0.0, "dW": 0.1},
-    61: {"name": "NEW_LHS_3954_Type3_UVimm_WControl_Equal",     "dU": 0.0, "dV": 0.0, "dW": 1.0},
-    62: {"name": "NEW_LHS_3954_Type3_UVimm_WFast_Equal",        "dU": 0.0, "dV": 0.0, "dW": 10.0},
+    # node u + v immobile
+    57: {"name": "NEW_LHS_3954_Type3_UVFreeze_Equal1",      "dU": 0.0, "dV": 0.0, "dW": 1.0}, 
+    58: {"name": "NEW_LHS_3954_Type3_UVFreeze_Equal2",      "dU": 0.0, "dV": 0.0, "dW": 0.1},
+    59: {"name": "NEW_LHS_3954_Type3_UVFreeze_Equal3",      "dU": 0.0, "dV": 0.0, "dW": 10.0},
 }
 
-
 # add one version where node W is always immobile so like DCI, also 100 i think is type 2 when node w is immobile but not sure could also be type 3 when we freeze the entire destabilising cycle so VW??
-
-
 
 # MAIN ANALYSIS FUNCTION
 
