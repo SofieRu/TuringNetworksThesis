@@ -129,29 +129,58 @@ def is_turing_shaberi(J, eigs_0, DU, DV, DW):
 # LATER ADD VARIATIONS SO EQUAL AND UNEQUAL AND LIMIT DIFFUSION RATES!!
 
 DIFFUSION_CONFIGS = {
-    # DDC: A=Destable, B=Destable, C=Destable
-    0:  {"name": "RMT_1838_DDC_Type1",          "dU": 1.0,  "dV": 0.0,  "dW": 10.0},
-    1:  {"name": "RMT_1838_DDC_Var1",           "dU": 1.0,  "dV": 1.0,  "dW": 10.0},
-    2:  {"name": "RMT_1838_DDC_Var2",           "dU": 0.0,  "dV": 1.0,  "dW": 10.0},
-    3:  {"name": "RMT_1838_DDC_Type1_Control",  "dU": 1.0,  "dV": 0.0,  "dW": 1.0},
+    
+    # TYPE 1
+    # controls
+    0:  {"name": "NEW_RMT_1838_Type1_Control_Slow",         "dU": 0.1,  "dV": 0.1,  "dW": 0.1},
+    1:  {"name": "NEW_RMT_1838_Type1_Control_Equal",        "dU": 1.0,  "dV": 1.0,  "dW": 1.0},
+    2:  {"name": "NEW_RMT_1838_Type1_Control_Fast",         "dU": 10.0, "dV": 10.0, "dW": 10.0},
 
-    4:  {"name": "RMT_1838_DDC_Type2_Equal",    "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
-    5:  {"name": "RMT_1838_DDC_Type2_Unequal1", "dU": 1.0,  "dV": 0.1,  "dW": 0.0},
-    6:  {"name": "RMT_1838_DDC_Type2_Unequal2", "dU": 0.1,  "dV": 1.0,  "dW": 0.0},
-    7:  {"name": "RMT_1838_DDC_Type2_Unequal3", "dU": 10.0, "dV": 1.0,  "dW": 0.0},
-    8:  {"name": "RMT_1838_DDC_Type2_Unequal4", "dU": 1.0,  "dV": 10.0, "dW": 0.0},
-    9:  {"name": "RMT_1838_DDC_Type2_Var1",     "dU": 0.0,  "dV": 1.0,  "dW": 0.0},
-    10: {"name": "RMT_1838_DDC_Type2_Var2",     "dU": 1.0,  "dV": 0.0,  "dW": 0.0},
+    # node w diffuses faster than u and v
+    3:  {"name": "NEW_RMT_1838_Type1_WFast_Unequal1",       "dU": 1.0,  "dV": 1.0,  "dW": 10.0},
+    4:  {"name": "NEW_RMT_1838_Type1_WFast_Unequal2",       "dU": 0.1,  "dV": 0.1,  "dW": 1.0},
+    5:  {"name": "NEW_RMT_1838_Type1_WFast_Unequal3",       "dU": 0.1,  "dV": 1.0,  "dW": 10.0},
+    6:  {"name": "NEW_RMT_1838_Type1_WFast_Unequal4",       "dU": 1.0,  "dV": 0.1,  "dW": 10.0},
+    7:  {"name": "NEW_RMT_1838_Type1_WFast_Unequal5",       "dU": 0.1,  "dV": 0.1,  "dW": 10.0},
+    8:  {"name": "NEW_RMT_1838_Type1_WFast_Unequal6",       "dU": 1.0,  "dV": 0.0,  "dW": 10.0},
+    9:  {"name": "NEW_RMT_1838_Type1_WFast_Unequal7",       "dU": 0.1,  "dV": 0.0,  "dW": 1.0},
+    10: {"name": "NEW_RMT_1838_Type1_WFast_Unequal8",       "dU": 0.1,  "dV": 0.0,  "dW": 10.0},
 
-    11: {"name": "RMT_1838_DDC_Type3_Equal",    "dU": 0.0,  "dV": 1.0,  "dW": 1.0},
-    12: {"name": "RMT_1838_DDC_Type3_Unequal1", "dU": 0.0,  "dV": 0.1,  "dW": 1.0},
-    13: {"name": "RMT_1838_DDC_Type3_Unequal2", "dU": 0.0,  "dV": 1.0,  "dW": 0.1},
-    14: {"name": "RMT_1838_DDC_Type3_Unequal3", "dU": 0.0,  "dV": 1.0,  "dW": 10.0},
-    15: {"name": "RMT_1838_DDC_Type3_Unequal4", "dU": 0.0,  "dV": 10.0, "dW": 1.0},
-    16: {"name": "RMT_1838_DDC_Type3_Var1",     "dU": 0.0,  "dV": 0.0,  "dW": 1.0},
-    17: {"name": "RMT_1838_DDC_Type3_Var2",     "dU": 1.0,  "dV": 0.0,  "dW": 1.0},
+    # TYPE 2
+    # node w is immobile
+    11: {"name": "NEW_RMT_1838_Type3_WFreeze_Equal1",       "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
+    12: {"name": "NEW_RMT_1838_Type3_WFreeze_Equal2",       "dU": 0.1,  "dV": 0.1,  "dW": 0.0},
+    13: {"name": "NEW_RMT_1838_Type3_WFreeze_Equal3",       "dU": 10.0, "dV": 10.0, "dW": 0.0},
+    14: {"name": "NEW_RMT_1838_Type3_WFreeze_Unequal1",     "dU": 1.0,  "dV": 0.1,  "dW": 0.0},
+    15: {"name": "NEW_RMT_1838_Type3_WFreeze_Unequal2",     "dU": 0.1,  "dV": 1.0,  "dW": 0.0},
+    16: {"name": "NEW_RMT_1838_Type3_WFreeze_Unequal3",     "dU": 10.0, "dV": 1.0,  "dW": 0.0},
+    17: {"name": "NEW_RMT_1838_Type3_WFreeze_Unequal4",     "dU": 1.0,  "dV": 10.0, "dW": 0.0},
+    18: {"name": "NEW_RMT_1838_Type3_WFreeze_Unequal5",     "dU": 0.1,  "dV": 10.0, "dW": 0.0},
+    19: {"name": "NEW_RMT_1838_Type3_WFreeze_Unequal6",     "dU": 10.0, "dV": 0.1,  "dW": 0.0},
+
+    # TYPE 3
+    # node u immobile
+    20: {"name": "NEW_RMT_1838_Type3_UFreeze_Equal1",       "dU": 0.0, "dV": 1.0,  "dW": 1.0},
+    21: {"name": "NEW_RMT_1838_Type3_UFreeze_Equal2",       "dU": 0.0, "dV": 0.1,  "dW": 0.1},
+    22: {"name": "NEW_RMT_1838_Type3_UFreeze_Equal3",       "dU": 0.0, "dV": 10.0, "dW": 10.0},
+    23: {"name": "NEW_RMT_1838_Type3_UFreeze_Unequal1",     "dU": 0.0, "dV": 1.0,  "dW": 0.1},
+    24: {"name": "NEW_RMT_1838_Type3_UFreeze_Unequal2",     "dU": 0.0, "dV": 0.1,  "dW": 1.0},
+    25: {"name": "NEW_RMT_1838_Type3_UFreeze_Unequal3",     "dU": 0.0, "dV": 10.0, "dW": 1.0},
+    26: {"name": "NEW_RMT_1838_Type3_UFreeze_Unequal4",     "dU": 0.0, "dV": 1.0,  "dW": 10.0},
+    27: {"name": "NEW_RMT_1838_Type3_UFreeze_Unequal5",     "dU": 0.0, "dV": 0.1,  "dW": 10.0},
+    28: {"name": "NEW_RMT_1838_Type3_UFreeze_Unequal6",     "dU": 0.0, "dV": 10.0, "dW": 0.1},
+
+    # node v immobile
+    29: {"name": "NEW_RMT_1838_Type2_VFreeze_Equal1",       "dU": 1.0,  "dV": 0.0,  "dW": 1.0},
+    30: {"name": "NEW_RMT_1838_Type2_VFreeze_Equal2",       "dU": 0.1,  "dV": 0.0,  "dW": 0.1},
+    31: {"name": "NEW_RMT_1838_Type2_VFreeze_Equal3",       "dU": 10.0, "dV": 0.0,  "dW": 10.0},
+    32: {"name": "NEW_RMT_1838_Type2_VFreeze_Unequal1",     "dU": 0.1,  "dV": 0.0,  "dW": 1.0},
+    33: {"name": "NEW_RMT_1838_Type2_VFreeze_Unequal2",     "dU": 1.0,  "dV": 0.0,  "dW": 0.1},
+    34: {"name": "NEW_RMT_1838_Type2_VFreeze_Unequal3",     "dU": 0.1,  "dV": 0.0,  "dW": 10.0},
+    35: {"name": "NEW_RMT_1838_Type2_VFreeze_Unequal4",     "dU": 10.0, "dV": 0.0,  "dW": 0.1},
+    36: {"name": "NEW_RMT_1838_Type2_VFreeze_Unequal5",     "dU": 1.0,  "dV": 0.0,  "dW": 10.0},
+    37: {"name": "NEW_RMT_1838_Type2_VFreeze_Unequal6",     "dU": 10.0, "dV": 0.0,  "dW": 1.0},
 }
-
 
 #full range sigma values but to test we do less values
 SIGMA_VALUES = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.8, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 3.6, 3.8, 4.0, 5.0, 6.0, 7.0 , 8.0, 9.0, 10.0]
@@ -259,12 +288,12 @@ if __name__ == "__main__":
         sys.exit(1)
     
     config_id = int(sys.argv[1])
-    n_samples = 1_000_000  # 1M samples per sigma value
+    n_samples = 100_000  # 100K samples per sigma value
     
     results = run_analysis(config_id, n_samples)
     
     # Save as pickle
-    output_pkl = f"results/{results['config_name']}_1mio.pkl"
+    output_pkl = f"results/{results['config_name']}_100k.pkl"
     with open(output_pkl, 'wb') as f:
         pickle.dump(results, f)
     
@@ -291,7 +320,7 @@ if __name__ == "__main__":
         }
         csv_rows.append(row)
     
-    output_csv = f"results/{results['config_name']}_1mio.csv"
+    output_csv = f"results/{results['config_name']}_100k.csv"
     pd.DataFrame(csv_rows).to_csv(output_csv, index=False)
     
     # Print summary
