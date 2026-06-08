@@ -87,7 +87,7 @@ def is_turing_diego(J, DU, DV, DW):
     
     # SUPPOSED TO BE 0.01 STEP, BUT INCREASED TO 0.1 FOR SPEED, CHANGE BACK LATER 
     D = np.diag([DU, DV, DW])
-    for k in np.arange(0.01, 10.01, 0.01):   
+    for k in np.arange(0.01, 10.01, 0.1):   
         M = J - k**2 * D
         a1 = -np.trace(M)
         a2 = (M[0,0]*M[1,1] - M[0,1]*M[1,0] +
@@ -108,7 +108,7 @@ def is_turing_shaberi(J, eigs_0, DU, DV, DW):
     # STEP 2: Check for instability with diffusion
     # SUPPOSED TO BE 0.01 STEP, BUT INCREASED TO 0.1 FOR SPEED, CHANGE BACK LATER
     D = np.diag([DU, DV, DW])
-    k_values = np.arange(0.01, 10.01, 0.01)
+    k_values = np.arange(0.01, 10.01, 0.1)
     
     has_instability = False
     is_oscillatory = False
@@ -163,6 +163,58 @@ DIFFUSION_CONFIGS = {
     10: {"name": "LHS_1823_CDD_Type3_Unequal2", "dU": 1.0,  "dV": 0.0,  "dW": 0.1},
     11: {"name": "LHS_1823_CDD_Type3_Var1",     "dU": 1.0,  "dV": 0.0,  "dW": 0.0},
     12: {"name": "LHS_1823_CDD_Type3_Var2",     "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
+}
+
+
+DIFFUSION_CONFIGS = {
+    
+    # TYPE 1
+    # controls
+    0:  {"name": "NEW_RMT_1823_Type1_Control_Slow",         "dU": 0.1,  "dV": 0.1,  "dW": 0.1},
+    1:  {"name": "NEW_RMT_1823_Type1_Control_Equal",        "dU": 1.0,  "dV": 1.0,  "dW": 1.0},
+    2:  {"name": "NEW_RMT_1823_Type1_Control_Fast",         "dU": 10.0, "dV": 10.0, "dW": 10.0},
+
+    # node u diffuses faster than v and w
+    3:  {"name": "NEW_LHS_1823_Type1_UFast_Unequal1",       "dU": 10.0, "dV": 1.0,  "dW": 1.0},
+    4:  {"name": "NEW_LHS_1823_Type1_UFast_Unequal2",       "dU": 1.0,  "dV": 0.1,  "dW": 0.1},
+    5:  {"name": "NEW_LHS_1823_Type1_UFast_Unequal3",       "dU": 10.0, "dV": 0.1,  "dW": 1.0},
+    6:  {"name": "NEW_LHS_1823_Type1_UFast_Unequal4",       "dU": 10.0, "dV": 1.0,  "dW": 0.1},
+    7:  {"name": "NEW_LHS_1823_Type1_UFast_Unequal5",       "dU": 10.0, "dV": 0.1,  "dW": 0.1},
+
+    # TYPE 2
+    # node u immobile
+    8:  {"name": "NEW_LHS_1823_Type2_UFreeze_Equal1",       "dU": 0.0, "dV": 1.0,  "dW": 1.0},
+    9:  {"name": "NEW_LHS_1823_Type2_UFreeze_Equal2",       "dU": 0.0, "dV": 0.1,  "dW": 0.1},
+    10: {"name": "NEW_LHS_1823_Type2_UFreeze_Equal3",       "dU": 0.0, "dV": 10.0, "dW": 10.0},
+    11: {"name": "NEW_LHS_1823_Type2_UFreeze_Unequal1",     "dU": 0.0, "dV": 1.0,  "dW": 0.1},
+    12: {"name": "NEW_LHS_1823_Type2_UFreeze_Unequal2",     "dU": 0.0, "dV": 0.1,  "dW": 1.0},
+    13: {"name": "NEW_LHS_1823_Type2_UFreeze_Unequal3",     "dU": 0.0, "dV": 10.0, "dW": 1.0},
+    14: {"name": "NEW_LHS_1823_Type2_UFreeze_Unequal4",     "dU": 0.0, "dV": 1.0,  "dW": 10.0},
+    15: {"name": "NEW_LHS_1823_Type2_UFreeze_Unequal5",     "dU": 0.0, "dV": 0.1,  "dW": 10.0},
+    16: {"name": "NEW_LHS_1823_Type2_UFreeze_Unequal6",     "dU": 0.0, "dV": 10.0, "dW": 0.1},
+
+    # TYPE 3
+    # node w is immobile
+    17: {"name": "NEW_LHS_1823_Type3_WFreeze_Equal1",       "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
+    18: {"name": "NEW_LHS_1823_Type3_WFreeze_Equal2",       "dU": 0.1,  "dV": 0.1,  "dW": 0.0},
+    19: {"name": "NEW_LHS_1823_Type3_WFreeze_Equal3",       "dU": 10.0, "dV": 10.0, "dW": 0.0},
+    20: {"name": "NEW_LHS_1823_Type3_WFreeze_Unequal1",     "dU": 1.0,  "dV": 0.1,  "dW": 0.0},
+    21: {"name": "NEW_LHS_1823_Type3_WFreeze_Unequal2",     "dU": 0.1,  "dV": 1.0,  "dW": 0.0},
+    22: {"name": "NEW_LHS_1823_Type3_WFreeze_Unequal3",     "dU": 10.0, "dV": 1.0,  "dW": 0.0},
+    23: {"name": "NEW_LHS_1823_Type3_WFreeze_Unequal4",     "dU": 1.0,  "dV": 10.0, "dW": 0.0},
+    24: {"name": "NEW_LHS_1823_Type3_WFreeze_Unequal5",     "dU": 0.1,  "dV": 10.0, "dW": 0.0},
+    25: {"name": "NEW_LHS_1823_Type3_WFreeze_Unequal6",     "dU": 10.0, "dV": 0.1,  "dW": 0.0},
+
+    # node v immobile
+    26: {"name": "NEW_LHS_1823_Type3_VFreeze_Equal1",       "dU": 1.0,  "dV": 0.0,  "dW": 1.0},
+    27: {"name": "NEW_LHS_1823_Type3_VFreeze_Equal2",       "dU": 0.1,  "dV": 0.0,  "dW": 0.1},
+    28: {"name": "NEW_LHS_1823_Type3_VFreeze_Equal3",       "dU": 10.0, "dV": 0.0,  "dW": 10.0},
+    29: {"name": "NEW_LHS_1823_Type3_VFreeze_Unequal1",     "dU": 0.1,  "dV": 0.0,  "dW": 1.0},
+    30: {"name": "NEW_LHS_1823_Type3_VFreeze_Unequal2",     "dU": 1.0,  "dV": 0.0,  "dW": 0.1},
+    31: {"name": "NEW_LHS_1823_Type3_VFreeze_Unequal3",     "dU": 0.1,  "dV": 0.0,  "dW": 10.0},
+    32: {"name": "NEW_LHS_1823_Type3_VFreeze_Unequal4",     "dU": 10.0, "dV": 0.0,  "dW": 0.1},
+    33: {"name": "NEW_LHS_1823_Type3_VFreeze_Unequal5",     "dU": 1.0,  "dV": 0.0,  "dW": 10.0},
+    34: {"name": "NEW_LHS_1823_Type3_VFreeze_Unequal6",     "dU": 10.0, "dV": 0.0,  "dW": 1.0},
 }
 
 # MAIN ANALYSIS FUNCTION
