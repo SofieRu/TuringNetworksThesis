@@ -6,7 +6,7 @@ import pandas as pd
 # Find all pickle files
 #result_files = sorted(glob.glob('results/*.pkl'))
 # result_files = sorted(glob.glob('results/*_1000k.pkl'))
-result_files = sorted(glob.glob('results/LHS_1823_*_1mio.pkl'))
+result_files = sorted(glob.glob('results/NEW_LHS_1823_*_1mio.pkl'))
 
 # Load all results
 all_results = []
@@ -46,5 +46,5 @@ print(df[cols].to_string(index=False))
 print("="*120)
 
 # Save as CSV for Excel
-df.to_csv('1823_lhs_results_summary.csv', index=False)
-print("\nSaved to: 1823_lhs_results_summary.csv")
+df.to_csv('1823_PREFINAL_lhs_results_summary.csv', index=False)
+print("\nSaved to: 1823_PREFINAL_lhs_results_summary.csv")
