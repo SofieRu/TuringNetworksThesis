@@ -11,8 +11,7 @@ import matplotlib.lines as mlines
 # have to run this first: module load SciPy-bundle/2024.05-gfbf-2024a
 # have to run this first: pip install seaborn --user
 
-#CSV = "3954_lhs_results_final_1mio.csv"
-CSV = "3954_NEW_lhs_results_summary.csv"
+CSV = "3954_PREFINAL_lhs_results_summary.csv"
 
 OUT_DIR = Path("plots")
 OUT_DIR.mkdir(exist_ok=True)
