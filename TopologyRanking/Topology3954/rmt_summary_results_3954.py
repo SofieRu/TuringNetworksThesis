@@ -6,7 +6,7 @@ import pandas as pd
 # have to run this first: module load matplotlib/3.9.2-gfbf-2024a, module load SciPy-bundle/2024.05-gfbf-2024a
 
 # Find all RMT pickle files (only RMT_3954 files, 100k samples)
-result_files = sorted(glob.glob('results/RMT_3954_*_100k.pkl'))
+result_files = sorted(glob.glob('results/NEW_RMT_3954_*_100k.pkl'))
 
 print(f"Found {len(result_files)} RMT result files")
 
@@ -64,5 +64,5 @@ print("TOPOLOGY #3954 - RMT TURING PATTERN ROBUSTNESS SUMMARY")
 print("="*140)
 print(df[cols_display].to_string(index=False))
 
-output_file = '3954_rmt_results_summary.csv'
+output_file = '3954_PREFINAL_rmt_results_summary.csv'
 df.to_csv(output_file, index=False)
