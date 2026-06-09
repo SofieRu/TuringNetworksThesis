@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
-CSV     = "3954_PREFINAL_rmt_results_summary.csv"
+CSV     = "1754_PREFINAL_rmt_results_summary.csv"
 OUT_DIR = Path("plots")
 OUT_DIR.mkdir(exist_ok=True)
 
@@ -38,7 +38,7 @@ def save(fig, name):
 def load_data():
     df = pd.read_csv(CSV)
     df = df[~df["config_name"].str.contains("Control")]
-    df["topology"]    = df["config_name"].str.extract(r"NEW_RMT_3954_([A-Z]+)_")
+    df["topology"]    = df["config_name"].str.extract(r"NEW_RMT_1754_([A-Z]+)_")
     df["turing_type"] = df["config_name"].str.extract(r"(Type[123])")
     return df
 
@@ -74,7 +74,7 @@ def fig1_sigma_vs_robustness(df):
     ax_rob.xaxis.grid(False)
 
     ax_stable.set_title(
-        "Topology #3954 RMT – Sigma vs Robustness and Stability",
+        "Topology #1754 RMT – Sigma vs Robustness and Stability",
         fontsize=12, loc="left", pad=10,
     )
 
@@ -84,7 +84,7 @@ def fig1_sigma_vs_robustness(df):
                      loc="upper center", bbox_to_anchor=(0.5, -0.12), ncol=2)
 
     fig.tight_layout()
-    save(fig, "new_3954_rmt_fig1_sigma_vs_robustness_all")
+    save(fig, "new_1754_rmt_fig1_sigma_vs_robustness_all")
 
 
 ########## FIGURE 2: Corrected robustness vs Sigma, coloured by type ##########
@@ -118,7 +118,7 @@ def fig2_corrected_robustness(df):
     ax_rob.xaxis.grid(False)
 
     ax_stable.set_title(
-        "Topology #3954 RMT – Corrected robustness (normalised by total samples) vs σ",
+        "Topology #1754 RMT – Corrected robustness (normalised by total samples) vs σ",
         fontsize=12, loc="left", pad=10,
     )
 
@@ -128,7 +128,7 @@ def fig2_corrected_robustness(df):
                      loc="upper center", bbox_to_anchor=(0.5, -0.12), ncol=4)
 
     fig.tight_layout()
-    save(fig, "new_3954_rmt_fig2_corrected_robustness")
+    save(fig, "new_1754_rmt_fig2_corrected_robustness")
 
 
 ########## FIGURE 3: Corrected robustness overview (all configs, one colour) ##########
@@ -167,7 +167,7 @@ def fig3_corrected_overview(df):
     ax_rob.xaxis.grid(False)
 
     ax_stable.set_title(
-        "Topology #3954 RMT Sigma vs Corrected Robustness overview (all configurations)",
+        "Topology #1754 RMT Sigma vs Corrected Robustness overview (all configurations)",
         fontsize=12, loc="left", pad=10,
     )
 
@@ -198,7 +198,7 @@ def fig3_corrected_overview(df):
     ax_inset.xaxis.grid(False)
 
     fig.tight_layout()
-    save(fig, "new_3954_rmt_fig3_corrected_overview")
+    save(fig, "new_1754_rmt_fig3_corrected_overview")
 
 
 
@@ -232,14 +232,14 @@ def fig4_dotplot_fixed_sigma(df, sigma_val=1.0):
     ax.set_xticklabels(["Type 1", "Type 2", "Type 3"], fontsize=11)
     ax.set_ylabel("Robustness (rob_shaberi_type_I)", fontsize=11)
     ax.set_title(
-        f"Topology #3954 RMT – Robustness by Turing Type at σ = {sigma_val}",
+        f"Topology #1754 RMT – Robustness by Turing Type at σ = {sigma_val}",
         fontsize=12, loc="left", pad=10,
     )
     ax.xaxis.grid(False)
     ax.set_xlim(-0.5, 2.5)
  
     fig.tight_layout()
-    save(fig, f"new_3954_rmt_fig4_dotplot_sigma{sigma_val}")
+    save(fig, f"new_1754_rmt_fig4_dotplot_sigma{sigma_val}")
 
 
 
@@ -293,7 +293,7 @@ def fig5_grouped_topology(df, sigma_val=1.0):
     ax.set_xticklabels(topos, fontsize=11)
     ax.set_ylabel(METRIC_LABEL, fontsize=11)
     ax.set_title(
-        f"Topology #3954 RMT Max robustness per topology and Turing Type at σ = {sigma_val}",
+        f"Topology #1754 RMT Max robustness per topology and Turing Type at σ = {sigma_val}",
         fontsize=12, loc="left", pad=10,
     )
     ax.xaxis.grid(False)
@@ -301,7 +301,7 @@ def fig5_grouped_topology(df, sigma_val=1.0):
               loc="upper center", bbox_to_anchor=(0.5, -0.12), ncol=3)
  
     fig.tight_layout()
-    save(fig, f"new_3954_rmt_fig5_grouped_topology_sigma{sigma_val}")
+    save(fig, f"new_1754_rmt_fig5_grouped_topology_sigma{sigma_val}")
 
 
 

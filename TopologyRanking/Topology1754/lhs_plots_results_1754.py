@@ -11,7 +11,7 @@ import matplotlib.lines as mlines
 # have to run this first: module load SciPy-bundle/2024.05-gfbf-2024a
 # have to run this first: pip install seaborn --user
 
-CSV = "1754_lhs_results_final_1mio.csv"
+CSV = "1754_PREFINAL_lhs_results_summary.csv"
 OUT_DIR = Path("plots")
 OUT_DIR.mkdir(exist_ok=True)
 
@@ -28,9 +28,9 @@ plt.rcParams.update({
 })
 
 TYPE_COLORS = {
-    "Type1": "#444EA6",
-    "Type2": "#AE2BA1",
-    "Type3": "#3FA051",
+    "Type1": "#4550AE",
+    "Type2": "#D12F85",
+    "Type3": "#287836",
 } 
 
 def save(fig, name):
@@ -43,7 +43,7 @@ def load_data():
     df = pd.read_csv(CSV)
 
     # Extract topology (DCC / CDD / CCD …) and Turing type (Type1/2/3)
-    df["topology"]    = df["config_name"].str.extract(r"LHS_1754_([A-Z]+)_")
+    df["topology"]    = df["config_name"].str.extract(r"NEW_LHS_1754_([A-Z]+)_")
     df["turing_type"] = df["config_name"].str.extract(r"(Type[123])")
 
     return df
@@ -68,7 +68,7 @@ def fig1_overview(df):
 
     ax.set_xticks(range(len(df)))
     ax.set_xticklabels(
-        df["config_name"].str.replace("1754_", "", regex=False),
+        df["config_name"].str.replace("NEW_LHS_1754_", "", regex=False),
         rotation=55,
         ha="right",
         fontsize=8,
@@ -100,7 +100,7 @@ def fig1_overview(df):
     ax.legend(handles=handles, title="Turing Type", frameon=False, loc="upper center", bbox_to_anchor=(0.5, -0.4), ncol=3)
 
     fig.tight_layout()
-    save(fig, "1754_lhs_fig1_overview_bar_detail")
+    save(fig, "new_1754_lhs_fig1_overview_bar_detail")
 
 
 
@@ -184,7 +184,7 @@ def fig2_new_dotplot(df):
     ax.legend(handles=handles, title="Diffusion", frameon=False, loc="center right", bbox_to_anchor=(1.3, 0.5), ncol=1)
 
     fig.tight_layout()
-    save(fig, "1754_lhs_fig2_new_dotplot")
+    save(fig, "new_1754_lhs_fig2_new_dotplot")
 
 
 
@@ -230,7 +230,7 @@ def fig3_grouped_topology(df):
               loc="upper center", bbox_to_anchor=(0.5, -0.12), ncol=3)
  
     fig.tight_layout()
-    save(fig, "1754_lhs_fig3_grouped_topology")
+    save(fig, "new_1754_lhs_fig3_grouped_topology")
 
 
 

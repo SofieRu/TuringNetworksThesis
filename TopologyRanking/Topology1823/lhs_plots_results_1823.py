@@ -11,7 +11,7 @@ import matplotlib.lines as mlines
 # have to run this first: module load SciPy-bundle/2024.05-gfbf-2024a
 # have to run this first: pip install seaborn --user
 
-CSV = "1823_lhs_results_final_1mio.csv"
+CSV = "1823_PREFINAL_lhs_results_summary.csv"
 OUT_DIR = Path("plots")
 OUT_DIR.mkdir(exist_ok=True)
 
@@ -28,9 +28,9 @@ plt.rcParams.update({
 })
 
 TYPE_COLORS = {
-    "Type1": "#444EA6",
-    "Type2": "#AE2BA1",
-    "Type3": "#3FA051",
+    "Type1": "#4550AE",
+    "Type2": "#D12F85",
+    "Type3": "#287836",
 } 
 
 def save(fig, name):
@@ -43,7 +43,7 @@ def load_data():
     df = pd.read_csv(CSV)
 
     # Extract topology (DCC / CDD / CCD …) and Turing type (Type1/2/3)
-    df["topology"]    = df["config_name"].str.extract(r"LHS_1823_([A-Z]+)_")
+    df["topology"]    = df["config_name"].str.extract(r"NEW_LHS_1823_([A-Z]+)_")
     df["turing_type"] = df["config_name"].str.extract(r"(Type[123])")
 
     return df
@@ -68,7 +68,7 @@ def fig1_overview(df):
 
     ax.set_xticks(range(len(df)))
     ax.set_xticklabels(
-        df["config_name"].str.replace("1823_", "", regex=False),
+        df["config_name"].str.replace("NEW_LHS_1823_", "", regex=False),
         rotation=55,
         ha="right",
         fontsize=8,
@@ -100,7 +100,7 @@ def fig1_overview(df):
     ax.legend(handles=handles, title="Turing Type", frameon=False, loc="upper center", bbox_to_anchor=(0.5, -0.4), ncol=3)
 
     fig.tight_layout()
-    save(fig, "1823_lhs_fig1_overview_bar_detail")
+    save(fig, "new_1823_lhs_fig1_overview_bar_detail")
 
 
 
@@ -183,7 +183,7 @@ def fig2_dotplot(df):
     ax.legend(handles=handles, title="Diffusion", frameon=False, loc="center right", bbox_to_anchor=(1.3, 0.5), ncol=1)
 
     fig.tight_layout()
-    save(fig, "1823_lhs_fig2_dotplot")
+    save(fig, "new_1823_lhs_fig2_dotplot")
 
 
 # ##################################### FIGURE 4: Scatter Plot Shaberi vs Diego Robustness across Type 1 to 3 #####################################
@@ -212,7 +212,7 @@ def fig2_dotplot(df):
 #     ax.set_xlabel("Robustness Score using Characteristic Polynomial (Diego)", fontsize=11)
 #     ax.set_ylabel("Robustness Score using Eigenvalues (Shaberi)", fontsize=11)
 #     ax.set_title(
-#         "Robustness Scores Diego vs Shaberi for #1754\n(Latin Hypercube Sampling, 1 million simulations)",
+#         "Robustness Scores Diego vs Shaberi for #1823\n(Latin Hypercube Sampling, 1 million simulations)",
 #         fontsize=12, loc="left", pad=10,
 #     )
 #     ax.legend(title="Turing Type", frameon=False,
