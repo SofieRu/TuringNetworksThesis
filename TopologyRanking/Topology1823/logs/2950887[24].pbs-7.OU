@@ -1,0 +1,36 @@
+Starting job 24 at Mon  8 Jun 17:58:11 BST 2026
+Starting NEW_LHS_1823_Type3_WFreeze_Unequal5: dU=0.1, dV=10.0, dW=0.0, n_samples=1,000,000
+[NEW_LHS_1823_Type3_WFreeze_Unequal5] 100,000/1,000,000 | Stable: 99284 | Diego: 0 | Shaberi: 0
+[NEW_LHS_1823_Type3_WFreeze_Unequal5] 200,000/1,000,000 | Stable: 198581 | Diego: 0 | Shaberi: 0
+[NEW_LHS_1823_Type3_WFreeze_Unequal5] 300,000/1,000,000 | Stable: 297825 | Diego: 0 | Shaberi: 0
+[NEW_LHS_1823_Type3_WFreeze_Unequal5] 400,000/1,000,000 | Stable: 397106 | Diego: 0 | Shaberi: 0
+[NEW_LHS_1823_Type3_WFreeze_Unequal5] 500,000/1,000,000 | Stable: 496391 | Diego: 0 | Shaberi: 0
+[NEW_LHS_1823_Type3_WFreeze_Unequal5] 600,000/1,000,000 | Stable: 595679 | Diego: 0 | Shaberi: 0
+[NEW_LHS_1823_Type3_WFreeze_Unequal5] 700,000/1,000,000 | Stable: 694931 | Diego: 0 | Shaberi: 0
+[NEW_LHS_1823_Type3_WFreeze_Unequal5] 800,000/1,000,000 | Stable: 794285 | Diego: 0 | Shaberi: 0
+[NEW_LHS_1823_Type3_WFreeze_Unequal5] 900,000/1,000,000 | Stable: 893513 | Diego: 0 | Shaberi: 0
+[NEW_LHS_1823_Type3_WFreeze_Unequal5] 1,000,000/1,000,000 | Stable: 992778 | Diego: 0 | Shaberi: 0
+
+======================================================================
+COMPLETED: NEW_LHS_1823_Type3_WFreeze_Unequal5
+======================================================================
+Diego Turing:    0 (0.0000%)
+Shaberi Total:   0 (0.0000%)
+  Type-I:        0
+  Type-II:       0
+  Hopf:          0
+
+Saved to:
+  results/NEW_LHS_1823_Type3_WFreeze_Unequal5_1mio.pkl
+  results/NEW_LHS_1823_Type3_WFreeze_Unequal5_1mio.csv
+======================================================================
+Finished job 24 at Mon  8 Jun 19:28:02 BST 2026
+
+====================================
+CPU Time used: 01:28:06
+CPU Percent: 99%
+Memory usage: 549784kb
+Approx Power usage: 0.0176
+Walltime usage: 01:30:03
+
+====================================

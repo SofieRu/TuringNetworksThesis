@@ -1,0 +1,36 @@
+Starting job 5 at Mon  8 Jun 17:35:36 BST 2026
+Starting NEW_LHS_1838_Type1_WFast_Unequal3: dU=0.1, dV=1.0, dW=10.0, n_samples=1,000,000
+[NEW_LHS_1838_Type1_WFast_Unequal3] 100,000/1,000,000 | Stable: 99753 | Diego: 1 | Shaberi: 1
+[NEW_LHS_1838_Type1_WFast_Unequal3] 200,000/1,000,000 | Stable: 199500 | Diego: 2 | Shaberi: 2
+[NEW_LHS_1838_Type1_WFast_Unequal3] 300,000/1,000,000 | Stable: 299282 | Diego: 6 | Shaberi: 6
+[NEW_LHS_1838_Type1_WFast_Unequal3] 400,000/1,000,000 | Stable: 399080 | Diego: 6 | Shaberi: 6
+[NEW_LHS_1838_Type1_WFast_Unequal3] 500,000/1,000,000 | Stable: 498864 | Diego: 7 | Shaberi: 7
+[NEW_LHS_1838_Type1_WFast_Unequal3] 600,000/1,000,000 | Stable: 598687 | Diego: 12 | Shaberi: 12
+[NEW_LHS_1838_Type1_WFast_Unequal3] 700,000/1,000,000 | Stable: 698475 | Diego: 12 | Shaberi: 12
+[NEW_LHS_1838_Type1_WFast_Unequal3] 800,000/1,000,000 | Stable: 798266 | Diego: 15 | Shaberi: 15
+[NEW_LHS_1838_Type1_WFast_Unequal3] 900,000/1,000,000 | Stable: 898043 | Diego: 16 | Shaberi: 16
+[NEW_LHS_1838_Type1_WFast_Unequal3] 1,000,000/1,000,000 | Stable: 997795 | Diego: 16 | Shaberi: 16
+
+======================================================================
+COMPLETED: NEW_LHS_1838_Type1_WFast_Unequal3
+======================================================================
+Diego Turing:    16 (0.0016%)
+Shaberi Total:   16 (0.0016%)
+  Type-I:        16
+  Type-II:       0
+  Hopf:          0
+
+Saved to:
+  results/NEW_LHS_1838_Type1_WFast_Unequal3_1mio.pkl
+  results/NEW_LHS_1838_Type1_WFast_Unequal3_1mio.csv
+======================================================================
+Finished job 5 at Tue  9 Jun 06:05:20 BST 2026
+
+====================================
+CPU Time used: 12:19:23
+CPU Percent: 98%
+Memory usage: 546316kb
+Approx Power usage: 0.14780000000000001
+Walltime usage: 12:30:03
+
+====================================

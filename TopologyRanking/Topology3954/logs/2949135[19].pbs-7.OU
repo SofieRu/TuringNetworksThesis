@@ -1,0 +1,59 @@
+Starting job 19 at Mon  8 Jun 16:06:09 BST 2026
+Starting NEW_RMT_3954_Type1_VWFast_Unequal2: dU=0.1, dV=1.0, dW=1.0
+Testing 34 sigma values with 100,000 samples each
+======================================================================
+  [sig=0.1] 100,000/100,000 | Stable: 100000 | Diego: 0 | Shaberi: 0
+  [sig=0.2] 100,000/100,000 | Stable: 100000 | Diego: 0 | Shaberi: 0
+  [sig=0.3] 100,000/100,000 | Stable: 100000 | Diego: 0 | Shaberi: 0
+  [sig=0.4] 100,000/100,000 | Stable: 99981 | Diego: 0 | Shaberi: 0
+  [sig=0.5] 100,000/100,000 | Stable: 99732 | Diego: 0 | Shaberi: 0
+  [sig=0.6] 100,000/100,000 | Stable: 98966 | Diego: 0 | Shaberi: 0
+  [sig=0.7] 100,000/100,000 | Stable: 97782 | Diego: 0 | Shaberi: 0
+  [sig=0.8] 100,000/100,000 | Stable: 96149 | Diego: 0 | Shaberi: 0
+  [sig=0.9] 100,000/100,000 | Stable: 94311 | Diego: 0 | Shaberi: 0
+  [sig=1.0] 100,000/100,000 | Stable: 92345 | Diego: 0 | Shaberi: 0
+  [sig=1.1] 100,000/100,000 | Stable: 90198 | Diego: 0 | Shaberi: 0
+  [sig=1.2] 100,000/100,000 | Stable: 88080 | Diego: 0 | Shaberi: 0
+  [sig=1.3] 100,000/100,000 | Stable: 85689 | Diego: 0 | Shaberi: 0
+  [sig=1.4] 100,000/100,000 | Stable: 83226 | Diego: 0 | Shaberi: 0
+  [sig=1.5] 100,000/100,000 | Stable: 80727 | Diego: 0 | Shaberi: 0
+  [sig=1.6] 100,000/100,000 | Stable: 78077 | Diego: 0 | Shaberi: 0
+  [sig=1.8] 100,000/100,000 | Stable: 72870 | Diego: 0 | Shaberi: 0
+  [sig=2.0] 100,000/100,000 | Stable: 67959 | Diego: 0 | Shaberi: 0
+  [sig=2.2] 100,000/100,000 | Stable: 63389 | Diego: 0 | Shaberi: 0
+  [sig=2.4] 100,000/100,000 | Stable: 59093 | Diego: 0 | Shaberi: 0
+  [sig=2.6] 100,000/100,000 | Stable: 55261 | Diego: 0 | Shaberi: 0
+  [sig=2.8] 100,000/100,000 | Stable: 51853 | Diego: 0 | Shaberi: 0
+  [sig=3.0] 100,000/100,000 | Stable: 48898 | Diego: 0 | Shaberi: 0
+  [sig=3.2] 100,000/100,000 | Stable: 46233 | Diego: 0 | Shaberi: 0
+  [sig=3.4] 100,000/100,000 | Stable: 43879 | Diego: 0 | Shaberi: 3
+  [sig=3.6] 100,000/100,000 | Stable: 41674 | Diego: 0 | Shaberi: 0
+  [sig=3.8] 100,000/100,000 | Stable: 39752 | Diego: 0 | Shaberi: 3
+  [sig=4.0] 100,000/100,000 | Stable: 38013 | Diego: 0 | Shaberi: 2
+  [sig=5.0] 100,000/100,000 | Stable: 31319 | Diego: 0 | Shaberi: 24
+  [sig=6.0] 100,000/100,000 | Stable: 26971 | Diego: 0 | Shaberi: 33
+  [sig=7.0] 100,000/100,000 | Stable: 23995 | Diego: 0 | Shaberi: 48
+  [sig=8.0] 100,000/100,000 | Stable: 21713 | Diego: 0 | Shaberi: 67
+  [sig=9.0] 100,000/100,000 | Stable: 19905 | Diego: 0 | Shaberi: 91
+  [sig=10.0] 100,000/100,000 | Stable: 18489 | Diego: 0 | Shaberi: 105
+
+======================================================================
+COMPLETED: NEW_RMT_3954_Type1_VWFast_Unequal2
+======================================================================
+Tested 34 sigma values
+100,000 samples per sigma
+Total: 3,400,000 Jacobians generated
+
+Saved to:
+  results/NEW_RMT_3954_Type1_VWFast_Unequal2_100k.pkl
+  results/NEW_RMT_3954_Type1_VWFast_Unequal2_100k.csv
+Finished job 19 at Mon  8 Jun 19:06:06 BST 2026
+
+====================================
+CPU Time used: 02:51:42
+CPU Percent: 99%
+Memory usage: 165404kb
+Approx Power usage: 0.0342
+Walltime usage: 03:02:39
+
+====================================

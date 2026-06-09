@@ -1,0 +1,36 @@
+Starting job 25 at Mon  8 Jun 17:36:13 BST 2026
+Starting NEW_LHS_1838_Type3_UFreeze_Unequal3: dU=0.0, dV=10.0, dW=1.0, n_samples=1,000,000
+[NEW_LHS_1838_Type3_UFreeze_Unequal3] 100,000/1,000,000 | Stable: 99753 | Diego: 0 | Shaberi: 0
+[NEW_LHS_1838_Type3_UFreeze_Unequal3] 200,000/1,000,000 | Stable: 199500 | Diego: 0 | Shaberi: 0
+[NEW_LHS_1838_Type3_UFreeze_Unequal3] 300,000/1,000,000 | Stable: 299282 | Diego: 0 | Shaberi: 0
+[NEW_LHS_1838_Type3_UFreeze_Unequal3] 400,000/1,000,000 | Stable: 399080 | Diego: 0 | Shaberi: 0
+[NEW_LHS_1838_Type3_UFreeze_Unequal3] 500,000/1,000,000 | Stable: 498864 | Diego: 0 | Shaberi: 0
+[NEW_LHS_1838_Type3_UFreeze_Unequal3] 600,000/1,000,000 | Stable: 598687 | Diego: 0 | Shaberi: 0
+[NEW_LHS_1838_Type3_UFreeze_Unequal3] 700,000/1,000,000 | Stable: 698475 | Diego: 0 | Shaberi: 0
+[NEW_LHS_1838_Type3_UFreeze_Unequal3] 800,000/1,000,000 | Stable: 798266 | Diego: 0 | Shaberi: 0
+[NEW_LHS_1838_Type3_UFreeze_Unequal3] 900,000/1,000,000 | Stable: 898043 | Diego: 0 | Shaberi: 0
+[NEW_LHS_1838_Type3_UFreeze_Unequal3] 1,000,000/1,000,000 | Stable: 997795 | Diego: 0 | Shaberi: 0
+
+======================================================================
+COMPLETED: NEW_LHS_1838_Type3_UFreeze_Unequal3
+======================================================================
+Diego Turing:    0 (0.0000%)
+Shaberi Total:   0 (0.0000%)
+  Type-I:        0
+  Type-II:       0
+  Hopf:          0
+
+Saved to:
+  results/NEW_LHS_1838_Type3_UFreeze_Unequal3_1mio.pkl
+  results/NEW_LHS_1838_Type3_UFreeze_Unequal3_1mio.csv
+======================================================================
+Finished job 25 at Tue  9 Jun 07:35:56 BST 2026
+
+====================================
+CPU Time used: 13:51:06
+CPU Percent: 99%
+Memory usage: 546152kb
+Approx Power usage: 0.1662
+Walltime usage: 14:00:02
+
+====================================
