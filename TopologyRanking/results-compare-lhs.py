@@ -14,13 +14,13 @@ from scipy.spatial import ConvexHull
 # have to run this first: pip install seaborn --user
 
 CSVS = {
-    "#1754": "Topology1754/1754_lhs_results_final_1mio.csv",
-    "#1823": "Topology1823/1823_lhs_results_final_1mio.csv",
-    "#1838": "Topology1838/1838_lhs_results_final_1mio.csv",
-    "#3954": "Topology3954/3954_lhs_results_final_1mio.csv",
+    "#1754": "Topology1754/1754_PREFINAL_lhs_results_summary.csv",
+    "#1823": "Topology1823/1823_PREFINAL_lhs_results_summary.csv",
+    "#1838": "Topology1838/1838_PREFINAL_lhs_results_summary.csv",
+    "#3954": "Topology3954/3954_PREFINAL_lhs_results_summary.csv",
 }
 
-PARAMS_CSV = "Topology3954/3954_NEW_lhs_results_parameters.csv"
+PARAMS_CSV = "Topology3954/3954_PREFINAL_lhs_results_parameters.csv"
 
 # for both 3954 and 1754 i got rid of _CCD_Type1_Var1/2 bc the values were really high and kinda did not match the rest but later if it does match then we can put it back in and see if it changes the results
 
@@ -65,10 +65,10 @@ def load_all():
         df = df[~df["config_name"].str.contains("OneFast|Control|Limit")]
         df["topology_id"]  = topo_id
         df["turing_type"]  = df["config_name"].str.extract(r"(Type[123])")
-        parsed = df["diffusion"].apply(parse_diff)
-        df["dU"] = parsed.apply(lambda d: d.get("dU"))
-        df["dV"] = parsed.apply(lambda d: d.get("dV"))
-        df["dW"] = parsed.apply(lambda d: d.get("dW"))
+        #parsed = df["diffusion"].apply(parse_diff)
+        #df["dU"] = parsed.apply(lambda d: d.get("dU"))
+        #df["dV"] = parsed.apply(lambda d: d.get("dV"))
+        #df["dW"] = parsed.apply(lambda d: d.get("dW"))
         dfs.append(df)
     return pd.concat(dfs, ignore_index=True)
 
@@ -111,7 +111,7 @@ def fig1_heatmap(df):
         fontsize=12, loc="left", pad=10,
     )
     fig.tight_layout()
-    save(fig, "compare_fig1_heatmap")
+    save(fig, "new_compare_fig1_heatmap")
 
 
 
@@ -194,7 +194,7 @@ def fig6_pattern_composition(df):
     ax.legend(handles=handles, title="Pattern type", frameon=False, loc="center right", bbox_to_anchor=(1.15, 0.5), ncol=1)
     
     fig.tight_layout()
-    save(fig, "compare_fig6_pattern_composition")
+    save(fig, "new_compare_fig6_pattern_composition")
 
 
 
@@ -241,7 +241,7 @@ def fig_pseudo_phase_3954(df):
     )
 
     fig.tight_layout()
-    save(fig, "3954_pseudo_phase_diagram")
+    save(fig, "new_3954_pseudo_phase_diagram")
 
 
 
@@ -360,7 +360,7 @@ def fig_3d_parameter_space_comparison():
     plt.suptitle('Turing Parameter Space: Diffusion Configuration Comparison', 
                  fontsize=14, y=0.98)
     
-    save(fig, "fig_3d_turing_island_comparison")
+    save(fig, "new_fig_3d_turing_island_comparison")
 
 
 
