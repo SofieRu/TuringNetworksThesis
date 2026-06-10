@@ -1,0 +1,60 @@
+Starting job 27 at Tue  9 Jun 22:07:38 BST 2026
+Starting NEW_RMT_1838_Type3_UFreeze_Unequal5: dU=0.0, dV=0.1, dW=10.0
+Testing 34 sigma values with 100,000 samples each
+======================================================================
+  [sig=0.1] 100,000/100,000 | Stable: 100000 | Diego: 0 | Shaberi: 0
+  [sig=0.2] 100,000/100,000 | Stable: 100000 | Diego: 0 | Shaberi: 0
+  [sig=0.3] 100,000/100,000 | Stable: 99999 | Diego: 0 | Shaberi: 0
+  [sig=0.4] 100,000/100,000 | Stable: 99921 | Diego: 2 | Shaberi: 2
+  [sig=0.5] 100,000/100,000 | Stable: 99071 | Diego: 57 | Shaberi: 57
+  [sig=0.6] 100,000/100,000 | Stable: 96487 | Diego: 205 | Shaberi: 205
+  [sig=0.7] 100,000/100,000 | Stable: 92090 | Diego: 481 | Shaberi: 481
+  [sig=0.8] 100,000/100,000 | Stable: 86592 | Diego: 1002 | Shaberi: 1002
+  [sig=0.9] 100,000/100,000 | Stable: 80635 | Diego: 1520 | Shaberi: 1520
+  [sig=1.0] 100,000/100,000 | Stable: 74716 | Diego: 2179 | Shaberi: 2179
+  [sig=1.1] 100,000/100,000 | Stable: 69240 | Diego: 2833 | Shaberi: 2833
+  [sig=1.2] 100,000/100,000 | Stable: 64207 | Diego: 3419 | Shaberi: 3419
+  [sig=1.3] 100,000/100,000 | Stable: 59815 | Diego: 4051 | Shaberi: 4051
+  [sig=1.4] 100,000/100,000 | Stable: 55835 | Diego: 4696 | Shaberi: 4696
+  [sig=1.5] 100,000/100,000 | Stable: 52264 | Diego: 5217 | Shaberi: 5217
+  [sig=1.6] 100,000/100,000 | Stable: 49185 | Diego: 5771 | Shaberi: 5771
+  [sig=1.8] 100,000/100,000 | Stable: 43859 | Diego: 6539 | Shaberi: 6539
+  [sig=2.0] 100,000/100,000 | Stable: 39646 | Diego: 7189 | Shaberi: 7189
+  [sig=2.2] 100,000/100,000 | Stable: 36255 | Diego: 7734 | Shaberi: 7734
+  [sig=2.4] 100,000/100,000 | Stable: 33511 | Diego: 8065 | Shaberi: 8065
+  [sig=2.6] 100,000/100,000 | Stable: 31160 | Diego: 8365 | Shaberi: 8365
+  [sig=2.8] 100,000/100,000 | Stable: 29247 | Diego: 8653 | Shaberi: 8653
+  [sig=3.0] 100,000/100,000 | Stable: 27575 | Diego: 8823 | Shaberi: 8823
+  [sig=3.2] 100,000/100,000 | Stable: 26110 | Diego: 8944 | Shaberi: 8944
+  [sig=3.4] 100,000/100,000 | Stable: 24845 | Diego: 9097 | Shaberi: 9097
+  [sig=3.6] 100,000/100,000 | Stable: 23772 | Diego: 9241 | Shaberi: 9241
+  [sig=3.8] 100,000/100,000 | Stable: 22721 | Diego: 9256 | Shaberi: 9256
+  [sig=4.0] 100,000/100,000 | Stable: 21868 | Diego: 9311 | Shaberi: 9311
+  [sig=5.0] 100,000/100,000 | Stable: 18465 | Diego: 9360 | Shaberi: 9360
+  [sig=6.0] 100,000/100,000 | Stable: 16192 | Diego: 9085 | Shaberi: 9085
+  [sig=7.0] 100,000/100,000 | Stable: 14593 | Diego: 8792 | Shaberi: 8792
+  [sig=8.0] 100,000/100,000 | Stable: 13337 | Diego: 8466 | Shaberi: 8466
+  [sig=9.0] 100,000/100,000 | Stable: 12361 | Diego: 8179 | Shaberi: 8179
+  [sig=10.0] 100,000/100,000 | Stable: 11571 | Diego: 7907 | Shaberi: 7907
+
+======================================================================
+COMPLETED: NEW_RMT_1838_Type3_UFreeze_Unequal5
+======================================================================
+Tested 34 sigma values
+100,000 samples per sigma
+Total: 3,400,000 Jacobians generated
+
+Saved to:
+  results/NEW_RMT_1838_Type3_UFreeze_Unequal5_100k.pkl
+  results/NEW_RMT_1838_Type3_UFreeze_Unequal5_100k.csv
+======================================================================
+Finished job 27 at Wed 10 Jun 00:09:18 BST 2026
+
+====================================
+CPU Time used: 01:59:34
+CPU Percent: 98%
+Memory usage: 164256kb
+Approx Power usage: 0.0238
+Walltime usage: 02:01:50
+
+====================================
