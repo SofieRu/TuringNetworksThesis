@@ -4,7 +4,7 @@ import pickle
 import pandas as pd
 from scipy.optimize import fsolve
 
-from heterogenous_ring_1754 import (
+from heterogenous_ring_3954 import (
     CONFIG_TO_TEST,
     build_ring_jacobian_homogeneous,
     compute_jacobian,
@@ -12,6 +12,7 @@ from heterogenous_ring_1754 import (
     baseline_params,
     hopping,
     ode_system,
+    df_params
 )
 
 # from heterogenous_ring_3954 import (
@@ -37,7 +38,7 @@ PERTURBATION = 0.10  # ±10% perturbation per parameter
 LOCAL_TOLERANCE = 0.5  # accept steady states within 50% of baseline (per component), sanity check might adjust later to 0.3 and 0.7?!!
 
 # CHANGE THIS FOR VARIATION
-N_cells = 20 # for sanity check run with N = 5, 10 and 20
+N_cells = 10 # for sanity check run with N = 5, 10 and 20
 
 PARAM_LABELS = {
     'alpha_u': 'u basal production',
@@ -95,7 +96,9 @@ def find_steady_state_local(params, baseline_ss, tol=LOCAL_TOLERANCE):
 # CHANGE HERE BASED ON WHETHER WE WANT TO TEST 3954 OR 1754 CONFIGS
 # df_params = pd.read_csv('../TopologyRanking/Topology3954/3954_NEW_lhs_results_parameters.csv')
 
-df_params = pd.read_csv('../TopologyRanking/Topology1754/1754_NEW_lhs_results_parameters.csv')
+# df_params = pd.read_csv('../TopologyRanking/Topology3954/3954_NEW_lhs_results_parameters.csv')
+
+# df_params = pd.read_csv('../TopologyRanking/Topology3954/3954_PREFINAL_lhs_results_parameters.csv')
 
 config_data = df_params[(df_params['config_id'] == CONFIG_TO_TEST) & (df_params['param_rank'] == 1)].iloc[0]
 config_name = config_data['config_name']
