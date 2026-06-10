@@ -43,7 +43,7 @@ N_cells = 10 # for sanity check run with N = 5, 10 and 20
 PARAM_LABELS = {
     'alpha_u': 'u basal production',
     'beta_u': 'u regulated production',
-    # 'K_uu': 'u self-activation', # comment or uncomment based on whether we are testing 3954 or 1754 configs
+    'K_uu': 'u self-activation', # comment or uncomment based on whether we are testing 3954 or 1754 configs
     'K_vu': 'v to u inhibition',
     'delta_u': 'u degradation',
     'alpha_v': 'v basal production',
@@ -60,9 +60,9 @@ PARAM_LABELS = {
 }
 
 # CHANGE THIS BASED ON WHETHER WE ARE TESTING 3954 OR 1754 CONFIGS
-#PARAM_NAMES = ['alpha_u', 'beta_u', 'K_uu', 'K_vu', 'delta_u','alpha_v', 'beta_v', 'K_uv', 'K_wv', 'delta_v','alpha_w', 'beta_w', 'K_ww', 'K_uw', 'K_vw', 'delta_w']
+PARAM_NAMES = ['alpha_u', 'beta_u', 'K_uu', 'K_vu', 'delta_u','alpha_v', 'beta_v', 'K_uv', 'K_wv', 'delta_v','alpha_w', 'beta_w', 'K_ww', 'K_uw', 'K_vw', 'delta_w']
 
-PARAM_NAMES = ['alpha_u', 'beta_u', 'K_vu', 'delta_u','alpha_v', 'beta_v', 'K_uv', 'K_wv', 'delta_v','alpha_w', 'beta_w', 'K_ww', 'K_uw', 'K_vw', 'delta_w']
+#PARAM_NAMES = ['alpha_u', 'beta_u', 'K_vu', 'delta_u','alpha_v', 'beta_v', 'K_uv', 'K_wv', 'delta_v','alpha_w', 'beta_w', 'K_ww', 'K_uw', 'K_vw', 'delta_w']
 
 
 def find_steady_state_local(params, baseline_ss, tol=LOCAL_TOLERANCE):
@@ -95,9 +95,7 @@ def find_steady_state_local(params, baseline_ss, tol=LOCAL_TOLERANCE):
 
 # CHANGE HERE BASED ON WHETHER WE WANT TO TEST 3954 OR 1754 CONFIGS
 # df_params = pd.read_csv('../TopologyRanking/Topology3954/3954_NEW_lhs_results_parameters.csv')
-
 # df_params = pd.read_csv('../TopologyRanking/Topology3954/3954_NEW_lhs_results_parameters.csv')
-
 # df_params = pd.read_csv('../TopologyRanking/Topology3954/3954_PREFINAL_lhs_results_parameters.csv')
 
 config_data = df_params[(df_params['config_id'] == CONFIG_TO_TEST) & (df_params['param_rank'] == 1)].iloc[0]
@@ -254,9 +252,8 @@ sensitivity_data = {
 }
 
 # CHANGE THIS BASED ON WHETHER WE WANT TO TEST 3954 OR 1754 CONFIGS
-#output_file = f'3954_sensitivity_results_config{CONFIG_TO_TEST}_N{N_cells}.pkl'
-
-output_file = f'1754_sensitivity_results_config{CONFIG_TO_TEST}_N{N_cells}.pkl'
+output_file = f'3954_sensitivity_results_config{CONFIG_TO_TEST}_N{N_cells}.pkl'
+# output_file = f'1754_sensitivity_results_config{CONFIG_TO_TEST}_N{N_cells}.pkl'
 
 
 with open(output_file, 'wb') as f:
