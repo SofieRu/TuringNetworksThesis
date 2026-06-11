@@ -1,0 +1,32 @@
+Starting job 0 at Thu 11 Jun 15:08:16 BST 2026
+Starting NEW_LHS_3954_Type1_Control_Slow: dU=0.1, dV=0.1, dW=0.1, n_samples=1,000,000
+[NEW_LHS_3954_Type1_Control_Slow] 100,000/1,000,000 | Stable: 95180 | Diego: 0 | Shaberi: 0
+[NEW_LHS_3954_Type1_Control_Slow] 200,000/1,000,000 | Stable: 190103 | Diego: 0 | Shaberi: 0
+[NEW_LHS_3954_Type1_Control_Slow] 300,000/1,000,000 | Stable: 285166 | Diego: 0 | Shaberi: 0
+[NEW_LHS_3954_Type1_Control_Slow] 400,000/1,000,000 | Stable: 380343 | Diego: 0 | Shaberi: 0
+[NEW_LHS_3954_Type1_Control_Slow] 500,000/1,000,000 | Stable: 475497 | Diego: 0 | Shaberi: 0
+[NEW_LHS_3954_Type1_Control_Slow] 600,000/1,000,000 | Stable: 570769 | Diego: 0 | Shaberi: 0
+[NEW_LHS_3954_Type1_Control_Slow] 700,000/1,000,000 | Stable: 665900 | Diego: 0 | Shaberi: 0
+[NEW_LHS_3954_Type1_Control_Slow] 800,000/1,000,000 | Stable: 760988 | Diego: 0 | Shaberi: 0
+[NEW_LHS_3954_Type1_Control_Slow] 900,000/1,000,000 | Stable: 856080 | Diego: 0 | Shaberi: 0
+[NEW_LHS_3954_Type1_Control_Slow] 1,000,000/1,000,000 | Stable: 951296 | Diego: 0 | Shaberi: 0
+Diego Turing:    0 (0.0000%)
+Shaberi Total:   0 (0.0000%)
+  Type-I:        0
+  Type-II:       0
+  Hopf:          0
+  Filter:        0
+
+Saved to:
+  results/NEW_LHS_3954_Type1_Control_Slow_1mio_with_params.pkl
+  results/NEW_LHS_3954_Type1_Control_Slow_1mio_with_params.csv
+Finished job 0 at Thu 11 Jun 16:59:50 BST 2026
+
+====================================
+CPU Time used: 01:49:02
+CPU Percent: 98%
+Memory usage: 608292kb
+Approx Power usage: 0.0218
+Walltime usage: 01:52:09
+
+====================================
