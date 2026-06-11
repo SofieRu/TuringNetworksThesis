@@ -20,7 +20,7 @@ from heterogenous_ring_3954 import (
 # have to run this first: pip install seaborn --user
 
 
-CSV_PATH = '../TopologyRanking/Topology3954/3954_NEW_lhs_results_parameters.csv'
+CSV_PATH = '../TopologyRanking/Topology3954/3954_PREFINAL_lhs_results_parameters.csv'
 
 def load_config(config_id):
     df = pd.read_csv(CSV_PATH)
@@ -34,10 +34,9 @@ def load_config(config_id):
     hopping = {'h_u': row['dU'], 'h_v': row['dV'], 'h_w': row['dW']}
     return params, ss, hopping
 
-
 print("Loading configs...")
-params_13, ss_13, hopping_13 = load_config(13) #rename so its jsut robust and fragile instead of the numbers itself...
-params_2,  ss_2,  hopping_2  = load_config(2)
+params_13, ss_13, hopping_13 = load_config(45) #rename so its jsut robust and fragile instead of the numbers itself...
+params_2,  ss_2,  hopping_2  = load_config(4)
 
 def compute_dispersion(local_jacobian, hopping_dict, k_values):
     """Compute max Re(λ) of [J - k²·D] for each k in k_values."""
