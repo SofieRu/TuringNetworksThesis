@@ -107,7 +107,7 @@ def is_turing_shaberi(J, eigs_0, DU, DV, DW):
 # PARAMETRS FOR HOMOGENOUS RING (EXAMPLE)
 
 # CHANGE THIS TO TEST DIFFERENT CONFIGS:
-CONFIG_TO_TEST = 4 #  
+CONFIG_TO_TEST = 12 #  
 CONFIG_LABEL = "low"  # or "low" — change this once when you switch configs
 N_cells = 10 # for sanity check run with N = 5, 10 and 20, 30??
 
