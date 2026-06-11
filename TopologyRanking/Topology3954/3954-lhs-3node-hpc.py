@@ -100,45 +100,102 @@ def is_turing_diego(J, DU, DV, DW):
 
 
 
+# SHABERI WIHTOUT CLASSIFYING AS TURING FILTER
+
+# def is_turing_shaberi(J, eigs_0, DU, DV, DW):
+#     # STEP 1: Stability at k=0
+#     if np.max(np.real(eigs_0)) >= 0:
+#         return None
+    
+#     # STEP 2: Check for instability with diffusion, # SUPPOSED TO BE 0.01 STEP, BUT INCREASED TO 0.1 FOR SPEED, CHANGE BACK LATER 
+#     D = np.diag([DU, DV, DW])
+#     k_values = np.arange(0.01, 10.01, 0.1)
+    
+#     has_instability = False
+#     is_oscillatory = False
+    
+#     for k in k_values:
+#         M = J - k**2 * D
+#         eigs_k = np.linalg.eigvals(M)
+        
+#         if np.max(np.real(eigs_k)) > 0:
+#             has_instability = True
+            
+#             unstable_eigs = eigs_k[np.real(eigs_k) > 0]
+#             if np.any(np.abs(np.imag(unstable_eigs)) > 1e-8):
+#                 is_oscillatory = True
+#                 break
+    
+#     if not has_instability:
+#         return None
+    
+#     if is_oscillatory:
+#         return 'Hopf'
+    
+#     # STEP 3: Check RESTABILIZATION (Shaberi's method)
+#     k_high_values = np.linspace(10, 50, 20)
+#     for k in k_high_values:
+#         M = J - k**2 * D
+#         eigs_k = np.linalg.eigvals(M)
+#         if np.max(np.real(eigs_k)) < 0:
+#             return 'Type-I'  # Restabilizes
+    
+#     return 'Type-II'  # Doesn't restabilize
+
+
+
 def is_turing_shaberi(J, eigs_0, DU, DV, DW):
     # STEP 1: Stability at k=0
     if np.max(np.real(eigs_0)) >= 0:
         return None
     
-    # STEP 2: Check for instability with diffusion, # SUPPOSED TO BE 0.01 STEP, BUT INCREASED TO 0.1 FOR SPEED, CHANGE BACK LATER 
+    # STEP 2: Compute dispersion across the swept k range
     D = np.diag([DU, DV, DW])
-    k_values = np.arange(0.01, 10.01, 0.1)
+    k_values = np.arange(0.01, 10.01, 0.1)  # 100 points; change to 0.01 step for HPC
     
-    has_instability = False
-    is_oscillatory = False
+    max_reals = np.zeros(len(k_values))
+    has_complex_unstable = False
     
-    for k in k_values:
+    for i, k in enumerate(k_values):
         M = J - k**2 * D
         eigs_k = np.linalg.eigvals(M)
+        max_reals[i] = np.max(np.real(eigs_k))
         
-        if np.max(np.real(eigs_k)) > 0:
-            has_instability = True
-            
-            unstable_eigs = eigs_k[np.real(eigs_k) > 0]
-            if np.any(np.abs(np.imag(unstable_eigs)) > 1e-8):
-                is_oscillatory = True
-                break
+        # Hopf check: any unstable eigenvalue with nonzero imaginary part
+        unstable_eigs = eigs_k[np.real(eigs_k) > 0]
+        if len(unstable_eigs) > 0 and np.any(np.abs(np.imag(unstable_eigs)) > 1e-8):
+            has_complex_unstable = True
     
-    if not has_instability:
+    # No instability anywhere in the sweep
+    if np.max(max_reals) <= 0:
         return None
     
-    if is_oscillatory:
+    # Hopf takes precedence (oscillatory instability is qualitatively distinct)
+    if has_complex_unstable:
         return 'Hopf'
     
-    # STEP 3: Check RESTABILIZATION (Shaberi's method)
+    # STEP 3: Filter detection — is the dispersion monotonically non-decreasing?
+    # Diego et al. (2018, Section V): filters plateau asymptotically, no peak.
+    # We detect this by checking if the maximum lies at or near the END of the
+    # swept range (still rising), as opposed to in the middle (peaked).
+    max_idx = np.argmax(max_reals)
+    max_position = max_idx / (len(k_values) - 1)  # 0 = start, 1 = end
+    #max_position = max_idx / len(k_values)  # 0 = at start of range, 1 = at end
+    
+    if max_position > 0.90:
+        # Maximum is in the top 10% of the swept range — dispersion is still rising
+        # This is filter-like behaviour
+        return 'Filter'
+    
+    # STEP 4: Distinguish Type-I from Type-II via restabilisation at very high k
     k_high_values = np.linspace(10, 50, 20)
     for k in k_high_values:
         M = J - k**2 * D
         eigs_k = np.linalg.eigvals(M)
         if np.max(np.real(eigs_k)) < 0:
-            return 'Type-I'  # Restabilizes
+            return 'Type-I'  # Restabilises at some high k
     
-    return 'Type-II'  # Doesn't restabilize
+    return 'Type-II'  # Stays unstable at all tested high k
 
 
 # ######### NEW VERSIONS, which is not shaberi accurate so we use the old and accurate one! #########
@@ -342,6 +399,7 @@ def run_analysis(config_id, n_samples, save_successful_params=False, max_success
     shaberi_type_I = 0
     shaberi_type_II = 0
     shaberi_hopf = 0
+    filter_count = 0
 
     # NEW: List to collect ALL successful parameters
     successful_params = [] if save_successful_params else None
@@ -391,6 +449,8 @@ def run_analysis(config_id, n_samples, save_successful_params=False, max_success
                         shaberi_type_II += 1
                     elif turing_type == 'Hopf':
                         shaberi_hopf += 1
+                    elif turing_type == 'Filter':
+                        filter_count += 1
         
         # Progress tracking
         if (i + 1) % 100000 == 0:
@@ -419,6 +479,7 @@ def run_analysis(config_id, n_samples, save_successful_params=False, max_success
         "shaberi_type_I": shaberi_type_I,
         "shaberi_type_II": shaberi_type_II,
         "shaberi_hopf": shaberi_hopf,
+        "filter_count": filter_count,
         "rob_diego": rob_diego,
         "rob_shaberi_total": rob_shaberi_total,
         "rob_shaberi_type_I": rob_shaberi_type_I,
@@ -471,6 +532,7 @@ if __name__ == "__main__":
         'shaberi_type_I': results['shaberi_type_I'],
         'shaberi_type_II': results['shaberi_type_II'],
         'shaberi_hopf': results['shaberi_hopf'],
+        'filter_count': results['filter_count'],
         'rob_diego': results['rob_diego'],
         'rob_shaberi_total': results['rob_shaberi_total'],
         'rob_shaberi_type_I': results['rob_shaberi_type_I'],
@@ -484,6 +546,7 @@ if __name__ == "__main__":
     print(f"  Type-I:        {results['shaberi_type_I']}")
     print(f"  Type-II:       {results['shaberi_type_II']}")
     print(f"  Hopf:          {results['shaberi_hopf']}")
+    print(f"  Filter:        {results['filter_count']}")
     print(f"\nSaved to:")
     print(f"  {output_pkl}")
     print(f"  {output_csv}")
