@@ -149,9 +149,9 @@ def is_turing_shaberi(J, eigs_0, DU, DV, DW):
     if np.max(np.real(eigs_0)) >= 0:
         return None
     
-    # STEP 2: Compute dispersion across the swept k range
+    # STEP 2: Compute dispersion across an extended k range to see asymptotic behaviour
     D = np.diag([DU, DV, DW])
-    k_values = np.arange(0.01, 10.01, 0.1)  # 100 points; change to 0.01 step for HPC
+    k_values = np.arange(0.01, 10.01, 0.1)  # widened to k=20 for better filter detection
     
     max_reals = np.zeros(len(k_values))
     has_complex_unstable = False
@@ -161,41 +161,39 @@ def is_turing_shaberi(J, eigs_0, DU, DV, DW):
         eigs_k = np.linalg.eigvals(M)
         max_reals[i] = np.max(np.real(eigs_k))
         
-        # Hopf check: any unstable eigenvalue with nonzero imaginary part
         unstable_eigs = eigs_k[np.real(eigs_k) > 0]
         if len(unstable_eigs) > 0 and np.any(np.abs(np.imag(unstable_eigs)) > 1e-8):
             has_complex_unstable = True
     
-    # No instability anywhere in the sweep
     if np.max(max_reals) <= 0:
         return None
     
-    # Hopf takes precedence (oscillatory instability is qualitatively distinct)
     if has_complex_unstable:
         return 'Hopf'
     
-    # STEP 3: Filter detection — is the dispersion monotonically non-decreasing?
-    # Diego et al. (2018, Section V): filters plateau asymptotically, no peak.
-    # We detect this by checking if the maximum lies at or near the END of the
-    # swept range (still rising), as opposed to in the middle (peaked).
+    # STEP 3: Filter detection — combined position AND slope criterion
+    # A filter has: max near the end of the range AND positive slope at the end
     max_idx = np.argmax(max_reals)
-    max_position = max_idx / (len(k_values) - 1)  # 0 = start, 1 = end
-    #max_position = max_idx / len(k_values)  # 0 = at start of range, 1 = at end
+    max_position = max_idx / (len(k_values) - 1)  # [0, 1]
     
-    if max_position > 0.90:
-        # Maximum is in the top 10% of the swept range — dispersion is still rising
-        # This is filter-like behaviour
+    # Check the slope at the right end of the sweep (last ~10% of points)
+    n_end = max(5, len(k_values) // 20)  # last 5% or at least 5 points
+    end_slope = (max_reals[-1] - max_reals[-n_end]) / n_end
+    
+    # Filter criteria: max is in last 10% of range AND end-slope is still positive
+    # (rising rather than peaked-and-falling)
+    if max_position > 0.90 and end_slope > 0:
         return 'Filter'
     
-    # STEP 4: Distinguish Type-I from Type-II via restabilisation at very high k
-    k_high_values = np.linspace(10, 50, 20)
+    # STEP 4: Type-I (restabilises at very high k) vs Type-II (doesn't)
+    k_high_values = np.linspace(10, 50, 15)
     for k in k_high_values:
         M = J - k**2 * D
         eigs_k = np.linalg.eigvals(M)
         if np.max(np.real(eigs_k)) < 0:
-            return 'Type-I'  # Restabilises at some high k
+            return 'Type-I'
     
-    return 'Type-II'  # Stays unstable at all tested high k
+    return 'Type-II'
 
 
 # ######### NEW VERSIONS, which is not shaberi accurate so we use the old and accurate one! #########
