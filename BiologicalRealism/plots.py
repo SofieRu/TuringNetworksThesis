@@ -5,18 +5,19 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Patch
 from scipy.optimize import fsolve
 
-from heterogenous_ring_3954 import (
-    hopping,
-)
-
-# for when we run bifurcation plots!!
 # from heterogenous_ring_3954 import (
-#     CONFIG_TO_TEST,
-#     build_ring_jacobian_homogeneous,
-#     steady_state_expected,
-#     baseline_params,
 #     hopping,
 # )
+
+# for when we run bifurcation plots!!
+from heterogenous_ring_3954 import (
+    CONFIG_TO_TEST,
+    build_ring_jacobian_homogeneous,
+    compute_jacobian,
+    steady_state_expected,
+    baseline_params,
+    hopping,
+)
 
 # have to run this first: module load matplotlib/3.9.2-gfbf-2024a
 # have to run this first: module load SciPy-bundle/2024.05-gfbf-2024a
@@ -51,17 +52,17 @@ def diff_str(hopping):
 ################ TOPOLOGY 3954 ################
 
 # Config 13 (robust)
-with open('3954_cv_sweep_high_config13_N10.pkl', 'rb') as f:
+with open('pastconfigs/3954_cv_sweep_high_config13_N10.pkl', 'rb') as f:
     cv_data_13 = pickle.load(f)
 
-with open('3954_sensitivity_results_config13_N10.pkl', 'rb') as f:
+with open('pastconfigs/3954_sensitivity_results_config13_N10.pkl', 'rb') as f:
     sens_data_13 = pickle.load(f)
 
 # Config 2 (fragile)
-with open('3954_cv_sweep_low_config2_N10.pkl', 'rb') as f:
+with open('pastconfigs/3954_cv_sweep_low_config2_N10.pkl', 'rb') as f:
     cv_data_2 = pickle.load(f)
 
-with open('3954_sensitivity_results_config2_N10.pkl', 'rb') as f:
+with open('pastconfigs/3954_sensitivity_results_config2_N10.pkl', 'rb') as f:
     sens_data_2 = pickle.load(f)
 
 cv13 = extract_cv_arrays(cv_data_13)
@@ -202,16 +203,16 @@ plt.close()
 
 ################ TOPOLOGY 1754 ################
 
-with open('1754_cv_sweep_high_config12_N10.pkl', 'rb') as f:
+with open('pastconfigs/1754_cv_sweep_high_config12_N10.pkl', 'rb') as f:
     cv_data_12 = pickle.load(f)
 
-with open('1754_sensitivity_results_config12_N10.pkl', 'rb') as f:
+with open('pastconfigs/1754_sensitivity_results_config12_N10.pkl', 'rb') as f:
     sens_data_12 = pickle.load(f)
 
-with open('1754_cv_sweep_low_config6_N10.pkl', 'rb') as f:
+with open('pastconfigs/1754_cv_sweep_low_config6_N10.pkl', 'rb') as f:
     cv_data_6 = pickle.load(f)
 
-with open('1754_sensitivity_results_config6_N10.pkl', 'rb') as f:
+with open('pastconfigs/1754_sensitivity_results_config6_N10.pkl', 'rb') as f:
     sens_data_6 = pickle.load(f)
 
 cv12 = extract_cv_arrays(cv_data_12)
@@ -470,22 +471,22 @@ plot_sensitivity(sens_data_6, 'Config 6 (fragile)', 'config6_fig3_sensitivity.pn
 
 # Load all four CV sweep pickles
 # (Adjust filenames to match what you actually have)
-with open('3954_cv_sweep_high_config13_N10.pkl', 'rb') as f:
+with open('pastconfigs/3954_cv_sweep_high_config13_N10.pkl', 'rb') as f:
     cv13_N10_data = pickle.load(f)
-with open('3954_cv_sweep_high_config13_N20.pkl', 'rb') as f:
+with open('pastconfigs/3954_cv_sweep_high_config13_N20.pkl', 'rb') as f:
     cv13_N20_data = pickle.load(f)
-with open('3954_cv_sweep_low_config2_N10.pkl', 'rb') as f:
+with open('pastconfigs/3954_cv_sweep_low_config2_N10.pkl', 'rb') as f:
     cv2_N10_data = pickle.load(f)
-with open('3954_cv_sweep_low_config2_N20.pkl', 'rb') as f:
+with open('pastconfigs/3954_cv_sweep_low_config2_N20.pkl', 'rb') as f:
     cv2_N20_data = pickle.load(f)
 
-with open('1754_cv_sweep_high_config12_N10.pkl', 'rb') as f:
+with open('pastconfigs/1754_cv_sweep_high_config12_N10.pkl', 'rb') as f:
     cv12_N10_data = pickle.load(f)
-with open('1754_cv_sweep_high_config12_N20.pkl', 'rb') as f:
+with open('pastconfigs/1754_cv_sweep_high_config12_N20.pkl', 'rb') as f:
     cv12_N20_data = pickle.load(f)
-with open('1754_cv_sweep_low_config6_N10.pkl', 'rb') as f:
+with open('pastconfigs/1754_cv_sweep_low_config6_N10.pkl', 'rb') as f:
     cv6_N10_data = pickle.load(f)
-with open('1754_cv_sweep_low_config6_N20.pkl', 'rb') as f:
+with open('pastconfigs/1754_cv_sweep_low_config6_N20.pkl', 'rb') as f:
     cv6_N20_data = pickle.load(f)
 
 
@@ -573,12 +574,6 @@ plt.tight_layout()
 plt.savefig('fig5_robustness_vs_cv_N10_vs_N20.png', dpi=300, bbox_inches='tight')
 print("Saved: fig5_robustness_vs_cv_N10_vs_N20.png")
 plt.close()
-
-
-
-
-
-
 
 
 
