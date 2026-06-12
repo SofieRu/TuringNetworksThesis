@@ -85,8 +85,7 @@ def fig1_overview(df):
         ha="right",
         fontsize=8,
     )
-
-
+    
     ax.set_ylabel("Robustness Score (in %)", fontsize=11)
     ax.set_title(
         "Robustness of Topologies for #3954\n(Latin Hypercube Sampling, 1 million simulations)",
