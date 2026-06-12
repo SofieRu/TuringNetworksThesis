@@ -17,10 +17,10 @@ CSVS = {
     "#1754": "Topology1754/1754_PREFINAL_lhs_results_summary.csv",
     "#1823": "Topology1823/1823_PREFINAL_lhs_results_summary.csv",
     "#1838": "Topology1838/1838_PREFINAL_lhs_results_summary.csv",
-    "#3954": "Topology3954/3954_PREFINAL_lhs_results_summary.csv",
+    "#3954": "Topology3954/3954_FILTER_lhs_results_summary.csv",
 }
 
-PARAMS_CSV = "Topology3954/3954_PREFINAL_lhs_results_parameters.csv"
+PARAMS_CSV = "Topology3954/3954_FILTER_lhs_results_parameters.csv"
 
 # for both 3954 and 1754 i got rid of _CCD_Type1_Var1/2 bc the values were really high and kinda did not match the rest but later if it does match then we can put it back in and see if it changes the results
 
@@ -134,9 +134,10 @@ def fig6_pattern_composition(df):
     types = ["Type1", "Type2", "Type3"]
  
     PATTERN_COLORS = {
-        "Type I"  : "#32A5AB",
+        "Type I"  : "#2770A0",
         "Type II" : "#9243A8",
         "Hopf"    : "#C7C93C",
+        "Turing Filter" : "#58C675"
     }
  
     import matplotlib.patches as mpatches
@@ -147,6 +148,7 @@ def fig6_pattern_composition(df):
         type_I = ("shaberi_type_I",   "sum"),
         type_II= ("shaberi_type_II",  "sum"),
         hopf   = ("shaberi_hopf",     "sum"),
+        turing_filter = ("filter_count", "sum"),
     )
  
     fig, ax = plt.subplots(figsize=(10, 5))
@@ -171,13 +173,15 @@ def fig6_pattern_composition(df):
             f1 = row["type_I"]  / total * rob
             f2 = row["type_II"] / total * rob
             fh = row["hopf"]    / total * rob
+            ft = row["turing_filter"] / total * rob
  
             x = i * gap + (j - n_topos / 2 + 0.5) * width
  
             ax.bar(x, f1,      width=width, color=PATTERN_COLORS["Type I"],  edgecolor="white", linewidth=0.3)
             ax.bar(x, f2,      width=width, color=PATTERN_COLORS["Type II"], edgecolor="white", linewidth=0.3, bottom=f1)
             ax.bar(x, fh,      width=width, color=PATTERN_COLORS["Hopf"],    edgecolor="white", linewidth=0.3, bottom=f1+f2)
- 
+            ax.bar(x, ft,      width=width, color=PATTERN_COLORS["Turing Filter"], edgecolor="white", linewidth=0.3, bottom=f1+f2+fh)
+
             ax.text(x, -0.019, topo, ha="right", va="top", fontsize=7, rotation=45)
  
     ax.set_xticks([i * gap for i in range(len(types))])
@@ -212,7 +216,7 @@ def fig_pseudo_phase_3954(df):
     )
 
     pairs = [("dU", "dV"), ("dU", "dW"), ("dV", "dW")]
-    fig, axes = plt.subplots(1, 3, figsize=(12, 4))
+    fig, axes = plt.subplots(1, 3, figsize=(15, 5))
 
     for ax, (xvar, yvar) in zip(axes, pairs):
         sc = ax.scatter(
@@ -253,7 +257,7 @@ from mpl_toolkits.mplot3d import Axes3D
 from scipy.spatial import ConvexHull
 
 # Add this near the top with other file paths
-PARAMS_CSV = "Topology3954/3954_NEW_lhs_results_parameters.csv"
+PARAMS_CSV = "Topology3954/3954_FILTER_lhs_results_parameters.csv"
 
 # Add this function with your other plotting functions
 
@@ -322,23 +326,26 @@ def fig_3d_parameter_space():
     save(fig, "fig_3d_turing_island_single_config")
 
 
+# think about maybe comparing different parametres so not necessarily beta u, beta v and beta w
 def fig_3d_parameter_space_comparison():
     df_params = pd.read_csv(PARAMS_CSV)
     
     # Choose two configs to compare (e.g., low vs high robustness)
-    config_a = 13  # High robustness
-    config_b = 10   # Different diffusion config
+    config_a = 4    # type I config 
+    config_b = 32   # type II config
+    config_c = 50   # type III config
     
-    df_a = df_params[df_params['config_id'] == config_a]
-    df_b = df_params[df_params['config_id'] == config_b]
+    df_a = df_params[df_params['config_id'] == config_a] # type I config 
+    df_b = df_params[df_params['config_id'] == config_b] # type II config
+    df_c = df_params[df_params['config_id'] == config_c] # type III config
     
     # Create plot
-    fig = plt.figure(figsize=(14, 6))
+    fig = plt.figure(figsize=(18, 6))
     
     # Plot A
-    ax1 = fig.add_subplot(121, projection='3d')
+    ax1 = fig.add_subplot(131, projection='3d')
     ax1.scatter(df_a['beta_u'], df_a['beta_v'], df_a['beta_w'],
-               c='red', s=50, alpha=0.6, edgecolors='k', linewidth=0.5,
+               c='blue', s=50, alpha=0.6, edgecolors='k', linewidth=0.5,
                label=f'Config {config_a}')
     ax1.set_xlabel('β$_u$', fontsize=11)
     ax1.set_ylabel('β$_v$', fontsize=11)
@@ -347,15 +354,26 @@ def fig_3d_parameter_space_comparison():
     ax1.view_init(elev=20, azim=45)
     
     # Plot B
-    ax2 = fig.add_subplot(122, projection='3d')
+    ax2 = fig.add_subplot(132, projection='3d')
     ax2.scatter(df_b['beta_u'], df_b['beta_v'], df_b['beta_w'],
-               c='blue', s=50, alpha=0.6, edgecolors='k', linewidth=0.5,
+               c='fuchsia', s=50, alpha=0.6, edgecolors='k', linewidth=0.5,
                label=f'Config {config_b}')
     ax2.set_xlabel('β$_u$', fontsize=11)
     ax2.set_ylabel('β$_v$', fontsize=11)
     ax2.set_zlabel('β$_w$', fontsize=11)
     ax2.set_title(f'{df_b["config_name"].iloc[0]}\n{len(df_b)} Turing sets', fontsize=12)
     ax2.view_init(elev=20, azim=45)
+
+    # Plot C
+    ax3 = fig.add_subplot(133, projection='3d')
+    ax3.scatter(df_c['beta_u'], df_c['beta_v'], df_c['beta_w'],
+               c='green', s=50, alpha=0.6, edgecolors='k', linewidth=0.5,
+               label=f'Config {config_c}')
+    ax3.set_xlabel('β$_u$', fontsize=11)
+    ax3.set_ylabel('β$_v$', fontsize=11)
+    ax3.set_zlabel('β$_w$', fontsize=11)
+    ax3.set_title(f'{df_c["config_name"].iloc[0]}\n{len(df_c)} Turing sets', fontsize=12)
+    ax3.view_init(elev=20, azim=45)
     
     plt.suptitle('Turing Parameter Space: Diffusion Configuration Comparison', 
                  fontsize=14, y=0.98)

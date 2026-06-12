@@ -29,6 +29,7 @@ for filepath in result_files:
             'shaberi_type_I': result['shaberi_type_I'],
             'shaberi_type_II': result['shaberi_type_II'],
             'shaberi_hopf': result['shaberi_hopf'],
+            'filter_count': result['filter_count'],
             'rob_diego': result['rob_diego'],
             'rob_shaberi_total': result['rob_shaberi_total'],
             'rob_shaberi_type_I': result['rob_shaberi_type_I'],
@@ -40,8 +41,8 @@ df = pd.DataFrame(all_results)
 df = df.sort_values('config_id', ascending=True)
 
 # Save as CSV for Excel
-df.to_csv('1754_PREFINAL_lhs_results_summary.csv', index=False)
-print("\nSaved to: 1754_PREFINAL_lhs_results_summary.csv")
+df.to_csv('1754_FILTER_lhs_results_summary.csv', index=False)
+print("\nSaved to: 1754_FILTER_lhs_results_summary.csv")
 
 # PART 2: DETAILED CSV (one row per saved parameter set)
 
@@ -95,7 +96,7 @@ for filepath in result_files:
 if all_params:
     df_params = pd.DataFrame(all_params)
     df_params = df_params.sort_values(['config_id', 'param_rank'], ascending=True)
-    df_params.to_csv('1754_PREFINAL_lhs_results_parameters.csv', index=False)
-    print("Saved to: 1754_PREFINAL_lhs_results_parameters.csv")
+    df_params.to_csv('1754_FILTER_lhs_results_parameters.csv', index=False)
+    print("Saved to: 1754_FILTER_lhs_results_parameters.csv")
 else:
     print("No successful parameter sets found in the results.")

@@ -11,7 +11,7 @@ import matplotlib.lines as mlines
 # have to run this first: module load SciPy-bundle/2024.05-gfbf-2024a
 # have to run this first: pip install seaborn --user
 
-CSV = "3954_PREFINAL_lhs_results_summary.csv"
+CSV = "3954_FILTER_lhs_results_summary.csv"
 
 OUT_DIR = Path("plots")
 OUT_DIR.mkdir(exist_ok=True)
@@ -226,43 +226,43 @@ def fig2_raincloud(df):
 
 ##################################### FIGURE 3: Grouped bars, max robustness per topology × type #####################################
 
-def fig3_grouped_topology(df):
+# def fig3_grouped_topology(df):
  
-    fig, ax = plt.subplots(figsize=(9, 5))
+#     fig, ax = plt.subplots(figsize=(9, 5))
 
-    topos = df["topology"].dropna().unique()
-    types = ["Type1", "Type2", "Type3"]
-    x     = np.arange(len(topos))
-    w     = 0.25
+#     topos = df["topology"].dropna().unique()
+#     types = ["Type1", "Type2", "Type3"]
+#     x     = np.arange(len(topos))
+#     w     = 0.25
  
-    for i, t in enumerate(types):
-        vals = [
-            df[(df["topology"] == topo) & (df["turing_type"] == t)]["rob_shaberi_total"].max()
-            for topo in topos
-        ]
-        ax.bar(
-            x + (i - 1) * w,
-            vals,
-            width=w,
-            color=TYPE_COLORS[t],
-            label=t,
-            edgecolor="white",
-            linewidth=0.5,
-        )
+#     for i, t in enumerate(types):
+#         vals = [
+#             df[(df["topology"] == topo) & (df["turing_type"] == t)]["rob_shaberi_total"].max()
+#             for topo in topos
+#         ]
+#         ax.bar(
+#             x + (i - 1) * w,
+#             vals,
+#             width=w,
+#             color=TYPE_COLORS[t],
+#             label=t,
+#             edgecolor="white",
+#             linewidth=0.5,
+#         )
  
-    ax.set_xticks(x)
-    ax.set_xticklabels(topos, fontsize=11)
-    ax.set_ylabel("Max Robustness Score (in %, Shaberi Method)", fontsize=11)
-    ax.set_title(
-        "Max robustness for #3954 Topology\n(Latin Hypercube Sampling, 1 million simulations)",
-        fontsize=12, loc="left", pad=10,
-    )
-    ax.xaxis.grid(False)
-    ax.legend(title="Turing Type", frameon=False,
-              loc="upper center", bbox_to_anchor=(0.5, -0.12), ncol=3)
+#     ax.set_xticks(x)
+#     ax.set_xticklabels(topos, fontsize=11)
+#     ax.set_ylabel("Max Robustness Score (in %, Shaberi Method)", fontsize=11)
+#     ax.set_title(
+#         "Max robustness for #3954 Topology\n(Latin Hypercube Sampling, 1 million simulations)",
+#         fontsize=12, loc="left", pad=10,
+#     )
+#     ax.xaxis.grid(False)
+#     ax.legend(title="Turing Type", frameon=False,
+#               loc="upper center", bbox_to_anchor=(0.5, -0.12), ncol=3)
  
-    fig.tight_layout()
-    save(fig, "new_3954_lhs_fig3_grouped_topology")
+#     fig.tight_layout()
+#     save(fig, "new_3954_lhs_fig3_grouped_topology")
 
 
 
@@ -318,5 +318,5 @@ df = load_data()
 fig1_overview(df)
 fig2_dotplot(df)
 fig2_raincloud(df)
-fig3_grouped_topology(df)
+# fig3_grouped_topology(df)
 fig4_diego_vs_shaberi(df)
