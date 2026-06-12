@@ -68,13 +68,24 @@ def fig1_overview(df):
     )
 
     # x-axis labels: strip the "3954_" prefix so they're shorter
+    # ax.set_xticks(range(len(df)))
+    # ax.set_xticklabels(
+    #     df["config_name"].str.replace("NEW_LHS_3954_Type", "", regex=False),
+    #     rotation=55,
+    #     ha="right",
+    #     fontsize=8,
+    # )
+
+        # x-axis labels: strip prefix and "Type" variations
     ax.set_xticks(range(len(df)))
     ax.set_xticklabels(
-        df["config_name"].str.replace("NEW_LHS_3954_", "", regex=False),
+        # The | means OR, and \d* means match zero or more digits (like 1, 2, 3)
+        df["config_name"].str.replace(r"NEW_LHS_3954_|Type\d*_", "", regex=True),
         rotation=55,
         ha="right",
         fontsize=8,
     )
+
 
     ax.set_ylabel("Robustness Score (in %)", fontsize=11)
     ax.set_title(
@@ -161,7 +172,7 @@ def fig2_raincloud(df):
     types  = ["Type1", "Type2", "Type3"]
     labels = ["Type 1", "Type 2", "Type 3"]
 
-    fig, ax = plt.subplots(figsize=(9.5, 6))
+    fig, ax = plt.subplots(figsize=(10, 6))
 
     for i, (t, label) in enumerate(zip(types, labels)):
         subset = df[df["turing_type"] == t]["rob_shaberi_total"].dropna().values
