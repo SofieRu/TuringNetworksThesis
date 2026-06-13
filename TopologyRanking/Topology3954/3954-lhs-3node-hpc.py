@@ -430,18 +430,16 @@ def run_analysis(config_id, n_samples, save_successful_params=False, max_success
                     if turing_type == 'Type-I':
                         shaberi_type_I += 1
 
-                        if save_successful_params:
-                            D = np.diag([DU, DV, DW])
-                            max_growth_rate = -np.inf
-
-                            for k in np.arange(0.01, 10.01, 0.1):
-                                M = J - k**2 * D
-                                eigs_k = np.linalg.eigvals(M)
-                                max_real_k = np.max(np.real(eigs_k))
-                                if max_real_k > max_growth_rate:
-                                    max_growth_rate = max_real_k
-
-                            successful_params.append({'params_array': params.copy(), 'steady_state': steady.copy(), 'max_growth_rate': float(max_growth_rate)})
+                        # if save_successful_params:
+                        #     D = np.diag([DU, DV, DW])
+                        #     max_growth_rate = -np.inf
+                        #     for k in np.arange(0.01, 10.01, 0.1):
+                        #         M = J - k**2 * D
+                        #         eigs_k = np.linalg.eigvals(M)
+                        #         max_real_k = np.max(np.real(eigs_k))
+                        #         if max_real_k > max_growth_rate:
+                        #             max_growth_rate = max_real_k
+                        #     successful_params.append({'params_array': params.copy(), 'steady_state': steady.copy(), 'max_growth_rate': float(max_growth_rate)})
 
                     elif turing_type == 'Type-II':
                         shaberi_type_II += 1
@@ -449,7 +447,21 @@ def run_analysis(config_id, n_samples, save_successful_params=False, max_success
                         shaberi_hopf += 1
                     elif turing_type == 'Filter':
                         filter_count += 1
-        
+                    
+                    # SAVE ALL classified parameters (regardless of type)
+                    if save_successful_params:
+                        D = np.diag([DU, DV, DW])
+                        max_growth_rate = -np.inf
+
+                        for k in np.arange(0.01, 10.01, 0.1):  # finer step for accuracy
+                            M = J - k**2 * D
+                            eigs_k = np.linalg.eigvals(M)
+                            max_real_k = np.max(np.real(eigs_k))
+                            if max_real_k > max_growth_rate:
+                                max_growth_rate = max_real_k
+
+                        successful_params.append({'params_array': params.copy(),'steady_state': steady.copy(),'max_growth_rate': float(max_growth_rate),'classification': turing_type,})
+
         # Progress tracking
         if (i + 1) % 100000 == 0:
             print(f"[{config_name}] {i+1:,}/{n_samples:,} | Stable: {stable_without_diffusion} | "

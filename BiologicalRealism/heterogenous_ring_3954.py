@@ -152,17 +152,13 @@ CONFIG_LABEL = "low"  # or "low" — change this once when you switch configs
 
 
 # Load parameters from CSV
-df_params = pd.read_csv('../TopologyRanking/Topology3954/3954_PREFINAL_lhs_results_parameters.csv')
+df_file = pd.read_csv('../TopologyRanking/Topology3954/3954_PREFINAL_lhs_results_parameters.csv')
+df_params = df_file[df_file['classification'] == 'Type-I'] #RECENT CHANGE BC WE MODIFY THE PARAMETERS WE SAVE
 
-# Get the best parameter set for this config
+# Get the best parameter set for this config and extract data
 config_data = df_params[(df_params['config_id'] == CONFIG_TO_TEST) & (df_params['param_rank'] == 1)]
-
-if len(config_data) == 0:
-    print(f"ERROR: No parameters found for config {CONFIG_TO_TEST}!")
-    exit(1)
-
-# Extract parameters
 row = config_data.iloc[0]
+
 
 baseline_params = np.array([
     row['alpha_u'], row['beta_u'], row['K_uu'], row['K_vu'], row['delta_u'],
