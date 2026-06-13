@@ -152,7 +152,7 @@ CONFIG_LABEL = "low"  # or "low" — change this once when you switch configs
 
 
 # Load parameters from CSV
-df_file = pd.read_csv('../TopologyRanking/Topology3954/3954_PREFINAL_lhs_results_parameters.csv')
+df_file = pd.read_csv('../TopologyRanking/Topology3954/3954_ALLPARAMSNEW_lhs_results_parameters.csv')
 df_params = df_file[df_file['classification'] == 'Type-I'] #RECENT CHANGE BC WE MODIFY THE PARAMETERS WE SAVE
 
 # Get the best parameter set for this config and extract data
