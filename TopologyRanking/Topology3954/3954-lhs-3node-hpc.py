@@ -143,7 +143,6 @@ def is_turing_diego(J, DU, DV, DW):
 #     return 'Type-II'  # Doesn't restabilize
 
 
-
 def is_turing_shaberi(J, eigs_0, DU, DV, DW):
     # STEP 1: Homogeneous steady state must be stable
     if np.max(np.real(eigs_0)) >= 0:
@@ -151,7 +150,7 @@ def is_turing_shaberi(J, eigs_0, DU, DV, DW):
     
     # STEP 2: Sweep k ∈ [0, 10] with step 0.01 (Shaberi 2025 methodology)
     D = np.diag([DU, DV, DW])
-    k_values = np.arange(0.01, 10.01, 0.01)
+    k_values = np.arange(0.01, 10.01, 0.1) # change later back to 0.01
     
     max_reals = np.zeros(len(k_values))
     has_complex_unstable = False
@@ -161,125 +160,31 @@ def is_turing_shaberi(J, eigs_0, DU, DV, DW):
         eigs_k = np.linalg.eigvals(M)
         max_reals[i] = np.max(np.real(eigs_k))
         
-        # Hopf check: any unstable eigenvalues with nonzero imaginary parts?
         if max_reals[i] > 0:
             unstable_eigs = eigs_k[np.real(eigs_k) > 0]
             if np.any(np.abs(np.imag(unstable_eigs)) > 1e-8):
                 has_complex_unstable = True
     
-    # No instability at any swept k
     if np.max(max_reals) <= 0:
         return None
     
-    # Hopf takes precedence (oscillatory instability is qualitatively distinct)
     if has_complex_unstable:
         return 'Hopf'
     
-    # STEP 3: Type-I = dispersion restabilises (negative) by k=10
+    # STEP 3: Type-I = restabilises (goes negative) by k=10
     if max_reals[-1] < 0:
         return 'Type-I'
     
-    # STEP 4: Sub-classify the "non-restabilising" cases.
-    # Filter (Diego 2018, Sec V): monotonic plateau - late-range mean ≈ overall max
-    # Type-II (Shaberi 2025): has an intermediate peak that drops slightly
-    late_range_mean = np.mean(max_reals[-len(max_reals) // 5:])  # last 20%
-    overall_max = np.max(max_reals)
+    # STEP 4: Distinguish Filter from Type-II by peak location
+    # Filter (Diego 2018): monotonic — max sits at the END of the range
+    # Type-II: has an interior peak — max is somewhere in the middle
+    max_idx = np.argmax(max_reals)
     
-    if overall_max > 0 and late_range_mean > 0.85 * overall_max:
+    # Allow a tiny buffer for floating-point noise (last 0.2% of range)
+    if max_idx >= len(k_values) - 2:
         return 'Filter'
     
     return 'Type-II'
-
-
-
-
-def is_turing_shaberi(J, eigs_0, DU, DV, DW):
-    # STEP 1: Homogeneous steady state must be stable
-    if np.max(np.real(eigs_0)) >= 0:
-        return None
-    
-    # STEP 2: Sweep k ∈ [0, 10] with step 0.01 (Shaberi 2025 methodology)
-    D = np.diag([DU, DV, DW])
-    k_values = np.arange(0.01, 10.01, 0.01)
-    
-    max_reals = np.zeros(len(k_values))
-    has_complex_unstable = False
-    
-    for i, k in enumerate(k_values):
-        M = J - (k**2) * D
-        eigs_k = np.linalg.eigvals(M)
-        max_reals[i] = np.max(np.real(eigs_k))
-        
-        # Hopf check
-        if max_reals[i] > 0:
-            unstable_eigs = eigs_k[np.real(eigs_k) > 0]
-            if np.any(np.abs(np.imag(unstable_eigs)) > 1e-8):
-                has_complex_unstable = True
-    
-    # No instability anywhere
-    if np.max(max_reals) <= 0:
-        return None
-    
-    # Hopf takes precedence
-    if has_complex_unstable:
-        return 'Hopf'
-    
-    # STEP 3: Type-I = dispersion restabilises (negative) by k=10
-    if max_reals[-1] < 0:
-        return 'Type-I'
-    
-    # STEP 4: Distinguish Filter from Type-II by interior peak detection
-    # Filter: rises monotonically to a plateau. End value ≈ maximum value.
-    # Type-II: has an interior peak that drops to a lower plateau.
-    
-    overall_max = np.max(max_reals)
-    end_value = max_reals[-1]
-    
-    # Relative drop from peak to end
-    relative_drop = (overall_max - end_value) / overall_max
-    
-    # Filter if the drop is small (≤ 5%) → essentially monotonic
-    if relative_drop <= 0.05:
-        return 'Filter'
-    
-    return 'Type-II'
-
-# ######### NEW VERSIONS, which is not shaberi accurate so we use the old and accurate one! #########
-
-# def is_turing_shaberi(J, eigs_0, DU, DV, DW, tol=1e-9):
-# 	# STEP 1: Stability at k=0
-# 	if np.max(np.real(eigs_0)) >= -tol:
-# 		return None
-
-# 	# STEP 2: Scan k, record dispersion
-# 	D = np.diag([DU, DV, DW])
-# 	k_values = np.arange(0.01, 10.01, 0.1)
-
-# 	max_real = np.empty(len(k_values))
-# 	imag_at_max = np.empty(len(k_values))
-
-# 	for i, k in enumerate(k_values):
-# 		eigs_k = np.linalg.eigvals(J - k**2 * D)
-# 		idx = np.argmax(np.real(eigs_k))
-# 		max_real[i] = np.real(eigs_k[idx])
-# 		imag_at_max[i] = np.imag(eigs_k[idx])
-
-# 	# No instability with diffusion
-# 	if np.max(max_real) <= tol:
-# 		return None
-
-# 	peak_idx = int(np.argmax(max_real))
-
-# 	# Exclude oscillatory instability
-# 	if np.abs(imag_at_max[peak_idx]) > 1e-8:
-# 		return "Hopf"
-
-# 	# Type II if the maximum is at the high-k boundary
-# 	if peak_idx >= len(k_values) - 2:
-# 		return "Type-II"
-
-# 	# Scholes-style Type I = Ia + Ib
-# 	return "Type-I"
 
 
 
