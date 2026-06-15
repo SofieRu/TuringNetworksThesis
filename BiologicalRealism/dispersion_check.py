@@ -13,7 +13,7 @@ from heterogenous_ring_3954 import compute_jacobian
 CSV_PATH = '../TopologyRanking/Topology3954/3954_ALLPARAMSNEW_lhs_results_parameters.csv'
 CONFIG_ID = 44           # 49 for all, The config to validate (54 = VWFreeze, only U diffuses)
 N_SAMPLES_PER_TYPE = 4   # How many samples per classification to plot
-K_MAX = 30               # How far to sweep k (wide enough to see asymptote)
+K_MAX = 20              # How far to sweep k (wide enough to see asymptote)
 K_STEP = 0.01            # Resolution of k sweep
 SEED = 42                # For reproducible sample selection
 
