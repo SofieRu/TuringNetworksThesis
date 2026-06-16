@@ -12,7 +12,7 @@ import pandas as pd
 # have to run this first: module load SciPy-bundle/2024.05-gfbf-2024a
 # have to run this first: pip install seaborn --user
 
-CSV = "3954_FILTER_lhs_results_summary.csv"
+CSV = "3954_NEWTURINGCLASS_lhs_results_summary.csv" 
 # got rid of control: 
 # NEW_LHS_1754_Type1_Control_Fast,2,10.0,10.0,10.0,1000000,991417,984576,0,0,0,0,0,0,0.0,0.0,0.0
 # NEW_LHS_1754_Type1_Control_Slow,0,0.1,0.1,0.1,1000000,991417,984576,0,0,0,0,0,0,0.0,0.0,0.0
@@ -308,7 +308,7 @@ def fig_combined_overview_and_raincloud(df):
     )
 
     #ax1.set_ylabel("Robustness Score (in %)", fontsize=11)
-    ax1.set_ylabel("Robustness Score (in %)", fontsize=11, labelpad=12)
+    ax1.set_ylabel("Robustness Score (in %)", fontsize=11, labelpad=10)
     ax1.set_title(
         "Latin Hypercube Sampling Results, 1 million simulations\nRobustness of different diffusion rate configurations for Topology #3954",
         fontsize=12,
@@ -397,7 +397,7 @@ def fig_combined_overview_and_raincloud(df):
     ax2.set_xticks(range(len(types)))
     ax2.set_xticklabels(labels, fontsize=11)
     #ax2.set_ylabel("Robustness Score (rob_shaberi_total)", fontsize=11)
-    ax2.set_ylabel("Robustness Score (rob_shaberi_total)", fontsize=11, labelpad=12)
+    ax2.set_ylabel("Robustness Score (rob_shaberi_total)", fontsize=11, labelpad=10)
     ax2.set_title(
         "Robustness distribution by Turing Type for Topology #3954",
         fontsize=12,

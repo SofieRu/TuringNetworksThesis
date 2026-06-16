@@ -1,8 +1,3 @@
-"""
-Verify that the analytical Jacobian matches the numerical Jacobian.
-Tests both topologies on a few sample parameter sets from the LHS results.
-"""
-
 import numpy as np
 import pandas as pd
 from scipy.optimize import approx_fprime
