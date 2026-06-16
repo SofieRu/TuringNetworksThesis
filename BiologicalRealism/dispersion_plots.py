@@ -2,6 +2,8 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from scipy.optimize import fsolve
+import matplotlib.lines as mlines
+
 
 # Import only the functions we need (no side effects from CV sweep etc.)
 from heterogenous_ring_3954 import (

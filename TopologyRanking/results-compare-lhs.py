@@ -10,19 +10,20 @@ import seaborn as sns
 from mpl_toolkits.mplot3d import Axes3D
 from scipy.spatial import ConvexHull
 import matplotlib.patches as mpatches
+import matplotlib.lines as mlines
 
 # have to run this first: module load matplotlib/3.9.2-gfbf-2024a
 # have to run this first: module load SciPy-bundle/2024.05-gfbf-2024a
 # have to run this first: pip install seaborn --user
 
 CSVS = {
-    "#1754": "Topology1754/1754_FILTER_lhs_results_summary.csv",
+    "#1754": "Topology1754/1754_NEWTURINGCLASS_lhs_results_summary.csv",
     "#1823": "Topology1823/1823_PREFINAL_lhs_results_summary.csv",
     "#1838": "Topology1838/1838_PREFINAL_lhs_results_summary.csv",
-    "#3954": "Topology3954/3954_FILTER_lhs_results_summary.csv",
+    "#3954": "Topology3954/3954_NEWTURINGCLASS_lhs_results_summary.csv",
 }
 
-PARAMS_CSV = "Topology3954/3954_FILTER_lhs_results_parameters.csv"
+PARAMS_CSV = "Topology3954/3954_NEWTURINGCLASS_lhs_results_parameters.csv"
 
 # for both 3954 and 1754 i got rid of _CCD_Type1_Var1/2 bc the values were really high and kinda did not match the rest but later if it does match then we can put it back in and see if it changes the results
 
@@ -177,7 +178,7 @@ def fig1_combined_heatmaps(df):
         pivot_total,
         annot=True,
         fmt=".4f",
-        cmap="BuPu",
+        cmap="Blues",
         linewidths=0.5,
         linecolor="white",
         ax=ax1,
@@ -197,7 +198,7 @@ def fig1_combined_heatmaps(df):
         pivot_typeI,
         annot=True,
         fmt=".4f",
-        cmap="BuGn",
+        cmap="Purples",
         linewidths=0.5,
         linecolor="white",
         ax=ax2,
@@ -212,9 +213,8 @@ def fig1_combined_heatmaps(df):
         pad=10,
     )
 
-    # 6. Clean up layout and save
     fig.tight_layout()
-    save(fig, "new_combined_fig1_heatmaps")
+    save(fig, "thesis_combined_fig1_heatmaps")
 
 
 
@@ -224,76 +224,6 @@ def fig1_combined_heatmaps(df):
 
 
 ########## FIGURE 6: Stacked absolute bar – Type I vs II vs Hopf composition ##########
-
-def fig6_pattern_composition(df):
-    df = df.copy()
-
-    # UNCOMMENT to exclude Unequal diffusion configurations
-    #df = df[~df["config_name"].str.contains("Unequal")]
-
-    topos = ["#1754", "#1823", "#1838", "#3954"]
-    types = ["Type1", "Type2", "Type3"]
- 
-    # aggregate: max robustness and pattern counts per topology × turing type
-    grouped = df.groupby(["topology_id", "turing_type"]).agg(
-        rob    = ("rob_shaberi_total", "max"),
-        type_I = ("shaberi_type_I",   "sum"),
-        type_II= ("shaberi_type_II",  "sum"),
-        hopf   = ("shaberi_hopf",     "sum"),
-        turing_filter = ("filter_count", "sum"),
-    )
- 
-    fig, ax = plt.subplots(figsize=(10, 5))
- 
-    n_topos = len(topos)
-    width   = 0.16
-    gap     = 0.7
- 
-    for i, t in enumerate(types):
-        for j, topo in enumerate(topos):
-            try:
-                row = grouped.loc[(topo, t)]
-            except KeyError:
-                continue
- 
-            rob   = row["rob"]
-            #total = row["type_I"] + row["type_II"] + row["hopf"]
-            total = row["type_I"] + row["type_II"] + row["hopf"] + row["turing_filter"]
-            if total == 0 or rob == 0:
-                continue
- 
-            # split robustness proportionally by pattern type
-            f1 = row["type_I"]  / total * rob
-            f2 = row["type_II"] / total * rob
-            fh = row["hopf"]    / total * rob
-            ft = row["turing_filter"] / total * rob
- 
-            x = i * gap + (j - n_topos / 2 + 0.5) * width
- 
-            ax.bar(x, f1,      width=width, color=PATTERN_COLORS["Type I"],  edgecolor="white", linewidth=0.3)
-            ax.bar(x, f2,      width=width, color=PATTERN_COLORS["Type II"], edgecolor="white", linewidth=0.3, bottom=f1)
-            ax.bar(x, fh,      width=width, color=PATTERN_COLORS["Hopf"],    edgecolor="white", linewidth=0.3, bottom=f1+f2)
-            ax.bar(x, ft,      width=width, color=PATTERN_COLORS["Turing Filter"], edgecolor="white", linewidth=0.3, bottom=f1+f2+fh)
-
-            ax.text(x, -0.019, topo, ha="right", va="top", fontsize=7, rotation=45)
- 
-    ax.set_xticks([i * gap for i in range(len(types))])
-    ax.set_xticklabels(types, fontsize=11)
-    ax.set_ylabel("Robustness (rob_shaberi_total)", fontsize=11)
-    ax.set_title(
-        "Type I is mainly in Turing Type 1, Type II and Hopf drive Type 2/3 robustness",
-        fontsize=12, loc="left", pad=10,
-    )
-    ax.xaxis.grid(False)
- 
-    handles = [mpatches.Patch(color=c, label=l) for l, c in PATTERN_COLORS.items()]
-    #ax.legend(handles=handles, title="Pattern type", frameon=False, loc="upper center", bbox_to_anchor=(0.5, -0.18), ncol=3)
-    ax.legend(handles=handles, title="Pattern type", frameon=False, loc="center right", bbox_to_anchor=(1.15, 0.5), ncol=1)
-    
-    fig.tight_layout()
-    save(fig, "new_compare_fig6_pattern_composition")
-
-
 
 
 def fig_filter_distribution_all_configs(df):
@@ -434,15 +364,12 @@ def fig_filter_distribution_all_configs(df):
 
 
 
-
-
 def fig_all_patterns_profile_trends(df):
     df = df.copy()
 
     topos = ["#1754", "#3954"]
     types = ["Type1", "Type2", "Type3"]
-
-    # Match your exact scientific color palette from the original bar chart
+    labels = ["Type 1", "Type 2", "Type 3"]  # Clean display names for X-axis
 
     # 1. Aggregate global sums for ALL configurations combined per topology × turing type
     grouped = (
@@ -456,10 +383,10 @@ def fig_all_patterns_profile_trends(df):
         .reset_index()
     )
 
-    # 2. Set up the 2-panel layout (one for each requested topology)
-    fig, axes = plt.subplots(1, 2, figsize=(15, 6), sharey=True)
+    # 2. Set up a less high, sleeker 2-panel layout (Height reduced to 4.8)
+    fig, axes = plt.subplots(1, 2, figsize=(15, 5), sharey=True)
 
-    for ax, topo in zip(axes, topos):
+    for i, (ax, topo) in enumerate(zip(axes, topos)):
         topo_data = grouped[grouped["topology_id"] == topo]
 
         # Initialize lists to store profile coordinates for plotting
@@ -498,14 +425,14 @@ def fig_all_patterns_profile_trends(df):
         for pattern_name, color in PATTERN_COLORS.items():
             y_values = percentages[pattern_name]
 
-            # Main trendline
+            # Main sleek trendline
             ax.plot(
-                types,
+                labels,  # Use clean display labels
                 y_values,
                 color=color,
-                linewidth=3.5,
+                linewidth=3.0,
                 marker="o",
-                markersize=8,
+                markersize=7,
                 markeredgecolor="white",
                 markeredgewidth=1.5,
                 label=pattern_name,
@@ -514,52 +441,76 @@ def fig_all_patterns_profile_trends(df):
 
             # Smooth shaded area under each line to emphasize density transitions
             ax.fill_between(
-                types, y_values, 0, color=color, alpha=0.08, zorder=2
+                labels, y_values, 0, color=color, alpha=0.1, zorder=2
             )
 
         # Panel styling and visual polish
         ax.set_title(
             f"Topology {topo} Pattern Dynamics",
-            fontsize=13,
-            fontweight="bold",
-            pad=12,
+            fontsize=12,
+            #fontweight="semibold",  # Changed from bold to semibold
+            color="#222222",
+            pad=14,
         )
-        ax.set_xlabel("Turing Type", fontsize=11)
-        ax.set_ylim(-5, 105)
-        ax.grid(True, axis="both", linestyle="--", alpha=0.4, zorder=0)
+        ax.set_xlabel("Turing Type (Diego et al. 2018)", fontsize=11, color="#333333", labelpad=8)
+        ax.set_ylabel("Pattern Composition Proportion (%)", fontsize=11, color="#333333", labelpad=8)
+        
+        # Enforce all axes showing numbers/ticks clearly
+        ax.tick_params(axis="both", which="major", labelsize=10, labelleft=True, colors="#444444")
+        ax.set_ylim(-3, 103)
+        
+        # Ultra-clean faint layout grids
+        ax.grid(True, axis="both", linestyle=":", alpha=0.5, color="#cccccc", zorder=0)
+        
+        # Remove top and right borders for a premium, lightweight look
+        ax.spines["top"].set_visible(False)
+        ax.spines["right"].set_visible(False)
+        ax.spines["left"].set_color("#cccccc")
+        ax.spines["bottom"].set_color("#cccccc")
 
-    # Global chart styling
-    axes[0].set_ylabel("Pattern Composition Proportion (%)", fontsize=11)
-
+    # Global Main Header
     plt.suptitle(
-        "Composition Signature Trends: Turing Filters Emerge Exclusively at Type III Across All Configs",
-        fontsize=14,
-        y=0.98,
+        "Distribution of Turing Instability Types Across Topological Network Types", # Changes in Turing Instability Composition When Moving from Type I to Type III
+        fontsize=13,
+        y=0.96,
         fontweight="semibold",
+        color="#111111"
     )
 
-    # Unified clean legend construction placed outside on the right
-    handles = [
-        mpatches.Patch(color=c, label=l) for l, c in PATTERN_COLORS.items()
+    # 4. Construct bottom center legend using the exact line styles plotted
+    legend_handles = [
+        mlines.Line2D(
+            [], [], 
+            color=c, 
+            linewidth=3.0, 
+            marker="o", 
+            markersize=7, 
+            markeredgecolor="white", 
+            markeredgewidth=1.5, 
+            label=l
+        ) for l, c in PATTERN_COLORS.items()
     ]
-    axes[1].legend(
-        handles=handles,
-        title="Pattern Type",
+    
+    # Places legend perfectly aligned horizontally underneath both panels
+    fig.legend(
+        handles=legend_handles,
+        loc="lower center",
+        bbox_to_anchor=(0.5, 0.02),
+        ncol=4,                 # Arranges legend items in a clean single row
         frameon=False,
-        loc="center left",
-        bbox_to_anchor=(1.02, 0.5),
-        fontsize=10,
+        fontsize=10.5
     )
 
+    # Manual tight padding adjustments to preserve the bottom legend space
     fig.subplots_adjust(
-        left=0.07, right=0.85, top=0.86, bottom=0.14, wspace=0.2
+        left=0.07, 
+        right=0.95, 
+        top=0.80, 
+        bottom=0.22,  # Added padding at the bottom for the new legend layout
+        wspace=0.22
     )
-    save(fig, "all_patterns_profile_trends")
-
-
-
-
-
+    
+    save(fig, "thesis_type_profile_trends")
 
 
 
@@ -632,8 +583,8 @@ def fig_pseudo_phase_combined(df):
     sub_all = df[df["topology_id"].isin(topos)].copy()
     # Normalize globally across both topologies so colors are directly comparable
     norm = mcolors.Normalize(
-        vmin=sub_all["rob_shaberi_total"].min(),
-        vmax=sub_all["rob_shaberi_total"].max(),
+        vmin=sub_all["rob_shaberi_type_I"].min(), # was before rob_shaberi_total
+        vmax=sub_all["rob_shaberi_type_I"].max(),
     )
 
     pairs = [("dU", "dV"), ("dU", "dW"), ("dV", "dW")]
@@ -641,8 +592,10 @@ def fig_pseudo_phase_combined(df):
     # 2 rows (one per topology), 3 columns (pairs)
     # Added sharex and sharey to keep the panels aligned and clean
     fig, axes = plt.subplots(
-        2, 3, figsize=(14, 8), sharex=True, sharey=True
+        2, 3, figsize=(14, 7.5), sharex=True, sharey=True
     )
+
+    #ax.tick_params(labelbottom=True)
 
     # Loop through each row (topology) and column (variable pair)
     for row_idx, topo in enumerate(topos):
@@ -654,8 +607,8 @@ def fig_pseudo_phase_combined(df):
             sc = ax.scatter(
                 sub[xvar],
                 sub[yvar],
-                c=sub["rob_shaberi_total"],
-                cmap="BuPu",
+                c=sub["rob_shaberi_type_I"],
+                cmap="PuRd",
                 norm=norm,
                 s=250,  # Slightly smaller to prevent overcrowding in stacked views
                 edgecolors="#444444",
@@ -674,12 +627,12 @@ def fig_pseudo_phase_combined(df):
             # Only set x-labels on the bottom row to prevent overcrowding
             if row_idx == 1:
                 ax.set_xlabel(xvar, fontsize=11)
+            
+            # ax.set_xlabel(xvar, fontsize=11) to add label to the first row
 
             # Only set y-labels on the left-most column
             if col_idx == 0:
-                ax.set_ylabel(
-                    f"{yvar}\n({topo})", fontsize=11, fontweight="bold"
-                )
+                ax.set_ylabel(f"{topo}\n{yvar}", fontsize=11) # fontweight="bold"
             else:
                 ax.set_ylabel(yvar, fontsize=11)
 
@@ -687,7 +640,7 @@ def fig_pseudo_phase_combined(df):
     # Height adjusted to 0.70 to scale nicely with the taller 2-row figure
     cbar_ax = fig.add_axes([0.88, 0.12, 0.02, 0.70])
     cbar = fig.colorbar(sc, cax=cbar_ax)
-    cbar.set_label("Robustness (rob_shaberi_total)", fontsize=11)
+    cbar.set_label("Robustness (rob_shaberi_type_I)", fontsize=11)
 
     fig.suptitle(
         "Pseudo Phase Diagram Across Diffusion Rate Combinations (Topologies #3954 & #1754)",
@@ -701,12 +654,10 @@ def fig_pseudo_phase_combined(df):
     # 2. Tight manual spacing adjustments for the 2D grid matrix
     # hspace handles the vertical gap between row 1 and row 2
     fig.subplots_adjust(
-        left=0.06, right=0.84, top=0.88, bottom=0.10, wspace=0.18, hspace=0.20
+        left=0.06, right=0.84, top=0.88, bottom=0.12, wspace=0.18, hspace=0.15
     )
 
-    save(fig, "combined_pseudo_phase_diagram")
-
-
+    save(fig, "new_combined_pseudo_phase_diagram")
 
 ############
 
@@ -857,7 +808,7 @@ def fig_3d_parameter_space_comparison():
     ax3.set_title(format_title(df_c), fontsize=11)
     ax3.view_init(elev=30, azim=45) # Changed to look down from above
     
-    plt.suptitle('3954 Turing Parameter Space: Diffusion Configuration Comparison', fontsize=14, y=0.98)
+    plt.suptitle('3954 Turing Parameter Space Comparison for Turing Instabilities Type I', fontsize=14, y=0.98)
     save(fig, "new_fig_3d_turing_island_comparison")
 
 
@@ -868,13 +819,12 @@ def fig_3d_parameter_space_comparison():
 ########### RUN THE WHOLE THING ############
 
 df = load_all()
-fig1_heatmap(df)
-fig1_heatmap_typeI(df)
+# fig1_heatmap(df)
+# fig1_heatmap_typeI(df)
+# fig_pseudo_phase_39542(df)
+
 fig1_combined_heatmaps(df)
-fig6_pattern_composition(df)
 fig_filter_distribution_all_configs(df)
 fig_all_patterns_profile_trends(df)
 fig_pseudo_phase_combined(df)
-
-fig_pseudo_phase_39542(df)
 fig_3d_parameter_space_comparison()
