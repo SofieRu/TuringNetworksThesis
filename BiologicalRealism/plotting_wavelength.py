@@ -222,7 +222,7 @@ for col_idx, category in enumerate(categories):
         # ax.plot(peak_k, peak_val, 'o', color='black', markersize=8, zorder=5)
         
         ax.set_xlabel('k', fontsize=10)
-        ax.set_ylabel('max Re(λ)', fontsize=10)
+        ax.set_ylabel('Re(λ)', fontsize=10) # QUESTION: is it max Re or just Re???
         # title = (f"{category} (rank {int(row['param_rank'])})\n"f"config {config_id}, peak k={peak_k:.2f}, λ_max={peak_val:.3f}")
         title = (f"{category} (sample {row_idx + 1})\n"f"config {config_id}, peak k={peak_k:.2f}, lambda max={peak_val:.3f}")
         ax.set_title(title, fontsize=10)
