@@ -49,11 +49,9 @@ def compute_dispersion(local_jacobian, hopping_dict, k_values):
         max_reals[i] = np.max(np.real(eigs))
     return max_reals
 
-
 def discrete_k_values(N):
     """Allowed wavenumbers k_m = 2πm/N for a periodic ring of N cells."""
     return np.array([2 * np.pi * m / N for m in range(N // 2 + 1)])
-
 
 # ============================================================================
 # PLOT A: BASIC DISPERSION WITH DISCRETE-K OVERLAY
@@ -64,7 +62,7 @@ def plot_dispersion_basic(ax, params, ss, hopping, title, max_growth_rate=None):
     J = compute_jacobian(ss, params)
 
     # Continuous dispersion curve
-    k_continuous = np.arange(0.01, 5.0, 0.01)
+    k_continuous = np.arange(0.01, 10.0, 0.01)
     disp_continuous = compute_dispersion(J, hopping, k_continuous)
 
     # Discrete k_m markers
