@@ -54,6 +54,13 @@ TOPO_MARKERS = {
     "#3954": "D",
 }
 
+PATTERN_COLORS = {
+    "Type I"  : 'steelblue',
+    "Type II" : 'mediumvioletred',
+    "Hopf"    : 'darkorange',
+    "Turing Filter" : 'seagreen',
+}
+
 def save(fig, name):
     for ext in ("png",):
         fig.savefig(OUT_DIR / f"{name}.{ext}", bbox_inches="tight", dpi=300)
@@ -227,13 +234,6 @@ def fig6_pattern_composition(df):
     topos = ["#1754", "#1823", "#1838", "#3954"]
     types = ["Type1", "Type2", "Type3"]
  
-    PATTERN_COLORS = {
-        "Type I"  : "#2770A0",
-        "Type II" : "#9243A8",
-        "Hopf"    : "#C7C93C",
-        "Turing Filter" : "#58C675"
-    }
- 
     # aggregate: max robustness and pattern counts per topology × turing type
     grouped = df.groupby(["topology_id", "turing_type"]).agg(
         rob    = ("rob_shaberi_total", "max"),
@@ -302,13 +302,6 @@ def fig_filter_distribution_all_configs(df):
     # Target topologies requested
     topos = ["#1754", "#3954"]
     types = ["Type1", "Type2", "Type3"]
-
-    PATTERN_COLORS = {
-        "Type I": "#2770A0",
-        "Type II": "#9243A8",
-        "Hopf": "#C7C93C",
-        "Turing Filter": "#58C675",
-    }
 
     # 1. Aggregate sums across ALL configs globally by topology and turing type
     grouped = (
@@ -450,12 +443,6 @@ def fig_all_patterns_profile_trends(df):
     types = ["Type1", "Type2", "Type3"]
 
     # Match your exact scientific color palette from the original bar chart
-    PATTERN_COLORS = {
-        "Type I": "#2770A0",
-        "Type II": "#9243A8",
-        "Hopf": "#C7C93C",
-        "Turing Filter": "#58C675",
-    }
 
     # 1. Aggregate global sums for ALL configurations combined per topology × turing type
     grouped = (

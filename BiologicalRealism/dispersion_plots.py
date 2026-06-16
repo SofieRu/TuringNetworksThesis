@@ -19,8 +19,7 @@ from heterogenous_ring_3954 import (
 # have to run this first: module load SciPy-bundle/2024.05-gfbf-2024a
 # have to run this first: pip install seaborn --user
 
-
-CSV_PATH = '../TopologyRanking/Topology3954/3954_PREFINAL_lhs_results_parameters.csv'
+CSV_PATH = '../TopologyRanking/Topology3954/3954_NEWTURINGCLASS_lhs_results_parameters.csv'
 
 def load_config(config_id):
     df = pd.read_csv(CSV_PATH)

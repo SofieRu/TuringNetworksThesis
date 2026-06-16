@@ -10,21 +10,16 @@ from heterogenous_ring_3954 import compute_jacobian
 # CONFIG: change these to validate different configs
 # ============================================================================
 
-CSV_PATH = '../TopologyRanking/Topology3954/3954_ALLPARAMSNEW_lhs_results_parameters.csv'
-CONFIG_ID = 44           # 49 for all, The config to validate (54 = VWFreeze, only U diffuses)
+CSV_PATH = '../TopologyRanking/Topology3954/3954_NEWTURINGCLASS_lhs_results_parameters.csv'
+CONFIG_ID = 49           # 49 for all, The config to validate (54 = VWFreeze, only U diffuses)
 N_SAMPLES_PER_TYPE = 4   # How many samples per classification to plot
 K_MAX = 20              # How far to sweep k (wide enough to see asymptote)
 K_STEP = 0.01            # Resolution of k sweep
-SEED = 42                # For reproducible sample selection
+SEED = 42
 
 # ============================================================================
 # LOAD AND FILTER
 # ============================================================================
-
-df_file = pd.read_csv('../TopologyRanking/Topology3954/3954_ALLPARAMSNEW_lhs_results_parameters.csv')
-print(f"CSV columns: {df_file.columns.tolist()}")
-print(f"Total rows: {len(df_file)}")
-print(f"First row: {df_file.iloc[0]}")
 
 print(f"Loading CSV: {CSV_PATH}")
 df = pd.read_csv(CSV_PATH)
@@ -40,19 +35,10 @@ dV = df_config['dV'].iloc[0]
 dW = df_config['dW'].iloc[0]
 config_name = df_config['config_name'].iloc[0]
 
-print(f"\nConfig {CONFIG_ID}: {config_name}")
-print(f"  Diffusion: dU={dU}, dV={dV}, dW={dW}")
-
-# Show classification breakdown
-print("\nClassification breakdown for this config:")
-print(df_config['classification'].value_counts())
-
 # Categories to plot (only include ones that have samples)
-all_categories = ['Type-I', 'Type-II', 'Hopf','Filter']
+all_categories = ['Turing Instability Type-I', 'Type-II', 'Hopf','Filter']
 available_categories = [c for c in all_categories 
                         if len(df_config[df_config['classification'] == c]) > 0]
-print(f"\nWill plot: {available_categories}")
-
 
 # ============================================================================
 # PLOT GRID
@@ -69,18 +55,23 @@ fig, axes = plt.subplots(n_rows, n_cols, figsize=(4 * n_cols, 3 * n_rows))
 if n_rows == 1:
     axes = axes.reshape(1, -1)
 
-rng = np.random.default_rng(SEED)
+# rng = np.random.default_rng(SEED)
+
+# for row_idx, category in enumerate(available_categories):
+#     subset = df_config[df_config['classification'] == category]
+    
+#     # Random sample of N_SAMPLES_PER_TYPE from this category
+#     n_available = len(subset)
+#     n_to_plot = min(N_SAMPLES_PER_TYPE, n_available)
+#     sample_indices = rng.choice(n_available, size=n_to_plot, replace=False)
+#     samples = subset.iloc[sample_indices]
 
 for row_idx, category in enumerate(available_categories):
     subset = df_config[df_config['classification'] == category]
     
-    # Random sample of N_SAMPLES_PER_TYPE from this category
-    n_available = len(subset)
-    n_to_plot = min(N_SAMPLES_PER_TYPE, n_available)
-    sample_indices = rng.choice(n_available, size=n_to_plot, replace=False)
-    samples = subset.iloc[sample_indices]
-    
-    print(f"\n{category}: plotting {n_to_plot} of {n_available} samples")
+    # Pick the top N_SAMPLES_PER_TYPE by param_rank (rank 1 = best, then 2, 3, ...)
+    samples = subset.sort_values('param_rank').head(N_SAMPLES_PER_TYPE)
+    n_to_plot = len(samples)
     
     for col_idx in range(n_cols):
         ax = axes[row_idx, col_idx]
@@ -117,8 +108,8 @@ for row_idx, category in enumerate(available_categories):
         
         ax.set_xlabel('k', fontsize=10)
         ax.set_ylabel('max Re(λ)', fontsize=10)
-        ax.set_title(f"{category}\npeak at k={peak_k:.2f}, λ_max={peak_val:.3f}",
-                     fontsize=10)
+        #ax.set_title(f"{category}\npeak at k={peak_k:.2f}, λ_max={peak_val:.3f}",fontsize=10)
+        ax.set_title(f"{category} (rank {row['param_rank']})\n"f"peak at k={peak_k:.2f}, λ_max={peak_val:.3f}",fontsize=10)
         ax.grid(alpha=0.3)
 
 fig.suptitle(f'Classifier validation: config {CONFIG_ID} ({config_name})\n'
