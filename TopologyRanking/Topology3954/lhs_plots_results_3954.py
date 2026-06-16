@@ -14,8 +14,6 @@ import pandas as pd
 
 CSV = "3954_NEWTURINGCLASS_lhs_results_summary.csv" 
 # got rid of control: 
-# NEW_LHS_1754_Type1_Control_Fast,2,10.0,10.0,10.0,1000000,991417,984576,0,0,0,0,0,0,0.0,0.0,0.0
-# NEW_LHS_1754_Type1_Control_Slow,0,0.1,0.1,0.1,1000000,991417,984576,0,0,0,0,0,0,0.0,0.0,0.0
 # NEW_LHS_3954_Type1_Control_Slow,0,0.1,0.1,0.1,1000000,969615,951296,0,0,0,0,0,0,0.0,0.0,0.0
 # NEW_LHS_3954_Type1_Control_Fast,2,10.0,10.0,10.0,1000000,969615,951296,0,0,0,0,0,0,0.0,0.0,0.0
 
@@ -34,12 +32,17 @@ plt.rcParams.update({
     "axes.spines.right": False,
 })
 
-
 TYPE_COLORS = {
-    "Type1": "#4550AE",
-    "Type2": "#D12F85",
-    "Type3": "#287836",
+    "Type1": 'cornflowerblue',
+    "Type2": 'palevioletred',
+    "Type3": 'forestgreen',
 } 
+
+# TYPE_COLORS = {
+#     "Type1": "#4550AE",
+#     "Type2": "#D12F85",
+#     "Type3": "#287836",
+# } 
 
 def save(fig, name):
     for ext in ("png",):
@@ -50,20 +53,15 @@ def save(fig, name):
 
 def load_data():
     df = pd.read_csv(CSV)
-
-    # Extract topology (DCC / CDD / CCD …) and Turing type (Type1/2/3)
     df["topology"]    = df["config_name"].str.extract(r"NEW_LHS_3954_([A-Z]+)_")
     df["turing_type"] = df["config_name"].str.extract(r"(Type[123])")
-
     return df
 
 ##################################### FIGURE 1: Overview bar chart #####################################
 
 def fig1_overview(df):
     fig, ax = plt.subplots(figsize=(14, 6))
-
     colors = df["turing_type"].map(TYPE_COLORS).fillna("#aaaaaa")
-
     ax.bar(
         range(len(df)),
         df["rob_shaberi_total"],
@@ -88,10 +86,8 @@ def fig1_overview(df):
         fontsize=12, loc="left", pad=10,
     )
     ax.spines[["top", "right"]].set_visible(False)
-
     # fix 1 – remove extra left padding
     ax.set_xlim(-0.5, len(df) - 0.5)
-
     # fix 2 – horizontal grid lines only
     ax.xaxis.grid(False)
     ax.yaxis.grid(True)
@@ -116,11 +112,8 @@ def fig1_overview(df):
 
 def fig2_dotplot(df):
     random.seed(42)
-
     fig, ax = plt.subplots(figsize=(7, 4))
-
     types = ["Type1", "Type2", "Type3"]
-
     for i, t in enumerate(types):
         subset = df[df["turing_type"] == t]
         for _, row in subset.iterrows():
@@ -153,7 +146,6 @@ def fig2_dotplot(df):
     ]
 
     ax.legend(handles=handles, title="Diffusion", frameon=False, loc="center right", bbox_to_anchor=(1.3, 0.5), ncol=1)
-
     fig.tight_layout()
     save(fig, "new_3954_lhs_fig2_dotplot")
 
@@ -164,7 +156,6 @@ def fig2_raincloud(df):
     random.seed(42)
     types  = ["Type1", "Type2", "Type3"]
     labels = ["Type 1", "Type 2", "Type 3"]
-
     fig, ax = plt.subplots(figsize=(10, 6))
 
     for i, (t, label) in enumerate(zip(types, labels)):
@@ -179,7 +170,7 @@ def fig2_raincloud(df):
         #kde    = gaussian_kde(subset, bw_method=0.4)
         kde    = gaussian_kde(subset, bw_method=0.3)
         #y_range = np.linspace(subset.min(), subset.max(), 200)
-        y_range = np.linspace(subset.min() - subset.std()*0.5, subset.max() + subset.std()*0.5, 200)
+        y_range = np.linspace(subset.min() - subset.std()*0.2, subset.max() + subset.std()*0.2, 200)
         kde_vals = kde(y_range)
         kde_vals = kde_vals / kde_vals.max() * 0.35  # normalise width
 
@@ -350,25 +341,19 @@ def fig_combined_overview_and_raincloud(df):
             continue
 
         color = TYPE_COLORS[t]
-
-        # Half violin distribution cloud
+        # violin distribution cloud
         kde = gaussian_kde(subset, bw_method=0.3)
-        y_range = np.linspace(
-            subset.min() - subset.std() * 0.5,
-            subset.max() + subset.std() * 0.5,
-            200,
-        )
+        y_range = np.linspace(subset.min() - subset.std()*0.3, subset.max() + subset.std()*0.3, 200)
         kde_vals = kde(y_range)
         kde_vals = kde_vals / kde_vals.max() * 0.35
+        ax2.fill_betweenx(y_range, i - kde_vals, i, color=color, alpha=1.0, linewidth=0)
 
-        ax2.fill_betweenx(
-            y_range, i - kde_vals, i, color=color, alpha=1.0, linewidth=0
-        )
+        # mean bar inside the cloud
+        mean_val = subset.mean() # new
+        closest_idx = np.argmin(np.abs(y_range - mean_val))
+        kde_at_mean = kde_vals[closest_idx]
+        ax2.hlines(mean_val, i - kde_at_mean, i, color="black", linewidth=1.0, zorder=4) # linestyle="--",
 
-        # White mean bar inside the cloud
-        ax2.hlines(
-            subset.mean(), i - 0.35, i, color="white", linewidth=1.5, zorder=4
-        )
 
         # Jittered data dots
         for val in subset:
@@ -480,8 +465,8 @@ def fig_combined_overview_and_raincloud(df):
 ########### RUN THE WHOLE THING ############
 
 df = load_data()
-fig1_overview(df)
-fig2_dotplot(df)
-fig2_raincloud(df)
-fig4_diego_vs_shaberi(df)
+# fig1_overview(df)
+# fig2_dotplot(df)
+# fig2_raincloud(df)
+# fig4_diego_vs_shaberi(df)
 fig_combined_overview_and_raincloud(df) 

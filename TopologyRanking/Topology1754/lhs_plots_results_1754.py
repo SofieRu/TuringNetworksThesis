@@ -1,17 +1,22 @@
 from pathlib import Path
-import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
-import pandas as pd
 import random
-import numpy as np
 import ast
 import matplotlib.lines as mlines
+import matplotlib.patches as mpatches
+import matplotlib.pyplot as plt
+import numpy as np
+from scipy.stats import gaussian_kde
+import pandas as pd
 
 # have to run this first: module load matplotlib/3.9.2-gfbf-2024a
 # have to run this first: module load SciPy-bundle/2024.05-gfbf-2024a
 # have to run this first: pip install seaborn --user
 
-CSV = "1754_PREFINAL_lhs_results_summary.csv"
+CSV = "1754_NEWTURINGCLASS_lhs_results_summary.csv"
+# got rid of control: 
+# NEW_LHS_1754_Type1_Control_Fast,2,10.0,10.0,10.0,1000000,991417,984576,0,0,0,0,0,0,0.0,0.0,0.0
+# NEW_LHS_1754_Type1_Control_Slow,0,0.1,0.1,0.1,1000000,991417,984576,0,0,0,0,0,0,0.0,0.0,0.0
+
 OUT_DIR = Path("plots")
 OUT_DIR.mkdir(exist_ok=True)
 
@@ -28,9 +33,9 @@ plt.rcParams.update({
 })
 
 TYPE_COLORS = {
-    "Type1": "#4550AE",
-    "Type2": "#D12F85",
-    "Type3": "#287836",
+    "Type1": 'cornflowerblue',
+    "Type2": 'palevioletred',
+    "Type3": 'forestgreen',
 } 
 
 def save(fig, name):
@@ -41,22 +46,16 @@ def save(fig, name):
 
 def load_data():
     df = pd.read_csv(CSV)
-
-    # Extract topology (DCC / CDD / CCD …) and Turing type (Type1/2/3)
     df["topology"]    = df["config_name"].str.extract(r"NEW_LHS_1754_([A-Z]+)_")
     df["turing_type"] = df["config_name"].str.extract(r"(Type[123])")
-
     return df
-
 
 
 ##################################### FIGURE 1: Overview bar chart #####################################
 
 def fig1_overview(df):
     fig, ax = plt.subplots(figsize=(14, 6))
-
     colors = df["turing_type"].map(TYPE_COLORS).fillna("#aaaaaa")
-
     ax.bar(
         range(len(df)),
         df["rob_shaberi_total"],
@@ -65,10 +64,11 @@ def fig1_overview(df):
         linewidth=0.5,
         width=0.75,
     )
-
+    # x-axis labels: strip prefix and "Type" variations
     ax.set_xticks(range(len(df)))
     ax.set_xticklabels(
-        df["config_name"].str.replace("NEW_LHS_1754_", "", regex=False),
+        # The | means OR, and \d* means match zero or more digits (like 1, 2, 3)
+        df["config_name"].str.replace(r"NEW_LHS_1754_|Type\d*_", "", regex=True),
         rotation=55,
         ha="right",
         fontsize=8,
@@ -89,12 +89,11 @@ def fig1_overview(df):
     ax.yaxis.grid(True)
 
     # Dashed vertical lines between topology groups
-    topos = df["topology"].values
-    for i in range(1, len(topos)):
-        if topos[i] != topos[i - 1]:
-            ax.axvline(i - 0.5, color="grey", linewidth=0.8, linestyle="--", alpha=0.5)
+    # topos = df["turing_type"].values
+    # for i in range(1, len(topos)):
+    #     if topos[i] != topos[i - 1]:
+    #         ax.axvline(i - 0.5, color="grey", linewidth=0.8, linestyle="--", alpha=0.5)
 
-    # legend
     handles = [mpatches.Patch(color=c, label=t) for t, c in TYPE_COLORS.items()]
     #ax.legend(handles=handles, title="Turing Type", frameon=False)
     ax.legend(handles=handles, title="Turing Type", frameon=False, loc="upper center", bbox_to_anchor=(0.5, -0.4), ncol=3)
@@ -103,53 +102,12 @@ def fig1_overview(df):
     save(fig, "new_1754_lhs_fig1_overview_bar_detail")
 
 
-
 ##################################### FIGURE 2: Scatter of Type 1 to Type 3 #####################################
 
-
-# def fig2_dotplot(df):
-#     random.seed(42)
- 
-#     fig, ax = plt.subplots(figsize=(7, 4))
- 
-#     types = ["Type1", "Type2", "Type3"]
- 
-#     for i, t in enumerate(types):
-#         subset = df[df["turing_type"] == t]["rob_shaberi_total"]
-#         # add small random jitter on x so dots don't stack
-#         jitter = [i + random.uniform(-0.15, 0.15) for _ in subset]
-#         ax.scatter(
-#             jitter,
-#             subset,
-#             color=TYPE_COLORS[t],
-#             s=80,
-#             edgecolors="white",
-#             linewidths=0.5,
-#             zorder=3,
-#         )
- 
-#     ax.set_xticks([0, 1, 2])
-#     ax.set_xticklabels(["Type 1", "Type 2", "Type 3"], fontsize=11)
-#     ax.set_ylabel("Robustness Score (in %, Shaberi Method)", fontsize=11)
-#     ax.set_title(
-#         "Robustness Scores by Turing Type for #1754\n(Latin Hypercube Sampling, 1 million simulations)",
-#         fontsize=12, loc="left", pad=10,
-#     )
-#     ax.xaxis.grid(False)
-#     ax.set_xlim(-0.5, 2.5)
- 
-#     fig.tight_layout()
-#     save(fig, "1754_lhs_fig2_dotplot")
-
-
-
-def fig2_new_dotplot(df):
+def fig2_dotplot(df):
     random.seed(42)
-
-    fig, ax = plt.subplots(figsize=(6, 4))
-
+    fig, ax = plt.subplots(figsize=(7, 4))
     types = ["Type1", "Type2", "Type3"]
-
     for i, t in enumerate(types):
         subset = df[df["turing_type"] == t]
         for _, row in subset.iterrows():
@@ -167,11 +125,11 @@ def fig2_new_dotplot(df):
             )
 
     ax.set_xticks([0, 1, 2])
-    ax.set_xticklabels(["Type 1", "Type 2", "Type 3"], fontsize=12)
-    ax.set_ylabel("Robustness Score (in %, Shaberi Method)", fontsize=12)
+    ax.set_xticklabels(["Type 1", "Type 2", "Type 3"], fontsize=11)
+    ax.set_ylabel("Robustness Score (in %, Shaberi Method)", fontsize=11)
     ax.set_title(
         "Robustness Scores by Turing Type for #1754\n(Latin Hypercube Sampling, 1 million simulations)",
-        fontsize=13, loc="left", pad=10,
+        fontsize=12, loc="left", pad=10,
     )
     ax.xaxis.grid(False)
     ax.set_xlim(-0.5, 2.5)
@@ -182,93 +140,310 @@ def fig2_new_dotplot(df):
     ]
 
     ax.legend(handles=handles, title="Diffusion", frameon=False, loc="center right", bbox_to_anchor=(1.3, 0.5), ncol=1)
-
     fig.tight_layout()
-    save(fig, "new_1754_lhs_fig2_new_dotplot")
+    save(fig, "new_1754_lhs_fig2_dotplot")
 
 
 
+def fig2_raincloud(df):
+    random.seed(42)
+    types  = ["Type1", "Type2", "Type3"]
+    labels = ["Type 1", "Type 2", "Type 3"]
 
+    fig, ax = plt.subplots(figsize=(10, 6))
 
+    for i, (t, label) in enumerate(zip(types, labels)):
+        subset = df[df["turing_type"] == t]["rob_shaberi_total"].dropna().values
 
+        if len(subset) < 2:
+            continue
 
-##################################### FIGURE 3: Grouped bars, max robustness per topology × type #####################################
+        color = TYPE_COLORS[t]
 
-def fig3_grouped_topology(df):
- 
-    fig, ax = plt.subplots(figsize=(9, 5))
+        # ── Half violin (left side) ───────────────────────────────────────────
+        kde    = gaussian_kde(subset, bw_method=0.2)
+        #y_range = np.linspace(subset.min(), subset.max(), 200)
+        y_range = np.linspace(subset.min() - subset.std()*0.1, subset.max() + subset.std()*0.1, 200)
+        kde_vals = kde(y_range)
+        kde_vals = kde_vals / kde_vals.max() * 0.35  # normalise width
+        ax.fill_betweenx(y_range, i - kde_vals, i, color=color, alpha=1.0, linewidth=0)
 
-    topos = df["topology"].dropna().unique()
-    types = ["Type1", "Type2", "Type3"]
-    x     = np.arange(len(topos))
-    w     = 0.25
- 
-    for i, t in enumerate(types):
-        vals = [
-            df[(df["topology"] == topo) & (df["turing_type"] == t)]["rob_shaberi_total"].max()
-            for topo in topos
-        ]
-        ax.bar(
-            x + (i - 1) * w,
-            vals,
-            width=w,
-            color=TYPE_COLORS[t],
-            label=t,
-            edgecolor="white",
-            linewidth=0.5,
-        )
- 
-    ax.set_xticks(x)
-    ax.set_xticklabels(topos, fontsize=11)
-    ax.set_ylabel("Max Robustness Score (in %, Shaberi Method)", fontsize=11)
+        # ── Mean line ─────────────────────────────────────────────────────────
+        # mean_val     = subset.mean()
+        # kde_at_mean  = kde(mean_val)[0]
+        # kde_at_mean  = kde_at_mean / kde_vals.max() * 0.35  # same normalisation as the cloud
+        # ax.hlines(subset.mean(), i - 0.35, i, color="white", linewidth=1.5, zorder=4)
+        # #ax.hlines(subset.mean(), i - 0.33, i, color="black", linewidth=1.5, zorder=4)
+
+        # ── Mean line ─────────────────────────────────────────────────────────
+        mean_val = subset.mean()
+        kde_at_mean = kde(mean_val)[0]
+        kde_at_mean = kde_at_mean / kde_vals.max() * 0.35 # Exact width of the cloud at the mean
+        # Draw the line starting from the cloud's left edge up to its right edge (i)
+        ax.hlines(mean_val, i - kde_at_mean, i, color="black", linewidth=1.5, zorder=4)
+
+        # ── Jittered dots (right side) ────────────────────────────────────────
+        for val in subset:
+            jitter = i + random.uniform(0.08, 0.35)
+            marker = "^" if any(
+                "Unequal" in row["config_name"]
+                for _, row in df[(df["turing_type"] == t) &
+                                 (df["rob_shaberi_total"] == val)].iterrows()
+            ) else "o"
+            ax.scatter(jitter, val, color=color, marker=marker, s=95, edgecolors="white", linewidths=0.4, zorder=3)
+
+    ax.set_xticks(range(len(types)))
+    ax.set_xticklabels(labels, fontsize=11)
+    ax.set_ylabel("Robustness Score (rob_shaberi_total)", fontsize=12)
     ax.set_title(
-        "Max robustness for #1754 Topology\n(Latin Hypercube Sampling, 1 million simulations)",
-        fontsize=12, loc="left", pad=10,
+        "Robustness distribution by Turing Type for #1754\n"
+        "(Latin Hypercube Sampling, 1 million simulations)",
+        fontsize=13, loc="left", pad=10,
     )
     ax.xaxis.grid(False)
+    #ax.yaxis.grid(False)
+    ax.set_xlim(-0.5, len(types) - 0.5)
+
+    # Legend
+    handles = [
+        mlines.Line2D([], [], color="#313131", marker="o", linestyle="None", markersize=8, markeredgecolor="white", label="Equal"),
+        mlines.Line2D([], [], color="#313131", marker="^", linestyle="None", markersize=8, markeredgecolor="white", label="Unequal"),
+    ]
+
+    ax.legend(handles=handles, title="Diffusion", frameon=False, loc="center right", bbox_to_anchor=(1.2, 0.5), ncol=1)
+
+    fig.tight_layout()
+    save(fig, "new_1754_lhs_fig2_raincloud")
+
+
+
+##################################### FIGURE 4: Scatter Plot Shaberi vs Diego Robustness across Type 1 to 3 #####################################
+
+def fig4_diego_vs_shaberi(df):
+    fig, ax = plt.subplots(figsize=(6, 5))
+ 
+    for t in ["Type1", "Type2", "Type3"]:
+        subset = df[df["turing_type"] == t]
+        ax.scatter(
+            subset["rob_diego"],
+            subset["rob_shaberi_total"],
+            color=TYPE_COLORS[t],
+            label=t,
+            s=80,
+            edgecolors="white",
+            linewidths=0.5,
+        )
+ 
+    lim = df[["rob_diego", "rob_shaberi_total"]].max().max() * 1.05 # 1:1 line
+    ax.plot([0, lim], [0, lim], color="#444444", linewidth=0.8,
+            linestyle="--", label="1:1 line")
+    ax.set_xlim(0, lim)
+    ax.set_ylim(0, lim)
+ 
+    ax.set_xlabel("Robustness Score using Characteristic Polynomial (Diego)", fontsize=11)
+    ax.set_ylabel("Robustness Score using Eigenvalues (Shaberi)", fontsize=11)
+    ax.set_title(
+        "Robustness Scores Diego vs Shaberi for #1754\n(Latin Hypercube Sampling, 1 million simulations)",
+        fontsize=12, loc="left", pad=10,
+    )
     ax.legend(title="Turing Type", frameon=False,
-              loc="upper center", bbox_to_anchor=(0.5, -0.12), ncol=3)
+              loc="upper center", bbox_to_anchor=(0.5, -0.15), ncol=4)
  
     fig.tight_layout()
-    save(fig, "new_1754_lhs_fig3_grouped_topology")
+    save(fig, "new_1754_lhs_fig4_diego_vs_shaberi")
 
 
 
-# ##################################### FIGURE 4: Scatter Plot Shaberi vs Diego Robustness across Type 1 to 3 #####################################
 
-# def fig4_diego_vs_shaberi(df):
-#     fig, ax = plt.subplots(figsize=(6, 5))
- 
-#     for t in ["Type1", "Type2", "Type3"]:
-#         subset = df[df["turing_type"] == t]
-#         ax.scatter(
-#             subset["rob_diego"],
-#             subset["rob_shaberi_total"],
-#             color=TYPE_COLORS[t],
-#             label=t,
-#             s=80,
-#             edgecolors="white",
-#             linewidths=0.5,
-#         )
- 
-#     lim = df[["rob_diego", "rob_shaberi_total"]].max().max() * 1.05 # 1:1 line
-#     ax.plot([0, lim], [0, lim], color="#444444", linewidth=0.8,
-#             linestyle="--", label="1:1 line")
-#     ax.set_xlim(0, lim)
-#     ax.set_ylim(0, lim)
- 
-#     ax.set_xlabel("Robustness Score using Characteristic Polynomial (Diego)", fontsize=11)
-#     ax.set_ylabel("Robustness Score using Eigenvalues (Shaberi)", fontsize=11)
-#     ax.set_title(
-#         "Robustness Scores Diego vs Shaberi for #1754\n(Latin Hypercube Sampling, 1 million simulations)",
-#         fontsize=12, loc="left", pad=10,
-#     )
-#     ax.legend(title="Turing Type", frameon=False,
-#               loc="upper center", bbox_to_anchor=(0.5, -0.15), ncol=4)
- 
-#     fig.tight_layout()
-#     save(fig, "1754_lhs_fig4_diego_vs_shaberi")
+# PLOT FOR THESIS
 
+def fig_combined_overview_and_raincloud(df):
+    df = df.copy()
+
+    # 1. Create a 2-row, 1-column layout (reverting to your preferred full-width rows)
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(14,10)) #previously 14,10, size has to be figsize=(6.3, 5.4) to match dina4 age but liek its sooo small
+
+    # ==========================================
+    # PANEL 1: OVERVIEW BAR CHART (ax1)
+    # ==========================================
+    colors = df["turing_type"].map(TYPE_COLORS).fillna("#aaaaaa")
+
+    ax1.bar(
+        range(len(df)),
+        df["rob_shaberi_total"],
+        color=colors,
+        edgecolor="white",
+        linewidth=0.5,
+        width=0.75,
+    )
+
+    ax1.set_xticks(range(len(df)))
+    ax1.set_xticklabels(
+        df["config_name"].str.replace(
+            r"NEW_LHS_1754_|Type\d*_", "", regex=True
+        ),
+        rotation=55,
+        ha="right",
+        fontsize=8,
+    )
+
+    #ax1.set_ylabel("Robustness Score (in %)", fontsize=11)
+    ax1.set_ylabel("Robustness Score (in %)", fontsize=11, labelpad=10)
+    ax1.set_title(
+        "Latin Hypercube Sampling Results, 1 million simulations\nRobustness of different diffusion rate configurations for Topology #1754",
+        fontsize=12,
+        loc="left",
+        pad=10,
+        fontweight="semibold",
+    )
+    ax1.spines[["top", "right"]].set_visible(False)
+    ax1.set_xlim(-0.5, len(df) - 0.5)
+
+    ax1.xaxis.grid(False)
+    ax1.yaxis.grid(True)
+
+    # Dashed grouping splitters
+    # topos = df["topology"].values
+    # for i in range(1, len(topos)):
+    #     if topos[i] != topos[i - 1]:
+    #         ax1.axvline(
+    #             i - 0.5,
+    #             color="grey",
+    #             linewidth=0.8,
+    #             linestyle="--",
+    #             alpha=0.5,
+    #         )
+
+    # ==========================================
+    # PANEL 2: RAINCLOUD DISTRIBUTION (ax2)
+    # ==========================================
+    random.seed(42)
+    types = ["Type1", "Type2", "Type3"]
+    labels = ["Type 1", "Type 2", "Type 3"]
+
+    for i, (t, label) in enumerate(zip(types, labels)):
+        subset = (
+            df[df["turing_type"] == t]["rob_shaberi_total"].dropna().values
+        )
+
+        if len(subset) < 2:
+            continue
+
+        color = TYPE_COLORS[t]
+
+        # violin distribution cloud
+        kde = gaussian_kde(subset, bw_method=0.3)
+        y_range = np.linspace(subset.min() - subset.std()*0.3, subset.max() + subset.std()*0.3, 200)
+        kde_vals = kde(y_range)
+        kde_vals = kde_vals / kde_vals.max() * 0.35
+        ax2.fill_betweenx(y_range, i - kde_vals, i, color=color, alpha=1.0, linewidth=0)
+
+        # mean bar inside the cloud
+        mean_val = subset.mean() # new
+        closest_idx = np.argmin(np.abs(y_range - mean_val))
+        kde_at_mean = kde_vals[closest_idx]
+        ax2.hlines(mean_val, i - kde_at_mean, i, color="black", linewidth=1.0, zorder=4) # linestyle="--",
+
+        # Jittered data dots
+        for val in subset:
+            jitter = i + random.uniform(0.08, 0.35)
+            marker = (
+                "^"
+                if any(
+                    "Unequal" in row["config_name"]
+                    for _, row in df[
+                        (df["turing_type"] == t) & (df["rob_shaberi_total"] == val)
+                    ].iterrows()
+                )
+                else "o"
+            )
+            ax2.scatter(
+                jitter,
+                val,
+                color=color,
+                marker=marker,
+                s=95,
+                edgecolors="white",
+                linewidths=0.4,
+                zorder=3,
+            )
+
+    ax2.set_xticks(range(len(types)))
+    ax2.set_xticklabels(labels, fontsize=11)
+    #ax2.set_ylabel("Robustness Score (rob_shaberi_total)", fontsize=11)
+    ax2.set_ylabel("Robustness Score (rob_shaberi_total)", fontsize=11, labelpad=10)
+    ax2.set_title(
+        "Robustness distribution by Turing Type for Topology #1754",
+        fontsize=12,
+        loc="left",
+        pad=10,
+        fontweight="semibold",
+    )
+    ax2.xaxis.grid(False)
+    ax2.yaxis.grid(True)
+    ax2.set_xlim(-0.5, len(types) - 0.5)
+    ax2.spines[["top", "right"]].set_visible(False)
+
+    # ==========================================
+    # GLOBAL UNIFIED BOTTOM LEGENDS
+    # ==========================================
+    # 1. Reconstruct handles for both legend elements
+    bar_handles = [
+        mpatches.Patch(color=c, label=t) for t, c in TYPE_COLORS.items()
+    ]
+    rain_handles = [
+        mlines.Line2D(
+            [],
+            [],
+            color="#313131",
+            marker="o",
+            linestyle="None",
+            markersize=8,
+            markeredgecolor="white",
+            label="Equal Diffusion",
+        ),
+        mlines.Line2D(
+            [],
+            [],
+            color="#313131",
+            marker="^",
+            linestyle="None",
+            markersize=8,
+            markeredgecolor="white",
+            label="Unequal Diffusion",
+        ),
+    ]
+
+    # 2. Draw the Turing Type legend (Left-aligned at the bottom center)
+    fig.legend(
+        handles=bar_handles,
+        title="Turing Type",
+        frameon=False,
+        loc="lower center",
+        bbox_to_anchor=(0.38, 0.04),
+        ncol=3,
+        fontsize=10,
+    )
+
+    # 3. Draw the Diffusion shape legend (Right-aligned at the bottom center)
+    fig.legend(
+        handles=rain_handles,
+        title="Diffusion Variant",
+        frameon=False,
+        loc="lower center",
+        bbox_to_anchor=(0.68, 0.04),
+        ncol=2,
+        fontsize=10,
+    )
+
+    # ==========================================
+    # GLOBAL SPACING LAYOUT BOUNDS
+    # ==========================================
+    # right=0.95 expands the plots to use the full canvas width now that the right margins are free
+    # bottom=0.14 leaves open white space below the plots specifically for the two legends
+    fig.subplots_adjust(left=0.07, right=0.95, top=0.94, bottom=0.14, hspace=0.42)
+    #fig.align_ylabels([ax1, ax2])
+    save(fig, "thesis_combined_1754_lhs_overview_distribution")
 
 
 
@@ -281,8 +456,8 @@ def fig3_grouped_topology(df):
 ########### RUN THE WHOLE THING ############
 
 df = load_data()
-fig1_overview(df)
+# fig1_overview(df)
 # fig2_dotplot(df)
-fig2_new_dotplot(df)
-fig3_grouped_topology(df)
+# fig2_raincloud(df)
 # fig4_diego_vs_shaberi(df)
+fig_combined_overview_and_raincloud(df) 

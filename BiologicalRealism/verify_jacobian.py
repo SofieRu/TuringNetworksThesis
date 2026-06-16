@@ -6,7 +6,7 @@ from scipy.optimize import approx_fprime
 # CHOOSE WHICH TOPOLOGY TO TEST
 # ============================================================================
 # Set this to 3954 or 1754 depending on which you want to verify
-TOPOLOGY = 3954
+TOPOLOGY = 1754
 
 # ============================================================================
 # IMPORT THE RIGHT FUNCTIONS
