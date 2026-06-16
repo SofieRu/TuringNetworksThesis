@@ -640,10 +640,10 @@ def fig_pseudo_phase_combined(df):
     # Height adjusted to 0.70 to scale nicely with the taller 2-row figure
     cbar_ax = fig.add_axes([0.88, 0.12, 0.02, 0.70])
     cbar = fig.colorbar(sc, cax=cbar_ax)
-    cbar.set_label("Robustness (rob_shaberi_type_I)", fontsize=11)
+    cbar.set_label("Robustness of Turing Type I", fontsize=11)
 
     fig.suptitle(
-        "Pseudo Phase Diagram Across Diffusion Rate Combinations (Topologies #3954 & #1754)",
+        "Phase Diagram Across Diffusion Rate Combinations for Topologies #3954 and #1754",
         fontsize=13,
         x=0.04,
         y=0.96,
@@ -657,7 +657,7 @@ def fig_pseudo_phase_combined(df):
         left=0.06, right=0.84, top=0.88, bottom=0.12, wspace=0.18, hspace=0.15
     )
 
-    save(fig, "new_combined_pseudo_phase_diagram")
+    save(fig, "thesis_combined_pseudo_phase_diagram")
 
 ############
 
