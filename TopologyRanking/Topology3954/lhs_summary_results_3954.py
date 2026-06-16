@@ -94,9 +94,26 @@ for filepath in result_files:
                 }
                 all_params.append(row)
 
+# if all_params:
+#     df_params = pd.DataFrame(all_params)
+#     df_params = df_params.sort_values(['config_id', 'classification', 'param_rank'], ascending=True)
+#     df_params.to_csv('3954_NEWTURINGCLASS_lhs_results_parameters.csv', index=False)
+#     print(f"Saved to: 3954_NEWTURINGCLASS_lhs_results_parameters.csv")
+# else:
+#     print("No successful parameter sets found in the results.")
+
 if all_params:
     df_params = pd.DataFrame(all_params)
-    df_params = df_params.sort_values(['config_id', 'classification', 'param_rank'], ascending=True)
+    # Sort by max_growth_rate within each (config_id, classification) group, Highest max_growth_rate first
+    df_params = df_params.sort_values(['config_id', 'classification', 'max_growth_rate'],ascending=[True, True, False])
+    
+    # Reassign param_rank within each (config_id, classification) group, so that param_rank=1 means "best in this classification for this config"
+    df_params['param_rank'] = df_params.groupby(
+        ['config_id', 'classification']
+    ).cumcount() + 1
+    
+    # Final sort for readability (group by config_id, then classification, then rank)
+    df_params = df_params.sort_values(['config_id', 'classification', 'param_rank'])
     df_params.to_csv('3954_NEWTURINGCLASS_lhs_results_parameters.csv', index=False)
     print(f"Saved to: 3954_NEWTURINGCLASS_lhs_results_parameters.csv")
 else:

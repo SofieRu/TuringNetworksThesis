@@ -93,10 +93,43 @@ for filepath in result_files:
                 }
                 all_params.append(row)
 
+# if all_params:
+#     df_params = pd.DataFrame(all_params)
+#     df_params = df_params.sort_values(['config_id', 'param_rank'], ascending=True)
+#     df_params.to_csv('1754_NEWTURINGCLASS_lhs_results_parameters.csv', index=False)
+#     print("Saved to: 1754_NEWTURINGCLASS_lhs_results_parameters.csv")
+# else:
+#     print("No successful parameter sets found in the results.")
+
 if all_params:
     df_params = pd.DataFrame(all_params)
-    df_params = df_params.sort_values(['config_id', 'param_rank'], ascending=True)
-    df_params.to_csv('1754_NEWTURINGCLASS_lhs_results_parameters.csv', index=False)
-    print("Saved to: 1754_NEWTURINGCLASS_lhs_results_parameters.csv")
+    
+    # Step 1: Sort by max_growth_rate within each (config_id, classification) group
+    # Highest max_growth_rate first
+    df_params = df_params.sort_values(
+        ['config_id', 'classification', 'max_growth_rate'],
+        ascending=[True, True, False]
+    )
+    
+    # Step 2: Reassign param_rank within each (config_id, classification) group
+    # so that param_rank=1 means "best in this classification for this config"
+    df_params['param_rank'] = df_params.groupby(
+        ['config_id', 'classification']
+    ).cumcount() + 1
+    
+    # Step 3: Final sort for readability (group by config_id, then classification, then rank)
+    df_params = df_params.sort_values(['config_id', 'classification', 'param_rank'])
+    
+    df_params.to_csv('3954_NEWTURINGCLASS_lhs_results_parameters.csv', index=False)
+    print(f"Saved to: 3954_NEWTURINGCLASS_lhs_results_parameters.csv")
+    
+    # Quick sanity print to verify
+    print("\nClassification breakdown:")
+    print(df_params['classification'].value_counts())
+    print("\nFor config 42, param_rank range per classification:")
+    cfg42 = df_params[df_params['config_id'] == 42]
+    for cls in cfg42['classification'].unique():
+        cls_subset = cfg42[cfg42['classification'] == cls]
+        print(f"  {cls}: ranks {cls_subset['param_rank'].min()}–{cls_subset['param_rank'].max()} ({len(cls_subset)} rows)")
 else:
     print("No successful parameter sets found in the results.")
