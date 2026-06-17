@@ -134,7 +134,7 @@ fig.subplots_adjust(
     left=0.06, 
     right=0.96, 
     top=0.78,     # Gives the header plenty of breathing room at the top
-    bottom=0.11,  # Lifts the bottom edge to make room for the unified legend
+    bottom=0.18,  # Lifts the bottom edge to make room for the unified legend
     wspace=0.10   # Increases horizontal spacing so subplots look wider and less narrow
 )
 
@@ -202,7 +202,7 @@ for row_idx, config_id in enumerate(CONFIG_IDS):
         ax = axes_multi[row_idx, col_idx]
         
         for disp in dispersion_curves_multi[CV]:
-            ax.plot(k_values, disp, color=color, linewidth=1.2, alpha=0.35)
+            ax.plot(k_values, disp, color=color, linewidth=1.5, alpha=0.7)
         
         ax.plot(k_values, baseline_curve_multi, color='black', linewidth=2.0, linestyle='-', alpha=0.8)
         ax.axhline(0, color='red', linestyle=':', linewidth=1.5, alpha=0.7)
