@@ -6,19 +6,19 @@ from matplotlib.patches import Patch
 from scipy.optimize import fsolve
 import matplotlib.lines as mlines
 
-# from heterogenous_ring_3954 import (
-#     hopping,
-# )
-
-# for when we run bifurcation plots!!
 from heterogenous_ring_3954 import (
-    CONFIG_TO_TEST,
-    build_ring_jacobian_homogeneous,
-    compute_jacobian,
-    steady_state_expected,
-    baseline_params,
     hopping,
 )
+
+# for when we run bifurcation plots!!
+# from heterogenous_ring_3954 import (
+#     CONFIG_TO_TEST,
+#     build_ring_jacobian_homogeneous,
+#     compute_jacobian,
+#     steady_state_expected,
+#     baseline_params,
+#     hopping,
+# )
 
 # have to run this first: module load matplotlib/3.9.2-gfbf-2024a
 # have to run this first: module load SciPy-bundle/2024.05-gfbf-2024a
@@ -53,17 +53,17 @@ def diff_str(hopping):
 ################ TOPOLOGY 3954 ################
 
 # Config 13 (robust)
-with open('pastconfigs/3954_cv_sweep_high_config13_N10.pkl', 'rb') as f:
+with open('3954_cv_sweep_high_config45_N10.pkl', 'rb') as f:
     cv_data_13 = pickle.load(f)
 
-with open('pastconfigs/3954_sensitivity_results_config13_N10.pkl', 'rb') as f:
+with open('3954_sensitivity_results_config45_N10.pkl', 'rb') as f:
     sens_data_13 = pickle.load(f)
 
 # Config 2 (fragile)
-with open('pastconfigs/3954_cv_sweep_low_config2_N10.pkl', 'rb') as f:
+with open('3954_cv_sweep_low_config4_N10.pkl', 'rb') as f:
     cv_data_2 = pickle.load(f)
 
-with open('pastconfigs/3954_sensitivity_results_config2_N10.pkl', 'rb') as f:
+with open('3954_sensitivity_results_config4_N10.pkl', 'rb') as f:
     sens_data_2 = pickle.load(f)
 
 cv13 = extract_cv_arrays(cv_data_13)
@@ -93,8 +93,8 @@ ax.grid(True, alpha=0.3)
 
 # save the plots
 plt.tight_layout()
-plt.savefig('config13_fig1_mean_range_vs_cv.png', dpi=300, bbox_inches='tight')
-print("Saved as config13_fig1_mean_range_vs_cv.png")
+plt.savefig('config45_fig1_mean_range_vs_cv.png', dpi=300, bbox_inches='tight')
+print("Saved as config45_fig1_mean_range_vs_cv.png")
 plt.close()
 
 # ============================================================================
@@ -133,8 +133,8 @@ ax.legend(fontsize=9, framealpha=0.9)  # Was fontsize=11
 ax.grid(True, alpha=0.3, axis='y')
 
 plt.tight_layout()
-plt.savefig('config13_fig2_boxplot_cv_sweep.png', dpi=300, bbox_inches='tight')
-print("Saved: config13_fig2_boxplot_cv_sweep.png")
+plt.savefig('config45_fig2_boxplot_cv_sweep.png', dpi=300, bbox_inches='tight')
+print("Saved: config45_fig2_boxplot_cv_sweep.png")
 plt.close()
 
 
@@ -155,8 +155,8 @@ ax.legend(fontsize=11, loc='upper left')
 ax.grid(True, alpha=0.3)
 
 plt.tight_layout()
-plt.savefig('config2_fig1_mean_range_vs_cv.png', dpi=300, bbox_inches='tight')
-print("Saved: config2_fig1_mean_range_vs_cv.png")
+plt.savefig('config4_fig1_mean_range_vs_cv.png', dpi=300, bbox_inches='tight')
+print("Saved: config4_fig1_mean_range_vs_cv.png")
 plt.close()
 
 # ============================================================================
@@ -191,8 +191,8 @@ ax.legend(fontsize=9, framealpha=0.9)
 ax.grid(True, alpha=0.3, axis='y')
 
 plt.tight_layout()
-plt.savefig('config2_fig2_boxplot_cv_sweep.png', dpi=300, bbox_inches='tight')
-print("Saved: config2_fig2_boxplot_cv_sweep.png")
+plt.savefig('config4_fig2_boxplot_cv_sweep.png', dpi=300, bbox_inches='tight')
+print("Saved: config4_fig2_boxplot_cv_sweep.png")
 plt.close()
 
 
@@ -204,13 +204,13 @@ plt.close()
 
 ################ TOPOLOGY 1754 ################
 
-with open('pastconfigs/1754_cv_sweep_high_config12_N10.pkl', 'rb') as f:
+with open('1754_cv_sweep_high_config35_N10.pkl', 'rb') as f:
     cv_data_12 = pickle.load(f)
 
 with open('pastconfigs/1754_sensitivity_results_config12_N10.pkl', 'rb') as f:
     sens_data_12 = pickle.load(f)
 
-with open('pastconfigs/1754_cv_sweep_low_config6_N10.pkl', 'rb') as f:
+with open('1754_cv_sweep_low_config12_N10.pkl', 'rb') as f:
     cv_data_6 = pickle.load(f)
 
 with open('pastconfigs/1754_sensitivity_results_config6_N10.pkl', 'rb') as f:
@@ -241,8 +241,8 @@ ax.legend(fontsize=11, loc='upper left')
 ax.grid(True, alpha=0.3)
 
 plt.tight_layout()
-plt.savefig('config12_fig1_mean_range_vs_cv.png', dpi=300, bbox_inches='tight')
-print("Saved as config12_fig1_mean_range_vs_cv.png")
+plt.savefig('config35_fig1_mean_range_vs_cv.png', dpi=300, bbox_inches='tight')
+print("Saved as config35_fig1_mean_range_vs_cv.png")
 plt.close()
 
 # ============================================================================
@@ -281,8 +281,8 @@ ax.legend(fontsize=9, framealpha=0.9)  # Was fontsize=11
 ax.grid(True, alpha=0.3, axis='y')
 
 plt.tight_layout()
-plt.savefig('config12_fig2_boxplot_cv_sweep.png', dpi=300, bbox_inches='tight')
-print("Saved: config12_fig2_boxplot_cv_sweep.png")
+plt.savefig('config35_fig2_boxplot_cv_sweep.png', dpi=300, bbox_inches='tight')
+print("Saved: config35_fig2_boxplot_cv_sweep.png")
 plt.close()
 
 
@@ -303,8 +303,8 @@ ax.legend(fontsize=11, loc='upper left')
 ax.grid(True, alpha=0.3)
 
 plt.tight_layout()
-plt.savefig('config6_fig1_mean_range_vs_cv.png', dpi=300, bbox_inches='tight')
-print("Saved: config6_fig1_mean_range_vs_cv.png")
+plt.savefig('config12_fig1_mean_range_vs_cv.png', dpi=300, bbox_inches='tight')
+print("Saved: config12_fig1_mean_range_vs_cv.png")
 plt.close()
 
 # ============================================================================
@@ -339,8 +339,8 @@ ax.legend(fontsize=9, framealpha=0.9)
 ax.grid(True, alpha=0.3, axis='y')
 
 plt.tight_layout()
-plt.savefig('config6_fig2_boxplot_cv_sweep.png', dpi=300, bbox_inches='tight')
-print("Saved: config6_fig2_boxplot_cv_sweep.png")
+plt.savefig('config12_fig2_boxplot_cv_sweep.png', dpi=300, bbox_inches='tight')
+print("Saved: config12_fig2_boxplot_cv_sweep.png")
 plt.close()
 
 
@@ -454,13 +454,13 @@ def plot_sensitivity(sens_data, config_label, save_name):
 # ============================================================================
 # FIGURE 3A + 3B : Sensitivity Config 13 and Config 2
 # ============================================================================
-plot_sensitivity(sens_data_13, 'Config 13 (robust)', 'config13_fig3_sensitivity.png')
+# plot_sensitivity(sens_data_13, 'Config 13 (robust)', 'config13_fig3_sensitivity.png')
 
-plot_sensitivity(sens_data_2, 'Config 2 (fragile)', 'config2_fig3_sensitivity.png')
+# plot_sensitivity(sens_data_2, 'Config 2 (fragile)', 'config2_fig3_sensitivity.png')
 
-plot_sensitivity(sens_data_12, 'Config 12 (robust)', 'config12_fig3_sensitivity.png')
+# plot_sensitivity(sens_data_12, 'Config 12 (robust)', 'config12_fig3_sensitivity.png')
 
-plot_sensitivity(sens_data_6, 'Config 6 (fragile)', 'config6_fig3_sensitivity.png')
+# plot_sensitivity(sens_data_6, 'Config 6 (fragile)', 'config6_fig3_sensitivity.png')
 
 
 
@@ -493,12 +493,17 @@ with open('1754_cv_sweep_high_config35_N20.pkl', 'rb') as f:
 with open('1754_cv_sweep_high_config35_N30.pkl', 'rb') as f:
     cv12_N30_data = pickle.load(f)
 
-with open('1754_cv_sweep_low_config12_N10.pkl', 'rb') as f:
+# with open('1754_cv_sweep_low_config12_N10.pkl', 'rb') as f:
+#     cv6_N10_data = pickle.load(f)
+# with open('1754_cv_sweep_low_config12_N20.pkl', 'rb') as f:
+#     cv6_N20_data = pickle.load(f)
+# with open('1754_cv_sweep_low_config12_N30.pkl', 'rb') as f:
+#     cv6_N30_data = pickle.load(f)
+
+with open('pastconfigs/1754_cv_sweep_low_config6_N10.pkl', 'rb') as f:
     cv6_N10_data = pickle.load(f)
-with open('1754_cv_sweep_low_config12_N20.pkl', 'rb') as f:
+with open('pastconfigs/1754_cv_sweep_low_config6_N20.pkl', 'rb') as f:
     cv6_N20_data = pickle.load(f)
-with open('1754_cv_sweep_low_config12_N30.pkl', 'rb') as f:
-    cv6_N30_data = pickle.load(f)
 
 # Extract robustness arrays using your existing helper
 cv13_N10 = extract_cv_arrays(cv13_N10_data)
@@ -534,32 +539,32 @@ robustness_curves = [
     {
         'label': '#3954 Fragile (Config 4, N=10)',
         'CV': cv2_N10['CV'], 'robustness': cv2_N10['robustness'],
-        'color': 'lightskyblue', 'marker': 's', 'linestyle': '-',
+        'color': 'indigo', 'marker': 's', 'linestyle': '-',
     },
     {
         'label': '#3954 Fragile (Config 4, N=20)',
         'CV': cv2_N20['CV'], 'robustness': cv2_N20['robustness'],
-        'color': 'lightskyblue', 'marker': 's', 'linestyle': '--',
+        'color': 'indigo', 'marker': 's', 'linestyle': '--',
     },
     {
         'label': '#3954 Fragile (Config 4, N=30)',
         'CV': cv2_N30['CV'], 'robustness': cv2_N30['robustness'],
-        'color': 'lightskyblue', 'marker': 's', 'linestyle': ':',
+        'color': 'indigo', 'marker': 's', 'linestyle': ':',
     },
     {
         'label': '#1754 Robust (Config 35, N=10)',
         'CV': cv12_N10['CV'], 'robustness': cv12_N10['robustness'],
-        'color': 'blueviolet', 'marker': '^', 'linestyle': '-',
+        'color': 'purple', 'marker': '^', 'linestyle': '-',
     },
     {
         'label': '#1754 Robust (Config 35, N=20)',
         'CV': cv12_N20['CV'], 'robustness': cv12_N20['robustness'],
-        'color': 'blueviolet', 'marker': '^', 'linestyle': '--',
+        'color': 'purple', 'marker': '^', 'linestyle': '--',
     },
     {
         'label': '#1754 Robust (Config 35, N=30)',
         'CV': cv12_N30['CV'], 'robustness': cv12_N30['robustness'],
-        'color': 'blueviolet', 'marker': '^', 'linestyle': ':',
+        'color': 'purple', 'marker': '^', 'linestyle': ':',
     },
     {
         'label': '#1754 Fragile (Config 12, N=10)',
@@ -611,11 +616,10 @@ plt.savefig('thesis_fig5_robustness_vs_cv_N10_vs_N20.png', dpi=300, bbox_inches=
 print("Saved: thesis_fig5_robustness_vs_cv_N10_vs_N20.png")
 plt.close()
 
-
 # combined plot with two subplots for each topology
 
 # Create 2 panels side-by-side with shared Y-axes
-fig, axes = plt.subplots(1, 2, figsize=(14, 5.5), sharey=True)
+fig, axes = plt.subplots(1, 2, figsize=(14, 5.5), sharey=False)
 
 for ax, topo in zip(axes, ['#3954', '#1754']):
     # Plot reference background guides
@@ -652,22 +656,22 @@ title_obj = fig.suptitle(
 legend_handles = [
     mlines.Line2D([], [], color='cornflowerblue', marker='o', linestyle='-', label='#3954 Robust (Config 45, N=10)'),
     mlines.Line2D([], [], color='cornflowerblue', marker='o', linestyle='--', label='#3954 Robust (Config 45, N=20)'),
-    mlines.Line2D([], [], color='cornflowerblue', marker='o', linestyle=':', label='#3954 Robust (Config 45, N=30)'),
+    mlines.Line2D([], [], color='cornflowerblue', marker='o', linestyle='--', label='#3954 Robust (Config 45, N=30)'),
     mlines.Line2D([], [], color='lightskyblue', marker='s', linestyle='-', label='#3954 Fragile (Config 4, N=10)'),
     mlines.Line2D([], [], color='lightskyblue', marker='s', linestyle='--', label='#3954 Fragile (Config 4, N=20)'),
-    mlines.Line2D([], [], color='lightskyblue', marker='s', linestyle=':', label='#3954 Fragile (Config 4, N=30)'),
+    mlines.Line2D([], [], color='lightskyblue', marker='s', linestyle='--', label='#3954 Fragile (Config 4, N=30)'),
     mlines.Line2D([], [], color='blueviolet', marker='^', linestyle='-', label='#1754 Robust (Config 35, N=10)'),
     mlines.Line2D([], [], color='blueviolet', marker='^', linestyle='--', label='#1754 Robust (Config 35, N=20)'),
     mlines.Line2D([], [], color='blueviolet', marker='^', linestyle=':', label='#1754 Robust (Config 35, N=30)'),
     mlines.Line2D([], [], color='mediumorchid', marker='D', linestyle='-', label='#1754 Fragile (Config 12, N=10)'),
     mlines.Line2D([], [], color='mediumorchid', marker='D', linestyle='--', label='#1754 Fragile (Config 12, N=20)'),
-    mlines.Line2D([], [], color='mediumorchid', marker='D', linestyle=':', label='#1754 Fragile (Config 12, N=30)'),
+    mlines.Line2D([], [], color='mediumorchid', marker='D', linestyle='--', label='#1754 Fragile (Config 12, N=30)'),
 ]
 
 leg_obj = fig.legend(
     handles=legend_handles,
     loc='lower center',
-    bbox_to_anchor=(0.5, -0.16),  # Lowered further down to fit 3 horizontal legend rows comfortably
+    bbox_to_anchor=(0.5, 0.0),  # Lowered further down to fit 3 horizontal legend rows comfortably
     ncol=4,                       
     frameon=False,
     fontsize=9.5
