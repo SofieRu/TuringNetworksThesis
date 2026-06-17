@@ -61,11 +61,11 @@ def load_data():
 
 def fig1_overview(df):
     fig, ax = plt.subplots(figsize=(14, 6))
-    colors = df["turing_type"].map(TYPE_COLORS).fillna("#aaaaaa")
+    #colors = df["turing_type_I"].map(TYPE_COLORS).fillna("#aaaaaa")
     ax.bar(
         range(len(df)),
-        df["rob_shaberi_total"],
-        color=colors,
+        df["rob_shaberi_type_I"], # rob_shaberi_total
+        #color=colors,
         edgecolor="white",
         linewidth=0.5,
         width=0.75,
@@ -104,7 +104,7 @@ def fig1_overview(df):
     ax.legend(handles=handles, title="Turing Type", frameon=False, loc="upper center", bbox_to_anchor=(0.5, -0.4), ncol=3)
 
     fig.tight_layout()
-    save(fig, "new_3954_lhs_fig1_overview_bar_detail")
+    save(fig, "testttt_3954_lhs_fig1_overview_bar_detail")
 
 
 
@@ -465,7 +465,7 @@ def fig_combined_overview_and_raincloud(df):
 ########### RUN THE WHOLE THING ############
 
 df = load_data()
-# fig1_overview(df)
+fig1_overview(df)
 # fig2_dotplot(df)
 # fig2_raincloud(df)
 # fig4_diego_vs_shaberi(df)

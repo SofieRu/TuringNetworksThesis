@@ -260,9 +260,9 @@ DIFFUSION_CONFIGS = {
     
     # TYPE 1
     # controls
-    0:  {"name": "NEW_LHS_1754_Type1_Control_Slow",         "dU": 0.1,  "dV": 0.1,  "dW": 0.1},
+    # 0:  {"name": "NEW_LHS_1754_Type1_Control_Slow",         "dU": 0.1,  "dV": 0.1,  "dW": 0.1},
     1:  {"name": "NEW_LHS_1754_Type1_Control_Equal",        "dU": 1.0,  "dV": 1.0,  "dW": 1.0},
-    2:  {"name": "NEW_LHS_1754_Type1_Control_Fast",         "dU": 10.0, "dV": 10.0, "dW": 10.0},
+    # 2:  {"name": "NEW_LHS_1754_Type1_Control_Fast",         "dU": 10.0, "dV": 10.0, "dW": 10.0},
 
     # node u diffuses faster than v and w
     3:  {"name": "NEW_LHS_1754_Type1_UFast_Unequal1",       "dU": 10.0, "dV": 1.0,  "dW": 1.0},
@@ -270,6 +270,14 @@ DIFFUSION_CONFIGS = {
     5:  {"name": "NEW_LHS_1754_Type1_UFast_Unequal3",       "dU": 10.0, "dV": 0.1,  "dW": 1.0},
     6:  {"name": "NEW_LHS_1754_Type1_UFast_Unequal4",       "dU": 10.0, "dV": 1.0,  "dW": 0.1},
     7:  {"name": "NEW_LHS_1754_Type1_UFast_Unequal5",       "dU": 10.0, "dV": 0.1,  "dW": 0.1},
+
+    #new check if accurate??
+    # node v diffuses faster than u and w
+    8:  {"name": "NEW_LHS_1754_Type1_VFast_Unequal1",       "dU": 1.0,  "dV": 10.0, "dW": 1.0},
+    9:  {"name": "NEW_LHS_1754_Type1_VFast_Unequal2",       "dU": 0.1,  "dV": 1.0,  "dW": 0.1},
+    10: {"name": "NEW_LHS_1754_Type1_VFast_Unequal3",       "dU": 0.1,  "dV": 10.0, "dW": 1.0},
+    11: {"name": "NEW_LHS_1754_Type1_VFast_Unequal4",       "dU": 1.0,  "dV": 10.0, "dW": 0.1},
+    12: {"name": "NEW_LHS_1754_Type1_VFast_Unequal5",       "dU": 0.1,  "dV": 10.0, "dW": 0.1},
 
     # nodes u and v diffuse faster than w
     8:  {"name": "NEW_LHS_1754_Type1_UVFast_Unequal1",      "dU": 10.0, "dV": 10.0, "dW": 1.0},
@@ -289,20 +297,20 @@ DIFFUSION_CONFIGS = {
     19: {"name": "NEW_LHS_1754_Type2_VFreeze_Unequal6",     "dU": 10.0, "dV": 0.0,  "dW": 1.0},
 
     # node u is immobile
-    20: {"name": "NEW_LHS_1754_Type3_UFreeze_Equal1",       "dU": 0.0, "dV": 1.0,  "dW": 1.0},
-    21: {"name": "NEW_LHS_1754_Type3_UFreeze_Equal2",       "dU": 0.0, "dV": 0.1,  "dW": 0.1},
-    22: {"name": "NEW_LHS_1754_Type3_UFreeze_Equal3",       "dU": 0.0, "dV": 10.0, "dW": 10.0},
-    23: {"name": "NEW_LHS_1754_Type3_UFreeze_Unequal1",     "dU": 0.0, "dV": 1.0,  "dW": 0.1},
-    24: {"name": "NEW_LHS_1754_Type3_UFreeze_Unequal2",     "dU": 0.0, "dV": 0.1,  "dW": 1.0},
-    25: {"name": "NEW_LHS_1754_Type3_UFreeze_Unequal3",     "dU": 0.0, "dV": 10.0, "dW": 1.0},
-    26: {"name": "NEW_LHS_1754_Type3_UFreeze_Unequal4",     "dU": 0.0, "dV": 1.0,  "dW": 10.0},
-    27: {"name": "NEW_LHS_1754_Type3_UFreeze_Unequal5",     "dU": 0.0, "dV": 0.1,  "dW": 10.0},
-    28: {"name": "NEW_LHS_1754_Type3_UFreeze_Unequal6",     "dU": 0.0, "dV": 10.0, "dW": 0.1},
+    20: {"name": "NEW_LHS_1754_Type2_UFreeze_Equal1",       "dU": 0.0, "dV": 1.0,  "dW": 1.0},
+    21: {"name": "NEW_LHS_1754_Type2_UFreeze_Equal2",       "dU": 0.0, "dV": 0.1,  "dW": 0.1},
+    22: {"name": "NEW_LHS_1754_Type2_UFreeze_Equal3",       "dU": 0.0, "dV": 10.0, "dW": 10.0},
+    23: {"name": "NEW_LHS_1754_Type2_UFreeze_Unequal1",     "dU": 0.0, "dV": 1.0,  "dW": 0.1},
+    24: {"name": "NEW_LHS_1754_Type2_UFreeze_Unequal2",     "dU": 0.0, "dV": 0.1,  "dW": 1.0},
+    25: {"name": "NEW_LHS_1754_Type2_UFreeze_Unequal3",     "dU": 0.0, "dV": 10.0, "dW": 1.0},
+    26: {"name": "NEW_LHS_1754_Type2_UFreeze_Unequal4",     "dU": 0.0, "dV": 1.0,  "dW": 10.0},
+    27: {"name": "NEW_LHS_1754_Type2_UFreeze_Unequal5",     "dU": 0.0, "dV": 0.1,  "dW": 10.0},
+    28: {"name": "NEW_LHS_1754_Type2_UFreeze_Unequal6",     "dU": 0.0, "dV": 10.0, "dW": 0.1},
 
     # node u + v immobile
-    29: {"name": "NEW_LHS_1754_Type3_UVFreeze_Equal1",      "dU": 0.0, "dV": 0.0, "dW": 1.0}, 
-    30: {"name": "NEW_LHS_1754_Type3_UVFreeze_Equal2",      "dU": 0.0, "dV": 0.0, "dW": 0.1},
-    31: {"name": "NEW_LHS_1754_Type3_UVFreeze_Equal3",      "dU": 0.0, "dV": 0.0, "dW": 10.0},
+    29: {"name": "NEW_LHS_1754_Type2_UVFreeze_Equal1",      "dU": 0.0, "dV": 0.0, "dW": 1.0}, 
+    30: {"name": "NEW_LHS_1754_Type2_UVFreeze_Equal2",      "dU": 0.0, "dV": 0.0, "dW": 0.1},
+    31: {"name": "NEW_LHS_1754_Type2_UVFreeze_Equal3",      "dU": 0.0, "dV": 0.0, "dW": 10.0},
 
     # TYPE 3
     # node w is immobile
