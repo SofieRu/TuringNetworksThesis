@@ -225,145 +225,6 @@ def fig1_combined_heatmaps(df):
 
 ########## FIGURE 6: Stacked absolute bar – Type I vs II vs Hopf composition ##########
 
-
-def fig_filter_distribution_all_configs(df):
-    df = df.copy()
-
-    # Target topologies requested
-    topos = ["#1754", "#3954"]
-    types = ["Type1", "Type2", "Type3"]
-
-    # 1. Aggregate sums across ALL configs globally by topology and turing type
-    grouped = (
-        df.groupby(["topology_id", "turing_type"])
-        .agg(
-            type_I=("shaberi_type_I", "sum"),
-            type_II=("shaberi_type_II", "sum"),
-            hopf=("shaberi_hopf", "sum"),
-            turing_filter=("filter_count", "sum"),
-        )
-        .reset_index()
-    )
-
-    # 2. Set up 2 panels side-by-side (one for each topology)
-    fig, axes = plt.subplots(1, 2, figsize=(14, 6), sharey=True)
-
-    for ax, topo in zip(axes, topos):
-        topo_data = grouped[grouped["topology_id"] == topo]
-
-        # X positions for Type1, Type2, Type3
-        x_pos = range(len(types))
-        bar_width = 0.5
-
-        for idx, t_type in enumerate(types):
-            # Fetch data or fall back to zeros if type is missing
-            row = topo_data[topo_data["turing_type"] == t_type]
-            if row.empty:
-                continue
-
-            t1 = row["type_I"].values[0]
-            t2 = row["type_II"].values[0]
-            th = row["hopf"].values[0]
-            tf = row["turing_filter"].values[0]
-
-            total = t1 + t2 + th + tf
-            if total == 0:
-                continue
-
-            # Convert to percentages to normalise across all configurations
-            p1 = (t1 / total) * 100
-            p2 = (t2 / total) * 100
-            ph = (th / total) * 100
-            pf = (tf / total) * 100
-
-            # Stacked bars
-            ax.bar(
-                idx,
-                p1,
-                width=bar_width,
-                color=PATTERN_COLORS["Type I"],
-                edgecolor="white",
-                linewidth=0.5,
-            )
-            ax.bar(
-                idx,
-                p2,
-                width=bar_width,
-                color=PATTERN_COLORS["Type II"],
-                edgecolor="white",
-                linewidth=0.5,
-                bottom=p1,
-            )
-            ax.bar(
-                idx,
-                ph,
-                width=bar_width,
-                color=PATTERN_COLORS["Hopf"],
-                edgecolor="white",
-                linewidth=0.5,
-                bottom=p1 + p2,
-            )
-            ax.bar(
-                idx,
-                pf,
-                width=bar_width,
-                color=PATTERN_COLORS["Turing Filter"],
-                edgecolor="white",
-                linewidth=0.5,
-                bottom=p1 + p2 + ph,
-            )
-
-            # Display raw filter count text on top of the bars if filters exist
-            if tf > 0:
-                ax.text(
-                    idx,
-                    p1 + p2 + ph + (pf / 2),
-                    f"n={int(tf)}",
-                    ha="center",
-                    va="center",
-                    color="black",
-                    fontweight="bold",
-                    fontsize=9,
-                )
-
-        # Panel styling
-        ax.set_title(f"Topology {topo}", fontsize=13, fontweight="bold", pad=10)
-        ax.set_xticks(x_pos)
-        ax.set_xticklabels(types, fontsize=11)
-        ax.xaxis.grid(False)
-
-    # Global formatting
-    axes[0].set_ylabel(
-        "Proportion of Total Counts across All Configs (%)", fontsize=11
-    )
-    plt.suptitle(
-        "Turing Filters are Exclusively Present within Turing Type III Configurations",
-        fontsize=14,
-        y=0.98,
-        fontweight="semibold",
-    )
-
-    # Unified clean legend placement on the right border
-    handles = [
-        mpatches.Patch(color=c, label=l) for l, c in PATTERN_COLORS.items()
-    ]
-    axes[1].legend(
-        handles=handles,
-        title="Pattern Type",
-        frameon=False,
-        loc="center left",
-        bbox_to_anchor=(1.02, 0.5),
-        fontsize=10,
-    )
-
-    fig.subplots_adjust(
-        left=0.08, right=0.85, top=0.88, bottom=0.12, wspace=0.2
-    )
-    save(fig, "turing_filter_distribution_all_configs")
-
-
-
-
 def fig_all_patterns_profile_trends(df):
     df = df.copy()
 
@@ -511,6 +372,416 @@ def fig_all_patterns_profile_trends(df):
     )
     
     save(fig, "thesis_type_profile_trends")
+
+
+
+
+
+
+def fig_all_patterns_profile_trends_complete(df):
+    df = df.copy()
+
+    # Reordered topos: row 1 -> #3954, row 2 -> #1754
+    topos = ["#3954", "#1754"]
+    types = ["Type1", "Type2", "Type3"]
+    labels = ["Type 1", "Type 2", "Type 3"]  # Clean display names for X-axis
+
+    # 1. Aggregate global sums for ALL configurations combined per topology × turing type
+    grouped = (
+        df.groupby(["topology_id", "turing_type"])
+        .agg(
+            type_I=("shaberi_type_I", "sum"),
+            type_II=("shaberi_type_II", "sum"),
+            hopf=("shaberi_hopf", "sum"),
+            turing_filter=("filter_count", "sum"),
+        )
+        .reset_index()
+    )
+
+    # 2. Changed layout to 2x2 grid. sharey=False because absolute numbers vs percents need different scales.
+    fig, axes = plt.subplots(2, 2, figsize=(16, 8.5), sharey=False)
+
+    for row_idx, topo in enumerate(topos):
+        topo_data = grouped[grouped["topology_id"] == topo]
+
+        # Initialize tracking dictionaries for both data modes
+        percentages = {"Type I": [], "Type II": [], "Hopf": [], "Turing Filter": []}
+        absolutes = {"Type I": [], "Type II": [], "Hopf": [], "Turing Filter": []}
+
+        # Calculate metrics for each step sequentially
+        for t_type in types:
+            row = topo_data[topo_data["turing_type"] == t_type]
+
+            if not row.empty:
+                t1 = row["type_I"].values[0]
+                t2 = row["type_II"].values[0]
+                th = row["hopf"].values[0]
+                tf = row["turing_filter"].values[0]
+            else:
+                t1 = t2 = th = tf = 0
+
+            total = t1 + t2 + th + tf
+
+            # Track absolute metrics
+            absolutes["Type I"].append(t1)
+            absolutes["Type II"].append(t2)
+            absolutes["Hopf"].append(th)
+            absolutes["Turing Filter"].append(tf)
+
+            # Track relative percentage metrics
+            if total > 0:
+                percentages["Type I"].append((t1 / total) * 100)
+                percentages["Type II"].append((t2 / total) * 100)
+                percentages["Hopf"].append((th / total) * 100)
+                percentages["Turing Filter"].append((tf / total) * 100)
+            else:
+                for key in percentages:
+                    percentages[key].append(0)
+
+        # Loop through columns: col_idx 0 = Percentages, col_idx 1 = Absolute Values
+        for col_idx in range(2):
+            ax = axes[row_idx, col_idx]
+            current_dataset = percentages if col_idx == 0 else absolutes
+
+            # Plot the structural profile trendline for each pattern type
+            for pattern_name, color in PATTERN_COLORS.items():
+                y_values = current_dataset[pattern_name]
+
+                # Main sleek trendline
+                ax.plot(
+                    labels,
+                    y_values,
+                    color=color,
+                    linewidth=3.0,
+                    marker="o",
+                    markersize=7,
+                    markeredgecolor="white",
+                    markeredgewidth=1.5,
+                    label=pattern_name,
+                    zorder=3,
+                )
+
+                # Smooth shaded area under each line
+                ax.fill_between(
+                    labels, y_values, 0, color=color, alpha=0.1, zorder=2
+                )
+
+            # Contextual labels and limits based on column type
+            if col_idx == 0:
+                ax.set_title(f"Topology {topo} Composition Proportion", fontsize=11, color="#222222", pad=10)
+                ax.set_ylabel("Pattern Composition Proportion (%)", fontsize=10, color="#333333", labelpad=8)
+                ax.set_ylim(-3, 103)
+            else:
+                ax.set_title(f"Topology {topo} Absolute Densities", fontsize=11, color="#222222", pad=10)
+                ax.set_ylabel("Absolute Pattern Count (Total)", fontsize=10, color="#333333", labelpad=8)
+                # Let absolute limits autoscale elegantly with small baseline padding
+                ax.autoscale(enable=True, axis='y', tight=False)
+
+            # Panel styling and visual polish
+            ax.set_xlabel("Turing Type (Diego et al. 2018)", fontsize=10, color="#333333", labelpad=6)
+            ax.tick_params(axis="both", which="major", labelsize=9.5, labelleft=True, colors="#444444")
+            ax.grid(True, axis="both", linestyle=":", alpha=0.5, color="#cccccc", zorder=0)
+            
+            # Remove top and right borders
+            ax.spines["top"].set_visible(False)
+            ax.spines["right"].set_visible(False)
+            ax.spines["left"].set_color("#cccccc")
+            ax.spines["bottom"].set_color("#cccccc")
+
+    # Global Main Header
+    plt.suptitle(
+        "Distribution of Turing Instability Types Across Topological Network Types",
+        fontsize=13,
+        y=0.97,
+        fontweight="semibold",
+        color="#111111"
+    )
+
+    # 4. Construct bottom center legend using the exact line styles plotted
+    legend_handles = [
+        mlines.Line2D(
+            [], [], 
+            color=c, 
+            linewidth=3.0, 
+            marker="o", 
+            markersize=7, 
+            markeredgecolor="white", 
+            markeredgewidth=1.5, 
+            label=l
+        ) for l, c in PATTERN_COLORS.items()
+    ]
+    
+    # Places legend perfectly aligned horizontally underneath all 4 panels
+    fig.legend(
+        handles=legend_handles,
+        loc="lower center",
+        bbox_to_anchor=(0.5, 0.02),
+        ncol=4,
+        frameon=False,
+        fontsize=10.5
+    )
+
+    # Adjust layout padding to accommodate the 2x2 multi-row structure and bottom legend
+    fig.subplots_adjust(
+        left=0.08, 
+        right=0.95, 
+        top=0.88, 
+        bottom=0.12,
+        wspace=0.25,
+        hspace=0.26
+    )
+    
+    save(fig, "thesis_complete_type_profile_trends")
+
+
+
+
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+def fig_topology_robustness_comparison(df):
+    df = df.copy()
+
+    # 1. Calculate the total robustness score (Turing count) per configuration row
+    df["total_turing_count"] = (
+        df["shaberi_type_I"] + 
+        df["shaberi_type_II"] + 
+        df["shaberi_hopf"] + 
+        df["filter_count"]
+    )
+
+    # 2. Filter data specifically for Type I configurations
+    # Note: Adjust "Type1" if your dataframe uses "Type 1" with a space
+    df_type_I = df[df["turing_type"] == "Type1"]
+
+    # 3. Create a clean side-by-side layout (1 row, 2 columns)
+    fig, axes = plt.subplots(1, 2, figsize=(14, 5.5))
+    
+    # Custom color palette matching your topologies (e.g., slate blue and muted teal)
+    topo_colors = {"#1754": "#4A90E2", "#3954": "#E2844A"}
+    topo_order = ["#1754", "#3954"]
+
+    # --- LEFT PLOT: Global Overall Robustness ---
+    sns.boxplot(
+        data=df,
+        x="topology_id",
+        y="total_turing_count",
+        order=topo_order,
+        palette=topo_colors,
+        ax=axes[0],
+        width=0.5,
+        fliersize=4,
+        linewidth=1.5
+    )
+    
+    # Add mean indicators to show average robustness scores directly
+    sns.stripplot(
+        data=df,
+        x="topology_id",
+        y="total_turing_count",
+        order=topo_order,
+        color="#222222",
+        alpha=0.15,
+        size=4,
+        jitter=0.15,
+        ax=axes[0],
+        zorder=1
+    )
+
+    axes[0].set_title("Overall Network Robustness\n(All Turing Types Combined)", fontsize=11, fontweight="semibold", pad=12)
+    axes[0].set_ylabel("Total Turing Instability Count", fontsize=10)
+    axes[0].set_xlabel("Topology ID", fontsize=10)
+
+    # --- RIGHT PLOT: Turing Type I Robustness Only ---
+    sns.boxplot(
+        data=df_type_I,
+        x="topology_id",
+        y="total_turing_count",
+        order=topo_order,
+        palette=topo_colors,
+        ax=axes[1],
+        width=0.5,
+        fliersize=4,
+        linewidth=1.5
+    )
+    
+    sns.stripplot(
+        data=df_type_I,
+        x="topology_id",
+        y="total_turing_count",
+        order=topo_order,
+        color="#222222",
+        alpha=0.15,
+        size=4,
+        jitter=0.15,
+        ax=axes[1],
+        zorder=1
+    )
+
+    axes[1].set_title("Targeted Network Robustness\n(Turing Type I Only)", fontsize=11, fontweight="semibold", pad=12)
+    axes[1].set_ylabel("Total Turing Instability Count", fontsize=10)
+    axes[1].set_xlabel("Topology ID", fontsize=10)
+
+    # 4. Polish and clean styles across both panels
+    for ax in axes:
+        ax.grid(True, axis="y", linestyle=":", alpha=0.5, color="#cccccc", zorder=0)
+        ax.tick_params(axis="both", which="major", labelsize=9.5, colors="#444444")
+        
+        # Remove top/right spines for premium aesthetic
+        ax.spines["top"].set_visible(False)
+        ax.spines["right"].set_visible(False)
+        ax.spines["left"].set_color("#cccccc")
+        ax.spines["bottom"].set_color("#cccccc")
+
+    # Global Main Header
+    plt.suptitle(
+        "Robustness and Parameter Space Density Comparison Between Topologies",
+        fontsize=12.5,
+        y=0.98,
+        fontweight="semibold",
+        color="#111111"
+    )
+
+    fig.subplots_adjust(
+        left=0.08, 
+        right=0.94, 
+        top=0.84, 
+        bottom=0.15,
+        wspace=0.28
+    )
+
+    save(fig, "thesis_topology_robustness_comparison")
+
+
+
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+def fig_topology_robustness_percentage(df):
+    df = df.copy()
+
+    # 1. Calculate the absolute total of successful Turing patterns
+    df["total_turing_count"] = (
+        df["shaberi_type_I"] + 
+        df["shaberi_type_II"] + 
+        df["shaberi_hopf"] + 
+        df["filter_count"]
+    )
+
+    # 2. Convert to a percentage of the total tested parameter space
+    # NOTE: Replace "total_sampled_points" with your exact column name representing the maximum possible points
+    # If the total space is a fixed constant (e.g. 5000), replace df["total_sampled_points"] with 5000.0
+    df["robustness_percentage"] = (df["total_turing_count"] / 1_000_000) * 100
+
+    # 3. Filter data specifically for Type I configurations
+    df_type_I = df[df["turing_type"] == "Type1"]
+
+    # 4. Set up the 1 row, 2 column side-by-side structure
+    fig, axes = plt.subplots(1, 2, figsize=(14, 5.5))
+    
+    # Matching your visual style palette
+    topo_colors = {"#1754": "#4A90E2", "#3954": "#E2844A"}
+    topo_order = ["#1754", "#3954"]
+
+    # --- LEFT PLOT: Global Robustness Percentage ---
+    sns.boxplot(
+        data=df,
+        x="topology_id",
+        y="robustness_percentage",
+        order=topo_order,
+        palette=topo_colors,
+        ax=axes[0],
+        width=0.45,
+        fliersize=4,
+        linewidth=1.5,
+        zorder=2
+    )
+    
+    sns.stripplot(
+        data=df,
+        x="topology_id",
+        y="robustness_percentage",
+        order=topo_order,
+        color="#222222",
+        alpha=0.15,
+        size=4.5,
+        jitter=0.12,
+        ax=axes[0],
+        zorder=1
+    )
+
+    axes[0].set_title("Global Efficiency\n(All Turing Types Combined)", fontsize=11, fontweight="semibold", pad=12)
+    axes[0].set_ylabel("Robust Parameter Space Yield (%)", fontsize=10)
+    axes[0].set_xlabel("Topology ID", fontsize=10)
+
+    # --- RIGHT PLOT: Turing Type I Robustness Percentage Only ---
+    sns.boxplot(
+        data=df_type_I,
+        x="topology_id",
+        y="robustness_percentage",
+        order=topo_order,
+        palette=topo_colors,
+        ax=axes[1],
+        width=0.45,
+        fliersize=4,
+        linewidth=1.5,
+        zorder=2
+    )
+    
+    sns.stripplot(
+        data=df_type_I,
+        x="topology_id",
+        y="robustness_percentage",
+        order=topo_order,
+        color="#222222",
+        alpha=0.15,
+        size=4.5,
+        jitter=0.12,
+        ax=axes[1],
+        zorder=1
+    )
+
+    axes[1].set_title("Targeted Efficiency\n(Turing Type I Only)", fontsize=11, fontweight="semibold", pad=12)
+    axes[1].set_ylabel("Robust Parameter Space Yield (%)", fontsize=10)
+    axes[1].set_xlabel("Topology ID", fontsize=10)
+
+    # 5. Clean layout polish and scale formatting
+    for ax in axes:
+        ax.grid(True, axis="y", linestyle=":", alpha=0.5, color="#cccccc", zorder=0)
+        ax.tick_params(axis="both", which="major", labelsize=9.5, colors="#444444")
+        
+        # Clip y-limits cleanly slightly above 0-100 to catch any 100% caps gracefully
+        ax.set_ylim(-3, 103)
+        
+        # Remove top/right borders
+        ax.spines["top"].set_visible(False)
+        ax.spines["right"].set_visible(False)
+        ax.spines["left"].set_color("#cccccc")
+        ax.spines["bottom"].set_color("#cccccc")
+
+    # Global Main Header
+    plt.suptitle(
+        "Turing Instability Robustness Yield Across Topological Network Architectures",
+        fontsize=12.5,
+        y=0.98,
+        fontweight="semibold",
+        color="#111111"
+    )
+
+    fig.subplots_adjust(
+        left=0.08, 
+        right=0.94, 
+        top=0.84, 
+        bottom=0.15,
+        wspace=0.28
+    )
+
+    save(fig, "thesis_topology_robustness_efficiency_comparison")
+
+
+
+
 
 
 
@@ -824,7 +1095,9 @@ df = load_all()
 # fig_pseudo_phase_39542(df)
 
 fig1_combined_heatmaps(df)
-fig_filter_distribution_all_configs(df)
+fig_all_patterns_profile_trends_complete(df)
 fig_all_patterns_profile_trends(df)
+fig_topology_robustness_comparison(df)
 fig_pseudo_phase_combined(df)
 fig_3d_parameter_space_comparison()
+fig_topology_robustness_percentage(df)
