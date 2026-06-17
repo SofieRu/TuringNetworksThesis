@@ -12,7 +12,7 @@ CSV_PATH = '../TopologyRanking/Topology1754/1754_NEWTURINGCLASS_lhs_results_para
 
 ### figure 1: code for one plot for on config id in 1754 ###
 
-CONFIG_ID = 45
+CONFIG_ID = 35
 CV_VALUES = [0, 0.1, 0.2, 0.3, 0.4]
 N_TRIALS = 10
 
@@ -125,7 +125,7 @@ legend_handles = [
 fig.legend(
     handles=legend_handles,
     loc='lower center',
-    bbox_to_anchor=(0.5, 0.02),
+    bbox_to_anchor=(0.5, -0.02),
     ncol=3,
     frameon=False,
     fontsize=10
@@ -203,7 +203,7 @@ for row_idx, config_id in enumerate(CONFIG_IDS):
         ax = axes_multi[row_idx, col_idx]
         
         for disp in dispersion_curves_multi[CV]:
-            ax.plot(k_values, disp, color=color, linewidth=1.2, alpha=0.35)
+            ax.plot(k_values, disp, color=color, linewidth=1.5, alpha=0.7)
         
         ax.plot(k_values, baseline_curve_multi, color='black', linewidth=2.0, linestyle='-', alpha=0.8)
         ax.axhline(0, color='red', linestyle=':', linewidth=1.5, alpha=0.7)

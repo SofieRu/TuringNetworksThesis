@@ -109,10 +109,10 @@ def is_turing_shaberi(J, eigs_0, DU, DV, DW):
 # CHANGE THIS TO TEST DIFFERENT CONFIGS:
 CONFIG_TO_TEST = 12 #  
 CONFIG_LABEL = "low"  # or "low" — change this once when you switch configs
-N_cells = 10 # for sanity check run with N = 5, 10 and 20, 30??
+N_cells = 30 # for sanity check run with N = 5, 10 and 20, 30??
 
 # Load parameters from CSV
-df_params = pd.read_csv('../TopologyRanking/Topology1754/1754_PREFINAL_lhs_results_parameters.csv')
+df_params = pd.read_csv('../TopologyRanking/Topology1754/1754_NEWTURINGCLASS_lhs_results_parameters.csv')
 
 # Get the best parameter set for this config
 config_data = df_params[(df_params['config_id'] == CONFIG_TO_TEST) & (df_params['param_rank'] == 1)]

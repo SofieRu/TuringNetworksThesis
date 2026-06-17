@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.patches import Patch
 from scipy.optimize import fsolve
+import matplotlib.lines as mlines
 
 # from heterogenous_ring_3954 import (
 #     hopping,
@@ -471,77 +472,112 @@ plot_sensitivity(sens_data_6, 'Config 6 (fragile)', 'config6_fig3_sensitivity.pn
 
 # Load all four CV sweep pickles
 # (Adjust filenames to match what you actually have)
-with open('pastconfigs/3954_cv_sweep_high_config13_N10.pkl', 'rb') as f:
+with open('3954_cv_sweep_high_config45_N10.pkl', 'rb') as f:
     cv13_N10_data = pickle.load(f)
-with open('pastconfigs/3954_cv_sweep_high_config13_N20.pkl', 'rb') as f:
+with open('3954_cv_sweep_high_config45_N20.pkl', 'rb') as f:
     cv13_N20_data = pickle.load(f)
-with open('pastconfigs/3954_cv_sweep_low_config2_N10.pkl', 'rb') as f:
+with open('3954_cv_sweep_high_config45_N30.pkl', 'rb') as f:
+    cv13_N30_data = pickle.load(f)
+
+with open('3954_cv_sweep_low_config4_N10.pkl', 'rb') as f:
     cv2_N10_data = pickle.load(f)
-with open('pastconfigs/3954_cv_sweep_low_config2_N20.pkl', 'rb') as f:
+with open('3954_cv_sweep_low_config4_N20.pkl', 'rb') as f:
     cv2_N20_data = pickle.load(f)
+with open('3954_cv_sweep_low_config4_N30.pkl', 'rb') as f:
+    cv2_N30_data = pickle.load(f)
 
-with open('pastconfigs/1754_cv_sweep_high_config12_N10.pkl', 'rb') as f:
+with open('1754_cv_sweep_high_config35_N10.pkl', 'rb') as f:
     cv12_N10_data = pickle.load(f)
-with open('pastconfigs/1754_cv_sweep_high_config12_N20.pkl', 'rb') as f:
+with open('1754_cv_sweep_high_config35_N20.pkl', 'rb') as f:
     cv12_N20_data = pickle.load(f)
-with open('pastconfigs/1754_cv_sweep_low_config6_N10.pkl', 'rb') as f:
-    cv6_N10_data = pickle.load(f)
-with open('pastconfigs/1754_cv_sweep_low_config6_N20.pkl', 'rb') as f:
-    cv6_N20_data = pickle.load(f)
+with open('1754_cv_sweep_high_config35_N30.pkl', 'rb') as f:
+    cv12_N30_data = pickle.load(f)
 
+with open('1754_cv_sweep_low_config12_N10.pkl', 'rb') as f:
+    cv6_N10_data = pickle.load(f)
+with open('1754_cv_sweep_low_config12_N20.pkl', 'rb') as f:
+    cv6_N20_data = pickle.load(f)
+with open('1754_cv_sweep_low_config12_N30.pkl', 'rb') as f:
+    cv6_N30_data = pickle.load(f)
 
 # Extract robustness arrays using your existing helper
 cv13_N10 = extract_cv_arrays(cv13_N10_data)
 cv13_N20 = extract_cv_arrays(cv13_N20_data)
+cv13_N30 = extract_cv_arrays(cv13_N30_data)
 cv2_N10  = extract_cv_arrays(cv2_N10_data)
 cv2_N20  = extract_cv_arrays(cv2_N20_data)
+cv2_N30  = extract_cv_arrays(cv2_N30_data)
 cv12_N10 = extract_cv_arrays(cv12_N10_data)
 cv12_N20 = extract_cv_arrays(cv12_N20_data)
+cv12_N30 = extract_cv_arrays(cv12_N30_data)
 cv6_N10  = extract_cv_arrays(cv6_N10_data)
 cv6_N20  = extract_cv_arrays(cv6_N20_data)
+cv6_N30  = extract_cv_arrays(cv6_N30_data)
 
 robustness_curves = [
+    # --- TOPOLOGY #3954 (Config 45: Robust, Config 4: Fragile) ---
     {
-        'label': '#3954 robust (config 13, N=10)',
+        'label': '#3954 Robust (Config 45, N=10)',
         'CV': cv13_N10['CV'], 'robustness': cv13_N10['robustness'],
         'color': 'cornflowerblue', 'marker': 'o', 'linestyle': '-',
     },
     {
-        'label': '#3954 robust (config 13, N=20)',
+        'label': '#3954 Robust (Config 45, N=20)',
         'CV': cv13_N20['CV'], 'robustness': cv13_N20['robustness'],
-        'color': 'cornflowerblue', 'marker': 'o', 'linestyle': '---',
+        'color': 'cornflowerblue', 'marker': 'o', 'linestyle': '--',
     },
     {
-        'label': '#3954 fragile (config 2, N=10)',
+        'label': '#3954 Robust (Config 45, N=30)',
+        'CV': cv13_N30['CV'], 'robustness': cv13_N30['robustness'],
+        'color': 'cornflowerblue', 'marker': 'o', 'linestyle': ':',
+    },
+    {
+        'label': '#3954 Fragile (Config 4, N=10)',
         'CV': cv2_N10['CV'], 'robustness': cv2_N10['robustness'],
         'color': 'lightskyblue', 'marker': 's', 'linestyle': '-',
     },
     {
-        'label': '#3954 fragile (config 2, N=20)',
+        'label': '#3954 Fragile (Config 4, N=20)',
         'CV': cv2_N20['CV'], 'robustness': cv2_N20['robustness'],
-        'color': 'lightskyblue', 'marker': 's', 'linestyle': '---',
+        'color': 'lightskyblue', 'marker': 's', 'linestyle': '--',
     },
     {
-        'label': '#1754 robust (config 12, N=10)',
+        'label': '#3954 Fragile (Config 4, N=30)',
+        'CV': cv2_N30['CV'], 'robustness': cv2_N30['robustness'],
+        'color': 'lightskyblue', 'marker': 's', 'linestyle': ':',
+    },
+    {
+        'label': '#1754 Robust (Config 35, N=10)',
         'CV': cv12_N10['CV'], 'robustness': cv12_N10['robustness'],
         'color': 'blueviolet', 'marker': '^', 'linestyle': '-',
     },
     {
-        'label': '#1754 robust (config 12, N=20)',
+        'label': '#1754 Robust (Config 35, N=20)',
         'CV': cv12_N20['CV'], 'robustness': cv12_N20['robustness'],
-        'color': 'blueviolet', 'marker': '^', 'linestyle': '---',
+        'color': 'blueviolet', 'marker': '^', 'linestyle': '--',
     },
     {
-        'label': '#1754 fragile (config 6, N=10)',
+        'label': '#1754 Robust (Config 35, N=30)',
+        'CV': cv12_N30['CV'], 'robustness': cv12_N30['robustness'],
+        'color': 'blueviolet', 'marker': '^', 'linestyle': ':',
+    },
+    {
+        'label': '#1754 Fragile (Config 12, N=10)',
         'CV': cv6_N10['CV'], 'robustness': cv6_N10['robustness'],
         'color': 'mediumorchid', 'marker': 'D', 'linestyle': '-',
     },
     {
-        'label': '#1754 fragile (config 6, N=20)',
+        'label': '#1754 Fragile (Config 12, N=20)',
         'CV': cv6_N20['CV'], 'robustness': cv6_N20['robustness'],
-        'color': 'mediumorchid', 'marker': 'D', 'linestyle': '---',
+        'color': 'mediumorchid', 'marker': 'D', 'linestyle': '--',
+    },
+    {
+        'label': '#1754 Fragile (Config 12, N=30)',
+        'CV': cv6_N30['CV'], 'robustness': cv6_N30['robustness'],
+        'color': 'mediumorchid', 'marker': 'D', 'linestyle': ':',
     },    
 ]
+
 
 fig, ax = plt.subplots(figsize=(11, 6))
 
@@ -571,10 +607,76 @@ ax.grid(True, alpha=0.3)
 ax.legend(fontsize=10, loc='center right', ncol=1, framealpha=0.95)
 
 plt.tight_layout()
-plt.savefig('fig5_robustness_vs_cv_N10_vs_N20.png', dpi=300, bbox_inches='tight')
-print("Saved: fig5_robustness_vs_cv_N10_vs_N20.png")
+plt.savefig('thesis_fig5_robustness_vs_cv_N10_vs_N20.png', dpi=300, bbox_inches='tight')
+print("Saved: thesis_fig5_robustness_vs_cv_N10_vs_N20.png")
 plt.close()
 
+
+# combined plot with two subplots for each topology
+
+# Create 2 panels side-by-side with shared Y-axes
+fig, axes = plt.subplots(1, 2, figsize=(14, 5.5), sharey=True)
+
+for ax, topo in zip(axes, ['#3954', '#1754']):
+    # Plot reference background guides
+    ax.axhline(y=50, color='gray', linestyle=':', linewidth=1.2, alpha=0.7, zorder=1)
+    ax.axhline(y=0, color='black', linewidth=0.8, alpha=0.3, zorder=1)
+    
+    # Extract and plot matching topology metrics
+    for curve in robustness_curves:
+        if topo in curve['label']:
+            ax.plot(
+                curve['CV'], curve['robustness'],
+                marker=curve['marker'], color=curve['color'],
+                linestyle=curve['linestyle'], linewidth=2, markersize=6.5,
+                markeredgecolor='white', markeredgewidth=1.0,
+                label=curve['label'], zorder=3
+            )
+            
+    ax.set_title(f'Topology {topo} Stability Profiles', fontsize=12, fontweight='semibold', pad=12)
+    ax.set_xlabel('CV (Coefficient of Variation)', fontsize=10.5, color='#333333', labelpad=8)
+    ax.set_xlim(-0.01, 0.42)
+    ax.set_ylim(-3, 103)
+    ax.grid(True, linestyle=':', alpha=0.4, color='#cccccc', zorder=0)
+    ax.tick_params(axis='both', labelsize=9.5)
+
+axes[0].set_ylabel('Robustness (% of trials with Turing instability)', fontsize=10.5, color='#333333', labelpad=8)
+
+title_obj = fig.suptitle(
+    'Robustness to Heterogeneity Across Ring Sizes (N=10, N=20, N=30)\n'
+    'Comparison of Topological Stability Profiles Under Stochastic Parameter Variation',
+    fontsize=12.5, y=0.96, fontweight='semibold', color='#111111'
+)
+
+# Expanded unified legend handles matching the 3-step N scale
+legend_handles = [
+    mlines.Line2D([], [], color='cornflowerblue', marker='o', linestyle='-', label='#3954 Robust (Config 45, N=10)'),
+    mlines.Line2D([], [], color='cornflowerblue', marker='o', linestyle='--', label='#3954 Robust (Config 45, N=20)'),
+    mlines.Line2D([], [], color='cornflowerblue', marker='o', linestyle=':', label='#3954 Robust (Config 45, N=30)'),
+    mlines.Line2D([], [], color='lightskyblue', marker='s', linestyle='-', label='#3954 Fragile (Config 4, N=10)'),
+    mlines.Line2D([], [], color='lightskyblue', marker='s', linestyle='--', label='#3954 Fragile (Config 4, N=20)'),
+    mlines.Line2D([], [], color='lightskyblue', marker='s', linestyle=':', label='#3954 Fragile (Config 4, N=30)'),
+    mlines.Line2D([], [], color='blueviolet', marker='^', linestyle='-', label='#1754 Robust (Config 35, N=10)'),
+    mlines.Line2D([], [], color='blueviolet', marker='^', linestyle='--', label='#1754 Robust (Config 35, N=20)'),
+    mlines.Line2D([], [], color='blueviolet', marker='^', linestyle=':', label='#1754 Robust (Config 35, N=30)'),
+    mlines.Line2D([], [], color='mediumorchid', marker='D', linestyle='-', label='#1754 Fragile (Config 12, N=10)'),
+    mlines.Line2D([], [], color='mediumorchid', marker='D', linestyle='--', label='#1754 Fragile (Config 12, N=20)'),
+    mlines.Line2D([], [], color='mediumorchid', marker='D', linestyle=':', label='#1754 Fragile (Config 12, N=30)'),
+]
+
+leg_obj = fig.legend(
+    handles=legend_handles,
+    loc='lower center',
+    bbox_to_anchor=(0.5, -0.16),  # Lowered further down to fit 3 horizontal legend rows comfortably
+    ncol=4,                       
+    frameon=False,
+    fontsize=9.5
+)
+
+fig.subplots_adjust(left=0.08, right=0.96, top=0.80, bottom=0.22, wspace=0.14)
+
+plt.savefig('thesis_fig5_robustness_vs_cv_N10_to_N30_combined.png', dpi=300, bbox_inches='tight', bbox_extra_artists=[title_obj, leg_obj])
+plt.close()
 
 
 
