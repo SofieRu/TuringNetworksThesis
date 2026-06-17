@@ -517,7 +517,7 @@ cv12_N20 = extract_cv_arrays(cv12_N20_data)
 cv12_N30 = extract_cv_arrays(cv12_N30_data)
 cv6_N10  = extract_cv_arrays(cv6_N10_data)
 cv6_N20  = extract_cv_arrays(cv6_N20_data)
-cv6_N30  = extract_cv_arrays(cv6_N30_data)
+#cv6_N30  = extract_cv_arrays(cv6_N30_data)
 
 robustness_curves = [
     # --- TOPOLOGY #3954 (Config 45: Robust, Config 4: Fragile) ---
@@ -576,11 +576,11 @@ robustness_curves = [
         'CV': cv6_N20['CV'], 'robustness': cv6_N20['robustness'],
         'color': 'mediumorchid', 'marker': 'D', 'linestyle': '--',
     },
-    {
-        'label': '#1754 Fragile (Config 12, N=30)',
-        'CV': cv6_N30['CV'], 'robustness': cv6_N30['robustness'],
-        'color': 'mediumorchid', 'marker': 'D', 'linestyle': ':',
-    },    
+    # {
+    #     'label': '#1754 Fragile (Config 12, N=30)',
+    #     'CV': cv6_N30['CV'], 'robustness': cv6_N30['robustness'],
+    #     'color': 'mediumorchid', 'marker': 'D', 'linestyle': ':',
+    # },    
 ]
 
 
