@@ -271,40 +271,61 @@ for CV in CV_VALUES:
 # PLOT — 4 SUBPLOTS (CV 0.1 to 0.4), BASELINE (CV 0.0) IN BLACK EVERYWHERE
 # ============================================================================
 
+# ============================================================================
+# PLOT — 4 SUBPLOTS (CV 0.1 to 0.4), BASELINE (CV 0.0) IN BLACK EVERYWHERE
+# ============================================================================
+
+# ============================================================================
+# PLOT — 4 SUBPLOTS (CV 0.1 to 0.4), BASELINE (CV 0.0) IN BLACK EVERYWHERE
+# ============================================================================
+
 noisy_cvs = [0.1, 0.2, 0.3, 0.4]
 panel_colors = ['steelblue', 'deeppink', 'darkorange', 'forestgreen']
 
-fig, axes = plt.subplots(1, 4, figsize=(22, 6), sharey=True) # Slightly wider/taller for rotated text
-baseline_disp = dispersion_results[0.0]
+fig, axes = plt.subplots(1, 4, figsize=(22, 6), sharey=True)
+
+# 1. FIX: Flatten the baseline array from (1, 16) to (16,)
+baseline_disp = dispersion_results[0.0][0]
 
 for ax, CV, color in zip(axes, noisy_cvs, panel_colors):
     curves = dispersion_results[CV]
     
-    # 1. FIX: Plot against M_VALUES instead of K_DISCRETE for even spacing
+    # Plot baseline (CV = 0.0) as a solid black line with dots
     ax.plot(M_VALUES, baseline_disp, 'o-', color='black', linewidth=2.0, 
             markersize=8, label='Baseline (CV=0.0)', zorder=5)
     
+    # Plot all noisy trials for this specific CV level
     for i, disp in enumerate(curves):
         label = f'Noisy Trials (CV={CV})' if i == 0 else ""
         ax.plot(M_VALUES, disp, 'o-', color=color, linewidth=1.2,
                 markersize=6, alpha=0.4, zorder=3, label=label)
     
-    # Turing threshold reference
+    # Reference: Turing threshold line
     ax.axhline(0, color='red', linestyle=':', linewidth=1.5, alpha=0.7)
     
-    # 2. FIX: Set grid ticks strictly to integer m steps so they stay perfectly spaced
+    # Set grid ticks strictly to integer m steps so they stay perfectly spaced
     ax.set_xticks(M_VALUES)
     
-    # 3. FIX: Create combined text strings and rotate them diagonally
+    # Create combined text strings and rotate them diagonally
     tick_labels = [f'm={m}\n($k_m$={k:.2f})' for m, k in zip(M_VALUES, K_DISCRETE)]
     ax.set_xticklabels(tick_labels, rotation=45, ha='right', fontsize=9)
     
     ax.set_title(f'CV = {CV:.2f} ({len(curves)} trials)', fontsize=12)
     ax.set_xlabel('Ring Modes ($m$)', fontsize=11)
-    
-    # The grid lines will now also naturally be perfectly spaced
     ax.grid(alpha=0.3, linestyle='--')
     ax.legend(loc='upper right', fontsize=9)
 
+# 2. FIX: Target index 0 of the array to apply the shared left y-label
 axes[0].set_ylabel('Max Re(λ)', fontsize=11)
+
+fig.suptitle(
+    f'Discrete Ring Dispersion Under Parameter Noise (Config {CONFIG_ID}, N={N_RING} cells)\n'
+    f'Black Line tracks Uniform Baseline (CV=0.0)',
+    fontsize=13, y=1.04
+)
+
+plt.tight_layout()
+plt.savefig('dispersion_homogeneous_ring_3954_noise_comparison.png', dpi=200, bbox_inches='tight')
+print("\nSaved: dispersion_homogeneous_ring_3954_noise_comparison.png")
+plt.close()
 
