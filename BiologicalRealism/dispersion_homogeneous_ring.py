@@ -208,9 +208,6 @@ baseline_params = np.array([
 baseline_ss = np.array([row['u_star'], row['v_star'], row['w_star']])
 dU, dV, dW = row['dU'], row['dV'], row['dW']
 
-print(f"\nLoaded config {CONFIG_ID}: {row['config_name']}")
-
-
 # ============================================================================
 # HELPER: dispersion at discrete k_m values
 # ============================================================================
@@ -279,43 +276,102 @@ for CV in CV_VALUES:
 # PLOT — 4 SUBPLOTS (CV 0.1 to 0.4), BASELINE (CV 0.0) IN BLACK EVERYWHERE
 # ============================================================================
 
+# noisy_cvs = [0.1, 0.2, 0.3, 0.4]
+# panel_colors = ['steelblue', 'deeppink', 'darkorange', 'forestgreen']
+
+# fig, axes = plt.subplots(1, 4, figsize=(22, 6), sharey=True)
+
+# # 1. FIX: Flatten the baseline array from (1, 16) to (16,)
+# baseline_disp = dispersion_results[0.0][0]
+
+# for ax, CV, color in zip(axes, noisy_cvs, panel_colors):
+#     curves = dispersion_results[CV]
+    
+#     # Plot baseline (CV = 0.0) as a solid black line with dots
+#     ax.plot(M_VALUES, baseline_disp, 'o-', color='black', linewidth=2.0, 
+#             markersize=8, label='Baseline (CV=0.0)', zorder=5)
+    
+#     # Plot all noisy trials for this specific CV level
+#     for i, disp in enumerate(curves):
+#         label = f'Noisy Trials (CV={CV})' if i == 0 else ""
+#         ax.plot(M_VALUES, disp, 'o-', color=color, linewidth=1.2,
+#                 markersize=6, alpha=0.4, zorder=3, label=label)
+    
+#     # Reference: Turing threshold line
+#     ax.axhline(0, color='red', linestyle=':', linewidth=1.5, alpha=0.7)
+    
+#     # Set grid ticks strictly to integer m steps so they stay perfectly spaced
+#     ax.set_xticks(M_VALUES)
+    
+#     # Create combined text strings and rotate them diagonally
+#     tick_labels = [f'm={m}\n($k_m$={k:.2f})' for m, k in zip(M_VALUES, K_DISCRETE)]
+#     ax.set_xticklabels(tick_labels, rotation=45, ha='right', fontsize=9)
+    
+#     ax.set_title(f'CV = {CV:.2f} ({len(curves)} trials)', fontsize=12)
+#     ax.set_xlabel('Ring Modes ($m$)', fontsize=11)
+#     ax.grid(alpha=0.3, linestyle='--')
+#     ax.legend(loc='upper right', fontsize=9)
+
+# # 2. FIX: Target index 0 of the array to apply the shared left y-label
+# axes[0].set_ylabel('Max Re(λ)', fontsize=11)
+
+# fig.suptitle(
+#     f'Discrete Ring Dispersion Under Parameter Noise (Config {CONFIG_ID}, N={N_RING} cells)\n'
+#     f'Black Line tracks Uniform Baseline (CV=0.0)',
+#     fontsize=13, y=1.04
+# )
+
+# plt.tight_layout()
+# plt.savefig('dispersion_homogeneous_ring_3954_noise_comparison.png', dpi=200, bbox_inches='tight')
+# print("\nSaved: dispersion_homogeneous_ring_3954_noise_comparison.png")
+# plt.close()
+
+
+# ============================================================================
+# PLOT — 4 SUBPLOTS (CV 0.1 to 0.4), BASELINE (CV 0.0) IN BLACK EVERYWHERE
+# ============================================================================
+
 noisy_cvs = [0.1, 0.2, 0.3, 0.4]
 panel_colors = ['steelblue', 'deeppink', 'darkorange', 'forestgreen']
 
-fig, axes = plt.subplots(1, 4, figsize=(22, 6), sharey=True)
+# Adjusted figure size slightly to accommodate the tilted labels safely
+fig, axes = plt.subplots(1, 4, figsize=(22, 5.5), sharey=True)
 
-# 1. FIX: Flatten the baseline array from (1, 16) to (16,)
+# Extract the baseline array correctly as a 1D structure
 baseline_disp = dispersion_results[0.0][0]
+
+# Generate index array [0, 1, 2, ..., 15] to ensure perfectly even spacing
+x_indices = np.arange(len(K_DISCRETE))
 
 for ax, CV, color in zip(axes, noisy_cvs, panel_colors):
     curves = dispersion_results[CV]
     
     # Plot baseline (CV = 0.0) as a solid black line with dots
-    ax.plot(M_VALUES, baseline_disp, 'o-', color='black', linewidth=2.0, 
+    ax.plot(x_indices, baseline_disp, 'o-', color='black', linewidth=2.0, 
             markersize=8, label='Baseline (CV=0.0)', zorder=5)
     
     # Plot all noisy trials for this specific CV level
     for i, disp in enumerate(curves):
         label = f'Noisy Trials (CV={CV})' if i == 0 else ""
-        ax.plot(M_VALUES, disp, 'o-', color=color, linewidth=1.2,
+        ax.plot(x_indices, disp, 'o-', color=color, linewidth=1.2,
                 markersize=6, alpha=0.4, zorder=3, label=label)
     
     # Reference: Turing threshold line
     ax.axhline(0, color='red', linestyle=':', linewidth=1.5, alpha=0.7)
     
-    # Set grid ticks strictly to integer m steps so they stay perfectly spaced
-    ax.set_xticks(M_VALUES)
+    # Lock grid lines and tick marks to the even indexes
+    ax.set_xticks(x_indices)
     
-    # Create combined text strings and rotate them diagonally
-    tick_labels = [f'm={m}\n($k_m$={k:.2f})' for m, k in zip(M_VALUES, K_DISCRETE)]
-    ax.set_xticklabels(tick_labels, rotation=45, ha='right', fontsize=9)
+    # Clean single-line formatting: looks like k_0=0.00, k_5=1.00, etc.
+    tick_labels = [f'$k_{{{m}}}$={k:.2f}' for m, k in zip(M_VALUES, K_DISCRETE)]
+    ax.set_xticklabels(tick_labels, rotation=30, ha='right', fontsize=9)
     
     ax.set_title(f'CV = {CV:.2f} ({len(curves)} trials)', fontsize=12)
-    ax.set_xlabel('Ring Modes ($m$)', fontsize=11)
+    ax.set_xlabel('Discrete Wavenumbers ($k_m$)', fontsize=11)
     ax.grid(alpha=0.3, linestyle='--')
     ax.legend(loc='upper right', fontsize=9)
 
-# 2. FIX: Target index 0 of the array to apply the shared left y-label
+# Target the first axis panel specifically to set the outer shared y-label
 axes[0].set_ylabel('Max Re(λ)', fontsize=11)
 
 fig.suptitle(
@@ -328,4 +384,3 @@ plt.tight_layout()
 plt.savefig('dispersion_homogeneous_ring_3954_noise_comparison.png', dpi=200, bbox_inches='tight')
 print("\nSaved: dispersion_homogeneous_ring_3954_noise_comparison.png")
 plt.close()
-
