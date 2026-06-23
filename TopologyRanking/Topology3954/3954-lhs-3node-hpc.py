@@ -86,7 +86,7 @@ def is_turing_diego(J, DU, DV, DW):
     
     # SUPPOSED TO BE 0.01 STEP, BUT INCREASED TO 0.1 FOR SPEED, CHANGE BACK LATER 
     D = np.diag([DU, DV, DW])
-    for k in np.arange(0.01, 10.01, 0.1):   
+    for k in np.arange(0.01, 10.01, 0.01):   
         M = J - k**2 * D
         a1 = -np.trace(M)
         a2 = (M[0,0]*M[1,1] - M[0,1]*M[1,0] +
@@ -150,7 +150,7 @@ def is_turing_shaberi(J, eigs_0, DU, DV, DW):
     
     # STEP 2: Sweep k ∈ [0, 10] with step 0.01 (Shaberi 2025 methodology)
     D = np.diag([DU, DV, DW])
-    k_values = np.arange(0.01, 10.01, 0.1) # change later back to 0.01
+    k_values = np.arange(0.01, 10.01, 0.01) # change later back to 0.01
     
     max_reals = np.zeros(len(k_values))
     has_complex_unstable = False
@@ -224,114 +224,86 @@ def is_turing_shaberi(J, eigs_0, DU, DV, DW):
 
 
 DIFFUSION_CONFIGS = {
-    
     # TYPE 1
-    # controls
     # 0:  {"name": "NEW_LHS_3954_Type1_Control_Slow",         "dU": 0.1,  "dV": 0.1,  "dW": 0.1},
-    1:  {"name": "NEW_LHS_3954_Type1_Control_Equal",        "dU": 1.0,  "dV": 1.0,  "dW": 1.0},
     # 2:  {"name": "NEW_LHS_3954_Type1_Control_Fast",         "dU": 10.0, "dV": 10.0, "dW": 10.0},
+    0:  {"name": "FINAL_LHS_3954_Type1_Control",              "dU": 1.0,  "dV": 1.0,  "dW": 1.0},
 
     # node u diffuses faster than v and w
-    3:  {"name": "NEW_LHS_3954_Type1_UFast_Unequal1",       "dU": 10.0, "dV": 1.0,  "dW": 1.0},
-    4:  {"name": "NEW_LHS_3954_Type1_UFast_Unequal2",       "dU": 1.0,  "dV": 0.1,  "dW": 0.1},
-    5:  {"name": "NEW_LHS_3954_Type1_UFast_Unequal3",       "dU": 10.0, "dV": 0.1,  "dW": 1.0},
-    6:  {"name": "NEW_LHS_3954_Type1_UFast_Unequal4",       "dU": 10.0, "dV": 1.0,  "dW": 0.1},
-    7:  {"name": "NEW_LHS_3954_Type1_UFast_Unequal5",       "dU": 10.0, "dV": 0.1,  "dW": 0.1},
+    1:  {"name": "FINAL_LHS_3954_Type1_UFast_Unequal1",       "dU": 10.0, "dV": 1.0,  "dW": 1.0},
+    2:  {"name": "FINAL_LHS_3954_Type1_UFast_Unequal2",       "dU": 1.0,  "dV": 0.1,  "dW": 0.1},
+    3:  {"name": "FINAL_LHS_3954_Type1_UFast_Unequal3",       "dU": 10.0, "dV": 0.1,  "dW": 1.0},
+    4:  {"name": "FINAL_LHS_3954_Type1_UFast_Unequal4",       "dU": 10.0, "dV": 1.0,  "dW": 0.1},
+    5:  {"name": "FINAL_LHS_3954_Type1_UFast_Unequal5",       "dU": 10.0, "dV": 0.1,  "dW": 0.1},
 
     # node v diffuses faster than u and w
-    8:  {"name": "NEW_LHS_3954_Type1_VFast_Unequal1",       "dU": 1.0,  "dV": 10.0, "dW": 1.0},
-    9:  {"name": "NEW_LHS_3954_Type1_VFast_Unequal2",       "dU": 0.1,  "dV": 1.0,  "dW": 0.1},
-    10: {"name": "NEW_LHS_3954_Type1_VFast_Unequal3",       "dU": 0.1,  "dV": 10.0, "dW": 1.0},
-    11: {"name": "NEW_LHS_3954_Type1_VFast_Unequal4",       "dU": 1.0,  "dV": 10.0, "dW": 0.1},
-    12: {"name": "NEW_LHS_3954_Type1_VFast_Unequal5",       "dU": 0.1,  "dV": 10.0, "dW": 0.1},
-
-    # node w diffuses faster than u and v
-    # 13: {"name": "NEW_LHS_3954_Type1_WFast_Unequal1",       "dU": 1.0,  "dV": 1.0,  "dW": 10.0},
-    # 14: {"name": "NEW_LHS_3954_Type1_WFast_Unequal2",       "dU": 0.1,  "dV": 0.1,  "dW": 1.0},
-    # 15: {"name": "NEW_LHS_3954_Type1_WFast_Unequal3",       "dU": 0.1,  "dV": 1.0,  "dW": 10.0},
-    # 16: {"name": "NEW_LHS_3954_Type1_WFast_Unequal4",       "dU": 1.0,  "dV": 0.1,  "dW": 10.0},
-    # 17: {"name": "NEW_LHS_3954_Type1_WFast_Unequal5",       "dU": 0.1,  "dV": 0.1,  "dW": 10.0},
-
-    # NEW_LHS_3954_Type1_WFast_Unequal1,13,1.0,1.0,10.0,1000000,969615,951296,1,1,1,0,0,0,0.0001,0.0001,0.0001
-    # NEW_LHS_3954_Type1_WFast_Unequal2,14,0.1,0.1,1.0,1000000,969615,951296,3,3,3,0,0,0,0.0003,0.0003,0.0003
-    # NEW_LHS_3954_Type1_WFast_Unequal3,15,0.1,1.0,10.0,1000000,969615,951296,144,144,144,0,0,0,0.0144,0.0144,0.0144
-    # NEW_LHS_3954_Type1_WFast_Unequal4,16,1.0,0.1,10.0,1000000,969615,951296,1,1,1,0,0,0,0.0001,0.0001,0.0001
-    # NEW_LHS_3954_Type1_WFast_Unequal5,17,0.1,0.1,10.0,1000000,969615,951296,29,29,29,0,0,0,0.0029,0.0029,0.0029
-
+    6:  {"name": "FINAL_LHS_3954_Type1_VFast_Unequal1",       "dU": 1.0,  "dV": 10.0, "dW": 1.0},
+    7:  {"name": "FINAL_LHS_3954_Type1_VFast_Unequal2",       "dU": 0.1,  "dV": 1.0,  "dW": 0.1},
+    8:  {"name": "FINAL_LHS_3954_Type1_VFast_Unequal3",       "dU": 0.1,  "dV": 10.0, "dW": 1.0},
+    9:  {"name": "FINAL_LHS_3954_Type1_VFast_Unequal4",       "dU": 1.0,  "dV": 10.0, "dW": 0.1},
+    10: {"name": "FINAL_LHS_3954_Type1_VFast_Unequal5",       "dU": 0.1,  "dV": 10.0, "dW": 0.1},
+    
     # nodes v and w diffuse faster than u
-    18: {"name": "NEW_LHS_3954_Type1_VWFast_Unequal1",      "dU": 1.0,  "dV": 10.0, "dW": 10.0},
-    19: {"name": "NEW_LHS_3954_Type1_VWFast_Unequal2",      "dU": 0.1,  "dV": 1.0,  "dW": 1.0},
-    20: {"name": "NEW_LHS_3954_Type1_VWFast_Unequal3",      "dU": 0.1,  "dV": 10.0, "dW": 10.0},
+    11: {"name": "FINAL_LHS_3954_Type1_VWFast_Unequal1",      "dU": 1.0,  "dV": 10.0, "dW": 10.0},
+    12: {"name": "FINAL_LHS_3954_Type1_VWFast_Unequal2",      "dU": 0.1,  "dV": 1.0,  "dW": 1.0},
+    13: {"name": "FINAL_LHS_3954_Type1_VWFast_Unequal3",      "dU": 0.1,  "dV": 10.0, "dW": 10.0},
 
     # nodes u and v diffuse faster than w
-    21: {"name": "NEW_LHS_3954_Type1_UVFast_Unequal1",      "dU": 10.0, "dV": 10.0, "dW": 1.0},
-    22: {"name": "NEW_LHS_3954_Type1_UVFast_Unequal2",      "dU": 1.0,  "dV": 1.0,  "dW": 0.1},
-    23: {"name": "NEW_LHS_3954_Type1_UVFast_Unequal3",      "dU": 10.0, "dV": 10.0, "dW": 0.1},
+    14: {"name": "FINAL_LHS_3954_Type1_UVFast_Unequal1",      "dU": 10.0, "dV": 10.0, "dW": 1.0},
+    15: {"name": "FINAL_LHS_3954_Type1_UVFast_Unequal2",      "dU": 1.0,  "dV": 1.0,  "dW": 0.1},
+    16: {"name": "FINAL_LHS_3954_Type1_UVFast_Unequal3",      "dU": 10.0, "dV": 10.0, "dW": 0.1},
 
     # TYPE 2 
     # (node v is immobile)
-    24: {"name": "NEW_LHS_3954_Type2_VFreeze_Equal1",       "dU": 1.0,  "dV": 0.0,  "dW": 1.0},
-    25: {"name": "NEW_LHS_3954_Type2_VFreeze_Equal2",       "dU": 0.1,  "dV": 0.0,  "dW": 0.1},
-    26: {"name": "NEW_LHS_3954_Type2_VFreeze_Equal3",       "dU": 10.0, "dV": 0.0,  "dW": 10.0},
-    27: {"name": "NEW_LHS_3954_Type2_VFreeze_Unequal1",     "dU": 0.1,  "dV": 0.0,  "dW": 1.0},
-    28: {"name": "NEW_LHS_3954_Type2_VFreeze_Unequal2",     "dU": 1.0,  "dV": 0.0,  "dW": 0.1},
-    29: {"name": "NEW_LHS_3954_Type2_VFreeze_Unequal3",     "dU": 0.1,  "dV": 0.0,  "dW": 10.0},
-    30: {"name": "NEW_LHS_3954_Type2_VFreeze_Unequal4",     "dU": 10.0, "dV": 0.0,  "dW": 0.1},
-    31: {"name": "NEW_LHS_3954_Type2_VFreeze_Unequal5",     "dU": 1.0,  "dV": 0.0,  "dW": 10.0},
-    32: {"name": "NEW_LHS_3954_Type2_VFreeze_Unequal6",     "dU": 10.0, "dV": 0.0,  "dW": 1.0},
+    17: {"name": "FINAL_LHS_3954_Type2_VFreeze_Equal1",       "dU": 1.0,  "dV": 0.0,  "dW": 1.0},
+    18: {"name": "FINAL_LHS_3954_Type2_VFreeze_Equal2",       "dU": 0.1,  "dV": 0.0,  "dW": 0.1},
+    19: {"name": "FINAL_LHS_3954_Type2_VFreeze_Equal3",       "dU": 10.0, "dV": 0.0,  "dW": 10.0},
+    20: {"name": "FINAL_LHS_3954_Type2_VFreeze_Unequal1",     "dU": 0.1,  "dV": 0.0,  "dW": 1.0},
+    21: {"name": "FINAL_LHS_3954_Type2_VFreeze_Unequal2",     "dU": 1.0,  "dV": 0.0,  "dW": 0.1},
+    22: {"name": "FINAL_LHS_3954_Type2_VFreeze_Unequal3",     "dU": 0.1,  "dV": 0.0,  "dW": 10.0},
+    23: {"name": "FINAL_LHS_3954_Type2_VFreeze_Unequal4",     "dU": 10.0, "dV": 0.0,  "dW": 0.1},
+    24: {"name": "FINAL_LHS_3954_Type2_VFreeze_Unequal5",     "dU": 1.0,  "dV": 0.0,  "dW": 10.0},
+    25: {"name": "FINAL_LHS_3954_Type2_VFreeze_Unequal6",     "dU": 10.0, "dV": 0.0,  "dW": 1.0},
 
     # TYPE 3 (freeze core destabilising nodes u and w)
     # node u immobile
-    33: {"name": "NEW_LHS_3954_Type3_UFreeze_Equal1",       "dU": 0.0, "dV": 1.0,  "dW": 1.0},
-    34: {"name": "NEW_LHS_3954_Type3_UFreeze_Equal2",       "dU": 0.0, "dV": 0.1,  "dW": 0.1},
-    35: {"name": "NEW_LHS_3954_Type3_UFreeze_Equal3",       "dU": 0.0, "dV": 10.0, "dW": 10.0},
-    36: {"name": "NEW_LHS_3954_Type3_UFreeze_Unequal1",     "dU": 0.0, "dV": 1.0,  "dW": 0.1},
-    37: {"name": "NEW_LHS_3954_Type3_UFreeze_Unequal2",     "dU": 0.0, "dV": 0.1,  "dW": 1.0},
-    38: {"name": "NEW_LHS_3954_Type3_UFreeze_Unequal3",     "dU": 0.0, "dV": 10.0, "dW": 1.0},
-    39: {"name": "NEW_LHS_3954_Type3_UFreeze_Unequal4",     "dU": 0.0, "dV": 1.0,  "dW": 10.0},
-    40: {"name": "NEW_LHS_3954_Type3_UFreeze_Unequal5",     "dU": 0.0, "dV": 0.1,  "dW": 10.0},
-    41: {"name": "NEW_LHS_3954_Type3_UFreeze_Unequal6",     "dU": 0.0, "dV": 10.0, "dW": 0.1},
+    26: {"name": "FINAL_LHS_3954_Type3_UFreeze_Equal1",       "dU": 0.0, "dV": 1.0,  "dW": 1.0},
+    27: {"name": "FINAL_LHS_3954_Type3_UFreeze_Equal2",       "dU": 0.0, "dV": 0.1,  "dW": 0.1},
+    28: {"name": "FINAL_LHS_3954_Type3_UFreeze_Equal3",       "dU": 0.0, "dV": 10.0, "dW": 10.0},
+    29: {"name": "FINAL_LHS_3954_Type3_UFreeze_Unequal1",     "dU": 0.0, "dV": 1.0,  "dW": 0.1},
+    30: {"name": "FINAL_LHS_3954_Type3_UFreeze_Unequal2",     "dU": 0.0, "dV": 0.1,  "dW": 1.0},
+    31: {"name": "FINAL_LHS_3954_Type3_UFreeze_Unequal3",     "dU": 0.0, "dV": 10.0, "dW": 1.0},
+    32: {"name": "FINAL_LHS_3954_Type3_UFreeze_Unequal4",     "dU": 0.0, "dV": 1.0,  "dW": 10.0},
+    33: {"name": "FINAL_LHS_3954_Type3_UFreeze_Unequal5",     "dU": 0.0, "dV": 0.1,  "dW": 10.0},
+    34: {"name": "FINAL_LHS_3954_Type3_UFreeze_Unequal6",     "dU": 0.0, "dV": 10.0, "dW": 0.1},
 
     # node w immobile
-    42: {"name": "NEW_LHS_3954_Type3_WFreeze_Equal1",       "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
-    43: {"name": "NEW_LHS_3954_Type3_WFreeze_Equal2",       "dU": 0.1,  "dV": 0.1,  "dW": 0.0},
-    44: {"name": "NEW_LHS_3954_Type3_WFreeze_Equal3",       "dU": 10.0, "dV": 10.0, "dW": 0.0},
-    45: {"name": "NEW_LHS_3954_Type3_WFreeze_Unequal1",     "dU": 1.0,  "dV": 0.1,  "dW": 0.0},
-    46: {"name": "NEW_LHS_3954_Type3_WFreeze_Unequal2",     "dU": 0.1,  "dV": 1.0,  "dW": 0.0},
-    47: {"name": "NEW_LHS_3954_Type3_WFreeze_Unequal3",     "dU": 10.0, "dV": 1.0,  "dW": 0.0},
-    48: {"name": "NEW_LHS_3954_Type3_WFreeze_Unequal4",     "dU": 1.0,  "dV": 10.0, "dW": 0.0},
-    49: {"name": "NEW_LHS_3954_Type3_WFreeze_Unequal5",     "dU": 0.1,  "dV": 10.0, "dW": 0.0},
-    50: {"name": "NEW_LHS_3954_Type3_WFreeze_Unequal6",     "dU": 10.0, "dV": 0.1,  "dW": 0.0},
+    35: {"name": "FINAL_LHS_3954_Type3_WFreeze_Equal1",       "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
+    36: {"name": "FINAL_LHS_3954_Type3_WFreeze_Equal2",       "dU": 0.1,  "dV": 0.1,  "dW": 0.0},
+    37: {"name": "FINAL_LHS_3954_Type3_WFreeze_Equal3",       "dU": 10.0, "dV": 10.0, "dW": 0.0},
+    38: {"name": "FINAL_LHS_3954_Type3_WFreeze_Unequal1",     "dU": 1.0,  "dV": 0.1,  "dW": 0.0},
+    39: {"name": "FINAL_LHS_3954_Type3_WFreeze_Unequal2",     "dU": 0.1,  "dV": 1.0,  "dW": 0.0},
+    40: {"name": "FINAL_LHS_3954_Type3_WFreeze_Unequal3",     "dU": 10.0, "dV": 1.0,  "dW": 0.0},
+    41: {"name": "FINAL_LHS_3954_Type3_WFreeze_Unequal4",     "dU": 1.0,  "dV": 10.0, "dW": 0.0},
+    42: {"name": "FINAL_LHS_3954_Type3_WFreeze_Unequal5",     "dU": 0.1,  "dV": 10.0, "dW": 0.0},
+    43: {"name": "FINAL_LHS_3954_Type3_WFreeze_Unequal6",     "dU": 10.0, "dV": 0.1,  "dW": 0.0},
 
     # node u + w immobile
-    # 51: {"name": "NEW_LHS_3954_Type3_UWFreeze_Equal1",      "dU": 0.0,  "dV": 1.0,  "dW": 0.0},
-    # 52: {"name": "NEW_LHS_3954_Type3_UWFreeze_Equal2",      "dU": 0.0,  "dV": 0.1,  "dW": 0.0},
-    # 53: {"name": "NEW_LHS_3954_Type3_UWFreeze_Equal3",      "dU": 0.0,  "dV": 10.0, "dW": 0.0},
-
-    # NEW_LHS_3954_Type3_UWFreeze_Equal1,51,0.0,1.0,0.0,1000000,969615,951296,6535,6948,0,0,322,6626,0.6535,0.6948,0.0
-    # NEW_LHS_3954_Type3_UWFreeze_Equal2,52,0.0,0.1,0.0,1000000,969615,951296,5661,6027,0,0,338,5689,0.5661,0.6027,0.0
-    # NEW_LHS_3954_Type3_UWFreeze_Equal3,53,0.0,10.0,0.0,1000000,969615,951296,6502,7034,0,0,260,6774,0.6502,0.7034,0.0
+    44: {"name": "FINAL_LHS_3954_Type3_UWFreeze_Equal1",      "dU": 0.0,  "dV": 1.0,  "dW": 0.0},
+    45: {"name": "FINAL_LHS_3954_Type3_UWFreeze_Equal2",      "dU": 0.0,  "dV": 0.1,  "dW": 0.0},
+    46: {"name": "FINAL_LHS_3954_Type3_UWFreeze_Equal3",      "dU": 0.0,  "dV": 10.0, "dW": 0.0},
 
     # node v + w immobile
-    54: {"name": "NEW_LHS_3954_Type3_VWFreeze_Equal1",      "dU": 1.0,  "dV": 0.0, "dW": 0.0},
-    55: {"name": "NEW_LHS_3954_Type3_VWFreeze_Equal2",      "dU": 0.1,  "dV": 0.0, "dW": 0.0},
-    56: {"name": "NEW_LHS_3954_Type3_VWFreeze_Equal3",      "dU": 10.0, "dV": 0.0, "dW": 0.0},
-
-    # node u + v immobile
-    # 57: {"name": "NEW_LHS_3954_Type3_UVFreeze_Equal1",      "dU": 0.0, "dV": 0.0, "dW": 1.0}, 
-    # 58: {"name": "NEW_LHS_3954_Type3_UVFreeze_Equal2",      "dU": 0.0, "dV": 0.0, "dW": 0.1},
-    # 59: {"name": "NEW_LHS_3954_Type3_UVFreeze_Equal3",      "dU": 0.0, "dV": 0.0, "dW": 10.0},
-
-    # NEW_LHS_3954_Type3_UVFreeze_Equal1,57,0.0,0.0,1.0,1000000,969615,951296,132,134,0,0,2,132,0.0132,0.0134,0.0
-    # NEW_LHS_3954_Type3_UVFreeze_Equal2,58,0.0,0.0,0.1,1000000,969615,951296,120,122,0,0,2,120,0.012,0.0122,0.0
-    # NEW_LHS_3954_Type3_UVFreeze_Equal3,59,0.0,0.0,10.0,1000000,969615,951296,133,135,0,0,2,133,0.0133,0.0135,0.0
+    47: {"name": "FINAL_LHS_3954_Type3_VWFreeze_Equal1",      "dU": 1.0,  "dV": 0.0, "dW": 0.0},
+    48: {"name": "FINAL_LHS_3954_Type3_VWFreeze_Equal2",      "dU": 0.1,  "dV": 0.0, "dW": 0.0},
+    49: {"name": "FINAL_LHS_3954_Type3_VWFreeze_Equal3",      "dU": 10.0, "dV": 0.0, "dW": 0.0},
 }
 
 # add one version where node W is always immobile so like DCI, also 100 i think is type 2 when node w is immobile but not sure could also be type 3 when we freeze the entire destabilising cycle so VW??
 
 # MAIN ANALYSIS FUNCTION
 
-def run_analysis(config_id, n_samples, save_successful_params=False, max_successful=10000):
+def run_analysis(config_id, n_samples, save_successful_params=False, max_successful=100):
     
     config = DIFFUSION_CONFIGS[config_id]
     DU, DV, DW = config["dU"], config["dV"], config["dW"]
@@ -420,7 +392,7 @@ def run_analysis(config_id, n_samples, save_successful_params=False, max_success
                         D = np.diag([DU, DV, DW])
                         max_growth_rate = -np.inf
 
-                        for k in np.arange(0.01, 10.01, 0.1):  # finer step for accuracy
+                        for k in np.arange(0.01, 10.01, 0.01):  # finer step for accuracy
                             M = J - k**2 * D
                             eigs_k = np.linalg.eigvals(M)
                             max_real_k = np.max(np.real(eigs_k))
@@ -481,7 +453,7 @@ if __name__ == "__main__":
     
     # NEW: Check for parameter saving flags
     save_successful_params = '--save-params' in sys.argv
-    max_successful = 10000  # Default to saving top 2 parameter sets
+    max_successful = 100  # Default to saving top 2 parameter sets
 
     for arg in sys.argv:
         if arg.startswith('--n-to-save='):

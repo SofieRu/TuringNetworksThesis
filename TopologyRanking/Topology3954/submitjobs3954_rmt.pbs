@@ -1,7 +1,7 @@
 #!/bin/bash
-#PBS -J 0-59
+#PBS -J 0-49
 #PBS -l select=1:ncpus=1:mem=16gb
-#PBS -l walltime=44:00:00
+#PBS -l walltime=55:00:00
 #PBS -N rmt_3954
 #PBS -o logs/
 #PBS -e logs/
