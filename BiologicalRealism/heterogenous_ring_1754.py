@@ -142,10 +142,7 @@ print(f"Testing config {CONFIG_TO_TEST}: {row['config_name']}")
 print(f"Max growth rate from Obj 1: {row['max_growth_rate']:.6f}")
 
 
-
 ###########################################
-
-
 
 # FUNCTION TO BUILD JACOBIAN FOR RING OF IDENTICAL CELLS
 
@@ -360,8 +357,7 @@ results_by_cv = []
     
 #     print(f"  Mean Re(λ): {result['mean_eig']:.6f} ± {result['std_eig']:.6f}")
 #     print(f"  Robustness: {robustness:.1f}% ({turing_count}/{n_trials})")
-
-
+ 
 for CV in [0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4]:
     print(f"\n{'='*70}")
     print(f"CV = {CV}")
