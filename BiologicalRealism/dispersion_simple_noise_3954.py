@@ -154,7 +154,6 @@ plt.close()
 CONFIG_IDS = [45, 4]
 fig_multi, axes_multi = plt.subplots(2, 4, figsize=(18, 8), sharex=True, sharey='row')
 
-
 for row_idx, config_id in enumerate(CONFIG_IDS):
     row = type_i[(type_i['config_id'] == config_id) & (type_i['param_rank'] == 1)].iloc[0]
 

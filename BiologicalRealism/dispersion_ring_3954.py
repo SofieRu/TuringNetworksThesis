@@ -8,6 +8,8 @@ from heterogenous_ring_3954 import compute_jacobian, find_steady_state
 # have to run this first: module load SciPy-bundle/2024.05-gfbf-2024a
 # have to run this first: pip install seaborn --user
 
+
+
 # ============================================================================
 # CONFIG
 # ============================================================================
@@ -24,7 +26,6 @@ from heterogenous_ring_3954 import compute_jacobian, find_steady_state
 # K_DISCRETE = 2 * np.sin(M_VALUES * np.pi / N_RING)
 
 # print(f"Discrete k_m values for N={N_RING}: {K_DISCRETE}")
-
 
 # # ============================================================================
 # # LOAD BASELINE TYPE-I PARAMETER SET
@@ -151,29 +152,8 @@ from heterogenous_ring_3954 import compute_jacobian, find_steady_state
 # print("\nSaved: dispersion_homogeneous_ring_3954_noise_comparison.png")
 # plt.close()
 
-
-
-
-
-
-
-
-
-
-###### code doesnt run but its for having 3954 and 1754 in one plot just the robust one though!
-
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-
-# Import the topology-specific functions with aliases to avoid namespace collisions
-from heterogenous_ring_3954 import compute_jacobian as jac_3954, find_steady_state as ss_3954
-# Replace 'heterogenous_ring_1754' with the exact name of your local module
-from heterogenous_ring_1754 import compute_jacobian as jac_1754, find_steady_state as ss_1754
-
-# ============================================================================
-# RUN CONFIGURATION (SHARED)
-# ============================================================================
+CSV_PATH = '../TopologyRanking/Topology3954/3954_NEWTURINGCLASS_lhs_results_parameters.csv'
+CONFIG_IDS = [45, 4]                    # The two configurations to compare
 N_RING = 30                             # number of cells in ring
 N_TRIALS = 10                            # noisy realisations per CV
 CV_VALUES = [0.0, 0.1, 0.2, 0.3, 0.4]    # Noise levels
@@ -184,31 +164,18 @@ M_VALUES = np.arange(0, N_RING // 2 + 1)
 K_DISCRETE = 2 * np.sin(M_VALUES * np.pi / N_RING)
 x_indices = np.arange(len(K_DISCRETE))
 
-# ============================================================================
-# MULTI-TOPOLOGY METADATA PREPARATION
-# ============================================================================
-topologies_meta = [
-    {
-        "id": "3954",
-        "csv_path": '../TopologyRanking/Topology3954/3954_NEWTURINGCLASS_lhs_results_parameters.csv',
-        "config_id": 45,
-        "jacobian_func": jac_3954,
-        "ss_func": ss_3954
-    },
-    {
-        "id": "1754",
-        "csv_path": '../TopologyRanking/Topology1754/1754_NEWTURINGCLASS_lhs_results_parameters.csv', # Verify this path matches yours
-        "config_id": 35, # Adjust if Topology 1754 uses a different config ID
-        "jacobian_func": jac_1754,
-        "ss_func": ss_1754
-    }
-]
-  
+print(f"Discrete k_m values for N={N_RING}: {K_DISCRETE}")
+
+# Load the main dataframe once
+df = pd.read_csv(CSV_PATH)
+type_i = df[df['classification'] == 'Type-I']
+
 # ============================================================================
 # HELPER: dispersion at discrete k_m values
 # ============================================================================
-def compute_discrete_dispersion(params, ss, dU, dV, dW, k_discrete, jacobian_func):
-    J = jacobian_func(ss, params)
+
+def compute_discrete_dispersion(params, ss, dU, dV, dW, k_discrete):
+    J = compute_jacobian(ss, params)
     D = np.diag([dU, dV, dW])
     max_reals = np.zeros(len(k_discrete))
     for i, k in enumerate(k_discrete):
@@ -217,26 +184,23 @@ def compute_discrete_dispersion(params, ss, dU, dV, dW, k_discrete, jacobian_fun
     return max_reals
 
 # ============================================================================
-# SETUP PLOT — 2 ROWS (Topologies), 4 COLUMNS (CV Levels)
+# INITIALISE PLOT: 2 Rows (one per Config), 4 Columns (one per CV)
 # ============================================================================
+
 noisy_cvs = [0.1, 0.2, 0.3, 0.4]
 panel_colors = ['steelblue', 'deeppink', 'darkorange', 'forestgreen']
 
-# nrows=2 creates an explicit row for each topology
-fig, axes = plt.subplots(nrows=2, ncols=4, figsize=(22, 11), sharey='row')
-
-np.random.seed(SEED)
+fig, axes = plt.subplots(2, 4, figsize=(22, 11), sharey='row') # sharey='row' links y-axis per config
 
 # ============================================================================
-# ITERATE OVER TOPOLOGIES (ROWS)
+# MAIN LOOP OVER CONFIGURATIONS
 # ============================================================================
-for row_idx, topo in enumerate(topologies_meta):
-    print(f"\nProcessing Topology {topo['id']}...")
+
+for row_idx, config_id in enumerate(CONFIG_IDS):
+    print(f"\nProcessing Config ID: {config_id} (Row {row_idx + 1}/2)")
     
-    # Load parameters specific to this topology
-    df = pd.read_csv(topo['csv_path'])
-    type_i = df[df['classification'] == 'Type-I']
-    row_data = type_i[(type_i['config_id'] == topo['config_id']) & (type_i['param_rank'] == 1)].iloc[0]
+    # --- LOAD CONFIG-SPECIFIC PARAMETER SET ---
+    row_data = type_i[(type_i['config_id'] == config_id) & (type_i['param_rank'] == 1)].iloc[0]
 
     baseline_params = np.array([
         row_data['alpha_u'], row_data['beta_u'], row_data['K_uu'], row_data['K_vu'], row_data['delta_u'],
@@ -246,13 +210,13 @@ for row_idx, topo in enumerate(topologies_meta):
     baseline_ss = np.array([row_data['u_star'], row_data['v_star'], row_data['w_star']])
     dU, dV, dW = row_data['dU'], row_data['dV'], row_data['dW']
 
-    # Compute dispersion for each CV level
+    # --- COMPUTE DISPERSION FOR EACH CV ---
+    np.random.seed(SEED) # Reset seed for consistent noise generation across configs if desired
     dispersion_results = {CV: [] for CV in CV_VALUES}
 
     for CV in CV_VALUES:
         if CV == 0.0:
-            disp = compute_discrete_dispersion(baseline_params, baseline_ss,
-                                                dU, dV, dW, K_DISCRETE, topo['jacobian_func'])
+            disp = compute_discrete_dispersion(baseline_params, baseline_ss, dU, dV, dW, K_DISCRETE)
             dispersion_results[CV].append(disp)
         else:
             sigma = np.sqrt(np.log(1 + CV**2))
@@ -267,61 +231,63 @@ for row_idx, topo in enumerate(topologies_meta):
                 noise_factors = np.random.lognormal(mu, sigma, size=len(baseline_params))
                 params_noisy = baseline_params * noise_factors
                 
-                ss_noisy = topo['ss_func'](params_noisy)
+                ss_noisy = find_steady_state(params_noisy)
                 if ss_noisy is None:
                     continue
                 
-                disp = compute_discrete_dispersion(params_noisy, ss_noisy,
-                                                    dU, dV, dW, K_DISCRETE, topo['jacobian_func'])
+                disp = compute_discrete_dispersion(params_noisy, ss_noisy, dU, dV, dW, K_DISCRETE)
                 dispersion_results[CV].append(disp)
                 successful += 1
             
             print(f"  CV={CV}: {successful}/{N_TRIALS} successful trials")
 
-    # ============================================================================
-    # PLOT COLUMNS FOR THIS SPECIFIC TOPOLOGY ROW
-    # ============================================================================
+    # --- PLOT ROW FOR THIS CONFIG ---
     baseline_disp = dispersion_results[0.0][0]
-    
-    for col_idx, (CV, color) in enumerate(zip(noisy_cvs, panel_colors)):
-        ax = axes[row_idx, col_idx]  # Index into the 2D grid matrix
+    row_axes = axes[row_idx] # Grab the 4 subplots corresponding to this row
+
+    for col_idx, (ax, CV, color) in enumerate(zip(row_axes, noisy_cvs, panel_colors)):
         curves = dispersion_results[CV]
         
         # Plot baseline (CV = 0.0)
         ax.plot(x_indices, baseline_disp, 'o-', color='black', linewidth=2.0, 
                 markersize=8, label='Baseline (CV=0.0)', zorder=5)
         
-        # Plot noisy realizations
+        # Plot all noisy trials
         for i, disp in enumerate(curves):
             label = f'Noisy Trials (CV={CV})' if i == 0 else ""
             ax.plot(x_indices, disp, 'o-', color=color, linewidth=1.2,
                     markersize=6, alpha=0.4, zorder=3, label=label)
         
-        # Reference line
+        # Reference: Turing threshold line
         ax.axhline(0, color='red', linestyle=':', linewidth=1.5, alpha=0.7)
-        
-        # Handle labels and structural grid elements
         ax.set_xticks(x_indices)
-        tick_labels = [f'k_{{{m}}}={k:.2f}' for m, k in zip(M_VALUES, K_DISCRETE)]
+        
+        # Formatting X axes (only label the bottom row properly to save space, or label both)
+        tick_labels = [f'$k_{{{m}}}$={k:.2f}' for m, k in zip(M_VALUES, K_DISCRETE)]
         ax.set_xticklabels(tick_labels, rotation=30, ha='right', fontsize=9)
         
-        # Row-specific title enhancements
-        ax.set_title(f"Topo {topo['id']} | CV = {CV:.2f} ({len(curves)} trials)", fontsize=11)
-        ax.set_xlabel('Discrete Wavenumbers ($k_m$)', fontsize=11)
+        # Subplot Titles and Grid
+        ax.set_title(f'Config {config_id} | CV = {CV:.2f} ({len(curves)} trials)', fontsize=11)
+        if row_idx == 1: # Only put x-labels on bottom row for a clean layout
+            ax.set_xlabel('Discrete Wavenumbers ($k_m$)', fontsize=11)
+            
         ax.grid(alpha=0.3, linestyle='--')
-        ax.legend(loc='upper right', fontsize=9)
-    
-    # Label the leftmost subplots with the specific Topology ID and Max Re(λ) label
-    axes[row_idx, 0].set_ylabel(f"Topology {topo['id']}\nMax Re(λ)", fontsize=12, fontweight='bold')
+        ax.legend(loc='upper right', fontsize=8)
 
-# Global Layout Polishing
+    # Set the outer y-label only for the first subplot of this specific row
+    row_axes[0].set_ylabel(f'Config {config_id}\nMax Re(λ)', fontsize=12, fontweight='bold')
+
+# ============================================================================
+# SAVE AND FINISH
+# ============================================================================
+
 fig.suptitle(
-    f'Discrete Ring Dispersion Comparison: Topology 3954 vs Topology 1754 (N={N_RING} cells)\n'
-    f'Black Line tracks Uniform Baseline (CV=0.0)',
-    fontsize=14, y=1.02
+    f'Discrete Ring Dispersion Comparison (N={N_RING} cells)\n'
+    f'Rows track Config {CONFIG_IDS[0]} vs Config {CONFIG_IDS[1]} | Black Line = Uniform Baseline (CV=0.0)',
+    fontsize=14, y=0.98
 )
 
 plt.tight_layout()
-plt.savefig('dispersion_topology_comparison_noise.png', dpi=200, bbox_inches='tight')
-print("\nSaved: dispersion_topology_comparison_noise.png")
+plt.savefig('dispersion_ring_comp_3954.png', dpi=200, bbox_inches='tight')
+print("\nSaved: dispersion_ring_comp_3954.png")
 plt.close()
