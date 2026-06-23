@@ -345,7 +345,7 @@ if __name__ == "__main__":
             'shaberi_type_I': sigma_result['shaberi_type_I'],
             'shaberi_type_II': sigma_result['shaberi_type_II'],
             'shaberi_hopf': sigma_result['shaberi_hopf'],
-            'filter_count': results['filter_count'],
+            'filter_count': sigma_result['filter_count'],
             'rob_diego': sigma_result['rob_diego'],
             'rob_shaberi_total': sigma_result['rob_shaberi_total'],
             'rob_shaberi_type_I': sigma_result['rob_shaberi_type_I'],
