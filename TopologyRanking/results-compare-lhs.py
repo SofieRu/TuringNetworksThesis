@@ -530,7 +530,7 @@ def fig_all_patterns_profile_trends_complete(df):
         top=0.88, 
         bottom=0.12,
         wspace=0.15,
-        hspace=0.10
+        hspace=0.30
     )
     
     save(fig, "thesis_complete_type_profile_trends")
@@ -800,73 +800,6 @@ def fig_pseudo_phase_combined(df):
 
     save(fig, "thesis_combined_pseudo_phase_diagram")
 
-############
-
-# Add this function with your other plotting functions
-
-# def fig_3d_parameter_space():
-#     # Load detailed parameter data
-#     df_params = pd.read_csv(PARAMS_CSV)
-    
-#     # Choose which config(s) to plot
-#     # Option 1: Plot just one config (the most robust)
-#     config_to_plot = 13  # Your most robust config
-#     df_plot = df_params[df_params['config_id'] == config_to_plot]
-    
-#     # Extract the 3 production rates
-#     beta_u = df_plot['beta_u'].values
-#     beta_v = df_plot['beta_v'].values
-#     beta_w = df_plot['beta_w'].values
-    
-#     print(f"\nConfig {config_to_plot}: {len(df_plot)} points")
-#     print(f"  beta_u range: [{beta_u.min():.2f}, {beta_u.max():.2f}]")
-#     print(f"  beta_v range: [{beta_v.min():.2f}, {beta_v.max():.2f}]")
-#     print(f"  beta_w range: [{beta_w.min():.2f}, {beta_w.max():.2f}]")
-    
-#     # Create 3D plot
-#     fig = plt.figure(figsize=(12, 9))
-#     ax = fig.add_subplot(111, projection='3d')
-    
-#     # Scatter plot of all Turing parameter sets
-#     scatter = ax.scatter(beta_u, beta_v, beta_w,
-#                         c=df_plot['max_growth_rate'],  # Color by Turing strength
-#                         cmap='YlOrRd',
-#                         s=50,
-#                         alpha=0.6,
-#                         edgecolors='k',
-#                         linewidth=0.5)
-    
-#     # Optional: Draw convex hull if you have enough points (>10)
-#     if len(df_plot) > 10:
-#         points = np.column_stack([beta_u, beta_v, beta_w])
-#         try:
-#             hull = ConvexHull(points)
-#             # Plot hull surface
-#             for simplex in hull.simplices:
-#                 triangle = points[simplex]
-#                 ax.plot_trisurf(triangle[:, 0], triangle[:, 1], triangle[:, 2],
-#                                color='orange', alpha=0.2, linewidth=0)
-#         except:
-#             print("  (Not enough points for convex hull)")
-    
-#     # Labels and styling
-#     ax.set_xlabel('β$_u$ (u production rate)', fontsize=12, labelpad=10)
-#     ax.set_ylabel('β$_v$ (v production rate)', fontsize=12, labelpad=10)
-#     ax.set_zlabel('β$_w$ (w production rate)', fontsize=12, labelpad=10)
-    
-#     config_name = df_plot['config_name'].iloc[0]
-#     ax.set_title(f'Turing Parameter Space: {config_name}\n'
-#                  f'(dU={df_plot["dU"].iloc[0]}, dV={df_plot["dV"].iloc[0]}, dW={df_plot["dW"].iloc[0]})',
-#                  fontsize=13, pad=20)
-    
-#     # Colorbar
-#     cbar = plt.colorbar(scatter, ax=ax, pad=0.1, shrink=0.8)
-#     cbar.set_label('Max Growth Rate (Turing strength)', fontsize=11)
-    
-#     # Better viewing angle
-#     ax.view_init(elev=20, azim=45)
-    
-#     save(fig, "fig_3d_turing_island_single_config")
 
 
 # think about maybe comparing different parametres so not necessarily beta u, beta v and beta w
