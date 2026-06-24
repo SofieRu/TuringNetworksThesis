@@ -1,0 +1,55 @@
+Starting job 49 at Tue 23 Jun 21:06:58 BST 2026
+Starting FINAL_RMT_3954_Type3_VWFreeze_Equal3: dU=10.0, dV=0.0, dW=0.0
+Testing 32 sigma values with 100,000 samples each
+======================================================================
+  [sig=0.1] 100,000/100,000 | Stable: 100000 | Diego: 0 | Shaberi: 0
+  [sig=0.2] 100,000/100,000 | Stable: 100000 | Diego: 0 | Shaberi: 0
+  [sig=0.3] 100,000/100,000 | Stable: 100000 | Diego: 0 | Shaberi: 0
+  [sig=0.4] 100,000/100,000 | Stable: 99981 | Diego: 47 | Shaberi: 47
+  [sig=0.5] 100,000/100,000 | Stable: 99732 | Diego: 393 | Shaberi: 393
+  [sig=0.6] 100,000/100,000 | Stable: 98966 | Diego: 1442 | Shaberi: 1442
+  [sig=0.7] 100,000/100,000 | Stable: 97782 | Diego: 3680 | Shaberi: 3680
+  [sig=0.8] 100,000/100,000 | Stable: 96149 | Diego: 6650 | Shaberi: 6650
+  [sig=0.9] 100,000/100,000 | Stable: 94311 | Diego: 9874 | Shaberi: 9874
+  [sig=1.0] 100,000/100,000 | Stable: 92345 | Diego: 13328 | Shaberi: 13328
+  [sig=1.1] 100,000/100,000 | Stable: 90198 | Diego: 16449 | Shaberi: 16449
+  [sig=1.2] 100,000/100,000 | Stable: 88080 | Diego: 19444 | Shaberi: 19444
+  [sig=1.3] 100,000/100,000 | Stable: 85689 | Diego: 21845 | Shaberi: 21845
+  [sig=1.4] 100,000/100,000 | Stable: 83226 | Diego: 23836 | Shaberi: 23836
+  [sig=1.5] 100,000/100,000 | Stable: 80727 | Diego: 25466 | Shaberi: 25466
+  [sig=1.6] 100,000/100,000 | Stable: 78077 | Diego: 26697 | Shaberi: 26697
+  [sig=1.8] 100,000/100,000 | Stable: 72870 | Diego: 28429 | Shaberi: 28429
+  [sig=2.0] 100,000/100,000 | Stable: 67959 | Diego: 29240 | Shaberi: 29240
+  [sig=2.2] 100,000/100,000 | Stable: 63389 | Diego: 29344 | Shaberi: 29344
+  [sig=2.4] 100,000/100,000 | Stable: 59093 | Diego: 29147 | Shaberi: 29147
+  [sig=2.6] 100,000/100,000 | Stable: 55261 | Diego: 28635 | Shaberi: 28635
+  [sig=2.8] 100,000/100,000 | Stable: 51853 | Diego: 28049 | Shaberi: 28049
+  [sig=3.0] 100,000/100,000 | Stable: 48898 | Diego: 27487 | Shaberi: 27487
+  [sig=3.2] 100,000/100,000 | Stable: 46233 | Diego: 26924 | Shaberi: 26924
+  [sig=3.4] 100,000/100,000 | Stable: 43879 | Diego: 26372 | Shaberi: 26372
+  [sig=3.6] 100,000/100,000 | Stable: 41674 | Diego: 25766 | Shaberi: 25766
+  [sig=3.8] 100,000/100,000 | Stable: 39752 | Diego: 25166 | Shaberi: 25166
+  [sig=4.0] 100,000/100,000 | Stable: 38013 | Diego: 24563 | Shaberi: 24563
+  [sig=5.0] 100,000/100,000 | Stable: 31319 | Diego: 22032 | Shaberi: 22032
+  [sig=6.0] 100,000/100,000 | Stable: 26971 | Diego: 20154 | Shaberi: 20154
+  [sig=7.0] 100,000/100,000 | Stable: 23995 | Diego: 18777 | Shaberi: 18777
+  [sig=8.0] 100,000/100,000 | Stable: 21713 | Diego: 17575 | Shaberi: 17575
+
+======================================================================
+COMPLETED: FINAL_RMT_3954_Type3_VWFreeze_Equal3
+======================================================================
+Tested 32 sigma values
+100,000 samples per sigma
+Total: 3,200,000 Jacobians generated
+
+Saved to:
+Finished job 49 at Wed 24 Jun 00:17:08 BST 2026
+
+====================================
+CPU Time used: 03:08:21
+CPU Percent: 99%
+Memory usage: 167008kb
+Approx Power usage: 0.0376
+Walltime usage: 03:10:18
+
+====================================

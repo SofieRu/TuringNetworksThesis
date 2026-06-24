@@ -1,0 +1,2 @@
+config_name,config_id,dU,dV,dW,n_samples,steady_states,stable_without_diffusion,diego_turing,shaberi_total,shaberi_type_I,shaberi_type_II,shaberi_hopf,filter_count,rob_diego,rob_shaberi_total,rob_shaberi_type_I
+FINAL_LHS_1754_Type1_UVFast_Unequal3,13,10.0,10.0,0.1,1000000,991417,984576,477,477,477,0,0,0,0.0477,0.0477,0.0477
