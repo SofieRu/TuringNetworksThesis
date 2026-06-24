@@ -5,7 +5,7 @@ import pandas as pd
 
 # have to run this first: module load matplotlib/3.9.2-gfbf-2024a, module load SciPy-bundle/2024.05-gfbf-2024a
 
-result_files = sorted(glob.glob('results/NEW_LHS_1754_*_1mio_with_params.pkl'))
+result_files = sorted(glob.glob('results/FINAL_LHS_1754_*_1mio_with_params.pkl'))
 
 # PART 1: SUMMARY CSV (one row per configuration)
 
@@ -41,8 +41,8 @@ df = pd.DataFrame(all_results)
 df = df.sort_values('config_id', ascending=True)
 
 # Save as CSV for Excel
-df.to_csv('1754_NEWTURINGCLASS_results_summary.csv', index=False)
-print("\nSaved to: 1754_NEWTURINGCLASS_lhs_results_summary.csv")
+df.to_csv('1754_FINAL_results_summary.csv', index=False)
+print("\nSaved to: 1754_FINAL_lhs_results_summary.csv")
 
 # PART 2: DETAILED CSV (one row per saved parameter set)
 
@@ -114,7 +114,7 @@ if all_params:
     
     # Final sort for readability (group by config_id, then classification, then rank)
     df_params = df_params.sort_values(['config_id', 'classification', 'param_rank'])
-    df_params.to_csv('1754_NEWTURINGCLASS_lhs_results_parameters.csv', index=False)
-    print(f"Saved to: 1754_NEWTURINGCLASS_lhs_results_parameters.csv")
+    df_params.to_csv('1754_FINAL_lhs_results_parameters.csv', index=False)
+    print(f"Saved to: 1754_FINAL_lhs_results_parameters.csv")
 else:
     print("No successful parameter sets found in the results.")
