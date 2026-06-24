@@ -3,12 +3,11 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.lines as mlines
 
-from heterogenous_ring_3954 import compute_jacobian, find_steady_state
+from heterogenous_ring_1754 import compute_jacobian, find_steady_state
 
 # have to run this first: module load matplotlib/3.9.2-gfbf-2024a
 # have to run this first: module load SciPy-bundle/2024.05-gfbf-2024a
 # have to run this first: pip install seaborn --user
-
 
 # CSV_PATH = '../TopologyRanking/Topology3954/3954_NEWTURINGCLASS_lhs_results_parameters.csv'
 # CONFIG_ID = 45
@@ -150,10 +149,8 @@ from heterogenous_ring_3954 import compute_jacobian, find_steady_state
 
 
 
-
-
-CSV_PATH = '../TopologyRanking/Topology3954/3954_FINAL_lhs_results_parameters.csv'
-CONFIG_IDS = [43, 2]
+CSV_PATH = '../TopologyRanking/Topology1754/1754_FINAL_lhs_results_parameters.csv'
+CONFIG_IDS = [40, 10]
 N_RING = 30
 N_TRIALS = 10
 CV_VALUES = [0.0, 0.1, 0.2, 0.3, 0.4]
@@ -252,13 +249,11 @@ for row_idx, config_id in enumerate(CONFIG_IDS):
     # Put a clear bold row marker on the left-most panel of each row
     row_axes[0].set_ylabel(f'Config {config_id}\nMax Re(λ)', fontsize=12)
 
-# ============================================================================
-# YOUR PROPOSED SPACING AND FINISHING
-# ============================================================================
+
 fig_multi.subplots_adjust(left=0.09, right=0.96, top=0.85, bottom=0.18, wspace=0.04, hspace=0.06)
 
 fig_multi.suptitle(
-    f'Topology 3954 Discrete Ring Dispersion Comparison (N={N_RING} cells)\n'
+    f'Topology 1754 Discrete Ring Dispersion Comparison (N={N_RING} cells)\n'
     f'Rows track Config {CONFIG_IDS[0]} vs Config {CONFIG_IDS[1]}',
     fontsize=14, y=0.95
 )
@@ -277,6 +272,6 @@ fig_multi.legend(
     fontsize=11
 )
 
-plt.savefig('3954_dispersion_comparison_configs.png', dpi=200, bbox_inches='tight')
-print("\nSaved: 3954_dispersion_comparison_configs.png")
+plt.savefig('1754_dispersion_comparison_configs.png', dpi=200, bbox_inches='tight')
+print("\nSaved: 1754_dispersion_comparison_configs.png")
 plt.close()
