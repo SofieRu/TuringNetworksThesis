@@ -17,13 +17,13 @@ import matplotlib.lines as mlines
 # have to run this first: pip install seaborn --user
 
 CSVS = {
-    "#1754": "Topology1754/1754_NEWTURINGCLASS_lhs_results_summary.csv",
+    "#1754": "Topology1754/1754_FINAL_lhs_results_summary.csv",
     "#1823": "Topology1823/1823_PREFINAL_lhs_results_summary.csv",
     "#1838": "Topology1838/1838_PREFINAL_lhs_results_summary.csv",
-    "#3954": "Topology3954/3954_NEWTURINGCLASS_lhs_results_summary.csv",
+    "#3954": "Topology3954/3954_FINAL_lhs_results_summary.csv",
 }
 
-PARAMS_CSV = "Topology3954/3954_NEWTURINGCLASS_lhs_results_parameters.csv"
+PARAMS_CSV = "Topology3954/3954_FINAL_lhs_results_parameters.csv"
 
 # for both 3954 and 1754 i got rid of _CCD_Type1_Var1/2 bc the values were really high and kinda did not match the rest but later if it does match then we can put it back in and see if it changes the results
 
@@ -72,7 +72,7 @@ def load_all():
     dfs = []
     for topo_id, path in CSVS.items():
         df = pd.read_csv(path)
-        df = df[~df["config_name"].str.contains("OneFast|Control|Limit")]
+        #df = df[~df["config_name"].str.contains("OneFast|Control|Limit")]
         df["topology_id"]  = topo_id
         df["turing_type"]  = df["config_name"].str.extract(r"(Type[123])")
         #parsed = df["diffusion"].apply(parse_diff)
@@ -492,7 +492,9 @@ def fig_all_patterns_profile_trends_complete(df):
     plt.suptitle(
         "Distribution of Turing Instability Types Across Topological Network Types",
         fontsize=13,
+        x=0.09,                  # <-- Align with the left edge of your subplots (matches your left=0.09)
         y=0.97,
+        ha="left",               # <-- Left bind the text anchor
         fontweight="semibold",
         color="#111111"
     )
@@ -527,8 +529,8 @@ def fig_all_patterns_profile_trends_complete(df):
         right=0.95, 
         top=0.88, 
         bottom=0.12,
-        wspace=0.25,
-        hspace=0.26
+        wspace=0.15,
+        hspace=0.10
     )
     
     save(fig, "thesis_complete_type_profile_trends")
@@ -793,7 +795,7 @@ def fig_pseudo_phase_combined(df):
     # 2. Tight manual spacing adjustments for the 2D grid matrix
     # hspace handles the vertical gap between row 1 and row 2
     fig.subplots_adjust(
-        left=0.06, right=0.84, top=0.88, bottom=0.12, wspace=0.18, hspace=0.15
+        left=0.06, right=0.84, top=0.88, bottom=0.12, wspace=0.2, hspace=0.26
     )
 
     save(fig, "thesis_combined_pseudo_phase_diagram")

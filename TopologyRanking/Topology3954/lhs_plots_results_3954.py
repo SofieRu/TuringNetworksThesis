@@ -12,7 +12,7 @@ import pandas as pd
 # have to run this first: module load SciPy-bundle/2024.05-gfbf-2024a
 # have to run this first: pip install seaborn --user
 
-CSV = "3954_NEWTURINGCLASS_lhs_results_summary.csv" 
+CSV = "3954_FINAL_lhs_results_summary.csv" 
 # got rid of control: 
 # NEW_LHS_3954_Type1_Control_Slow,0,0.1,0.1,0.1,1000000,969615,951296,0,0,0,0,0,0,0.0,0.0,0.0
 # NEW_LHS_3954_Type1_Control_Fast,2,10.0,10.0,10.0,1000000,969615,951296,0,0,0,0,0,0,0.0,0.0,0.0
@@ -34,7 +34,7 @@ plt.rcParams.update({
 
 TYPE_COLORS = {
     "Type1": 'cornflowerblue',
-    "Type2": 'palevioletred',
+    "Type2": 'deeppink',
     "Type3": 'forestgreen',
 } 
 
@@ -53,7 +53,7 @@ def save(fig, name):
 
 def load_data():
     df = pd.read_csv(CSV)
-    df["topology"]    = df["config_name"].str.extract(r"NEW_LHS_3954_([A-Z]+)_")
+    df["topology"]    = df["config_name"].str.extract(r"FINAL_LHS_3954_([A-Z]+)_")
     df["turing_type"] = df["config_name"].str.extract(r"(Type[123])")
     return df
 
@@ -74,7 +74,7 @@ def fig1_overview(df):
     ax.set_xticks(range(len(df)))
     ax.set_xticklabels(
         # The | means OR, and \d* means match zero or more digits (like 1, 2, 3)
-        df["config_name"].str.replace(r"NEW_LHS_3954_|Type\d*_", "", regex=True),
+        df["config_name"].str.replace(r"FINAL_LHS_3954_|Type\d*_", "", regex=True),
         rotation=55,
         ha="right",
         fontsize=8,
@@ -291,7 +291,7 @@ def fig_combined_overview_and_raincloud(df):
     ax1.set_xticks(range(len(df)))
     ax1.set_xticklabels(
         df["config_name"].str.replace(
-            r"NEW_LHS_3954_|Type\d*_", "", regex=True
+            r"FINAL_LHS_3954_|Type\d*_", "", regex=True
         ),
         rotation=55,
         ha="right",
@@ -465,7 +465,7 @@ def fig_combined_overview_and_raincloud(df):
 ########### RUN THE WHOLE THING ############
 
 df = load_data()
-fig1_overview(df)
+# fig1_overview(df)
 # fig2_dotplot(df)
 # fig2_raincloud(df)
 # fig4_diego_vs_shaberi(df)
