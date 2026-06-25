@@ -182,12 +182,13 @@ for row_idx, config_id in enumerate(CONFIG_IDS):
     
     # Extract row matching loop context safely
     row_data = type_i[(type_i['config_id'] == config_id) & (type_i['param_rank'] == 1)].iloc[0]
-    
+
     baseline_params = np.array([
-        row_data['alpha_u'], row_data['beta_u'], row_data['K_uu'], row_data['K_vu'], row_data['delta_u'],
+        row_data['alpha_u'], row_data['beta_u'], row_data['K_vu'], row_data['delta_u'],
         row_data['alpha_v'], row_data['beta_v'], row_data['K_uv'], row_data['K_wv'], row_data['delta_v'],
         row_data['alpha_w'], row_data['beta_w'], row_data['K_ww'], row_data['K_uw'], row_data['K_vw'], row_data['delta_w']
     ])
+
     baseline_ss = np.array([row_data['u_star'], row_data['v_star'], row_data['w_star']])
     dU, dV, dW = row_data['dU'], row_data['dV'], row_data['dW']
     
@@ -213,8 +214,15 @@ for row_idx, config_id in enumerate(CONFIG_IDS):
                 if ss_noisy is None:
                     continue
                 disp = compute_discrete_dispersion(params_noisy, ss_noisy, dU, dV, dW, K_DISCRETE)
-                dispersion_results[CV].append(disp)
-                successful += 1
+
+                # old version where we didint get rid of trials that arent in the negative in the beginning
+                # dispersion_results[CV].append(disp)
+                # successful += 1
+
+                # NEW 1. k0 = 0 must be stable (negative)
+                if disp[0] < 0:
+                    dispersion_results[CV].append(disp)
+                    successful += 1
 
     baseline_disp = dispersion_results[0.0][0]
     row_axes = axes_multi[row_idx]

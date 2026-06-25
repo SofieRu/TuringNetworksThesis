@@ -216,8 +216,15 @@ for row_idx, config_id in enumerate(CONFIG_IDS):
                 if ss_noisy is None:
                     continue
                 disp = compute_discrete_dispersion(params_noisy, ss_noisy, dU, dV, dW, K_DISCRETE)
-                dispersion_results[CV].append(disp)
-                successful += 1
+
+                # old version where we didint get rid of trials that arent in the negative in the beginning
+                # dispersion_results[CV].append(disp)
+                # successful += 1
+
+                # NEW 1. k0 = 0 must be stable (negative)
+                if disp[0] < 0:
+                    dispersion_results[CV].append(disp)
+                    successful += 1
 
     baseline_disp = dispersion_results[0.0][0]
     row_axes = axes_multi[row_idx]
