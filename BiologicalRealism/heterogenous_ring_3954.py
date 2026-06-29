@@ -349,135 +349,274 @@ eigs = np.linalg.eigvals(J)
 # Check Turing
 turing = is_turing_shaberi(J, eigs, hopping['h_u'], hopping['h_v'], hopping['h_w'])
 
-print("\n" + "="*70)
-print("STEP 4: MONTE CARLO - CV SWEEP")
-print("="*70)
 
-# Settings, CHANGE HERE FOR VARIATION
-# n_trials = 1000
-# N_cells = 10 # for sanity check run with N = 5, 10 and 20, 30??
 
-if turing == 'Type-I':
-    # N_cells = 10
-    J_ring = build_ring_jacobian_homogeneous(N_cells, steady_state_expected, baseline_params, hopping)
-    eigs_ring = np.linalg.eigvals(J_ring)
-    max_real_ring = np.max(np.real(eigs_ring))
-    print(f"Homogeneous ring baseline Re(λ) = {max_real_ring:.6f}")
-    if max_real_ring < 0:
-        print("WARNING: Ring baseline is stable (continuous Turing peak between discrete k_m values)")
-else:
-    print(f"WARNING: This config is not Type-I in continuous analysis (got: {turing})")
+# print("\n" + "="*70)
+# print("STEP 4: MONTE CARLO - CV SWEEP")
+# print("="*70)
 
-np.random.seed(42)
-results_by_cv = []
+# # Settings, CHANGE HERE FOR VARIATION
+# # n_trials = 1000
+# # N_cells = 10 # for sanity check run with N = 5, 10 and 20, 30??
 
-for CV in [0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4]:
-    print(f"\n{'='*70}")
-    print(f"CV = {CV}")
-    print(f"{'='*70}")
+# if turing == 'Type-I':
+#     # N_cells = 10
+#     J_ring = build_ring_jacobian_homogeneous(N_cells, steady_state_expected, baseline_params, hopping)
+#     eigs_ring = np.linalg.eigvals(J_ring)
+#     max_real_ring = np.max(np.real(eigs_ring))
+#     print(f"Homogeneous ring baseline Re(λ) = {max_real_ring:.6f}")
+#     if max_real_ring < 0:
+#         print("WARNING: Ring baseline is stable (continuous Turing peak between discrete k_m values)")
+# else:
+#     print(f"WARNING: This config is not Type-I in continuous analysis (got: {turing})")
+
+# np.random.seed(42)
+# results_by_cv = []
+
+# for CV in [0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4]:
+#     print(f"\n{'='*70}")
+#     print(f"CV = {CV}")
+#     print(f"{'='*70}")
     
-    max_eigenvalues = []
-    turing_count = 0
-    discarded_count = 0
+#     max_eigenvalues = []
+#     turing_count = 0
+#     discarded_count = 0
     
-    for trial in range(n_trials):
-        if CV == 0:
-            J_ring = build_ring_jacobian_homogeneous(
-                N_cells=N_cells,
-                steady_state=steady_state_expected,
-                params=baseline_params,
-                hopping=hopping
-            )
-        else:
-            J_ring, ss_hetero, params_hetero = build_ring_jacobian_heterogeneous(
-                N_cells=N_cells,
-                baseline_params=baseline_params,
-                hopping=hopping,
-                CV=CV
-            )
+#     for trial in range(n_trials):
+#         if CV == 0:
+#             J_ring = build_ring_jacobian_homogeneous(
+#                 N_cells=N_cells,
+#                 steady_state=steady_state_expected,
+#                 params=baseline_params,
+#                 hopping=hopping
+#             )
+#         else:
+#             J_ring, ss_hetero, params_hetero = build_ring_jacobian_heterogeneous(
+#                 N_cells=N_cells,
+#                 baseline_params=baseline_params,
+#                 hopping=hopping,
+#                 CV=CV
+#             )
             
-            if J_ring is None:
-                discarded_count += 1
-                continue  # Skip this trial entirely
+#             if J_ring is None:
+#                 discarded_count += 1
+#                 continue  # Skip this trial entirely
         
-        eigs = np.linalg.eigvals(J_ring)
-        max_real = np.max(np.real(eigs))
+#         eigs = np.linalg.eigvals(J_ring)
+#         max_real = np.max(np.real(eigs))
         
-        max_eigenvalues.append(max_real)
+#         max_eigenvalues.append(max_real)
         
-        if max_real > 0:
-            turing_count += 1
+#         if max_real > 0:
+#             turing_count += 1
     
-    # Statistics on VALID trials only
-    max_eigenvalues = np.array(max_eigenvalues)
-    n_valid = len(max_eigenvalues)
-    discard_rate = 100 * discarded_count / n_trials
+#     # Statistics on VALID trials only
+#     max_eigenvalues = np.array(max_eigenvalues)
+#     n_valid = len(max_eigenvalues)
+#     discard_rate = 100 * discarded_count / n_trials
     
-    if n_valid > 0:
-        robustness = 100 * turing_count / n_valid
-        result = {
-            'CV': CV,
-            'mean_eig': np.mean(max_eigenvalues),
-            'std_eig': np.std(max_eigenvalues),
-            'median_eig': np.median(max_eigenvalues),
-            'min_eig': np.min(max_eigenvalues),
-            'max_eig': np.max(max_eigenvalues),
-            'turing_count': turing_count,
-            'n_valid': n_valid,
-            'n_discarded': discarded_count,
-            'discard_rate': discard_rate,
-            'robustness': robustness,
-            'all_eigenvalues': max_eigenvalues
-        }
+#     if n_valid > 0:
+#         robustness = 100 * turing_count / n_valid
+#         result = {
+#             'CV': CV,
+#             'mean_eig': np.mean(max_eigenvalues),
+#             'std_eig': np.std(max_eigenvalues),
+#             'median_eig': np.median(max_eigenvalues),
+#             'min_eig': np.min(max_eigenvalues),
+#             'max_eig': np.max(max_eigenvalues),
+#             'turing_count': turing_count,
+#             'n_valid': n_valid,
+#             'n_discarded': discarded_count,
+#             'discard_rate': discard_rate,
+#             'robustness': robustness,
+#             'all_eigenvalues': max_eigenvalues
+#         }
+#     else:
+#         result = {
+#             'CV': CV,
+#             'mean_eig': np.nan, 'std_eig': np.nan, 'median_eig': np.nan,
+#             'min_eig': np.nan, 'max_eig': np.nan,
+#             'turing_count': 0, 'n_valid': 0,
+#             'n_discarded': discarded_count,
+#             'discard_rate': discard_rate, 'robustness': np.nan,
+#             'all_eigenvalues': np.array([])
+#         }
+    
+#     results_by_cv.append(result)
+    
+#     print(f"  Valid trials: {n_valid}/{n_trials}")
+#     print(f"  Discarded:    {discarded_count} ({discard_rate:.1f}%)")
+#     if n_valid > 0:
+#         print(f"  Mean Re(λ):   {result['mean_eig']:.6f} ± {result['std_eig']:.6f}")
+#         print(f"  Robustness:   {robustness:.1f}% ({turing_count}/{n_valid})")
+
+
+# # Print summary table
+# print("\n" + "="*70)
+# print("SUMMARY TABLE")
+# print("="*70)
+# print(f"{'CV':<6} {'Mean Re(λ)':<14} {'Std':<12} {'Valid':<8} {'Discard%':<10} {'Robustness'}")
+# print("-"*70)
+
+# for r in results_by_cv:
+#     if r['n_valid'] > 0:
+#         print(f"{r['CV']:<6.2f} {r['mean_eig']:<14.6f} {r['std_eig']:<12.6f} "
+#               f"{r['n_valid']:<8} {r['discard_rate']:<10.1f} "
+#               f"{r['robustness']:.1f}% ({r['turing_count']}/{r['n_valid']})")
+#     else:
+#         print(f"{r['CV']:<6.2f} {'all discarded':<14} {'-':<12} "
+#               f"{0:<8} {r['discard_rate']:<10.1f} -")
+
+# print("="*70)
+
+# # Save results to file
+# output_data = {
+#     'results': results_by_cv,
+#     'baseline_params': baseline_params,
+#     'hopping': hopping,
+#     'n_trials': n_trials,
+#     'config_id': CONFIG_TO_TEST,
+#     'config_name': row['config_name']
+# }
+
+# output_file = f'3954_cv_sweep_{CONFIG_LABEL}_config{CONFIG_TO_TEST}_N{N_cells}.pkl'
+
+# with open(output_file, 'wb') as f:
+#     pickle.dump(output_data, f)
+
+
+
+if __name__ == "__main__":
+    print("\n" + "="*70)
+    print("STEP 4: MONTE CARLO - CV SWEEP")
+    print("="*70)
+
+    # Settings, CHANGE HERE FOR VARIATION
+    # n_trials = 1000
+    # N_cells = 10 # for sanity check run with N = 5, 10 and 20, 30??
+
+    if turing == 'Type-I':
+        # N_cells = 10
+        J_ring = build_ring_jacobian_homogeneous(N_cells, steady_state_expected, baseline_params, hopping)
+        eigs_ring = np.linalg.eigvals(J_ring)
+        max_real_ring = np.max(np.real(eigs_ring))
+        print(f"Homogeneous ring baseline Re(λ) = {max_real_ring:.6f}")
+        if max_real_ring < 0:
+            print("WARNING: Ring baseline is stable (continuous Turing peak between discrete k_m values)")
     else:
-        result = {
-            'CV': CV,
-            'mean_eig': np.nan, 'std_eig': np.nan, 'median_eig': np.nan,
-            'min_eig': np.nan, 'max_eig': np.nan,
-            'turing_count': 0, 'n_valid': 0,
-            'n_discarded': discarded_count,
-            'discard_rate': discard_rate, 'robustness': np.nan,
-            'all_eigenvalues': np.array([])
-        }
-    
-    results_by_cv.append(result)
-    
-    print(f"  Valid trials: {n_valid}/{n_trials}")
-    print(f"  Discarded:    {discarded_count} ({discard_rate:.1f}%)")
-    if n_valid > 0:
-        print(f"  Mean Re(λ):   {result['mean_eig']:.6f} ± {result['std_eig']:.6f}")
-        print(f"  Robustness:   {robustness:.1f}% ({turing_count}/{n_valid})")
+        print(f"WARNING: This config is not Type-I in continuous analysis (got: {turing})")
+
+    np.random.seed(42)
+    results_by_cv = []
+
+    for CV in [0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4]:
+        print(f"\n{'='*70}")
+        print(f"CV = {CV}")
+        print(f"{'='*70}")
+        
+        max_eigenvalues = []
+        turing_count = 0
+        discarded_count = 0
+        
+        for trial in range(n_trials):
+            if CV == 0:
+                J_ring = build_ring_jacobian_homogeneous(
+                    N_cells=N_cells,
+                    steady_state=steady_state_expected,
+                    params=baseline_params,
+                    hopping=hopping
+                )
+            else:
+                J_ring, ss_hetero, params_hetero = build_ring_jacobian_heterogeneous(
+                    N_cells=N_cells,
+                    baseline_params=baseline_params,
+                    hopping=hopping,
+                    CV=CV
+                )
+                
+                if J_ring is None:
+                    discarded_count += 1
+                    continue  # Skip this trial entirely
+            
+            eigs = np.linalg.eigvals(J_ring)
+            max_real = np.max(np.real(eigs))
+            
+            max_eigenvalues.append(max_real)
+            
+            if max_real > 0:
+                turing_count += 1
+        
+        # Statistics on VALID trials only
+        max_eigenvalues = np.array(max_eigenvalues)
+        n_valid = len(max_eigenvalues)
+        discard_rate = 100 * discarded_count / n_trials
+        
+        if n_valid > 0:
+            robustness = 100 * turing_count / n_valid
+            result = {
+                'CV': CV,
+                'mean_eig': np.mean(max_eigenvalues),
+                'std_eig': np.std(max_eigenvalues),
+                'median_eig': np.median(max_eigenvalues),
+                'min_eig': np.min(max_eigenvalues),
+                'max_eig': np.max(max_eigenvalues),
+                'turing_count': turing_count,
+                'n_valid': n_valid,
+                'n_discarded': discarded_count,
+                'discard_rate': discard_rate,
+                'robustness': robustness,
+                'all_eigenvalues': max_eigenvalues
+            }
+        else:
+            result = {
+                'CV': CV,
+                'mean_eig': np.nan, 'std_eig': np.nan, 'median_eig': np.nan,
+                'min_eig': np.nan, 'max_eig': np.nan,
+                'turing_count': 0, 'n_valid': 0,
+                'n_discarded': discarded_count,
+                'discard_rate': discard_rate, 'robustness': np.nan,
+                'all_eigenvalues': np.array([])
+            }
+        
+        results_by_cv.append(result)
+        
+        print(f"  Valid trials: {n_valid}/{n_trials}")
+        print(f"  Discarded:    {discarded_count} ({discard_rate:.1f}%)")
+        if n_valid > 0:
+            print(f"  Mean Re(λ):   {result['mean_eig']:.6f} ± {result['std_eig']:.6f}")
+            print(f"  Robustness:   {robustness:.1f}% ({turing_count}/{n_valid})")
 
 
-# Print summary table
-print("\n" + "="*70)
-print("SUMMARY TABLE")
-print("="*70)
-print(f"{'CV':<6} {'Mean Re(λ)':<14} {'Std':<12} {'Valid':<8} {'Discard%':<10} {'Robustness'}")
-print("-"*70)
+    # Print summary table
+    print("\n" + "="*70)
+    print("SUMMARY TABLE")
+    print("="*70)
+    print(f"{'CV':<6} {'Mean Re(λ)':<14} {'Std':<12} {'Valid':<8} {'Discard%':<10} {'Robustness'}")
+    print("-"*70)
 
-for r in results_by_cv:
-    if r['n_valid'] > 0:
-        print(f"{r['CV']:<6.2f} {r['mean_eig']:<14.6f} {r['std_eig']:<12.6f} "
-              f"{r['n_valid']:<8} {r['discard_rate']:<10.1f} "
-              f"{r['robustness']:.1f}% ({r['turing_count']}/{r['n_valid']})")
-    else:
-        print(f"{r['CV']:<6.2f} {'all discarded':<14} {'-':<12} "
-              f"{0:<8} {r['discard_rate']:<10.1f} -")
+    for r in results_by_cv:
+        if r['n_valid'] > 0:
+            print(f"{r['CV']:<6.2f} {r['mean_eig']:<14.6f} {r['std_eig']:<12.6f} "
+                f"{r['n_valid']:<8} {r['discard_rate']:<10.1f} "
+                f"{r['robustness']:.1f}% ({r['turing_count']}/{r['n_valid']})")
+        else:
+            print(f"{r['CV']:<6.2f} {'all discarded':<14} {'-':<12} "
+                f"{0:<8} {r['discard_rate']:<10.1f} -")
 
-print("="*70)
+    print("="*70)
 
-# Save results to file
-output_data = {
-    'results': results_by_cv,
-    'baseline_params': baseline_params,
-    'hopping': hopping,
-    'n_trials': n_trials,
-    'config_id': CONFIG_TO_TEST,
-    'config_name': row['config_name']
-}
+    # Save results to file
+    output_data = {
+        'results': results_by_cv,
+        'baseline_params': baseline_params,
+        'hopping': hopping,
+        'n_trials': n_trials,
+        'config_id': CONFIG_TO_TEST,
+        'config_name': row['config_name']
+    }
 
-output_file = f'3954_cv_sweep_{CONFIG_LABEL}_config{CONFIG_TO_TEST}_N{N_cells}.pkl'
+    output_file = f'3954_cv_sweep_{CONFIG_LABEL}_config{CONFIG_TO_TEST}_N{N_cells}.pkl'
 
-with open(output_file, 'wb') as f:
-    pickle.dump(output_data, f)
+    with open(output_file, 'wb') as f:
+        pickle.dump(output_data, f)
+

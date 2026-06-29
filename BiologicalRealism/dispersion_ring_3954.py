@@ -10,7 +10,7 @@ from heterogenous_ring_3954 import compute_jacobian, find_steady_state, build_ri
 CSV_PATH = '../TopologyRanking/Topology3954/3954_FINAL_lhs_results_parameters.csv'
 CONFIG_IDS = [43, 2]
 N_RING = 30
-N_TRIALS = 10
+N_TRIALS = 1
 CV_VALUES = [0.0, 0.1, 0.2, 0.3, 0.4]
 SEED = 42
 
@@ -315,6 +315,9 @@ def compute_heterogeneous_dispersion(baseline_params, hopping, N, CV, k_discrete
     
     eigenvalues, eigenvectors = np.linalg.eig(J_ring)
     real_parts = np.real(eigenvalues)
+
+    print(f"  Trial: 90 eigenvalues sorted (top 20): {np.sort(real_parts)[::-1][:20]}")
+    print(f"  Median: {np.median(real_parts):.2f}, " f"min: {real_parts.min():.2f}, max: {real_parts.max():.2f}")
     
     # Initialize bins for each discrete wavenumber m
     max_re_per_km = np.full(len(k_discrete), -np.inf)
@@ -347,7 +350,8 @@ for row_idx, config_id in enumerate(CONFIG_IDS):
     ])
     
     # Bundle the diffusion coefficients into your 'hopping' parameter array
-    hopping = np.array([row_data['dU'], row_data['dV'], row_data['dW']])
+    dU, dV, dW = row_data['dU'], row_data['dV'], row_data['dW']
+    hopping = {'h_u': dU, 'h_v': dV, 'h_w': dW}
     
     # Enforce random state seeding per configuration loop for reproducibility
     np.random.seed(SEED)
@@ -373,10 +377,14 @@ for row_idx, config_id in enumerate(CONFIG_IDS):
                 if disp is None or np.isnan(disp[0]):
                     continue
                 
-                # Check condition: k0 (index 0) must be stable (negative real parts)
-                if disp[0] < 0:
-                    dispersion_results[CV].append(disp)
-                    successful += 1
+                # NEW version Check condition: k0 (index 0) must be stable (negative real parts)
+                # if disp[0] < 0:
+                #     dispersion_results[CV].append(disp)
+                #     successful += 1
+                
+                # ORIGINAL VERSION No k=0 check — heterogeneous rings can have positive m=0 even without diffusion
+                dispersion_results[CV].append(disp)
+                successful += 1
 
     # Extract baseline dispersion profile
     baseline_disp = dispersion_results[0.0][0] if len(dispersion_results[0.0]) > 0 else np.zeros(len(K_DISCRETE))
@@ -426,4 +434,5 @@ legend_handles = [
 fig_multi.legend(handles=legend_handles, loc='lower center', bbox_to_anchor=(0.5, 0.02), ncol=2, frameon=False, fontsize=11)
 
 plt.savefig('3954_heterogeneous_dispersion_comparison.png', dpi=200, bbox_inches='tight')
+print("Saved as 3954_heterogeneous_dispersion_comparison.png")
 plt.close()
