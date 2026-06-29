@@ -422,6 +422,7 @@ legend_handles = [
     mlines.Line2D([], [], color='black', linewidth=2, marker='o', linestyle='-', label='Baseline (CV=0.0)'),
     mlines.Line2D([], [], color='red', linewidth=1.5, linestyle=':', label='Turing Threshold'),
 ]
+
 fig_multi.legend(handles=legend_handles, loc='lower center', bbox_to_anchor=(0.5, 0.02), ncol=2, frameon=False, fontsize=11)
 
 plt.savefig('3954_heterogeneous_dispersion_comparison.png', dpi=200, bbox_inches='tight')

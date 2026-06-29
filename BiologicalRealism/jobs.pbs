@@ -1,6 +1,6 @@
 #!/bin/bash
 #PBS -N python_job
-#PBS -l walltime=00:20:00
+#PBS -l walltime=00:60:00
 #PBS -l select=1:ncpus=1:mem=4gb
 #PBS -j oe
 
