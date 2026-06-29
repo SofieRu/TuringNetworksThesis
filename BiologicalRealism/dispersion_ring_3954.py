@@ -10,7 +10,7 @@ from heterogenous_ring_3954 import compute_jacobian, find_steady_state, build_ri
 CSV_PATH = '../TopologyRanking/Topology3954/3954_FINAL_lhs_results_parameters.csv'
 CONFIG_IDS = [43, 2]
 N_RING = 30
-N_TRIALS = 1
+N_TRIALS = 3
 CV_VALUES = [0.0, 0.1, 0.2, 0.3, 0.4]
 SEED = 42
 
@@ -288,16 +288,18 @@ type_i = df[df['classification'] == 'Type-I']
 
 
 def find_dominant_k(eigenvector, N):
-    """
-    Finds the dominant wavenumber m by looking at the combined magnitude 
-    of all species across the cells to ensure robust mapping.
-    """
-    # Reshape to (N_cells, N_species) -> (30, 3)
-    reshaped = eigenvector.reshape((N, 3))
+    #OLD 
+    reshaped = eigenvector.reshape((N, 3)) # Reshape to (N_cells, N_species) -> (30, 3)
     # Take the spatial profile magnitude across all species combined
     spatial_profile = np.linalg.norm(reshaped, axis=1)
-    
     fft_mag = np.abs(np.fft.fft(spatial_profile))
+
+    #NEW
+    reshaped = eigenvector.reshape((N, 3))
+    # FFT each species separately, take magnitudes, sum across species
+    fft_per_species = np.abs(np.fft.fft(reshaped, axis=0))  # shape (N, 3)
+    fft_mag = np.sum(fft_per_species, axis=1)  # combined power per spatial frequency, length N
+
     relevant_magnitudes = fft_mag[:N // 2 + 1]
     return int(np.argmax(relevant_magnitudes))
 
@@ -315,6 +317,12 @@ def compute_heterogeneous_dispersion(baseline_params, hopping, N, CV, k_discrete
     
     eigenvalues, eigenvectors = np.linalg.eig(J_ring)
     real_parts = np.real(eigenvalues)
+
+    # NEW TO KINDA FILTER AND NOT GET THOSE WEIRD VALUES...
+    mask = real_parts > -10
+    eigenvalues = eigenvalues[mask]
+    eigenvectors = eigenvectors[:, mask]
+    real_parts = real_parts[mask]
 
     print(f"  Trial: 90 eigenvalues sorted (top 20): {np.sort(real_parts)[::-1][:20]}")
     print(f"  Median: {np.median(real_parts):.2f}, " f"min: {real_parts.min():.2f}, max: {real_parts.max():.2f}")
