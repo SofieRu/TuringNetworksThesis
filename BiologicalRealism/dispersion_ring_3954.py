@@ -16,7 +16,6 @@ SEED = 42
 
 M_VALUES = np.arange(0, N_RING // 2 + 1)
 K_DISCRETE = 2 * np.sin(M_VALUES * np.pi / N_RING)
-x_indices = np.arange(len(K_DISCRETE))
 
 df = pd.read_csv(CSV_PATH)
 type_i = df[df['classification'] == 'Type-I']
