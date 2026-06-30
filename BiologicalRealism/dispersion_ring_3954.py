@@ -9,8 +9,8 @@ from heterogenous_ring_3954 import compute_jacobian, find_steady_state, build_ri
 
 CSV_PATH = '../TopologyRanking/Topology3954/3954_FINAL_lhs_results_parameters.csv'
 CONFIG_IDS = [43, 2]
-N_RING = 30
-N_TRIALS = 3
+N_RING = 20
+N_TRIALS = 10
 CV_VALUES = [0.0, 0.1, 0.2, 0.3, 0.4]
 SEED = 42
 
@@ -136,163 +136,12 @@ type_i = df[df['classification'] == 'Type-I']
 
 #### HETEROGENOUS VERSION
 
-# FFT to find dominant k_m of an eigenvector
-# For a heterogeneous ring eigenvector, find its dominant k_m via FFT.neigenvector: 3N-element array (cells stacked × species), species_idx: which species to use for spatial analysis (default: u, idx 0), Returns: integer m index in [0, N//2] of dominant wavenumber
-
-# def find_dominant_k(eigenvector, N, species_idx=0):
-#     subvec = eigenvector[species_idx::3]  # length N
-#     fft_mag = np.abs(np.fft.fft(subvec))
-
-#     # Only look at m = 0 to N//2 (our K_DISCRETE range)
-#     relevant_magnitudes = fft_mag[:N // 2 + 1]
-#     return int(np.argmax(relevant_magnitudes))
-
-# # For one trial: build a heterogeneous ring Jacobian using the existing build_ring_jacobian_heterogeneous function, then compute max Re(λ) per discrete k_m.
-# # Returns: array of length len(K_DISCRETE) with max Re(λ) per k_m bin, or None if any cell's steady state couldn't be found.
-
-# def compute_heterogeneous_dispersion(baseline_params, hopping, N, CV, K_DISCRETE):
-#     J_ring, steady_states, params_list = build_ring_jacobian_heterogeneous(N, baseline_params, hopping, CV)
-    
-#     if J_ring is None:
-#         return None
-    
-#     eigenvalues, eigenvectors = np.linalg.eig(J_ring)
-#     real_parts = np.real(eigenvalues)
-    
-#     # Bin eigenvalues by dominant k_m
-#     max_re_per_km = np.full(len(K_DISCRETE), -np.inf)
-    
-#     for j in range(len(eigenvalues)):
-#         eigvec = eigenvectors[:, j]
-#         m = find_dominant_k(eigvec, N, species_idx=0)
-#         if real_parts[j] > max_re_per_km[m]:
-#             max_re_per_km[m] = real_parts[j]
-    
-#     max_re_per_km = np.where(np.isinf(max_re_per_km), np.nan, max_re_per_km)
-#     return max_re_per_km
-
-# # COMPUTE FOR EACH CONFIG AND CV
-# results = {}  # results[config_id][CV] = list of dispersion arrays
-
-# for config_id in CONFIG_IDS:
-#     row_data = type_i[(type_i['config_id'] == config_id) & (type_i['param_rank'] == 1)].iloc[0]
-    
-#     baseline_params = np.array([
-#         row_data['alpha_u'], row_data['beta_u'], row_data['K_uu'], row_data['K_vu'], row_data['delta_u'],
-#         row_data['alpha_v'], row_data['beta_v'], row_data['K_uv'], row_data['K_wv'], row_data['delta_v'],
-#         row_data['alpha_w'], row_data['beta_w'], row_data['K_ww'], row_data['K_uw'], row_data['K_vw'], row_data['delta_w']
-#     ])
-#     dU, dV, dW = row_data['dU'], row_data['dV'], row_data['dW']
-#     hopping = {'h_u': dU, 'h_v': dV, 'h_w': dW}
-    
-#     print(f"Config {config_id}: {row_data['config_name']}")
-#     print(f"  Diffusion (dU, dV, dW) = ({dU}, {dV}, {dW})")
-    
-#     np.random.seed(SEED + config_id)  # different seed per config
-#     config_results = {CV: [] for CV in CV_VALUES}
-
-#     # check this again bc before we had: #     np.random.seed(SEED) #     dispersion_results = {CV: [] for CV in CV_VALUES}
-    
-#     for CV in CV_VALUES:
-#         if CV == 0.0:
-#             # No noise — single baseline (all cells identical)
-#             disp = compute_heterogeneous_dispersion(
-#                 baseline_params, hopping, N_RING, CV, K_DISCRETE
-#             )
-#             if disp is not None and disp[0] < 0:
-#                 config_results[CV].append(disp)
-#         else:
-#             successful = 0
-#             attempts = 0
-#             max_attempts = N_TRIALS * 10
-            
-#             while successful < N_TRIALS and attempts < max_attempts:
-#                 attempts += 1
-#                 disp = compute_heterogeneous_dispersion(
-#                     baseline_params, hopping, N_RING, CV, K_DISCRETE
-#                 )
-#                 if disp is None:
-#                     continue
-                
-#                 # Discard rule: k=0 must be stable
-#                 if disp[0] < 0:
-#                     config_results[CV].append(disp)
-#                     successful += 1
-            
-#             print(f"  CV={CV}: {successful}/{N_TRIALS} successful " f"({attempts} attempts, {attempts - successful} discarded)")
-    
-#     results[config_id] = config_results
-#     print()
-
-# # plotting the disperion relation 
-
-# noisy_cvs = [0.1, 0.2, 0.3, 0.4]
-# panel_colors = ['steelblue', 'deeppink', 'darkorange', 'forestgreen']
-# fig, axes = plt.subplots(2, 4, figsize=(18, 8.5), sharex=True, sharey='row')
-
-# for row_idx, config_id in enumerate(CONFIG_IDS):
-#     config_results = results[config_id]
-#     baseline_disps = config_results[0.0]
-    
-#     if not baseline_disps:
-#         print(f"WARNING: no baseline for config {config_id}, skipping row")
-#         continue
-    
-#     baseline_disp = baseline_disps[0]
-#     row_axes = axes[row_idx]
-    
-#     for col_idx, (ax, CV, color) in enumerate(zip(row_axes, noisy_cvs, panel_colors)):
-#         curves = config_results[CV]
-        
-#         # Baseline
-#         ax.plot(x_indices, baseline_disp, 'o-', color='black', linewidth=2.0, markersize=8, zorder=5)
-        
-#         # Noisy trials
-#         for disp in curves:
-#             ax.plot(x_indices, disp, 'o-', color=color, linewidth=1.2, markersize=6, alpha=0.4, zorder=3)
-        
-#         ax.axhline(0, color='red', linestyle=':', linewidth=1.5, alpha=0.7)
-#         ax.set_xticks(x_indices)
-#         ax.grid(alpha=0.3, linestyle='--')
-        
-#         if row_idx == 0:
-#             ax.set_title(f'CV = {CV:.2f} ({len(curves)} trials)', fontsize=12)
-        
-#         if row_idx == 1:
-#             tick_labels = [f'$k_{{{m}}}$={k:.2f}' for m, k in zip(M_VALUES, K_DISCRETE)]
-#             ax.set_xticklabels(tick_labels, rotation=30, ha='right', fontsize=9)
-#             ax.set_xlabel('Discrete Wavenumbers ($k_m$)', fontsize=11)
-    
-#     row_axes[0].set_ylabel(f'Config {config_id}\nMax Re(λ)', fontsize=12)
-
-# fig.subplots_adjust(left=0.09, right=0.96, top=0.85, bottom=0.18, wspace=0.04, hspace=0.06)
-
-# fig.suptitle(
-#     f'Topology 3954 Heterogeneous Ring Dispersion (N={N_RING} cells)\n'
-#     f'Each cell has independent noisy parameters — '
-#     f'Config {CONFIG_IDS[0]} (top) vs Config {CONFIG_IDS[1]} (bottom)',
-#     fontsize=14, y=0.95
-# )
-
-# legend_handles = [
-#     mlines.Line2D([], [], color='black', linewidth=2, marker='o',linestyle='-', label='Baseline (CV=0.0)'),
-#     mlines.Line2D([], [], color='red', linewidth=1.5, linestyle=':', label='Turing Threshold'),
-# ]
-
-# fig.legend(handles=legend_handles, loc='lower center', bbox_to_anchor=(0.5, 0.02), ncol=2, frameon=False, fontsize=11)
-
-# plt.savefig('3954_heterogeneous_dispersion_comparison.png', dpi=200, bbox_inches='tight')
-# plt.close()
-
-
-
-
 def find_dominant_k(eigenvector, N):
     #OLD 
-    reshaped = eigenvector.reshape((N, 3)) # Reshape to (N_cells, N_species) -> (30, 3)
-    # Take the spatial profile magnitude across all species combined
-    spatial_profile = np.linalg.norm(reshaped, axis=1)
-    fft_mag = np.abs(np.fft.fft(spatial_profile))
+    # reshaped = eigenvector.reshape((N, 3)) # Reshape to (N_cells, N_species) -> (30, 3)
+    # # Take the spatial profile magnitude across all species combined
+    # spatial_profile = np.linalg.norm(reshaped, axis=1)
+    # fft_mag = np.abs(np.fft.fft(spatial_profile))
 
     #NEW
     reshaped = eigenvector.reshape((N, 3))
@@ -303,12 +152,7 @@ def find_dominant_k(eigenvector, N):
     relevant_magnitudes = fft_mag[:N // 2 + 1]
     return int(np.argmax(relevant_magnitudes))
 
-
 def compute_heterogeneous_dispersion(baseline_params, hopping, N, CV, k_discrete):
-    """
-    Builds the massive heterogeneous ring Jacobian, calculates eigenvalues,
-    and bins them by their dominant spatial wavenumber.
-    """
     # Pass diffusion rates packaged as expected by your module (usually [dU, dV, dW])
     J_ring, steady_states, params_list = build_ring_jacobian_heterogeneous(N, baseline_params, hopping, CV)
     
@@ -319,13 +163,13 @@ def compute_heterogeneous_dispersion(baseline_params, hopping, N, CV, k_discrete
     real_parts = np.real(eigenvalues)
 
     # NEW TO KINDA FILTER AND NOT GET THOSE WEIRD VALUES...
-    mask = real_parts > -10
-    eigenvalues = eigenvalues[mask]
-    eigenvectors = eigenvectors[:, mask]
-    real_parts = real_parts[mask]
+    # mask = real_parts > -5
+    # eigenvalues = eigenvalues[mask]
+    # eigenvectors = eigenvectors[:, mask]
+    # real_parts = real_parts[mask]
 
-    print(f"  Trial: 90 eigenvalues sorted (top 20): {np.sort(real_parts)[::-1][:20]}")
-    print(f"  Median: {np.median(real_parts):.2f}, " f"min: {real_parts.min():.2f}, max: {real_parts.max():.2f}")
+    print(f"Trial: 90 eigenvalues sorted (top 20): {np.sort(real_parts)[::-1][:20]}")
+    print(f"Median: {np.median(real_parts):.2f}, " f"min: {real_parts.min():.2f}, max: {real_parts.max():.2f}")
     
     # Initialize bins for each discrete wavenumber m
     max_re_per_km = np.full(len(k_discrete), -np.inf)
@@ -403,26 +247,27 @@ for row_idx, config_id in enumerate(CONFIG_IDS):
         curves = dispersion_results[CV]
         
         # Plot Baseline Reference
-        ax.plot(x_indices, baseline_disp, 'o-', color='black', linewidth=2.0, markersize=8, 
-                label='Baseline (CV=0.0)' if (row_idx == 0 and col_idx == 0) else "", zorder=5)
+        ax.plot(K_DISCRETE, baseline_disp, 'o-', color='black', linewidth=2.0, markersize=8, label='Baseline (CV=0.0)' if (row_idx == 0 and col_idx == 0) else "", zorder=5)  # changed from x_indices bc the spacing was not true 
         
         # Plot Noisy Heterogeneous Trials
         for i, disp in enumerate(curves):
             label = f'Heterogeneous Noisy (CV={CV})' if (i == 0 and row_idx == 0 and col_idx == 0) else ""
-            ax.plot(x_indices, disp, 'o-', color=color, linewidth=1.2,
+            ax.plot(K_DISCRETE, disp, 'o-', color=color, linewidth=1.2,
                     markersize=6, alpha=0.4, zorder=3, label=label)
             
         ax.axhline(0, color='red', linestyle=':', linewidth=1.5, alpha=0.7)
-        ax.set_xticks(x_indices)
+        ax.set_xticks(K_DISCRETE)
         ax.grid(alpha=0.3, linestyle='--')
         
         if row_idx == 0:
             ax.set_title(f'CV = {CV:.2f} ({len(curves)} trials)', fontsize=12)
             
         if row_idx == 1:
-            tick_labels = [f'$k_{{{m}}}$={k:.2f}' for m, k in zip(M_VALUES, K_DISCRETE)]
-            ax.set_xticklabels(tick_labels, rotation=30, ha='right', fontsize=9)
-            ax.set_xlabel('Discrete Wavenumbers ($k_m$)', fontsize=11)
+            visible_ticks = K_DISCRETE[::3]
+            visible_labels = [f'$k_{{{m}}}$={k:.2f}' for m, k in zip(M_VALUES[::3], visible_ticks)]
+            ax.set_xticks(visible_ticks)
+            ax.set_xticklabels(visible_labels, rotation=30, ha='right', fontsize=9)
+            ax.set_xlabel('Wavenumber $k_m$', fontsize=11)
 
     row_axes[0].set_ylabel(f'Config {config_id}\nHeterogeneous Re(λ)', fontsize=12)
 
