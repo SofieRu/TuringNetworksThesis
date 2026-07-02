@@ -133,9 +133,9 @@ baseline_params = np.array([
     row['alpha_v'], row['beta_v'], row['K_uv'], row['K_wv'], row['delta_v'],
     row['alpha_w'], row['beta_w'], row['K_ww'], row['K_uw'], row['K_vw'], row['delta_w']
 ])
+
 dU, dV, dW = row['dU'], row['dV'], row['dW']
 hopping = {'h_u': dU, 'h_v': dV, 'h_w': dW}
-
 
 def find_dominant_k(eigenvector, N):
     reshaped = eigenvector.reshape((N, 3))
@@ -143,7 +143,6 @@ def find_dominant_k(eigenvector, N):
     fft_mag = np.sum(fft_per_species, axis=1)
     relevant_magnitudes = fft_mag[:N // 2 + 1]
     return int(np.argmax(relevant_magnitudes))
-
 
 def get_all_eigenvalues_with_km(baseline_params, hopping, N, CV):
     """Return list of (k_m, Re(λ)) tuples — all 90 eigenvalues with their assigned k_m."""

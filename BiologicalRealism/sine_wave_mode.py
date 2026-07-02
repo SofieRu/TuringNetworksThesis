@@ -20,8 +20,7 @@ ax.plot(cells, mode_1, 'o-', color='darkorchid', linewidth=2, markersize=7)
 ax.axhline(0, color='gray', linewidth=0.8, linestyle='--', alpha=0.7)
 ax.set_xlabel('Cell index', fontsize=11)
 ax.set_ylabel('Eigenvector amplitude', fontsize=11)
-ax.set_title(f'm=1: one cycle across the ring\n$k_1 = {k_1:.3f}$',
-             fontsize=12)
+ax.set_title(f'm=1: one cycle across the ring\n$k_1 = {k_1:.3f}$', fontsize=12)
 ax.grid(alpha=0.3)
 ax.set_xticks(np.arange(0, N + 1, 5))
 

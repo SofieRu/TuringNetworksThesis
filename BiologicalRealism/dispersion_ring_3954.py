@@ -87,16 +87,16 @@ type_i = df[df['classification'] == 'Type-I']
 #         curves = dispersion_results[CV]
         
 #         # Plot Baseline
-#         ax.plot(x_indices, baseline_disp, 'o-', color='black', linewidth=2.0, markersize=8, label='Baseline (CV=0.0)' if (row_idx==0 and col_idx==0) else "", zorder=5)
+#         ax.plot(K_DISCRETE, baseline_disp, 'o-', color='black', linewidth=2.0, markersize=8, label='Baseline (CV=0.0)' if (row_idx==0 and col_idx==0) else "", zorder=5)
         
 #         # Plot Noisy Trials
 #         for i, disp in enumerate(curves):
 #             label = f'Noisy (CV={CV})' if (i == 0 and row_idx == 0 and col_idx == 0) else ""
-#             ax.plot(x_indices, disp, 'o-', color=color, linewidth=1.2,
+#             ax.plot(K_DISCRETE, disp, 'o-', color=color, linewidth=1.2,
 #                     markersize=6, alpha=0.4, zorder=3, label=label)
             
 #         ax.axhline(0, color='red', linestyle=':', linewidth=1.5, alpha=0.7)
-#         ax.set_xticks(x_indices)
+#         ax.set_xticks(K_DISCRETE)
 #         ax.grid(alpha=0.3, linestyle='--')
         
 #         # Clean Clean-up: Only show titles over the top row of subplots
