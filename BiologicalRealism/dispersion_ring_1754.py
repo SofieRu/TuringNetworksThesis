@@ -9,7 +9,7 @@ from heterogenous_ring_1754 import compute_jacobian, find_steady_state, build_ri
 
 CSV_PATH = '../TopologyRanking/Topology1754/1754_FINAL_lhs_results_parameters.csv'
 CONFIG_IDS = [40, 10]
-N_RING = 30
+N_RING = 20
 N_TRIALS = 10
 CV_VALUES = [0.0, 0.1, 0.2, 0.3, 0.4]
 SEED = 42
@@ -193,7 +193,7 @@ for row_idx, config_id in enumerate(CONFIG_IDS):
     row_data = type_i[(type_i['config_id'] == config_id) & (type_i['param_rank'] == 1)].iloc[0]
     
     baseline_params = np.array([
-        row_data['alpha_u'], row_data['beta_u'], row_data['K_uu'], row_data['K_vu'], row_data['delta_u'],
+        row_data['alpha_u'], row_data['beta_u'], row_data['K_vu'], row_data['delta_u'],
         row_data['alpha_v'], row_data['beta_v'], row_data['K_uv'], row_data['K_wv'], row_data['delta_v'],
         row_data['alpha_w'], row_data['beta_w'], row_data['K_ww'], row_data['K_uw'], row_data['K_vw'], row_data['delta_w']
     ])
