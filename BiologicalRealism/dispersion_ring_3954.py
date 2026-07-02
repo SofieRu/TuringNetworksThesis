@@ -105,9 +105,14 @@ type_i = df[df['classification'] == 'Type-I']
             
 #         # Clean Clean-up: Only show X axis text on the very bottom row panels
 #         if row_idx == 1:
-#             tick_labels = [f'$k_{{{m}}}$={k:.2f}' for m, k in zip(M_VALUES, K_DISCRETE)]
-#             ax.set_xticklabels(tick_labels, rotation=30, ha='right', fontsize=9)
-#             ax.set_xlabel('Discrete Wavenumbers ($k_m$)', fontsize=11)
+#             visible_ticks = K_DISCRETE[::3]
+#             visible_labels = [f'$k_{{{m}}}$={k:.2f}' for m, k in zip(M_VALUES[::3], visible_ticks)]
+#             ax.set_xticks(visible_ticks)
+#             ax.set_xticklabels(visible_labels, rotation=30, ha='right', fontsize=9)
+#             ax.set_xlabel('Wavenumber $k_m$', fontsize=11)
+#             # tick_labels = [f'$k_{{{m}}}$={k:.2f}' for m, k in zip(M_VALUES, K_DISCRETE)]
+#             # ax.set_xticklabels(tick_labels, rotation=30, ha='right', fontsize=9)
+#             # ax.set_xlabel('Discrete Wavenumbers ($k_m$)', fontsize=11)
 
 #     # Put a clear bold row marker on the left-most panel of each row
 #     row_axes[0].set_ylabel(f'Config {config_id}\nMax Re(λ)', fontsize=12)
@@ -127,7 +132,7 @@ type_i = df[df['classification'] == 'Type-I']
 
 # fig_multi.legend(handles=legend_handles, loc='lower center', bbox_to_anchor=(0.5, 0.02), ncol=2, frameon=False, fontsize=11)
 
-# plt.savefig('3954_dispersion_comparison_configs.png', dpi=200, bbox_inches='tight')
+# plt.savefig('3954_homogeneous_dispersion_comparison.png', dpi=200, bbox_inches='tight')
 # plt.close()
 
 
