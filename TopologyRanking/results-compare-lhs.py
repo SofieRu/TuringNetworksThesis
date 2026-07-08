@@ -983,126 +983,6 @@ def fig_topology_robustness_comparison(df):
 
 
 
-
-
-# def fig_topology_robustness_comparison_final(df):
-#     df = df.copy()
-
-#     # 1. Filter strictly for your two target topologies
-#     target_topologies = ["#1754", "#3954"]
-#     df = df[df["topology_id"].isin(target_topologies)]
-    
-#     topo_colors = {"#1754": "blueviolet", "#3954": "cornflowerblue"}
-#     topo_order = ["#1754", "#3954"]
-
-#     # 2. Assign standard CSV columns to plotting metrics
-#     df["plot_total"] = df["rob_shaberi_total"]
-#     df["plot_type_I"] = df["rob_shaberi_type_I"]
-
-#     fig, axes = plt.subplots(1, 2, figsize=(14, 5.0))
-
-#     # --- CALCULATE METRICS FOR THE LEGEND ---
-#     med_tot_1754 = df[df["topology_id"] == "#1754"]["plot_total"].median()
-#     mean_tot_1754 = df[df["topology_id"] == "#1754"]["plot_total"].mean()
-#     med_tot_3954 = df[df["topology_id"] == "#3954"]["plot_total"].median()
-#     mean_tot_3954 = df[df["topology_id"] == "#3954"]["plot_total"].mean()
-    
-#     med_t1_1754 = df[df["topology_id"] == "#1754"]["plot_type_I"].median()
-#     mean_t1_1754 = df[df["topology_id"] == "#1754"]["plot_type_I"].mean()
-#     med_t1_3954 = df[df["topology_id"] == "#3954"]["plot_type_I"].median()
-#     mean_t1_3954 = df[df["topology_id"] == "#3954"]["plot_type_I"].mean()
-
-#     # --- LEFT PLOT: Global Overall Robustness ---
-#     # FIXED: Explicitly targeting axes[0] for all left-side operations
-#     sns.boxplot(
-#         data=df, x="topology_id", y="plot_total", 
-#         order=topo_order, palette=topo_colors, ax=axes[0], 
-#         width=0.4, fliersize=0, linewidth=2.0,
-#         showmeans=True, meanline=True,
-#         meanprops={"linestyle": "--", "linewidth": 2.2, "color": "#D32F2F"}
-#     )
-#     sns.stripplot(
-#         data=df, x="topology_id", y="plot_total",
-#         order=topo_order, color="#222222", alpha=0.25, size=4, jitter=0.15, ax=axes[0]
-#     )
-#     axes[0].set_title("Overall Network Robustness\n(All Genuine Turing Types Combined)", fontsize=11, fontweight="semibold", pad=12)
-#     axes[0].set_ylabel("Robustness Score (%)", fontsize=10)
-
-#     # --- RIGHT PLOT: Genuine Turing Type I Robustness Only ---
-#     # FIXED: Explicitly targeting axes[1] for all right-side operations
-#     sns.boxplot(
-#         data=df, x="topology_id", y="plot_type_I",  
-#         order=topo_order, palette=topo_colors, ax=axes[1], 
-#         width=0.4, fliersize=0, linewidth=2.0,
-#         showmeans=True, meanline=True,
-#         meanprops={"linestyle": "--", "linewidth": 2.2, "color": "#D32F2F"}
-#     )
-#     sns.stripplot(
-#         data=df, x="topology_id", y="plot_type_I",  
-#         order=topo_order, color="#222222", alpha=0.25, size=4, jitter=0.15, ax=axes[1]
-#     )
-#     axes[1].set_title("Targeted Network Robustness\n(Genuine Turing Type I Only)", fontsize=11, fontweight="semibold", pad=12)
-#     axes[1].set_ylabel("Robustness Score (%)", fontsize=10)
-
-#     # 3. Clean up axis boundaries and labels across both panels
-#     for ax in axes:
-#         ax.set_xlabel("Topology ID", fontsize=10)
-#         ax.tick_params(axis="both", which="major", labelsize=9.5)
-
-#     # 4. Global Main Header (Bold Title, Standard-Weight regular Subtitle)
-#     fig.text(0.5, 0.98, "Robustness and Parameter Space Density Comparison Between Topologies", 
-#              fontsize=12.5, fontweight="semibold", color="#111111", ha="center")
-    
-#     # 5. FIXED LEGEND (4-Column Layout with Explicit Text Labels)
-#     legend_labels = [
-#         f"Topology #1754\nOverall Mean: {mean_tot_1754:.3f}%\nType I Mean: {mean_t1_1754:.3f}%",
-#         f"Topology #3954\nOverall Mean: {mean_tot_3954:.3f}%\nType I Mean: {mean_t1_3954:.3f}%",
-#         f"Statistical Medians\nOverall (#1754 / #3954): {med_tot_1754:.3f}% / {med_tot_3954:.3f}%\nType I (#1754 / #3954): {med_t1_1754:.3f}% / {med_t1_3954:.3f}%",
-#         "",  # Empty spacer label for column alignment
-#         "Topology #1754",
-#         "Topology #3954",
-#         "Median Value",
-#         "Mean (Average) Value"
-#     ]
-    
-#     patch_1754 = mpatches.Patch(color='blueviolet')
-#     patch_3954 = mpatches.Patch(color='cornflowerblue')
-#     line_median = mlines.Line2D([], [], color='#444444', linewidth=2.0)
-#     line_mean = mlines.Line2D([], [], color='#D32F2F', linestyle='--', linewidth=2.2)
-
-#     display_handles = [
-#         patch_1754, patch_3954, line_median, mpatches.Patch(color='none'), 
-#         patch_1754, patch_3954, line_median, line_mean
-#     ]
-
-#     # Places the clean, frame-free legend directly under the subplots
-#     fig.legend(
-#         handles=display_handles,
-#         labels=legend_labels,
-#         loc="upper center",
-#         bbox_to_anchor=(0.5, 0.08), 
-#         ncol=4,
-#         fontsize=9,
-#         frameon=False 
-#     )
-
-#     # 6. Adjust panel space and bottom margin tightly
-#     fig.subplots_adjust(
-#         left=0.08, 
-#         right=0.94, 
-#         top=0.84, 
-#         bottom=0.22,
-#         wspace=0.15
-#     )
-
-#     save(fig, "thesis_topology_robustness_comparison")
-
-
-import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
-import matplotlib.lines as mlines
-import seaborn as sns
-
 def fig_topology_robustness_comparison_final(df):
     df = df.copy()
 
@@ -1131,8 +1011,8 @@ def fig_topology_robustness_comparison_final(df):
     mean_t1_3954 = df[df["topology_id"] == "#3954"]["plot_type_I"].mean()
 
     # Reusable style elements for the legend keys
-    line_median = mlines.Line2D([], [], color='#222222', linewidth=2.0)
-    line_mean = mlines.Line2D([], [], color='#D32F2F', linestyle='--', linewidth=2.2)
+    line_median = mlines.Line2D([], [], color='#222222', linewidth=1.5)
+    line_mean = mlines.Line2D([], [], color='#D32F2F', linestyle='--', linewidth=1.5)
 
     # --- LEFT PLOT: Global Overall Robustness ---
     sns.boxplot(
@@ -1146,11 +1026,16 @@ def fig_topology_robustness_comparison_final(df):
         data=df, x="topology_id", y="plot_total",
         order=topo_order, color="#222222", alpha=0.25, size=4, jitter=0.15, ax=axes[0]
     )
-    axes[0].set_title("Overall Network Robustness\n(All Genuine Turing Types Combined)", fontsize=11, fontweight="semibold", pad=12)
+    axes[0].set_title("Overall Network Robustness\n(All Genuine Turing Types Combined)", fontsize=11, pad=12)
     axes[0].set_ylabel("Robustness Score (%)", fontsize=10)
 
-    # Clean Left Legend (Focusing purely on the data in this subplot)
-    handles_left = [mpatches.Patch(color='blueviolet'), line_median, line_mean]
+    # FIXED: Added the cornflowerblue patch handle for #3954
+    handles_left = [
+        mpatches.Patch(color='blueviolet'), 
+        mpatches.Patch(color='cornflowerblue'), 
+        line_median, 
+        line_mean
+    ]
     labels_left = [
         f"#1754 (Median: {med_tot_1754:.4f}%, Mean: {mean_tot_1754:.4f}%)",
         f"#3954 (Median: {med_tot_3954:.4f}%, Mean: {mean_tot_3954:.4f}%)",
@@ -1171,11 +1056,16 @@ def fig_topology_robustness_comparison_final(df):
         data=df, x="topology_id", y="plot_type_I",  
         order=topo_order, color="#222222", alpha=0.25, size=4, jitter=0.15, ax=axes[1]
     )
-    axes[1].set_title("Targeted Network Robustness\n(Genuine Turing Type I Only)", fontsize=11, fontweight="semibold", pad=12)
+    axes[1].set_title("Targeted Network Robustness\n(Genuine Turing Type I Only)", fontsize=11, pad=12)
     axes[1].set_ylabel("Robustness Score (%)", fontsize=10)
 
-    # Clean Right Legend (Focusing purely on the data in this subplot)
-    handles_right = [mpatches.Patch(color='blueviolet'), line_median, line_mean]
+    # FIXED: Added the cornflowerblue patch handle for #3954
+    handles_right = [
+        mpatches.Patch(color='blueviolet'), 
+        mpatches.Patch(color='cornflowerblue'), 
+        line_median, 
+        line_mean
+    ]
     labels_right = [
         f"#1754 (Median: {med_t1_1754:.4f}%, Mean: {mean_t1_1754:.4f}%)",
         f"#3954 (Median: {med_t1_3954:.4f}%, Mean: {mean_t1_3954:.4f}%)",
@@ -1190,11 +1080,10 @@ def fig_topology_robustness_comparison_final(df):
         ax.tick_params(axis="both", which="major", labelsize=9.5)
 
     # 4. Global Main Header
-    fig.text(0.5, 0.96, "Robustness and Parameter Space Density Comparison Between Topologies", 
-             fontsize=12.5, fontweight="semibold", color="#111111", ha="center")
+    fig.text(0.5, 0.98, "Robustness and Parameter Space Density Comparison Between Topologies", fontsize=12.5, fontweight="semibold", color="#111111", ha="center")
 
     # 5. Fine tuning plot limits and spacing to guarantee nothing overlaps
-    fig.subplots_adjust(left=0.08, right=0.94, top=0.86, bottom=0.12, wspace=0.20)
+    fig.subplots_adjust(left=0.08, right=0.94, top=0.84, bottom=0.12, wspace=0.12)
 
     save(fig, "thesis_topology_robustness_comparison")
 
