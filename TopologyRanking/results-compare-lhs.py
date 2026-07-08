@@ -331,7 +331,7 @@ def fig_all_patterns_profile_trends(df):
 
     # Global Main Header
     plt.suptitle(
-        "Distribution of Turing Instability Types Across Topological Network Types", # Changes in Turing Instability Composition When Moving from Type I to Type III
+        "Distribution of Turing Instability Types Across Topological Types", # Changes in Turing Instability Composition When Moving from Type I to Type III
         fontsize=13,
         y=0.96,
         fontweight="semibold",
@@ -478,7 +478,7 @@ def fig_all_patterns_profile_trends_complete(df):
                 ax.autoscale(enable=True, axis='y', tight=False)
 
             # Panel styling and visual polish
-            ax.set_xlabel("Turing Type (Diego et al. 2018)", fontsize=10, color="#333333", labelpad=6)
+            ax.set_xlabel("Type (Diego et al. 2018)", fontsize=10, color="#333333", labelpad=6)
             ax.tick_params(axis="both", which="major", labelsize=9.5, labelleft=True, colors="#444444")
             ax.grid(True, axis="both", linestyle=":", alpha=0.5, color="#cccccc", zorder=0)
             
@@ -490,7 +490,7 @@ def fig_all_patterns_profile_trends_complete(df):
 
     # Global Main Header
     plt.suptitle(
-        "Distribution of Turing Instability Types Across Topological Network Types",
+        "Distribution of Turing Instability Types Across Topological Types",
         fontsize=13,
         x=0.09,                  # <-- Align with the left edge of your subplots (matches your left=0.09)
         y=0.97,
@@ -952,14 +952,14 @@ def fig_thesis_combined_robustness_analysis(df):
         cbar_kws={"label": "Max robustness (rob_shaberi_total)"},
     )
     ax_hm_tot.set_title(
-        "(A) Maximum Robustness Score Across All Turing Types",
+        "(A) Maximum Robustness Score Across All Turing Instability Types",
         fontsize=11,
         fontweight="semibold",
         loc="left",
         pad=10,
     )
     ax_hm_tot.set_xlabel("Topology ID", fontsize=11)
-    ax_hm_tot.set_ylabel("Turing Type", fontsize=11)
+    ax_hm_tot.set_ylabel("Type (Diego et al. 2018)", fontsize=11)
 
     # Right Column: Boxplot
     sns.boxplot(
@@ -1026,14 +1026,14 @@ def fig_thesis_combined_robustness_analysis(df):
         cbar_kws={"label": "Type I robustness (rob_shaberi_type_I)"},
     )
     ax_hm_t1.set_title(
-        "(C) Maximum Robustness Score for Genuine Turing Type I",
+        "(C) Maximum Robustness Score for Turing Instability Type I",
         fontsize=11,
         fontweight="semibold",
         loc="left",
         pad=10,
     )
     ax_hm_t1.set_xlabel("Topology ID", fontsize=11)
-    ax_hm_t1.set_ylabel("Turing Type", fontsize=11)
+    ax_hm_t1.set_ylabel("Type (Diego et al. 2018)", fontsize=11)
 
     # Right Column: Boxplot
     sns.boxplot(
