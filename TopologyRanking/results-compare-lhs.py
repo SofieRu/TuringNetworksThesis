@@ -952,7 +952,7 @@ def fig_thesis_combined_robustness_analysis(df):
         cbar_kws={"label": "Max robustness (rob_shaberi_total)"},
     )
     ax_hm_tot.set_title(
-        "(A) Parameter Space Density Across All Topologies",
+        "(A) Maximum Robustness Score Across All Turing Types",
         fontsize=11,
         fontweight="semibold",
         loc="left",
@@ -1026,7 +1026,7 @@ def fig_thesis_combined_robustness_analysis(df):
         cbar_kws={"label": "Type I robustness (rob_shaberi_type_I)"},
     )
     ax_hm_t1.set_title(
-        "(C) Pattern-Forming Parameter Density Across All Topologies",
+        "(C) Maximum Robustness Score for Genuine Turing Type I",
         fontsize=11,
         fontweight="semibold",
         loc="left",
@@ -1062,7 +1062,7 @@ def fig_thesis_combined_robustness_analysis(df):
         ax=ax_box_t1,
     )
     ax_box_t1.set_title(
-        "(D) Genuine Type I Robustness Distribution (#1754 vs #3954)",
+        "(D) Genuine Turing Type I Robustness Distribution (#1754 vs #3954)",
         fontsize=11,
         fontweight="semibold",
         loc="left",
@@ -1092,7 +1092,7 @@ def fig_thesis_combined_robustness_analysis(df):
         ax.tick_params(axis="both", which="major", labelsize=10)
 
     # Global Title Options (Choose one for your figure text below)
-    title_text = "Comparative Robustness Analysis of Network Topologies: Global vs. Genuine Type I Turing Systems"
+    title_text = "Total Turing Robustness vs Genuine Type I Robustness Across Topologies #1754 and #3954"
     fig.text(
         0.5,
         0.97,
