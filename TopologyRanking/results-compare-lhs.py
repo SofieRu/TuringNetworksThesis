@@ -536,128 +536,6 @@ def fig_all_patterns_profile_trends_complete(df):
     save(fig, "thesis_complete_type_profile_trends")
 
 
-
-
-
-import matplotlib.pyplot as plt
-import seaborn as sns
-
-def fig_topology_robustness_comparison(df):
-    df = df.copy()
-
-    # 1. Calculate the total robustness score (Turing count) per configuration row
-    df["total_turing_count"] = (
-        df["shaberi_type_I"] + 
-        df["shaberi_type_II"] + 
-        #df["shaberi_hopf"] + 
-        df["filter_count"]
-    )
-
-    # 2. Filter data specifically for Type I configurations
-    # Note: Adjust "Type1" if your dataframe uses "Type 1" with a space
-    df_type_I = df[df["turing_type"] == "Type1"]
-
-    # 3. Create a clean side-by-side layout (1 row, 2 columns)
-    fig, axes = plt.subplots(1, 2, figsize=(14, 5.5))
-    
-    # Custom color palette matching your topologies (e.g., slate blue and muted teal)
-    topo_colors = {"#1754": "blueviolet", "#3954": "royalblue"}
-    topo_order = ["#1754", "#3954"]
-
-    # --- LEFT PLOT: Global Overall Robustness ---
-    sns.boxplot(
-        data=df,
-        x="topology_id",
-        y="total_turing_count",
-        order=topo_order,
-        palette=topo_colors,
-        ax=axes[0],
-        width=0.5,
-        fliersize=4,
-        linewidth=1.5
-    )
-    
-    # Add mean indicators to show average robustness scores directly
-    sns.stripplot(
-        data=df,
-        x="topology_id",
-        y="total_turing_count",
-        order=topo_order,
-        color="#222222",
-        alpha=0.15,
-        size=4,
-        jitter=0.15,
-        ax=axes[0],
-        zorder=1
-    )
-
-    axes[0].set_title("Overall Network Robustness\n(All Turing Types Combined)", fontsize=11, fontweight="semibold", pad=12)
-    axes[0].set_ylabel("Total Turing Instability Count", fontsize=10)
-    axes[0].set_xlabel("Topology ID", fontsize=10)
-
-    # --- RIGHT PLOT: Turing Type I Robustness Only ---
-    sns.boxplot(
-        data=df_type_I,
-        x="topology_id",
-        y="total_turing_count",
-        order=topo_order,
-        palette=topo_colors,
-        ax=axes[1],
-        width=0.5,
-        fliersize=4,
-        linewidth=1.5
-    )
-    
-    sns.stripplot(
-        data=df_type_I,
-        x="topology_id",
-        y="total_turing_count",
-        order=topo_order,
-        color="#222222",
-        alpha=0.15,
-        size=4,
-        jitter=0.15,
-        ax=axes[1],
-        zorder=1
-    )
-
-    axes[1].set_title("Targeted Network Robustness\n(Turing Type I Only)", fontsize=11, fontweight="semibold", pad=12)
-    axes[1].set_ylabel("Total Turing Instability Count", fontsize=10)
-    axes[1].set_xlabel("Topology ID", fontsize=10)
-
-    # 4. Polish and clean styles across both panels
-    for ax in axes:
-        ax.grid(True, axis="y", linestyle=":", alpha=0.5, color="#cccccc", zorder=0)
-        ax.tick_params(axis="both", which="major", labelsize=9.5, colors="#444444")
-        
-        # Remove top/right spines for premium aesthetic
-        ax.spines["top"].set_visible(False)
-        ax.spines["right"].set_visible(False)
-        ax.spines["left"].set_color("#cccccc")
-        ax.spines["bottom"].set_color("#cccccc")
-
-    # Global Main Header
-    plt.suptitle(
-        "Robustness and Parameter Space Density Comparison Between Topologies",
-        fontsize=12.5,
-        y=0.98,
-        fontweight="semibold",
-        color="#111111"
-    )
-
-    fig.subplots_adjust(
-        left=0.08, 
-        right=0.94, 
-        top=0.84, 
-        bottom=0.15,
-        wspace=0.28
-    )
-
-    save(fig, "old_thesis_topology_robustness_comparison")
-
-
-
-
 # def fig_pseudo_phase_39542(df):
 #     import matplotlib.colors as mcolors
 #     import matplotlib.cm as cm
@@ -716,8 +594,6 @@ def fig_topology_robustness_comparison(df):
 
 
 def fig_pseudo_phase_combined(df):
-    import matplotlib.cm as cm
-    import matplotlib.colors as mcolors
 
     # Filter data for both topologies
     topos = ["#3954", "#1754"]
@@ -891,98 +767,6 @@ def fig_3d_parameter_space_comparison():
 
 
 #######
-def fig_topology_robustness_comparison(df):
-    df = df.copy()
-
-    # 1. Filter strictly for your two target topologies
-    target_topologies = ["#1754", "#3954"]
-    df = df[df["topology_id"].isin(target_topologies)]
-    
-    topo_colors = {"#1754": "#4A90E2", "#3954": "#E2844A"}
-    topo_order = ["#1754", "#3954"]
-
-    # 2. CRITICAL FIX: The data is already formatted as percentages in your CSV.
-    # No multiplication required.
-    df["plot_total"] = df["rob_shaberi_total"]
-    df["plot_type_I"] = df["rob_shaberi_type_I"]
-
-    fig, axes = plt.subplots(1, 2, figsize=(14, 5.5))
-
-    # --- LEFT PLOT: Global Overall Robustness ---
-    # showmeans=True with meanline=True converts the mean marker into a clean horizontal line
-    sns.boxplot(
-        data=df, x="topology_id", y="plot_total", 
-        order=topo_order, palette=topo_colors, ax=axes[0], 
-        width=0.4, fliersize=0, linewidth=1.5,
-        showmeans=True, meanline=True,
-        meanprops={"linestyle": "--", "linewidth": 1.5, "color": "#D32F2F"}
-    )
-    sns.stripplot(
-        data=df, x="topology_id", y="plot_total",
-        order=topo_order, color="#222222", alpha=0.25, size=4, jitter=0.15, ax=axes[0]
-    )
-    axes[0].set_title("Overall Network Robustness\n(All Genuine Turing Types Combined)", fontsize=11, fontweight="semibold", pad=12)
-    axes[0].set_ylabel("Robustness Score (%)", fontsize=10)
-
-    # Calculate both Median and Mean for the Left Plot
-    med_total_1754 = df[df["topology_id"] == "#1754"]["plot_total"].median()
-    mean_total_1754 = df[df["topology_id"] == "#1754"]["plot_total"].mean()
-    
-    med_total_3954 = df[df["topology_id"] == "#3954"]["plot_total"].median()
-    mean_total_3954 = df[df["topology_id"] == "#3954"]["plot_total"].mean()
-    
-    text_left = (
-        f"Topology #1754:\n  Median: {med_total_1754:.4f}%\n  Mean (Avg): {mean_total_1754:.4f}%\n\n"
-        f"Topology #3954:\n  Median: {med_total_3954:.4f}%\n  Mean (Avg): {mean_total_3954:.4f}%"
-    )
-    axes[0].text(
-        0.05, 0.95, text_left, transform=axes[0].transAxes, fontsize=9,
-        verticalalignment='top', bbox=dict(boxstyle='round,pad=0.5', facecolor='white', edgecolor='#cccccc', alpha=0.9)
-    )
-
-    # --- RIGHT PLOT: Genuine Turing Type I Robustness Only ---
-    sns.boxplot(
-        data=df, x="topology_id", y="plot_type_I",  
-        order=topo_order, palette=topo_colors, ax=axes[1], 
-        width=0.4, fliersize=0, linewidth=1.5,
-        showmeans=True, meanline=True,
-        meanprops={"linestyle": "--", "linewidth": 1.5, "color": "#D32F2F"}
-    )
-    sns.stripplot(
-        data=df, x="topology_id", y="plot_type_I",  
-        order=topo_order, color="#222222", alpha=0.25, size=4, jitter=0.15, ax=axes[1]
-    )
-    axes[1].set_title("Targeted Network Robustness\n(Genuine Turing Type I Only)", fontsize=11, fontweight="semibold", pad=12)
-    axes[1].set_ylabel("Robustness Score (%)", fontsize=10)
-
-    # Calculate both Median and Mean for the Right Plot
-    med_typeI_1754 = df[df["topology_id"] == "#1754"]["plot_type_I"].median()
-    mean_typeI_1754 = df[df["topology_id"] == "#1754"]["plot_type_I"].mean()
-    
-    med_typeI_3954 = df[df["topology_id"] == "#3954"]["plot_type_I"].median()
-    mean_typeI_3954 = df[df["topology_id"] == "#3954"]["plot_type_I"].mean()
-    
-    text_right = (
-        f"Topology #1754:\n  Median: {med_typeI_1754:.4f}%\n  Mean (Avg): {mean_typeI_1754:.4f}%\n\n"
-        f"Topology #3954:\n  Median: {med_typeI_3954:.4f}%\n  Mean (Avg): {mean_typeI_3954:.4f}%"
-    )
-    axes[1].text(
-        0.05, 0.95, text_right, transform=axes[1].transAxes, fontsize=9,
-        verticalalignment='top', bbox=dict(boxstyle='round,pad=0.5', facecolor='white', edgecolor='#cccccc', alpha=0.9)
-    )
-
-    # 3. Clean up axis boundaries and labels across panels
-    for ax in axes:
-        ax.set_xlabel("Topology ID", fontsize=10)
-        ax.tick_params(axis="both", which="major", labelsize=9.5)
-
-    plt.suptitle("Robustness and Parameter Space Density Comparison Between Topologies", fontsize=12.5, y=0.98, fontweight="semibold")
-    fig.subplots_adjust(left=0.08, right=0.94, top=0.84, bottom=0.15, wspace=0.28)
-    
-    save(fig, "thesis_topology_robustness_comparison_percentage")
-
-
-
 def fig_topology_robustness_comparison_final(df):
     df = df.copy()
 
@@ -1099,12 +883,10 @@ df = load_all()
 fig1_combined_heatmaps(df)
 fig_all_patterns_profile_trends_complete(df)
 fig_all_patterns_profile_trends(df)
-fig_topology_robustness_comparison(df)
 fig_pseudo_phase_combined(df)
 fig_3d_parameter_space_comparison()
 
 # Try Option A: Raw ratio format, zoomed in automatically on the tiny values (Highly Recommended)
 
 # Run with auto-scaling to let your distributions expand fully in the frame
-fig_topology_robustness_comparison(df)
 fig_topology_robustness_comparison_final(df)
