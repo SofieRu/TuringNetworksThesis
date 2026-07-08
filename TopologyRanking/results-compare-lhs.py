@@ -1026,7 +1026,7 @@ def fig_topology_robustness_comparison_final(df):
         data=df, x="topology_id", y="plot_total",
         order=topo_order, color="#222222", alpha=0.25, size=4, jitter=0.15, ax=axes[0]
     )
-    axes[0].set_title("Overall Network Robustness\n(All Genuine Turing Types Combined)", fontsize=11, pad=12)
+    axes[0].set_title("Total Robustness Score\n(All Types Combined: Type I, II, Hopf and Turing Filter)", fontsize=11, pad=12)
     axes[0].set_ylabel("Robustness Score (%)", fontsize=10)
 
     # FIXED: Added the cornflowerblue patch handle for #3954
@@ -1056,7 +1056,7 @@ def fig_topology_robustness_comparison_final(df):
         data=df, x="topology_id", y="plot_type_I",  
         order=topo_order, color="#222222", alpha=0.25, size=4, jitter=0.15, ax=axes[1]
     )
-    axes[1].set_title("Targeted Network Robustness\n(Genuine Turing Type I Only)", fontsize=11, pad=12)
+    axes[1].set_title("Pattern-Forming Robustness\n(Genuine Turing Type I Only)", fontsize=11, pad=12)
     axes[1].set_ylabel("Robustness Score (%)", fontsize=10)
 
     # FIXED: Added the cornflowerblue patch handle for #3954
