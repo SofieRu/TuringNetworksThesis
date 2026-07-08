@@ -808,7 +808,7 @@ def fig_topology_robustness_comparison_final(df):
     )
     sns.stripplot(
         data=df, x="topology_id", y="plot_total",
-        order=topo_order, color="#222222", alpha=0.25, size=4, jitter=0.15, ax=axes[0]
+        order=topo_order, color="#222222", alpha=0.45, size=4, jitter=0.15, ax=axes[0]
     )
     axes[0].set_title("Total Robustness Score\n(All Types Combined: Type I, II, Hopf and Turing Filter)", fontsize=11, pad=12)
     axes[0].set_ylabel("Robustness Score (%)", fontsize=10)
@@ -838,7 +838,7 @@ def fig_topology_robustness_comparison_final(df):
     )
     sns.stripplot(
         data=df, x="topology_id", y="plot_type_I",  
-        order=topo_order, color="#222222", alpha=0.25, size=4, jitter=0.15, ax=axes[1]
+        order=topo_order, color="#222222", alpha=0.45, size=4, jitter=0.15, ax=axes[1]
     )
     axes[1].set_title("Pattern-Forming Robustness\n(Genuine Turing Type I Only)", fontsize=11, pad=12)
     axes[1].set_ylabel("Robustness Score (%)", fontsize=10)
@@ -873,6 +873,243 @@ def fig_topology_robustness_comparison_final(df):
 
 
 
+###############
+
+def fig_thesis_combined_robustness_analysis(df):
+    # --- 1. DATA PREPARATION ---
+    # Heatmap 1 data (Total Robustness)
+    pivot_total = (
+        df.groupby(["topology_id", "turing_type"])["rob_shaberi_total"]
+        .max()
+        .unstack("topology_id")
+        .reindex(index=["Type3", "Type2", "Type1"])
+    )
+
+    # Heatmap 2 data (Type I Robustness)
+    pivot_typeI = (
+        df.groupby(["topology_id", "turing_type"])["rob_shaberi_type_I"]
+        .max()
+        .unstack("topology_id")
+        .reindex(index=["Type3", "Type2", "Type1"])
+    )
+
+    # Boxplot data filtering
+    df_box = df.copy()
+    target_topologies = ["#1754", "#3954"]
+    df_box = df_box[df_box["topology_id"].isin(target_topologies)]
+
+    topo_colors = {"#1754": "blueviolet", "#3954": "cornflowerblue"}
+    topo_order = ["#1754", "#3954"]
+
+    # Calculate Boxplot Metrics
+    med_tot_1754 = df_box[df_box["topology_id"] == "#1754"][
+        "rob_shaberi_total"
+    ].median()
+    mean_tot_1754 = df_box[df_box["topology_id"] == "#1754"][
+        "rob_shaberi_total"
+    ].mean()
+    med_tot_3954 = df_box[df_box["topology_id"] == "#3954"][
+        "rob_shaberi_total"
+    ].median()
+    mean_tot_3954 = df_box[df_box["topology_id"] == "#3954"][
+        "rob_shaberi_total"
+    ].mean()
+
+    med_t1_1754 = df_box[df_box["topology_id"] == "#1754"][
+        "rob_shaberi_type_I"
+    ].median()
+    mean_t1_1754 = df_box[df_box["topology_id"] == "#1754"][
+        "rob_shaberi_type_I"
+    ].mean()
+    med_t1_3954 = df_box[df_box["topology_id"] == "#3954"][
+        "rob_shaberi_type_I"
+    ].median()
+    mean_t1_3954 = df_box[df_box["topology_id"] == "#3954"][
+        "rob_shaberi_type_I"
+    ].mean()
+
+    # Reusable style elements for legends
+    line_median = mlines.Line2D([], [], color="#222222", linewidth=1.5)
+    line_mean = mlines.Line2D(
+        [], [], color="#D32F2F", linestyle="--", linewidth=1.5
+    )
+
+    # --- 2. FIGURE INITIALISATION ---
+    # 2 rows, 2 columns grid mapping exactly to your request
+    fig, axes = plt.subplots(2, 2, figsize=(15, 10))
+    ((ax_hm_tot, ax_box_tot), (ax_hm_t1, ax_box_t1)) = axes
+
+    # --- 3. ROW 1: TOTAL ROBUSTNESS (ALL TYPES COMBINED) ---
+    # Left Column: Heatmap
+    sns.heatmap(
+        pivot_total,
+        annot=True,
+        fmt=".4f",
+        cmap="Blues",
+        linewidths=0.5,
+        linecolor="white",
+        ax=ax_hm_tot,
+        cbar_kws={"label": "Max robustness (rob_shaberi_total)"},
+    )
+    ax_hm_tot.set_title(
+        "(A) Parameter Space Density Across All Topologies",
+        fontsize=11,
+        fontweight="semibold",
+        loc="left",
+        pad=10,
+    )
+    ax_hm_tot.set_xlabel("Topology ID", fontsize=11)
+    ax_hm_tot.set_ylabel("Turing Type", fontsize=11)
+
+    # Right Column: Boxplot
+    sns.boxplot(
+        data=df_box,
+        x="topology_id",
+        y="rob_shaberi_total",
+        order=topo_order,
+        palette=topo_colors,
+        ax=ax_box_tot,
+        width=0.4,
+        fliersize=0,
+        linewidth=2.0,
+        showmeans=True,
+        meanline=True,
+        meanprops={"linestyle": "--", "linewidth": 2.2, "color": "#D32F2F"},
+    )
+    sns.stripplot(
+        data=df_box,
+        x="topology_id",
+        y="rob_shaberi_total",
+        order=topo_order,
+        color="#222222",
+        alpha=0.25,
+        size=4,
+        jitter=0.15,
+        ax=ax_box_tot,
+    )
+    ax_box_tot.set_title(
+        "(B) Total Robustness Distribution (#1754 vs #3954)",
+        fontsize=11,
+        fontweight="semibold",
+        loc="left",
+        pad=10,
+    )
+    ax_box_tot.set_xlabel("Topology ID", fontsize=11)
+    ax_box_tot.set_ylabel("Robustness Score (%)", fontsize=11)
+
+    handles_tot = [
+        mpatches.Patch(color="blueviolet"),
+        mpatches.Patch(color="cornflowerblue"),
+        line_median,
+        line_mean,
+    ]
+    labels_tot = [
+        f"#1754 (Med: {med_tot_1754:.4f}%, Mean: {mean_tot_1754:.4f}%)",
+        f"#3954 (Med: {med_tot_3954:.4f}%, Mean: {mean_tot_3954:.4f}%)",
+        "Median",
+        "Mean",
+    ]
+    ax_box_tot.legend(
+        handles=handles_tot, labels=labels_tot, loc="upper left", fontsize=10, frameon=True,
+    )
+
+    # --- 4. ROW 2: GENUINE TURING TYPE I ROBUSTNESS ---
+    # Left Column: Heatmap
+    sns.heatmap(
+        pivot_typeI,
+        annot=True,
+        fmt=".4f",
+        cmap="Purples",
+        linewidths=0.5,
+        linecolor="white",
+        ax=ax_hm_t1,
+        cbar_kws={"label": "Type I robustness (rob_shaberi_type_I)"},
+    )
+    ax_hm_t1.set_title(
+        "(C) Pattern-Forming Parameter Density Across All Topologies",
+        fontsize=11,
+        fontweight="semibold",
+        loc="left",
+        pad=10,
+    )
+    ax_hm_t1.set_xlabel("Topology ID", fontsize=11)
+    ax_hm_t1.set_ylabel("Turing Type", fontsize=11)
+
+    # Right Column: Boxplot
+    sns.boxplot(
+        data=df_box,
+        x="topology_id",
+        y="rob_shaberi_type_I",
+        order=topo_order,
+        palette=topo_colors,
+        ax=ax_box_t1,
+        width=0.4,
+        fliersize=0,
+        linewidth=2.0,
+        showmeans=True,
+        meanline=True,
+        meanprops={"linestyle": "--", "linewidth": 2.2, "color": "#D32F2F"},
+    )
+    sns.stripplot(
+        data=df_box,
+        x="topology_id",
+        y="rob_shaberi_type_I",
+        order=topo_order,
+        color="#222222",
+        alpha=0.25,
+        size=4,
+        jitter=0.15,
+        ax=ax_box_t1,
+    )
+    ax_box_t1.set_title(
+        "(D) Genuine Type I Robustness Distribution (#1754 vs #3954)",
+        fontsize=11,
+        fontweight="semibold",
+        loc="left",
+        pad=10,
+    )
+    ax_box_t1.set_xlabel("Topology ID", fontsize=11)
+    ax_box_t1.set_ylabel("Robustness Score (%)", fontsize=11)
+
+    handles_t1 = [
+        mpatches.Patch(color="blueviolet"),
+        mpatches.Patch(color="cornflowerblue"),
+        line_median,
+        line_mean,
+    ]
+    labels_t1 = [
+        f"#1754 (Med: {med_t1_1754:.4f}%, Mean: {mean_t1_1754:.4f}%)",
+        f"#3954 (Med: {med_t1_3954:.4f}%, Mean: {mean_t1_3954:.4f}%)",
+        "Median",
+        "Mean",
+    ]
+    ax_box_t1.legend(
+        handles=handles_t1, labels=labels_t1, loc="upper left", fontsize=10, frameon=True
+    )
+
+    # --- 5. CLEAN UP & LAYOUT TUNING ---
+    for ax in axes.flatten():
+        ax.tick_params(axis="both", which="major", labelsize=10)
+
+    # Global Title Options (Choose one for your figure text below)
+    title_text = "Comparative Robustness Analysis of Network Topologies: Global vs. Genuine Type I Turing Systems"
+    fig.text(
+        0.5,
+        0.97,
+        title_text,
+        fontsize=13.5,
+        fontweight="semibold",
+        color="#111111",
+        ha="center",
+    )
+
+    # Adjust margins tightly to avoid overlap with labels/titles
+    fig.subplots_adjust(
+        left=0.1, right=0.95, top=0.9, bottom=0.07, wspace=0.12, hspace=0.27
+    )
+
+    save(fig, "thesis_combined_robustness_analysis")
+
 ########### RUN THE WHOLE THING ############
 
 df = load_all()
@@ -885,8 +1122,5 @@ fig_all_patterns_profile_trends_complete(df)
 fig_all_patterns_profile_trends(df)
 fig_pseudo_phase_combined(df)
 fig_3d_parameter_space_comparison()
-
-# Try Option A: Raw ratio format, zoomed in automatically on the tiny values (Highly Recommended)
-
-# Run with auto-scaling to let your distributions expand fully in the frame
 fig_topology_robustness_comparison_final(df)
+fig_thesis_combined_robustness_analysis(df)
