@@ -505,7 +505,6 @@ robustness_curves = [
 ]
 
 # combined plot with two subplots for each topology
-
 fig, axes = plt.subplots(1, 2, figsize=(14, 5.5), sharey=False)
 
 for ax, topo in zip(axes, ['#3954', '#1754']):
