@@ -549,7 +549,7 @@ def fig_topology_robustness_comparison(df):
     df["total_turing_count"] = (
         df["shaberi_type_I"] + 
         df["shaberi_type_II"] + 
-        df["shaberi_hopf"] + 
+        #df["shaberi_hopf"] + 
         df["filter_count"]
     )
 
@@ -561,7 +561,7 @@ def fig_topology_robustness_comparison(df):
     fig, axes = plt.subplots(1, 2, figsize=(14, 5.5))
     
     # Custom color palette matching your topologies (e.g., slate blue and muted teal)
-    topo_colors = {"#1754": "#4A90E2", "#3954": "#E2844A"}
+    topo_colors = {"#1754": "blueviolet", "#3954": "royalblue"}
     topo_order = ["#1754", "#3954"]
 
     # --- LEFT PLOT: Global Overall Robustness ---
@@ -658,59 +658,59 @@ def fig_topology_robustness_comparison(df):
 
 
 
-def fig_pseudo_phase_39542(df):
-    import matplotlib.colors as mcolors
-    import matplotlib.cm as cm
+# def fig_pseudo_phase_39542(df):
+#     import matplotlib.colors as mcolors
+#     import matplotlib.cm as cm
 
-    sub = df[df["topology_id"] == "#3954"].copy()
-    norm = mcolors.Normalize(
-        vmin=sub["rob_shaberi_type_I"].min(), # previously rob_shaberi_total but maybe just focus on type I
-        vmax=sub["rob_shaberi_type_I"].max(),
-    )
+#     sub = df[df["topology_id"] == "#3954"].copy()
+#     norm = mcolors.Normalize(
+#         vmin=sub["rob_shaberi_type_I"].min(), # previously rob_shaberi_total but maybe just focus on type I
+#         vmax=sub["rob_shaberi_type_I"].max(),
+#     )
 
-    pairs = [("dU", "dV"), ("dU", "dW"), ("dV", "dW")]
-    # Reduced figure width to 14 to pull the subplots physically closer together
-    fig, axes = plt.subplots(1, 3, figsize=(14, 4))
+#     pairs = [("dU", "dV"), ("dU", "dW"), ("dV", "dW")]
+#     # Reduced figure width to 14 to pull the subplots physically closer together
+#     fig, axes = plt.subplots(1, 3, figsize=(14, 4))
 
-    for ax, (xvar, yvar) in zip(axes, pairs):
-        sc = ax.scatter(
-            sub[xvar],
-            sub[yvar],
-            c=sub["rob_shaberi_type_I"],
-            cmap="BuPu",
-            norm=norm,
-            s=300,
-            edgecolors="#444444",
-            linewidths=0.5,
-        )
-        ax.set_xlabel(xvar, fontsize=11)
-        ax.set_ylabel(yvar, fontsize=11)
-        ax.set_xscale("symlog", linthresh=0.1)
-        ax.set_yscale("symlog", linthresh=0.1)
-        ax.xaxis.grid(False)
-        ax.set_title(f"{xvar} vs {yvar}", fontsize=11)
+#     for ax, (xvar, yvar) in zip(axes, pairs):
+#         sc = ax.scatter(
+#             sub[xvar],
+#             sub[yvar],
+#             c=sub["rob_shaberi_type_I"],
+#             cmap="BuPu",
+#             norm=norm,
+#             s=300,
+#             edgecolors="#444444",
+#             linewidths=0.5,
+#         )
+#         ax.set_xlabel(xvar, fontsize=11)
+#         ax.set_ylabel(yvar, fontsize=11)
+#         ax.set_xscale("symlog", linthresh=0.1)
+#         ax.set_yscale("symlog", linthresh=0.1)
+#         ax.xaxis.grid(False)
+#         ax.set_title(f"{xvar} vs {yvar}", fontsize=11)
 
-    # 1. Manually build a dedicated axis box for the colour bar on the far right edge
-    # Syntax: [left_position, bottom_position, width, height] relative to the whole canvas
-    cbar_ax = fig.add_axes([0.88, 0.15, 0.02, 0.65])
-    cbar = fig.colorbar(sc, cax=cbar_ax)
-    cbar.set_label("Robustness (rob_shaberi_type_I)", fontsize=10)
+#     # 1. Manually build a dedicated axis box for the colour bar on the far right edge
+#     # Syntax: [left_position, bottom_position, width, height] relative to the whole canvas
+#     cbar_ax = fig.add_axes([0.88, 0.15, 0.02, 0.65])
+#     cbar = fig.colorbar(sc, cax=cbar_ax)
+#     cbar.set_label("Robustness (rob_shaberi_type_I)", fontsize=10)
 
-    fig.suptitle(
-        "Topology #3954 – Pseudo phase diagram across diffusion rate combinations",
-        fontsize=12,
-        x=0.04,
-        y=0.96,
-        ha="left",
-    )
+#     fig.suptitle(
+#         "Topology #3954 – Pseudo phase diagram across diffusion rate combinations",
+#         fontsize=12,
+#         x=0.04,
+#         y=0.96,
+#         ha="left",
+#     )
 
-    # 2. Tightened wspace from 0.3 to 0.18 to bring the 3 main panels close together
-    # Shrunk right to 0.84 to completely insulate the plots from hitting the colorbar axis at 0.88
-    fig.subplots_adjust(
-        left=0.04, right=0.86, top=0.82, bottom=0.15, wspace=0.2
-    )
+#     # 2. Tightened wspace from 0.3 to 0.18 to bring the 3 main panels close together
+#     # Shrunk right to 0.84 to completely insulate the plots from hitting the colorbar axis at 0.88
+#     fig.subplots_adjust(
+#         left=0.04, right=0.86, top=0.82, bottom=0.15, wspace=0.2
+#     )
 
-    save(fig, "new2_3954_pseudo_phase_diagram")
+#     save(fig, "new2_3954_pseudo_phase_diagram")
 
 
 
@@ -890,6 +890,77 @@ def fig_3d_parameter_space_comparison():
 
 
 
+#########
+
+def fig_topology_robustness_comparison(df, use_percentage=False, axis_scale="auto"):
+    """
+    Plots overall robustness vs genuine Turing Type I robustness for topologies #1754 and #3954.
+    """
+    df = df.copy()
+
+    # 1. Filter strictly for your two target topologies
+    target_topologies = ["#1754", "#3954"]
+    df = df[df["topology_id"].isin(target_topologies)]
+    
+    # 2. Establish plot styling and order
+    topo_colors = {"#1754": "#4A90E2", "#3954": "#E2844A"}
+    topo_order = ["#1754", "#3954"]
+
+    # 3. Handle Scaling Variables (Percentage vs. Decimal Ratio)
+    if use_percentage:
+        df["plot_total"] = df["rob_shaberi_total"] * 100
+        df["plot_type_I"] = df["rob_shaberi_type_I"] * 100
+        unit_label = "(%)"
+    else:
+        df["plot_total"] = df["rob_shaberi_total"]
+        df["plot_type_I"] = df["rob_shaberi_type_I"]
+        unit_label = "(Ratio)"
+
+    # 4. Create the side-by-side layout
+    fig, axes = plt.subplots(1, 2, figsize=(14, 5.5))
+
+    # --- LEFT PLOT: Global Overall Robustness (All genuine types combined) ---
+    sns.boxplot(
+        data=df, x="topology_id", y="plot_total", 
+        order=topo_order, palette=topo_colors, ax=axes[0], width=0.4
+    )
+    sns.stripplot(
+        data=df, x="topology_id", y="plot_total",
+        order=topo_order, color="#222222", alpha=0.25, size=4, jitter=0.15, ax=axes[0]
+    )
+    axes[0].set_title("Overall Network Robustness\n(All Genuine Turing Types Combined)", fontsize=11, fontweight="semibold", pad=12)
+    axes[0].set_ylabel(f"Robustness Score {unit_label}", fontsize=10)
+
+    # --- RIGHT PLOT: Genuine Turing Type I Robustness Only ---
+    # Plots the full distribution of shaberi_type_I across all data rows
+    sns.boxplot(
+        data=df, x="topology_id", y="plot_type_I",  
+        order=topo_order, palette=topo_colors, ax=axes[1], width=0.4
+    )
+    sns.stripplot(
+        data=df, x="topology_id", y="plot_type_I",  
+        order=topo_order, color="#222222", alpha=0.25, size=4, jitter=0.15, ax=axes[1]
+    )
+    axes[1].set_title("Targeted Network Robustness\n(Genuine Turing Type I Only)", fontsize=11, fontweight="semibold", pad=12)
+    axes[1].set_ylabel(f"Robustness Score {unit_label}", fontsize=10)
+
+    # 5. Clean up axis boundaries
+    for ax in axes:
+        ax.set_xlabel("Topology ID", fontsize=10)
+        ax.tick_params(axis="both", which="major", labelsize=9.5)
+        
+        if axis_scale == "full":
+            ax.set_ylim((-5, 105) if use_percentage else (-0.05, 1.05))
+        elif axis_scale == "auto":
+            pass # Zoom tightly around your actual distribution bounds
+
+    plt.suptitle("Robustness and Parameter Space Density Comparison Between Topologies", fontsize=12.5, y=0.98, fontweight="semibold")
+    fig.subplots_adjust(left=0.08, right=0.94, top=0.84, bottom=0.15, wspace=0.28)
+    
+    save(fig, f"thesis_robustness_comparison_{'pct' if use_percentage else 'ratio'}_{axis_scale}")
+
+
+
 ########### RUN THE WHOLE THING ############
 
 df = load_all()
@@ -903,3 +974,8 @@ fig_all_patterns_profile_trends(df)
 fig_topology_robustness_comparison(df)
 fig_pseudo_phase_combined(df)
 fig_3d_parameter_space_comparison()
+
+# Try Option A: Raw ratio format, zoomed in automatically on the tiny values (Highly Recommended)
+
+# Run with auto-scaling to let your distributions expand fully in the frame
+fig_topology_robustness_comparison(df, use_percentage=False, axis_scale="auto")

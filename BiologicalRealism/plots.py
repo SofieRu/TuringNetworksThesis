@@ -52,22 +52,22 @@ def diff_str(hopping):
 
 ################ TOPOLOGY 3954 ################
 
-# Config 13 (robust)
-with open('3954_cv_sweep_high_config45_N10.pkl', 'rb') as f:
-    cv_data_13 = pickle.load(f)
+# Config 43 (robust)
+with open('3954_cv_sweep_high_config43_N10.pkl', 'rb') as f:
+    cv_3954_data_43 = pickle.load(f)
 
-with open('3954_sensitivity_results_config45_N10.pkl', 'rb') as f:
-    sens_data_13 = pickle.load(f)
+with open('3954_sensitivity_results_config43_N10.pkl', 'rb') as f:
+    sens_3954_data_43 = pickle.load(f)
 
 # Config 2 (fragile)
-with open('3954_cv_sweep_low_config4_N10.pkl', 'rb') as f:
-    cv_data_2 = pickle.load(f)
+with open('3954_cv_sweep_low_config2_N10.pkl', 'rb') as f:
+    cv_3954_data_2 = pickle.load(f)
 
-with open('3954_sensitivity_results_config4_N10.pkl', 'rb') as f:
-    sens_data_2 = pickle.load(f)
+with open('3954_sensitivity_results_config2_N10.pkl', 'rb') as f:
+    sens_3954_data_2 = pickle.load(f)
 
-cv13 = extract_cv_arrays(cv_data_13)
-cv2 = extract_cv_arrays(cv_data_2)
+cv43 = extract_cv_arrays(cv_3954_data_43)
+cv2 = extract_cv_arrays(cv_3954_data_2)
 
 # ============================================================================
 # FIGURE 1A: Mean with full range Config 13
@@ -76,10 +76,10 @@ cv2 = extract_cv_arrays(cv_data_2)
 fig, ax = plt.subplots(figsize=(10, 6))
 
 # Fill FULL range (min to max)
-ax.fill_between(cv13['CV'], cv13['min'], cv13['max'], alpha=0.2, color='blue', label='Full range (min-max)', zorder=1)
+ax.fill_between(cv43['CV'], cv43['min'], cv43['max'], alpha=0.2, color='blue', label='Full range (min-max)', zorder=1)
 
 # plot mean line
-ax.plot(cv13['CV'], cv13['mean'], 'o-', color='darkblue', linewidth=2.5, markersize=8, label='Mean Re(λ)', zorder=3)
+ax.plot(cv43['CV'], cv43['mean'], 'o-', color='darkblue', linewidth=2.5, markersize=8, label='Mean Re(λ)', zorder=3)
 
 # horizontal line at Re(λ) = 0
 ax.axhline(y=0, color='red', linestyle='--', linewidth=2, label='Turing threshold', zorder=2)
@@ -87,25 +87,25 @@ ax.axhline(y=0, color='red', linestyle='--', linewidth=2, label='Turing threshol
 # labels and title
 ax.set_xlabel('CV (Coefficient of Variation)', fontsize=12)
 ax.set_ylabel('Max Re(λ)', fontsize=12)
-ax.set_title(f'3954 Turing Growth Rate vs Parameter Heterogeneity\n'f'Config 13 (robust): {diff_str(cv13["hopping"])}', fontsize=12, pad=15)
+ax.set_title(f'3954 Turing Growth Rate vs Parameter Heterogeneity\n'f'Config 43 (robust): {diff_str(cv43["hopping"])}', fontsize=12, pad=15)
 ax.legend(fontsize=11, loc='upper left')
 ax.grid(True, alpha=0.3)
 
 # save the plots
 plt.tight_layout()
-plt.savefig('config45_fig1_mean_range_vs_cv.png', dpi=300, bbox_inches='tight')
-print("Saved as config45_fig1_mean_range_vs_cv.png")
+plt.savefig('config43_fig1_mean_range_vs_cv.png', dpi=300, bbox_inches='tight')
+print("Saved as config43_fig1_mean_range_vs_cv.png")
 plt.close()
 
 # ============================================================================
-# FIGURE 2A: BOXPLOT Config 13
+# FIGURE 2A: BOXPLOT Config 43
 # ============================================================================
 
 fig, ax = plt.subplots(figsize=(12, 6))
 
 # Create boxplot
-bp = ax.boxplot(cv13['all'],
-                positions=range(len(cv13['CV'])),
+bp = ax.boxplot(cv43['all'],
+                positions=range(len(cv43['CV'])),
                 widths=0.6,
                 patch_artist=True,
                 showfliers=True,
@@ -120,21 +120,21 @@ for patch in bp['boxes']:
 # horizontal line at Re(λ) = 0 (Turing threshold)
 ax.axhline(y=0, color='red', linestyle='--', linewidth=2, label='Turing threshold (Re(λ)=0)', zorder=10)
 
-ax.set_xticks(range(len(cv13['CV'])))
-ax.set_xticklabels([f'{cv:.2f}' for cv in cv13['CV']])
+ax.set_xticks(range(len(cv43['CV'])))
+ax.set_xticklabels([f'{cv:.2f}' for cv in cv43['CV']])
 ax.set_xlabel('CV (Coefficient of Variation)', fontsize=12)
 ax.set_ylabel('Max Re(λ)', fontsize=12)
 
 ax.set_title(f'3954 Distribution of Turing Growth Rates Under Parameter Heterogeneity\n'
-             f'Config 13 (robust): {diff_str(cv13["hopping"])}',
+             f'Config 43 (robust): {diff_str(cv43["hopping"])}',
              fontsize=12, pad=15)
 
 ax.legend(fontsize=9, framealpha=0.9)  # Was fontsize=11
 ax.grid(True, alpha=0.3, axis='y')
 
 plt.tight_layout()
-plt.savefig('config45_fig2_boxplot_cv_sweep.png', dpi=300, bbox_inches='tight')
-print("Saved: config45_fig2_boxplot_cv_sweep.png")
+plt.savefig('config43_fig2_boxplot_cv_sweep.png', dpi=300, bbox_inches='tight')
+print("Saved: config43_fig2_boxplot_cv_sweep.png")
 plt.close()
 
 
@@ -155,8 +155,8 @@ ax.legend(fontsize=11, loc='upper left')
 ax.grid(True, alpha=0.3)
 
 plt.tight_layout()
-plt.savefig('config4_fig1_mean_range_vs_cv.png', dpi=300, bbox_inches='tight')
-print("Saved: config4_fig1_mean_range_vs_cv.png")
+plt.savefig('config2_fig1_mean_range_vs_cv.png', dpi=300, bbox_inches='tight')
+print("Saved: config2_fig1_mean_range_vs_cv.png")
 plt.close()
 
 # ============================================================================
@@ -191,8 +191,8 @@ ax.legend(fontsize=9, framealpha=0.9)
 ax.grid(True, alpha=0.3, axis='y')
 
 plt.tight_layout()
-plt.savefig('config4_fig2_boxplot_cv_sweep.png', dpi=300, bbox_inches='tight')
-print("Saved: config4_fig2_boxplot_cv_sweep.png")
+plt.savefig('config2_fig2_boxplot_cv_sweep.png', dpi=300, bbox_inches='tight')
+print("Saved: config2_fig2_boxplot_cv_sweep.png")
 plt.close()
 
 
@@ -204,29 +204,29 @@ plt.close()
 
 ################ TOPOLOGY 1754 ################
 
-with open('1754_cv_sweep_high_config35_N10.pkl', 'rb') as f:
-    cv_data_12 = pickle.load(f)
+with open('1754_cv_sweep_high_config43_N10.pkl', 'rb') as f:
+    cv_1754_data_43 = pickle.load(f)
 
-with open('pastconfigs/1754_sensitivity_results_config12_N10.pkl', 'rb') as f:
-    sens_data_12 = pickle.load(f)
+with open('pastconfigs/1754_sensitivity_results_config43_N10.pkl', 'rb') as f:
+    sens_1754_data_43 = pickle.load(f)
 
 with open('1754_cv_sweep_low_config12_N10.pkl', 'rb') as f:
-    cv_data_6 = pickle.load(f)
+    cv_1754_data_12 = pickle.load(f)
 
-with open('pastconfigs/1754_sensitivity_results_config6_N10.pkl', 'rb') as f:
-    sens_data_6 = pickle.load(f)
+with open('pastconfigs/1754_sensitivity_results_config12_N10.pkl', 'rb') as f:
+    sens_1754_data_12 = pickle.load(f)
 
-cv12 = extract_cv_arrays(cv_data_12)
-cv6 = extract_cv_arrays(cv_data_6)
+cv43 = extract_cv_arrays(cv_1754_data_43)
+cv12 = extract_cv_arrays(cv_1754_data_12)
 
 # ============================================================================
-# FIGURE 1A: Mean with full range Config 12
+# FIGURE 1A: Mean with full range Config 43
 # ============================================================================
 
 fig, ax = plt.subplots(figsize=(10, 6))
 
 # Fill FULL range (min to max)
-ax.fill_between(cv12['CV'], cv12['min'], cv12['max'], alpha=0.2, color='blue', label='Full range (min-max)', zorder=1)
+ax.fill_between(cv43['CV'], cv43['min'], cv43['max'], alpha=0.2, color='blue', label='Full range (min-max)', zorder=1)
 
 # plot mean line
 ax.plot(cv12['CV'], cv12['mean'], 'o-', color='darkblue', linewidth=2.5, markersize=8, label='Mean Re(λ)', zorder=3)
@@ -241,19 +241,19 @@ ax.legend(fontsize=11, loc='upper left')
 ax.grid(True, alpha=0.3)
 
 plt.tight_layout()
-plt.savefig('config35_fig1_mean_range_vs_cv.png', dpi=300, bbox_inches='tight')
-print("Saved as config35_fig1_mean_range_vs_cv.png")
+plt.savefig('config43_fig1_mean_range_vs_cv.png', dpi=300, bbox_inches='tight')
+print("Saved as config43_fig1_mean_range_vs_cv.png")
 plt.close()
 
 # ============================================================================
-# FIGURE 2A: BOXPLOT Config 12
+# FIGURE 2A: BOXPLOT Config 43
 # ============================================================================
 
 fig, ax = plt.subplots(figsize=(12, 6))
 
 # Create boxplot
-bp = ax.boxplot(cv12['all'],
-                positions=range(len(cv12['CV'])),
+bp = ax.boxplot(cv43['all'],
+                positions=range(len(cv43['CV'])),
                 widths=0.6,
                 patch_artist=True,
                 showfliers=True,
@@ -268,37 +268,37 @@ for patch in bp['boxes']:
 # horizontal line at Re(λ) = 0 (Turing threshold)
 ax.axhline(y=0, color='red', linestyle='--', linewidth=2, label='Turing threshold (Re(λ)=0)', zorder=10)
 
-ax.set_xticks(range(len(cv12['CV'])))
-ax.set_xticklabels([f'{cv:.2f}' for cv in cv12['CV']])
+ax.set_xticks(range(len(cv43['CV'])))
+ax.set_xticklabels([f'{cv:.2f}' for cv in cv43['CV']])
 ax.set_xlabel('CV (Coefficient of Variation)', fontsize=12)
 ax.set_ylabel('Max Re(λ)', fontsize=12)
 
 ax.set_title(f'1754 Distribution of Turing Growth Rates Under Parameter Heterogeneity\n'
-             f'Config 12 (robust): {diff_str(cv12["hopping"])}',
+             f'Config 43 (robust): {diff_str(cv43["hopping"])}',
              fontsize=12, pad=15)
 
 ax.legend(fontsize=9, framealpha=0.9)  # Was fontsize=11
 ax.grid(True, alpha=0.3, axis='y')
 
 plt.tight_layout()
-plt.savefig('config35_fig2_boxplot_cv_sweep.png', dpi=300, bbox_inches='tight')
-print("Saved: config35_fig2_boxplot_cv_sweep.png")
+plt.savefig('config43_fig2_boxplot_cv_sweep.png', dpi=300, bbox_inches='tight')
+print("Saved: config43_fig2_boxplot_cv_sweep.png")
 plt.close()
 
 
 # ============================================================================
-# FIGURE 1B: Mean with full range — Config 6
+# FIGURE 1B: Mean with full range — Config 12
 # ============================================================================
 
 fig, ax = plt.subplots(figsize=(10, 6))
 
-ax.fill_between(cv6['CV'], cv6['min'], cv6['max'], alpha=0.2, color='blue', label='Full range (min-max)', zorder=1)
-ax.plot(cv6['CV'], cv6['mean'], 'o-', color='darkblue', linewidth=2.5, markersize=8, label='Mean Re(λ)', zorder=3)
+ax.fill_between(cv12['CV'], cv12['min'], cv12['max'], alpha=0.2, color='blue', label='Full range (min-max)', zorder=1)
+ax.plot(cv12['CV'], cv12['mean'], 'o-', color='darkblue', linewidth=2.5, markersize=8, label='Mean Re(λ)', zorder=3)
 ax.axhline(y=0, color='red', linestyle='--', linewidth=2, label='Turing threshold', zorder=2)
 
 ax.set_xlabel('CV (Coefficient of Variation)', fontsize=12)
 ax.set_ylabel('Max Re(λ)', fontsize=12)
-ax.set_title(f'1754 Turing Growth Rate vs Parameter Heterogeneity\n' f'Config 6 (fragile): {diff_str(cv6["hopping"])}', fontsize=12, pad=15)
+ax.set_title(f'1754 Turing Growth Rate vs Parameter Heterogeneity\n' f'Config 12 (fragile): {diff_str(cv12["hopping"])}', fontsize=12, pad=15)
 ax.legend(fontsize=11, loc='upper left')
 ax.grid(True, alpha=0.3)
 
@@ -308,13 +308,13 @@ print("Saved: config12_fig1_mean_range_vs_cv.png")
 plt.close()
 
 # ============================================================================
-# FIGURE 2B: Boxplot — Config 6
+# FIGURE 2B: Boxplot — Config 12
 # ============================================================================
 
 fig, ax = plt.subplots(figsize=(12, 6))
 
-bp = ax.boxplot(cv6['all'],
-                positions=range(len(cv6['CV'])),
+bp = ax.boxplot(cv12['all'],
+                positions=range(len(cv12['CV'])),
                 widths=0.6,
                 patch_artist=True,
                 showfliers=True,
@@ -327,12 +327,12 @@ for patch in bp['boxes']:
 
 ax.axhline(y=0, color='red', linestyle='--', linewidth=2, label='Turing threshold (Re(λ)=0)', zorder=10)
 
-ax.set_xticks(range(len(cv6['CV'])))
-ax.set_xticklabels([f'{cv:.2f}' for cv in cv6['CV']])
+ax.set_xticks(range(len(cv12['CV'])))
+ax.set_xticklabels([f'{cv:.2f}' for cv in cv12['CV']])
 ax.set_xlabel('CV (Coefficient of Variation)', fontsize=12)
 ax.set_ylabel('Max Re(λ)', fontsize=12)
 ax.set_title(f'1754 Distribution of Turing Growth Rates Under Parameter Heterogeneity\n'
-             f'Config 6 (fragile): {diff_str(cv6["hopping"])} — 1000 trials per CV',
+             f'Config 12 (fragile): {diff_str(cv12["hopping"])} with 1000 trials per CV',
              fontsize=12, pad=15)
 
 ax.legend(fontsize=9, framealpha=0.9)
@@ -454,13 +454,13 @@ def plot_sensitivity(sens_data, config_label, save_name):
 # ============================================================================
 # FIGURE 3A + 3B : Sensitivity Config 13 and Config 2
 # ============================================================================
-# plot_sensitivity(sens_data_13, 'Config 13 (robust)', 'config13_fig3_sensitivity.png')
+# plot_sensitivity(sens_3954_data_43, 'Config 43 (robust)', '3954_config43_fig3_sensitivity.png')
 
-# plot_sensitivity(sens_data_2, 'Config 2 (fragile)', 'config2_fig3_sensitivity.png')
+# plot_sensitivity(sens_3954_data_2, 'Config 2 (fragile)', '3954_config2_fig3_sensitivity.png')
 
-# plot_sensitivity(sens_data_12, 'Config 12 (robust)', 'config12_fig3_sensitivity.png')
+# plot_sensitivity(sens_1754_data_43, 'Config 43 (robust)', '1754_config43_fig3_sensitivity.png')
 
-# plot_sensitivity(sens_data_6, 'Config 6 (fragile)', 'config6_fig3_sensitivity.png')
+# plot_sensitivity(sens_1754_data_12, 'Config 12 (fragile)', '1754_config12_fig3_sensitivity.png')
 
 
 
@@ -472,25 +472,25 @@ def plot_sensitivity(sens_data, config_label, save_name):
 
 # Load all four CV sweep pickles
 # (Adjust filenames to match what you actually have)
-with open('3954_cv_sweep_high_config45_N10.pkl', 'rb') as f:
+with open('3954_cv_sweep_high_config43_N10.pkl', 'rb') as f:
     cv13_N10_data = pickle.load(f)
-with open('3954_cv_sweep_high_config45_N20.pkl', 'rb') as f:
+with open('3954_cv_sweep_high_config43_N20.pkl', 'rb') as f:
     cv13_N20_data = pickle.load(f)
-with open('3954_cv_sweep_high_config45_N30.pkl', 'rb') as f:
+with open('3954_cv_sweep_high_config43_N30.pkl', 'rb') as f:
     cv13_N30_data = pickle.load(f)
 
-with open('3954_cv_sweep_low_config4_N10.pkl', 'rb') as f:
+with open('3954_cv_sweep_low_config2_N10.pkl', 'rb') as f:
     cv2_N10_data = pickle.load(f)
-with open('3954_cv_sweep_low_config4_N20.pkl', 'rb') as f:
+with open('3954_cv_sweep_low_config2_N20.pkl', 'rb') as f:
     cv2_N20_data = pickle.load(f)
-with open('3954_cv_sweep_low_config4_N30.pkl', 'rb') as f:
+with open('3954_cv_sweep_low_config2_N30.pkl', 'rb') as f:
     cv2_N30_data = pickle.load(f)
 
-with open('1754_cv_sweep_high_config35_N10.pkl', 'rb') as f:
+with open('1754_cv_sweep_high_config43_N10.pkl', 'rb') as f:
     cv12_N10_data = pickle.load(f)
-with open('1754_cv_sweep_high_config35_N20.pkl', 'rb') as f:
+with open('1754_cv_sweep_high_config43_N20.pkl', 'rb') as f:
     cv12_N20_data = pickle.load(f)
-with open('1754_cv_sweep_high_config35_N30.pkl', 'rb') as f:
+with open('1754_cv_sweep_high_config43_N30.pkl', 'rb') as f:
     cv12_N30_data = pickle.load(f)
 
 # with open('1754_cv_sweep_low_config12_N10.pkl', 'rb') as f:
@@ -599,9 +599,7 @@ ax.axhline(y=0, color='black', linewidth=0.8, alpha=0.5, zorder=1)
 
 ax.set_xlabel('CV (Coefficient of Variation)', fontsize=13)
 ax.set_ylabel('Robustness (% of trials with Turing instability)', fontsize=13)
-ax.set_title('Robustness to Heterogeneity across Ring Sizes\n'
-             'Same qualitative behaviour at N=10 and N=20',
-             fontsize=13, pad=12)
+ax.set_title('Robustness to Heterogeneity across Ring Sizes\n' 'Same qualitative behaviour at N=10 and N=20', fontsize=13, pad=12)
 
 ax.set_xlim(-0.01, 0.42)
 ax.set_ylim(-5, 105)

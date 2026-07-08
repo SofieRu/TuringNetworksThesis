@@ -63,53 +63,95 @@ def compute_jacobian(state, params):
     
     return J
 
+# def is_turing_shaberi(J, eigs_0, DU, DV, DW):
+#     # STEP 1: Stability at k=0
+#     if np.max(np.real(eigs_0)) >= 0:
+#         return None
+    
+#     # STEP 2: Check for instability with diffusion, # SUPPOSED TO BE 0.01 STEP, BUT INCREASED TO 0.1 FOR SPEED, CHANGE BACK LATER 
+#     D = np.diag([DU, DV, DW])
+#     k_values = np.arange(0.01, 10.01, 0.01)  # Δk = 0.01 per Shaberi et al., before i had np.arange(0.01, 10.01, 0.1)
+    
+#     has_instability = False
+#     is_oscillatory = False
+    
+#     for k in k_values:
+#         M = J - k**2 * D
+#         eigs_k = np.linalg.eigvals(M)
+        
+#         if np.max(np.real(eigs_k)) > 0:
+#             has_instability = True
+            
+#             unstable_eigs = eigs_k[np.real(eigs_k) > 0]
+#             if np.any(np.abs(np.imag(unstable_eigs)) > 1e-8):
+#                 is_oscillatory = True
+#                 break
+    
+#     if not has_instability:
+#         return None
+    
+#     if is_oscillatory:
+#         return 'Hopf'
+    
+#     # STEP 3: Check RESTABILIZATION (Shaberi's method)
+#     k_high_values = np.linspace(10, 50, 20)
+#     for k in k_high_values:
+#         M = J - k**2 * D
+#         eigs_k = np.linalg.eigvals(M)
+#         if np.max(np.real(eigs_k)) < 0:
+#             return 'Type-I'  # Restabilizes
+    
+#     return 'Type-II'  # Doesn't restabilize
+
 def is_turing_shaberi(J, eigs_0, DU, DV, DW):
-    # STEP 1: Stability at k=0
+    # STEP 1: Homogeneous steady state must be stable
     if np.max(np.real(eigs_0)) >= 0:
         return None
     
-    # STEP 2: Check for instability with diffusion, # SUPPOSED TO BE 0.01 STEP, BUT INCREASED TO 0.1 FOR SPEED, CHANGE BACK LATER 
+    # STEP 2: Sweep k ∈ [0, 10] with step 0.01 (Shaberi 2025 methodology)
     D = np.diag([DU, DV, DW])
-    k_values = np.arange(0.01, 10.01, 0.01)  # Δk = 0.01 per Shaberi et al., before i had np.arange(0.01, 10.01, 0.1)
+    k_values = np.arange(0.01, 10.01, 0.01) # change later back to 0.01
     
-    has_instability = False
-    is_oscillatory = False
+    max_reals = np.zeros(len(k_values))
+    has_complex_unstable = False
     
-    for k in k_values:
-        M = J - k**2 * D
+    for i, k in enumerate(k_values):
+        M = J - (k**2) * D
         eigs_k = np.linalg.eigvals(M)
+        max_reals[i] = np.max(np.real(eigs_k))
         
-        if np.max(np.real(eigs_k)) > 0:
-            has_instability = True
-            
+        if max_reals[i] > 0:
             unstable_eigs = eigs_k[np.real(eigs_k) > 0]
             if np.any(np.abs(np.imag(unstable_eigs)) > 1e-8):
-                is_oscillatory = True
-                break
+                has_complex_unstable = True
     
-    if not has_instability:
+    if np.max(max_reals) <= 0:
         return None
     
-    if is_oscillatory:
+    if has_complex_unstable:
         return 'Hopf'
     
-    # STEP 3: Check RESTABILIZATION (Shaberi's method)
-    k_high_values = np.linspace(10, 50, 20)
-    for k in k_high_values:
-        M = J - k**2 * D
-        eigs_k = np.linalg.eigvals(M)
-        if np.max(np.real(eigs_k)) < 0:
-            return 'Type-I'  # Restabilizes
+    # STEP 3: Type-I = restabilises (goes negative) by k=10
+    if max_reals[-1] < 0:
+        return 'Type-I'
     
-    return 'Type-II'  # Doesn't restabilize
-
+    # STEP 4: Distinguish Filter from Type-II by peak location
+    # Filter (Diego 2018): monotonic — max sits at the END of the range
+    # Type-II: has an interior peak — max is somewhere in the middle
+    max_idx = np.argmax(max_reals)
+    
+    # Allow a tiny buffer for floating-point noise (last 0.2% of range)
+    if max_idx >= len(k_values) - 2:
+        return 'Filter'
+    
+    return 'Type-II'
 
 # PARAMETRS FOR HOMOGENOUS RING (EXAMPLE)
 
 # CHANGE THIS TO TEST DIFFERENT CONFIGS:
 CONFIG_TO_TEST = 12 #  
 CONFIG_LABEL = "low"  # or "low" — change this once when you switch configs
-N_cells = 30 # for sanity check run with N = 5, 10 and 20, 30??
+N_cells = 10 # for sanity check run with N = 5, 10 and 20, 30??
 n_trials = 1000
 
 # Load parameters from CSV
