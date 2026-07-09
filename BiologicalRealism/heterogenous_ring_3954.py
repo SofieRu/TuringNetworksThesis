@@ -190,10 +190,10 @@ def is_turing_shaberi(J, eigs_0, DU, DV, DW):
 # ])
 
 # THINGS TO CHECK: WHY ARE THERE SOO MANY DISCARDED...??!!
-CONFIG_TO_TEST = 17
+CONFIG_TO_TEST = 25
 CONFIG_LABEL = "low"  # " high" or "low" — change this once when you switch configs
 n_trials = 1000
-N_cells = 10
+N_cells = 30
 
 # Load parameters from CSV
 df_file = pd.read_csv('../TopologyRanking/Topology3954/3954_FINAL_lhs_results_parameters.csv')
