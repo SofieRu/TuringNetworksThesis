@@ -115,7 +115,7 @@ ax.axhline(y=0, color='red', linestyle='--', linewidth=2, label='Turing threshol
 # labels and title
 ax.set_xlabel('CV (Coefficient of Variation)', fontsize=12)
 ax.set_ylabel('Max Re(λ)', fontsize=12)
-ax.set_title(f'3954 Turing Growth Rate vs Parameter Heterogeneity\n'f'ID (robust): {diff_str(cv_robust_3954_N10["hopping"])}', fontsize=12, pad=15)
+ax.set_title(f'3954 Turing Growth Rate vs Parameter Heterogeneity\n'f'ID 43 (robust): {diff_str(cv_robust_3954_N10["hopping"])}', fontsize=12, pad=15)
 ax.legend(fontsize=11, loc='upper left')
 ax.grid(True, alpha=0.3)
 
@@ -154,7 +154,7 @@ ax.set_xlabel('CV (Coefficient of Variation)', fontsize=12)
 ax.set_ylabel('Max Re(λ)', fontsize=12)
 
 ax.set_title(f'3954 Distribution of Turing Growth Rates Under Parameter Heterogeneity\n'
-             f'ID (robust): {diff_str(cv_robust_3954_N10["hopping"])}',
+             f'ID 43 (robust): {diff_str(cv_robust_3954_N10["hopping"])}',
              fontsize=12, pad=15)
 
 ax.legend(fontsize=9, framealpha=0.9)  # Was fontsize=11
@@ -178,17 +178,17 @@ ax.axhline(y=0, color='red', linestyle='--', linewidth=2, label='Turing threshol
 
 ax.set_xlabel('CV (Coefficient of Variation)', fontsize=12)
 ax.set_ylabel('Max Re(λ)', fontsize=12)
-ax.set_title(f'3954 Turing Growth Rate vs Parameter Heterogeneity\n' f'ID (fragile): {diff_str(cv_fragile_3954_N10["hopping"])}', fontsize=12, pad=15)
+ax.set_title(f'3954 Turing Growth Rate vs Parameter Heterogeneity\n' f'ID 17 (fragile): {diff_str(cv_fragile_3954_N10["hopping"])}', fontsize=12, pad=15)
 ax.legend(fontsize=11, loc='upper left')
 ax.grid(True, alpha=0.3)
 
 plt.tight_layout()
-plt.savefig('3954_config2_fig1_mean_range_vs_cv.png', dpi=300, bbox_inches='tight')
-print("Saved: 3954_config2_fig1_mean_range_vs_cv.png")
+plt.savefig('3954_config17_mean_range_vs_cv.png', dpi=300, bbox_inches='tight')
+print("Saved: 3954_config17_mean_range_vs_cv.png")
 plt.close()
 
 # ============================================================================
-# FIGURE 2B: Boxplot — Config 2
+# FIGURE 2B: Boxplot
 # ============================================================================
 
 fig, ax = plt.subplots(figsize=(12, 6))
@@ -212,15 +212,15 @@ ax.set_xticklabels([f'{cv:.2f}' for cv in cv_fragile_3954_N10['CV']])
 ax.set_xlabel('CV (Coefficient of Variation)', fontsize=12)
 ax.set_ylabel('Max Re(λ)', fontsize=12)
 ax.set_title(f'3954 Distribution of Turing Growth Rates Under Parameter Heterogeneity\n'
-             f'ID (fragile): {diff_str(cv_fragile_3954_N10["hopping"])} — 1000 trials per CV',
+             f'ID 17 (fragile): {diff_str(cv_fragile_3954_N10["hopping"])} — 1000 trials per CV',
              fontsize=12, pad=15)
 
 ax.legend(fontsize=9, framealpha=0.9)
 ax.grid(True, alpha=0.3, axis='y')
 
 plt.tight_layout()
-plt.savefig('3954_config2_fig2_boxplot_cv_sweep.png', dpi=300, bbox_inches='tight')
-print("Saved: 3954_config2_fig2_boxplot_cv_sweep.png")
+plt.savefig('3954_config17_boxplot_cv_sweep.png', dpi=300, bbox_inches='tight')
+print("Saved: 3954_config17_boxplot_cv_sweep.png")
 plt.close()
 
 
@@ -249,13 +249,13 @@ ax.axhline(y=0, color='red', linestyle='--', linewidth=2, label='Turing threshol
 
 ax.set_xlabel('CV (Coefficient of Variation)', fontsize=12)
 ax.set_ylabel('Max Re(λ)', fontsize=12)
-ax.set_title(f'1754 Turing Growth Rate vs Parameter Heterogeneity\n'f'ID (robust): {diff_str(cv_fragile_1754_N10["hopping"])}', fontsize=12, pad=15)
+ax.set_title(f'1754 Turing Growth Rate vs Parameter Heterogeneity\n'f'ID 43 (robust): {diff_str(cv_fragile_1754_N10["hopping"])}', fontsize=12, pad=15)
 ax.legend(fontsize=11, loc='upper left')
 ax.grid(True, alpha=0.3)
 
 plt.tight_layout()
-plt.savefig('1754_config43_fig1_mean_range_vs_cv.png', dpi=300, bbox_inches='tight')
-print("Saved as config43_fig1_mean_range_vs_cv.png")
+plt.savefig('1754_config43_mean_range_vs_cv.png', dpi=300, bbox_inches='tight')
+print("Saved as config43_mean_range_vs_cv.png")
 plt.close()
 
 # ============================================================================
@@ -287,15 +287,15 @@ ax.set_xlabel('CV (Coefficient of Variation)', fontsize=12)
 ax.set_ylabel('Max Re(λ)', fontsize=12)
 
 ax.set_title(f'1754 Distribution of Turing Growth Rates Under Parameter Heterogeneity\n'
-             f'ID (robust): {diff_str(cv_robust_1754_N10["hopping"])}',
+             f'ID 43(robust): {diff_str(cv_robust_1754_N10["hopping"])}',
              fontsize=12, pad=15)
 
 ax.legend(fontsize=9, framealpha=0.9)  # Was fontsize=11
 ax.grid(True, alpha=0.3, axis='y')
 
 plt.tight_layout()
-plt.savefig('1754_config43_fig2_boxplot_cv_sweep.png', dpi=300, bbox_inches='tight')
-print("Saved: 1754_config43_fig2_boxplot_cv_sweep.png")
+plt.savefig('1754_config43_boxplot_cv_sweep.png', dpi=300, bbox_inches='tight')
+print("Saved: 1754_config43_boxplot_cv_sweep.png")
 plt.close()
 
 
@@ -316,8 +316,8 @@ ax.legend(fontsize=11, loc='upper left')
 ax.grid(True, alpha=0.3)
 
 plt.tight_layout()
-plt.savefig('1754_config12_fig1_mean_range_vs_cv.png', dpi=300, bbox_inches='tight')
-print("Saved: 1754_config12_fig1_mean_range_vs_cv.png")
+plt.savefig('1754_config14_mean_range_vs_cv.png', dpi=300, bbox_inches='tight')
+print("Saved: 1754_config14_mean_range_vs_cv.png")
 plt.close()
 
 # ============================================================================
@@ -345,15 +345,15 @@ ax.set_xticklabels([f'{cv:.2f}' for cv in cv_fragile_1754_N10['CV']])
 ax.set_xlabel('CV (Coefficient of Variation)', fontsize=12)
 ax.set_ylabel('Max Re(λ)', fontsize=12)
 ax.set_title(f'1754 Distribution of Turing Growth Rates Under Parameter Heterogeneity\n'
-             f'ID (fragile): {diff_str(cv_fragile_1754_N10["hopping"])} with 1000 trials per CV',
+             f'ID 14 (fragile): {diff_str(cv_fragile_1754_N10["hopping"])} with 1000 trials per CV',
              fontsize=12, pad=15)
 
 ax.legend(fontsize=9, framealpha=0.9)
 ax.grid(True, alpha=0.3, axis='y')
 
 plt.tight_layout()
-plt.savefig('1754_config12_fig2_boxplot_cv_sweep.png', dpi=300, bbox_inches='tight')
-print("Saved: 1754_config12_fig2_boxplot_cv_sweep.png")
+plt.savefig('1754_config14_boxplot_cv_sweep.png', dpi=300, bbox_inches='tight')
+print("Saved: 1754_config14_boxplot_cv_sweep.png")
 plt.close()
 
 
@@ -467,13 +467,13 @@ def plot_sensitivity(sens, config_label, save_name):
 # ============================================================================
 # FIGURE 3A + 3B : Sensitivity 
 # ============================================================================
-plot_sensitivity(sens_3954_robust, 'ID 43 (robust)', '3954_config43_fig3_sensitivity.png')
+plot_sensitivity(sens_3954_robust, 'ID 43 (robust)', '3954_config43_sensitivity.png')
 
-plot_sensitivity(sens_3954_fragile, 'ID (fragile)', '3954_config2_fig3_sensitivity.png')
+plot_sensitivity(sens_3954_fragile, 'ID 17 (fragile)', '3954_config17_sensitivity.png')
 
-plot_sensitivity(sens_1754_robust, 'ID 43 (robust)', '1754_config43_fig3_sensitivity.png')
+plot_sensitivity(sens_1754_robust, 'ID 43 (robust)', '1754_config43_sensitivity.png')
 
-plot_sensitivity(sens_1754_fragile, 'ID  (fragile)', '1754_config12_fig3_sensitivity.png')
+plot_sensitivity(sens_1754_fragile, 'ID 14 (fragile)', '1754_config14_sensitivity.png')
 
 
 
@@ -488,17 +488,17 @@ robustness_curves = [
     {'label': '#3954 Robust (ID 43, N=20)','CV': cv_robust_3954_N20['CV'], 'robustness': cv_robust_3954_N20['robustness'],'color': 'blue', 'marker': 'o', 'linestyle': '--',},
     {'label': '#3954 Robust (ID 43, N=30)','CV': cv_robust_3954_N30['CV'], 'robustness': cv_robust_3954_N30['robustness'],'color': 'blue', 'marker': 'o', 'linestyle': ':',},
     
-    {'label': '#3954 Fragile (ID 2, N=10)','CV':  cv_fragile_3954_N10['CV'], 'robustness': cv_fragile_3954_N10['robustness'],'color': 'cornflowerblue', 'marker': 's', 'linestyle': '-',},
-    {'label': '#3954 Fragile (ID 2, N=20)','CV':  cv_fragile_3954_N20['CV'], 'robustness': cv_fragile_3954_N20['robustness'],'color': 'cornflowerblue', 'marker': 's', 'linestyle': '--',},
-    {'label': '#3954 Fragile (ID 2, N=30)','CV':  cv_fragile_3954_N30['CV'], 'robustness': cv_fragile_3954_N30['robustness'],'color': 'cornflowerblue', 'marker': 's', 'linestyle': ':',},
+    {'label': '#3954 Fragile (ID 17, N=10)','CV':  cv_fragile_3954_N10['CV'], 'robustness': cv_fragile_3954_N10['robustness'],'color': 'cornflowerblue', 'marker': 's', 'linestyle': '-',},
+    {'label': '#3954 Fragile (ID 17, N=20)','CV':  cv_fragile_3954_N20['CV'], 'robustness': cv_fragile_3954_N20['robustness'],'color': 'cornflowerblue', 'marker': 's', 'linestyle': '--',},
+    {'label': '#3954 Fragile (ID 17, N=30)','CV':  cv_fragile_3954_N30['CV'], 'robustness': cv_fragile_3954_N30['robustness'],'color': 'cornflowerblue', 'marker': 's', 'linestyle': ':',},
     
     {'label': '#1754 Robust (ID 43, N=10)','CV': cv_robust_1754_N10['CV'], 'robustness': cv_robust_1754_N10['robustness'],'color': 'purple', 'marker': '^', 'linestyle': '-',},
     {'label': '#1754 Robust (ID 43, N=20)','CV': cv_robust_1754_N20['CV'], 'robustness': cv_robust_1754_N20['robustness'],'color': 'purple', 'marker': '^', 'linestyle': '--',},
     {'label': '#1754 Robust (ID 43, N=30)','CV': cv_robust_1754_N30['CV'], 'robustness': cv_robust_1754_N30['robustness'],'color': 'purple', 'marker': '^', 'linestyle': ':',},
     
-    {'label': '#1754 Fragile (ID 12, N=10)','CV': cv_fragile_1754_N10['CV'], 'robustness': cv_fragile_1754_N10['robustness'],'color': 'mediumorchid', 'marker': 'D', 'linestyle': '-',},
-    {'label': '#1754 Fragile (ID 12, N=20)','CV': cv_fragile_1754_N20['CV'], 'robustness': cv_fragile_1754_N20['robustness'],'color': 'mediumorchid', 'marker': 'D', 'linestyle': '--',},
-    {'label': '#1754 Fragile (ID 12, N=30)','CV': cv_fragile_1754_N30['CV'], 'robustness': cv_fragile_1754_N30['robustness'],'color': 'mediumorchid', 'marker': 'D', 'linestyle': ':',},
+    {'label': '#1754 Fragile (ID 14, N=10)','CV': cv_fragile_1754_N10['CV'], 'robustness': cv_fragile_1754_N10['robustness'],'color': 'mediumorchid', 'marker': 'D', 'linestyle': '-',},
+    {'label': '#1754 Fragile (ID 14, N=20)','CV': cv_fragile_1754_N20['CV'], 'robustness': cv_fragile_1754_N20['robustness'],'color': 'mediumorchid', 'marker': 'D', 'linestyle': '--',},
+    {'label': '#1754 Fragile (ID 14, N=30)','CV': cv_fragile_1754_N30['CV'], 'robustness': cv_fragile_1754_N30['robustness'],'color': 'mediumorchid', 'marker': 'D', 'linestyle': ':',},
 ]
 
 # combined plot with two subplots for each topology
