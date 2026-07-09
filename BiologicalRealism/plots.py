@@ -121,8 +121,8 @@ ax.grid(True, alpha=0.3)
 
 # save the plots
 plt.tight_layout()
-plt.savefig('3954_config43_fig1_mean_range_vs_cv.png', dpi=300, bbox_inches='tight')
-print("Saved as 3954_config43_fig1_mean_range_vs_cv.png")
+plt.savefig('3954_config43_mean_range_vs_cv.png', dpi=300, bbox_inches='tight')
+print("Saved as 3954_config43_mean_range_vs_cv.png")
 plt.close()
 
 # ============================================================================
@@ -161,8 +161,8 @@ ax.legend(fontsize=9, framealpha=0.9)  # Was fontsize=11
 ax.grid(True, alpha=0.3, axis='y')
 
 plt.tight_layout()
-plt.savefig('3954_config43_fig2_boxplot_cv_sweep.png', dpi=300, bbox_inches='tight')
-print("Saved: 3954_config43_fig2_boxplot_cv_sweep.png")
+plt.savefig('3954_config43_boxplot_cv_sweep.png', dpi=300, bbox_inches='tight')
+print("Saved: 3954_config43_boxplot_cv_sweep.png")
 plt.close()
 
 
