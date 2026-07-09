@@ -167,7 +167,7 @@ plt.close()
 
 
 # ============================================================================
-# FIGURE 1B: Mean with full range — 
+# FIGURE 1B: Mean with full range  
 # ============================================================================
 
 fig, ax = plt.subplots(figsize=(10, 6))
@@ -212,7 +212,7 @@ ax.set_xticklabels([f'{cv:.2f}' for cv in cv_fragile_3954_N10['CV']])
 ax.set_xlabel('CV (Coefficient of Variation)', fontsize=12)
 ax.set_ylabel('Max Re(λ)', fontsize=12)
 ax.set_title(f'3954 Distribution of Turing Growth Rates Under Parameter Heterogeneity\n'
-             f'ID 17 (fragile): {diff_str(cv_fragile_3954_N10["hopping"])} — 1000 trials per CV',
+             f'ID 17 (fragile): {diff_str(cv_fragile_3954_N10["hopping"])} 1000 trials per CV',
              fontsize=12, pad=15)
 
 ax.legend(fontsize=9, framealpha=0.9)
@@ -300,7 +300,7 @@ plt.close()
 
 
 # ============================================================================
-# FIGURE 1B: Mean with full range — Config 12
+# FIGURE 1B: Mean with full range  Config 12
 # ============================================================================
 
 fig, ax = plt.subplots(figsize=(10, 6))
@@ -321,7 +321,7 @@ print("Saved: 1754_config14_mean_range_vs_cv.png")
 plt.close()
 
 # ============================================================================
-# FIGURE 2B: Boxplot — Config 12
+# FIGURE 2B: Boxplot  Config 12
 # ============================================================================
 
 fig, ax = plt.subplots(figsize=(12, 6))
@@ -419,12 +419,12 @@ def plot_sensitivity(sens, config_label, save_name):
     bar_heights = np.where(sorted_is_nan, 1e-4, sorted_sens)
     bars = ax.bar(range(len(sorted_labels)), bar_heights, color='steelblue', alpha=0.9)
 
-    # Color top 3 clean bars (stiff) — only count non-NaN
+    # Color top 3 clean bars (stiff)  only count non-NaN
     n_clean = (~sorted_is_nan).sum()
     for i in range(min(3, n_clean)):
         bars[i].set_color('mediumvioletred')
 
-    # Color bottom 3 clean bars (sloppy) — last 3 non-NaN
+    # Color bottom 3 clean bars (sloppy)  last 3 non-NaN
     sloppy_start = max(0, n_clean - 3)
     for i in range(sloppy_start, n_clean):
         bars[i].set_color('silver')
@@ -480,7 +480,7 @@ plot_sensitivity(sens_1754_fragile, 'ID 14 (fragile)', '1754_config14_sensitivit
 
 
 # ========================================================================================================================================================
-#                                                  FIGURE: ROBUSTNESS VS CV — N=10 vs N=20 COMPARISON
+#                                                  FIGURE: ROBUSTNESS VS CV  N=10 vs N=20 COMPARISON
 # ========================================================================================================================================================
 
 robustness_curves = [

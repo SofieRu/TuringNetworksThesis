@@ -1,0 +1,32 @@
+Starting job 15 at Wed  8 Jul 21:56:33 BST 2026
+Starting FINAL_LHS_3954_Type1_UVFast_Unequal2: dU=1.0, dV=1.0, dW=0.1, n_samples=1,000,000
+[FINAL_LHS_3954_Type1_UVFast_Unequal2] 100,000/1,000,000 | Stable: 95180 | Diego: 3 | Shaberi: 3
+[FINAL_LHS_3954_Type1_UVFast_Unequal2] 200,000/1,000,000 | Stable: 190103 | Diego: 7 | Shaberi: 7
+[FINAL_LHS_3954_Type1_UVFast_Unequal2] 300,000/1,000,000 | Stable: 285166 | Diego: 12 | Shaberi: 12
+[FINAL_LHS_3954_Type1_UVFast_Unequal2] 400,000/1,000,000 | Stable: 380343 | Diego: 16 | Shaberi: 16
+[FINAL_LHS_3954_Type1_UVFast_Unequal2] 500,000/1,000,000 | Stable: 475497 | Diego: 21 | Shaberi: 21
+[FINAL_LHS_3954_Type1_UVFast_Unequal2] 600,000/1,000,000 | Stable: 570769 | Diego: 25 | Shaberi: 25
+[FINAL_LHS_3954_Type1_UVFast_Unequal2] 700,000/1,000,000 | Stable: 665900 | Diego: 33 | Shaberi: 33
+[FINAL_LHS_3954_Type1_UVFast_Unequal2] 800,000/1,000,000 | Stable: 760988 | Diego: 35 | Shaberi: 35
+[FINAL_LHS_3954_Type1_UVFast_Unequal2] 900,000/1,000,000 | Stable: 856080 | Diego: 42 | Shaberi: 42
+[FINAL_LHS_3954_Type1_UVFast_Unequal2] 1,000,000/1,000,000 | Stable: 951296 | Diego: 47 | Shaberi: 47
+Diego Turing:    47 (0.0047%)
+Shaberi Total:   47 (0.0047%)
+  Type-I:        47
+  Type-II:       0
+  Hopf:          0
+  Filter:        0
+
+Saved to:
+  results/FINAL_LHS_3954_Type1_UVFast_Unequal2_1mio_with_params.pkl
+  results/FINAL_LHS_3954_Type1_UVFast_Unequal2_1mio_with_params.csv
+Finished job 15 at Thu  9 Jul 09:43:50 BST 2026
+
+====================================
+CPU Time used: 11:41:34
+CPU Percent: 99%
+Memory usage: 578720kb
+Approx Power usage: 0.1402
+Walltime usage: 11:47:22
+
+====================================

@@ -1,0 +1,32 @@
+Starting job 47 at Wed  8 Jul 21:58:25 BST 2026
+Starting FINAL_LHS_3954_Type3_VWFreeze_Equal1: dU=1.0, dV=0.0, dW=0.0, n_samples=1,000,000
+[FINAL_LHS_3954_Type3_VWFreeze_Equal1] 100,000/1,000,000 | Stable: 95180 | Diego: 1178 | Shaberi: 1178
+[FINAL_LHS_3954_Type3_VWFreeze_Equal1] 200,000/1,000,000 | Stable: 190103 | Diego: 2336 | Shaberi: 2336
+[FINAL_LHS_3954_Type3_VWFreeze_Equal1] 300,000/1,000,000 | Stable: 285166 | Diego: 3476 | Shaberi: 3476
+[FINAL_LHS_3954_Type3_VWFreeze_Equal1] 400,000/1,000,000 | Stable: 380343 | Diego: 4617 | Shaberi: 4617
+[FINAL_LHS_3954_Type3_VWFreeze_Equal1] 500,000/1,000,000 | Stable: 475497 | Diego: 5731 | Shaberi: 5731
+[FINAL_LHS_3954_Type3_VWFreeze_Equal1] 600,000/1,000,000 | Stable: 570769 | Diego: 6938 | Shaberi: 6938
+[FINAL_LHS_3954_Type3_VWFreeze_Equal1] 700,000/1,000,000 | Stable: 665900 | Diego: 8072 | Shaberi: 8072
+[FINAL_LHS_3954_Type3_VWFreeze_Equal1] 800,000/1,000,000 | Stable: 760988 | Diego: 9181 | Shaberi: 9181
+[FINAL_LHS_3954_Type3_VWFreeze_Equal1] 900,000/1,000,000 | Stable: 856080 | Diego: 10365 | Shaberi: 10365
+[FINAL_LHS_3954_Type3_VWFreeze_Equal1] 1,000,000/1,000,000 | Stable: 951296 | Diego: 11490 | Shaberi: 11490
+Diego Turing:    11490 (1.1490%)
+Shaberi Total:   11490 (1.1490%)
+  Type-I:        0
+  Type-II:       0
+  Hopf:          0
+  Filter:        11490
+
+Saved to:
+  results/FINAL_LHS_3954_Type3_VWFreeze_Equal1_1mio_with_params.pkl
+  results/FINAL_LHS_3954_Type3_VWFreeze_Equal1_1mio_with_params.csv
+Finished job 47 at Thu  9 Jul 12:09:11 BST 2026
+
+====================================
+CPU Time used: 14:03:18
+CPU Percent: 99%
+Memory usage: 578628kb
+Approx Power usage: 0.16860000000000003
+Walltime usage: 14:10:58
+
+====================================

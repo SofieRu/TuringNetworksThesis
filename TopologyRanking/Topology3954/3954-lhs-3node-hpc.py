@@ -100,48 +100,7 @@ def is_turing_diego(J, DU, DV, DW):
 
 
 
-# SHABERI WIHTOUT CLASSIFYING AS TURING FILTER
-
-# def is_turing_shaberi(J, eigs_0, DU, DV, DW):
-#     # STEP 1: Stability at k=0
-#     if np.max(np.real(eigs_0)) >= 0:
-#         return None
-    
-#     # STEP 2: Check for instability with diffusion, # SUPPOSED TO BE 0.01 STEP, BUT INCREASED TO 0.1 FOR SPEED, CHANGE BACK LATER 
-#     D = np.diag([DU, DV, DW])
-#     k_values = np.arange(0.01, 10.01, 0.1)
-    
-#     has_instability = False
-#     is_oscillatory = False
-    
-#     for k in k_values:
-#         M = J - k**2 * D
-#         eigs_k = np.linalg.eigvals(M)
-        
-#         if np.max(np.real(eigs_k)) > 0:
-#             has_instability = True
-            
-#             unstable_eigs = eigs_k[np.real(eigs_k) > 0]
-#             if np.any(np.abs(np.imag(unstable_eigs)) > 1e-8):
-#                 is_oscillatory = True
-#                 break
-    
-#     if not has_instability:
-#         return None
-    
-#     if is_oscillatory:
-#         return 'Hopf'
-    
-#     # STEP 3: Check RESTABILIZATION (Shaberi's method)
-#     k_high_values = np.linspace(10, 50, 20)
-#     for k in k_high_values:
-#         M = J - k**2 * D
-#         eigs_k = np.linalg.eigvals(M)
-#         if np.max(np.real(eigs_k)) < 0:
-#             return 'Type-I'  # Restabilizes
-    
-#     return 'Type-II'  # Doesn't restabilize
-
+# SHABERI 
 
 def is_turing_shaberi(J, eigs_0, DU, DV, DW):
     # STEP 1: Homogeneous steady state must be stable
@@ -186,6 +145,61 @@ def is_turing_shaberi(J, eigs_0, DU, DV, DW):
     
     return 'Type-II'
 
+
+# Filtering as Type I a and Ib???
+
+import numpy as np
+
+def is_turing_shaberi(J, eigs_0, DU, DV, DW):
+    # STEP 1: Homogeneous steady state must be stable
+    if np.max(np.real(eigs_0)) >= 0:
+        return None
+    
+    # STEP 2: Sweep a wider range of k to ensure high-k behavior captures the asymptote
+    D = np.diag([DU, DV, DW])
+    k_values = np.arange(0.01, 30.01, 0.01) # Increased range from 10 to 30 for safety
+    
+    max_reals = np.zeros(len(k_values))
+    has_complex_unstable = False
+    
+    for i, k in enumerate(k_values):
+        M = J - (k**2) * D
+        eigs_k = np.linalg.eigvals(M)
+        max_reals[i] = np.max(np.real(eigs_k))
+        
+        if max_reals[i] > 0:
+            unstable_eigs = eigs_k[np.real(eigs_k) > 0]
+            if np.any(np.abs(np.imag(unstable_eigs)) > 1e-8):
+                has_complex_unstable = True
+    
+    # If no instabilities are found across the spectrum, it's not a Turing network
+    if np.max(max_reals) <= 0:
+        return None
+    
+    if has_complex_unstable:
+        return 'Hopf'
+    
+    # --- FIXED SEGMENTATION LOGIC ---
+    max_idx = np.argmax(max_reals)
+    is_interior_peak = max_idx < (len(k_values) - 5) # Buffer for floating point noise
+    
+    # If it has an interior peak (Type I behavior)
+    if is_interior_peak:
+        if max_reals[-1] < 0:
+            return 'Type-Ia'  # Re-stabilises below 0
+        else:
+            return 'Type-Ib'  # Fails to re-stabilise but has a definitive macro-peak
+            
+    # If the maximum value is at the end of the range (k -> infinity)
+    else:
+        # To separate Type-II (blow up) from Filter (asymptotic saturation), 
+        # evaluate the derivative/slope at the end of the evaluated spectrum.
+        slope_at_end = max_reals[-1] - max_reals[-5]
+        
+        if slope_at_end > 1e-3: 
+            return 'Type-II' # Growth rate continues skyrocketing towards infinity
+        else:
+            return 'Filter'   # Growth rate flatlines into a stable positive asymptote
 
 
 ##############################################
