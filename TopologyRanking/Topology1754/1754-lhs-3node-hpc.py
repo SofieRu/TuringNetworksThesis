@@ -388,18 +388,30 @@ def run_analysis(config_id, n_samples, save_successful_params=False, max_success
                 # Shaberi (reuses eigs_0)
                 turing_type = is_turing_shaberi(J, eigs_0, DU, DV, DW)
                 
-                # if turing_type is not None:
-                if turing_type is not None and turing_type != 'Hopf': # NEW, do not count Hopf as Turing for Shaberi
-                    shaberi_total += 1
-                    if turing_type == 'Type-I':
-                        shaberi_type_I += 1
-                    elif turing_type == 'Type-II':
-                        shaberi_type_II += 1
-                    elif turing_type == 'Hopf':
-                        shaberi_hopf += 1
-                    elif turing_type == 'Filter':
-                        filter_count += 1
+                # # if turing_type is not None:
+                # if turing_type is not None and turing_type != 'Hopf': # NEW, do not count Hopf as Turing for Shaberi
+                #     shaberi_total += 1
+                #     if turing_type == 'Type-I':
+                #         shaberi_type_I += 1
+                #     elif turing_type == 'Type-II':
+                #         shaberi_type_II += 1
+                #     elif turing_type == 'Hopf':
+                #         shaberi_hopf += 1
+                #     elif turing_type == 'Filter':
+                #         filter_count += 1
 
+                if turing_type is not None: # NEW, do not count Hopf as Turing for Shaberi
+                    if turing_type == 'Hopf':
+                        shaberi_hopf += 1
+                    else:
+                        shaberi_total += 1
+                        if turing_type == 'Type-I':
+                            shaberi_type_I += 1
+                        elif turing_type == 'Type-II':
+                            shaberi_type_II += 1
+                        elif turing_type == 'Filter':
+                            filter_count += 1
+                        
                     # SAVE ALL classified parameters (regardless of type)
                     if save_successful_params:
                         D = np.diag([DU, DV, DW])

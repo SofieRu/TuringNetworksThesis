@@ -148,58 +148,56 @@ def is_turing_shaberi(J, eigs_0, DU, DV, DW):
 
 # Filtering as Type I a and Ib???
 
-import numpy as np
-
-def is_turing_shaberi(J, eigs_0, DU, DV, DW):
-    # STEP 1: Homogeneous steady state must be stable
-    if np.max(np.real(eigs_0)) >= 0:
-        return None
+# def is_turing_shaberi(J, eigs_0, DU, DV, DW):
+#     # STEP 1: Homogeneous steady state must be stable
+#     if np.max(np.real(eigs_0)) >= 0:
+#         return None
     
-    # STEP 2: Sweep a wider range of k to ensure high-k behavior captures the asymptote
-    D = np.diag([DU, DV, DW])
-    k_values = np.arange(0.01, 30.01, 0.01) # Increased range from 10 to 30 for safety
+#     # STEP 2: Sweep a wider range of k to ensure high-k behavior captures the asymptote
+#     D = np.diag([DU, DV, DW])
+#     k_values = np.arange(0.01, 30.01, 0.01) # Increased range from 10 to 30 for safety
     
-    max_reals = np.zeros(len(k_values))
-    has_complex_unstable = False
+#     max_reals = np.zeros(len(k_values))
+#     has_complex_unstable = False
     
-    for i, k in enumerate(k_values):
-        M = J - (k**2) * D
-        eigs_k = np.linalg.eigvals(M)
-        max_reals[i] = np.max(np.real(eigs_k))
+#     for i, k in enumerate(k_values):
+#         M = J - (k**2) * D
+#         eigs_k = np.linalg.eigvals(M)
+#         max_reals[i] = np.max(np.real(eigs_k))
         
-        if max_reals[i] > 0:
-            unstable_eigs = eigs_k[np.real(eigs_k) > 0]
-            if np.any(np.abs(np.imag(unstable_eigs)) > 1e-8):
-                has_complex_unstable = True
+#         if max_reals[i] > 0:
+#             unstable_eigs = eigs_k[np.real(eigs_k) > 0]
+#             if np.any(np.abs(np.imag(unstable_eigs)) > 1e-8):
+#                 has_complex_unstable = True
     
-    # If no instabilities are found across the spectrum, it's not a Turing network
-    if np.max(max_reals) <= 0:
-        return None
+#     # If no instabilities are found across the spectrum, it's not a Turing network
+#     if np.max(max_reals) <= 0:
+#         return None
     
-    if has_complex_unstable:
-        return 'Hopf'
+#     if has_complex_unstable:
+#         return 'Hopf'
     
-    # --- FIXED SEGMENTATION LOGIC ---
-    max_idx = np.argmax(max_reals)
-    is_interior_peak = max_idx < (len(k_values) - 5) # Buffer for floating point noise
+#     # --- FIXED SEGMENTATION LOGIC ---
+#     max_idx = np.argmax(max_reals)
+#     is_interior_peak = max_idx < (len(k_values) - 5) # Buffer for floating point noise
     
-    # If it has an interior peak (Type I behavior)
-    if is_interior_peak:
-        if max_reals[-1] < 0:
-            return 'Type-Ia'  # Re-stabilises below 0
-        else:
-            return 'Type-Ib'  # Fails to re-stabilise but has a definitive macro-peak
+#     # If it has an interior peak (Type I behavior)
+#     if is_interior_peak:
+#         if max_reals[-1] < 0:
+#             return 'Type-Ia'  # Re-stabilises below 0
+#         else:
+#             return 'Type-Ib'  # Fails to re-stabilise but has a definitive macro-peak
             
-    # If the maximum value is at the end of the range (k -> infinity)
-    else:
-        # To separate Type-II (blow up) from Filter (asymptotic saturation), 
-        # evaluate the derivative/slope at the end of the evaluated spectrum.
-        slope_at_end = max_reals[-1] - max_reals[-5]
+#     # If the maximum value is at the end of the range (k -> infinity)
+#     else:
+#         # To separate Type-II (blow up) from Filter (asymptotic saturation), 
+#         # evaluate the derivative/slope at the end of the evaluated spectrum.
+#         slope_at_end = max_reals[-1] - max_reals[-5]
         
-        if slope_at_end > 1e-3: 
-            return 'Type-II' # Growth rate continues skyrocketing towards infinity
-        else:
-            return 'Filter'   # Growth rate flatlines into a stable positive asymptote
+#         if slope_at_end > 1e-3: 
+#             return 'Type-II' # Growth rate continues skyrocketing towards infinity
+#         else:
+#             return 'Filter'   # Growth rate flatlines into a stable positive asymptote
 
 
 ##############################################
@@ -378,17 +376,17 @@ def run_analysis(config_id, n_samples, save_successful_params=False, max_success
                 # Shaberi (reuses eigs_0)
                 turing_type = is_turing_shaberi(J, eigs_0, DU, DV, DW)
                 
-                # if turing_type is not None:
-                if turing_type is not None and turing_type != 'Hopf': # NEW, do not count Hopf as Turing for Shaberi
-                    shaberi_total += 1
-                    if turing_type == 'Type-I':
-                        shaberi_type_I += 1
-                    elif turing_type == 'Type-II':
-                        shaberi_type_II += 1
-                    elif turing_type == 'Hopf':
+                if turing_type is not None: # NEW, do not count Hopf as Turing for Shaberi
+                    if turing_type == 'Hopf':
                         shaberi_hopf += 1
-                    elif turing_type == 'Filter':
-                        filter_count += 1
+                    else:
+                        shaberi_total += 1
+                        if turing_type == 'Type-I':
+                            shaberi_type_I += 1
+                        elif turing_type == 'Type-II':
+                            shaberi_type_II += 1
+                        elif turing_type == 'Filter':
+                            filter_count += 1
                     
                     # SAVE ALL classified parameters (regardless of type)
                     if save_successful_params:
