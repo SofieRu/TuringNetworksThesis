@@ -155,7 +155,7 @@ def is_turing_shaberi(J, eigs_0, DU, DV, DW):
     
 #     # STEP 2: Sweep a wider range of k to ensure high-k behavior captures the asymptote
 #     D = np.diag([DU, DV, DW])
-#     k_values = np.arange(0.01, 30.01, 0.01) # Increased range from 10 to 30 for safety
+#     k_values = np.arange(0.01, 10.01, 0.01)
     
 #     max_reals = np.zeros(len(k_values))
 #     has_complex_unstable = False
