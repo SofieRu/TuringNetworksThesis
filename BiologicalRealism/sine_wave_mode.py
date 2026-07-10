@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-N = 20
+N = 10
 cells = np.arange(N)
 
 # Compute the m=1 and m=5 spatial modes
@@ -41,6 +41,6 @@ fig.suptitle(
 )
 
 plt.tight_layout()
-plt.savefig('sine_wave_modes_n20.png', dpi=200, bbox_inches='tight')
-print("Saved: sine_wave_modes_n20.png")
+plt.savefig('sine_wave_modes_n10.png', dpi=200, bbox_inches='tight')
+print("Saved: sine_wave_modes_n10.png")
 plt.close()

@@ -255,7 +255,7 @@ ax.grid(True, alpha=0.3)
 
 plt.tight_layout()
 plt.savefig('1754_config43_mean_range_vs_cv.png', dpi=300, bbox_inches='tight')
-print("Saved as config43_mean_range_vs_cv.png")
+print("Saved: 1754_config43_mean_range_vs_cv.png")
 plt.close()
 
 # ============================================================================
@@ -520,7 +520,7 @@ for ax, topo in zip(axes, ['#3954', '#1754']):
                 label=curve['label'], zorder=3
             )
             
-    ax.set_title(f'Topology {topo} Stability Profiles', fontsize=12, fontweight='semibold', pad=12)
+    ax.set_title(f'Topology {topo} Stability Profiles', fontsize=12, pad=12) # fontweight='semibold'
     ax.set_xlabel('CV (Coefficient of Variation)', fontsize=10.5, color='#333333', labelpad=8)
     ax.set_xlim(-0.01, 0.42)
     ax.set_ylim(-3, 103)
@@ -532,7 +532,7 @@ axes[0].set_ylabel('Robustness (% of trials with Turing instability)', fontsize=
 title_obj = fig.suptitle(
     'Robustness to Heterogeneity Across Ring Sizes (N=10, N=20, N=30)\n'
     'Comparison of Topological Stability Profiles Under Stochastic Parameter Variation',
-    fontsize=12.5, y=0.96, fontweight='semibold', color='#111111'
+    fontsize=12, y=0.96, fontweight='semibold', color='#111111'
 )
 
 # # Expanded unified legend handles matching the 3-step N scale
@@ -570,10 +570,10 @@ leg_obj = fig.legend(
     bbox_to_anchor=(0.5, 0.0),  # Lowered further down to fit 3 horizontal legend rows comfortably
     ncol=4,                       
     frameon=False,
-    fontsize=9.5
+    fontsize=10
 )
 
-fig.subplots_adjust(left=0.08, right=0.96, top=0.80, bottom=0.22, wspace=0.14)
+fig.subplots_adjust(left=0.08, right=0.96, top=0.80, bottom=0.25, wspace=0.14)
 
 plt.savefig('thesis_robustness_N10_to_N30_combined.png', dpi=300, bbox_inches='tight', bbox_extra_artists=[title_obj, leg_obj])
 plt.close()
