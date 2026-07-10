@@ -16,28 +16,34 @@ fig, axes = plt.subplots(1, 2, figsize=(14, 4.5), sharey=True)
 
 # --- Left: m=1 ---
 ax = axes[0]
-ax.plot(cells, mode_1, 'o-', color='darkorchid', linewidth=2, markersize=7)
-ax.axhline(0, color='gray', linewidth=0.8, linestyle='--', alpha=0.7)
-ax.set_xlabel('Cell index', fontsize=11)
-ax.set_ylabel('Eigenvector amplitude', fontsize=11)
-ax.set_title(f'm=1: one cycle across the ring\n$k_1 = {k_1:.3f}$', fontsize=12)
+ax.plot(cells, mode_1, 'o-', color='darkorchid', linewidth=2.2, markersize=7)
+ax.axhline(0, color='gray', linewidth=0.9, linestyle='--', alpha=0.7)
+ax.set_xlabel('Cell index', fontsize=12)
+ax.set_ylabel('Eigenvector amplitude', fontsize=12)
+ax.set_title(f'm=1, $k_1 = {k_1:.3f}$', fontsize=12)
 ax.grid(alpha=0.3)
-ax.set_xticks(np.arange(0, N + 1, 5))
+ax.set_xticks(np.arange(0, N + 1, 2))
 
 # --- Right: m=5 ---
 ax = axes[1]
-ax.plot(cells, mode_5, 'o-', color='darkorchid', linewidth=2, markersize=7)
-ax.axhline(0, color='gray', linewidth=0.8, linestyle='--', alpha=0.7)
-ax.set_xlabel('Cell index', fontsize=11)
-ax.set_title(f'm=5: five cycles across the ring\n$k_5 = {k_5:.3f}$',
-             fontsize=12)
+ax.plot(cells, mode_5, 'o-', color='darkorchid', linewidth=2.2, markersize=7)
+ax.axhline(0, color='gray', linewidth=0.9, linestyle='--', alpha=0.7)
+ax.set_xlabel('Cell index', fontsize=12)
+ax.set_title(f'm=5, $k_5 = {k_5:.3f}$',fontsize=12)
 ax.grid(alpha=0.3)
-ax.set_xticks(np.arange(0, N + 1, 5))
+ax.set_xticks(np.arange(0, N + 1, 2))
 
+# fig.suptitle(
+#     f'Discrete spatial modes on a ring of N={N} cells\n'
+#     f'Each mode $m$ is a sine wave with $m$ full cycles',
+#     fontsize=12, fontweight='semibold' 
+# )
+
+# 1. Add the main title
 fig.suptitle(
-    f'Discrete spatial modes on a ring of N={N} cells\n'
-    f'Each mode $m$ is a sine wave with $m$ full cycles',
+    f'Discrete spatial modes on a ring of N={N} cells', 
     fontsize=13, 
+    fontweight='semibold'
 )
 
 plt.tight_layout()
