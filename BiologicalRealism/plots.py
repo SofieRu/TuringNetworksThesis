@@ -502,7 +502,7 @@ robustness_curves = [
 ]
 
 # combined plot with two subplots for each topology
-fig, axes = plt.subplots(1, 2, figsize=(14, 5.5), sharey=False)
+fig, axes = plt.subplots(1, 2, figsize=(14, 5.8), sharey=False)
 
 for ax, topo in zip(axes, ['#3954', '#1754']):
     # Plot reference background guides
@@ -530,28 +530,11 @@ for ax, topo in zip(axes, ['#3954', '#1754']):
 axes[0].set_ylabel('Robustness (% of trials with Turing instability)', fontsize=10.5, color='#333333', labelpad=8)
 
 title_obj = fig.suptitle(
-    'Robustness to Heterogeneity Across Ring Sizes (N=10, N=20, N=30)\n'
-    'Comparison of Topological Stability Profiles Under Stochastic Parameter Variation',
+    'Robustness to Parameter Heterogeneity Across Ring Sizes (N=10, N=20, N=30)\n'
+    'Comparison of Topological Stability Under Parameter Variation',
     fontsize=12, y=0.96, fontweight='semibold', color='#111111'
 )
 
-# # Expanded unified legend handles matching the 3-step N scale
-# legend_handles = [
-#     mlines.Line2D([], [], color='blue', marker='o', linestyle='-', label='#3954 Robust (ID 43, N=10)'),
-#     mlines.Line2D([], [], color='blue', marker='o', linestyle='--', label='#3954 Robust (Config 45, N=20)'),
-#     mlines.Line2D([], [], color='blue', marker='o', linestyle=':', label='#3954 Robust (Config 45, N=30)'),
-#     mlines.Line2D([], [], color='cornflowerblue', marker='s', linestyle='-', label='#3954 Fragile (Config 4, N=10)'),
-#     mlines.Line2D([], [], color='cornflowerblue', marker='s', linestyle='--', label='#3954 Fragile (Config 4, N=20)'),
-#     mlines.Line2D([], [], color='cornflowerblue', marker='s', linestyle='--', label='#3954 Fragile (Config 4, N=30)'),
-#     mlines.Line2D([], [], color='purple', marker='^', linestyle='-', label='#1754 Robust (Config 35, N=10)'),
-#     mlines.Line2D([], [], color='purple', marker='^', linestyle='--', label='#1754 Robust (Config 35, N=20)'),
-#     mlines.Line2D([], [], color='purple', marker='^', linestyle=':', label='#1754 Robust (Config 35, N=30)'),
-#     mlines.Line2D([], [], color='mediumorchid', marker='D', linestyle='-', label='#1754 Fragile (Config 12, N=10)'),
-#     mlines.Line2D([], [], color='mediumorchid', marker='D', linestyle='--', label='#1754 Fragile (Config 12, N=20)'),
-#     mlines.Line2D([], [], color='mediumorchid', marker='D', linestyle='--', label='#1754 Fragile (Config 12, N=30)'),
-# ]
-
-# Automatically generate the handles directly from your curves dictionary
 legend_handles = [
     mlines.Line2D(
         [],
@@ -573,7 +556,7 @@ leg_obj = fig.legend(
     fontsize=10
 )
 
-fig.subplots_adjust(left=0.08, right=0.96, top=0.80, bottom=0.25, wspace=0.14)
+fig.subplots_adjust(left=0.08, right=0.96, top=0.80, bottom=0.25, wspace=0.11)
 
 plt.savefig('thesis_robustness_N10_to_N30_combined.png', dpi=300, bbox_inches='tight', bbox_extra_artists=[title_obj, leg_obj])
 plt.close()
