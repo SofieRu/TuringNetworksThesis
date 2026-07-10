@@ -1,0 +1,32 @@
+Starting job 10 at Thu  9 Jul 14:04:04 BST 2026
+Starting FINAL_LHS_3954_Type1_VFast_Unequal5: dU=0.1, dV=10.0, dW=0.1, n_samples=1,000,000
+[FINAL_LHS_3954_Type1_VFast_Unequal5] 100,000/1,000,000 | Stable: 95180 | Diego: 247 | Shaberi: 239
+[FINAL_LHS_3954_Type1_VFast_Unequal5] 200,000/1,000,000 | Stable: 190103 | Diego: 492 | Shaberi: 470
+[FINAL_LHS_3954_Type1_VFast_Unequal5] 300,000/1,000,000 | Stable: 285166 | Diego: 713 | Shaberi: 682
+[FINAL_LHS_3954_Type1_VFast_Unequal5] 400,000/1,000,000 | Stable: 380343 | Diego: 949 | Shaberi: 910
+[FINAL_LHS_3954_Type1_VFast_Unequal5] 500,000/1,000,000 | Stable: 475497 | Diego: 1196 | Shaberi: 1150
+[FINAL_LHS_3954_Type1_VFast_Unequal5] 600,000/1,000,000 | Stable: 570769 | Diego: 1424 | Shaberi: 1368
+[FINAL_LHS_3954_Type1_VFast_Unequal5] 700,000/1,000,000 | Stable: 665900 | Diego: 1650 | Shaberi: 1583
+[FINAL_LHS_3954_Type1_VFast_Unequal5] 800,000/1,000,000 | Stable: 760988 | Diego: 1893 | Shaberi: 1810
+[FINAL_LHS_3954_Type1_VFast_Unequal5] 900,000/1,000,000 | Stable: 856080 | Diego: 2142 | Shaberi: 2049
+[FINAL_LHS_3954_Type1_VFast_Unequal5] 1,000,000/1,000,000 | Stable: 951296 | Diego: 2365 | Shaberi: 2259
+Diego Turing:    2365 (0.2365%)
+Shaberi Total:   2259 (0.2259%)
+  Type-I:        2259
+  Type-II:       0
+  Hopf:          108
+  Filter:        0
+
+Saved to:
+  results/FINAL_LHS_3954_Type1_VFast_Unequal5_1mio_with_params.pkl
+  results/FINAL_LHS_3954_Type1_VFast_Unequal5_1mio_with_params.csv
+Finished job 10 at Fri 10 Jul 03:13:58 BST 2026
+
+====================================
+CPU Time used: 13:04:30
+CPU Percent: 99%
+Memory usage: 578580kb
+Approx Power usage: 0.15680000000000002
+Walltime usage: 13:10:10
+
+====================================

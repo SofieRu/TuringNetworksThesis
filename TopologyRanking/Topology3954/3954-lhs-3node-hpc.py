@@ -237,8 +237,6 @@ def is_turing_shaberi(J, eigs_0, DU, DV, DW):
 
 DIFFUSION_CONFIGS = {
     # TYPE 1
-    # 0:  {"name": "NEW_LHS_3954_Type1_Control_Slow",         "dU": 0.1,  "dV": 0.1,  "dW": 0.1},
-    # 2:  {"name": "NEW_LHS_3954_Type1_Control_Fast",         "dU": 10.0, "dV": 10.0, "dW": 10.0},
     0:  {"name": "FINAL_LHS_3954_Type1_Control",              "dU": 1.0,  "dV": 1.0,  "dW": 1.0},
 
     # node u diffuses faster than v and w
@@ -293,22 +291,30 @@ DIFFUSION_CONFIGS = {
     35: {"name": "FINAL_LHS_3954_Type3_WFreeze_Equal1",       "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
     36: {"name": "FINAL_LHS_3954_Type3_WFreeze_Equal2",       "dU": 0.1,  "dV": 0.1,  "dW": 0.0},
     37: {"name": "FINAL_LHS_3954_Type3_WFreeze_Equal3",       "dU": 10.0, "dV": 10.0, "dW": 0.0},
-    38: {"name": "FINAL_LHS_3954_Type3_WFreeze_Unequal1",     "dU": 1.0,  "dV": 0.1,  "dW": 0.0},
-    39: {"name": "FINAL_LHS_3954_Type3_WFreeze_Unequal2",     "dU": 0.1,  "dV": 1.0,  "dW": 0.0},
-    40: {"name": "FINAL_LHS_3954_Type3_WFreeze_Unequal3",     "dU": 10.0, "dV": 1.0,  "dW": 0.0},
-    41: {"name": "FINAL_LHS_3954_Type3_WFreeze_Unequal4",     "dU": 1.0,  "dV": 10.0, "dW": 0.0},
-    42: {"name": "FINAL_LHS_3954_Type3_WFreeze_Unequal5",     "dU": 0.1,  "dV": 10.0, "dW": 0.0},
-    43: {"name": "FINAL_LHS_3954_Type3_WFreeze_Unequal6",     "dU": 10.0, "dV": 0.1,  "dW": 0.0},
+
+    38: {"name": "FINAL_LHS_3954_Type3_WFreeze_Lab1",         "dU": 2.0,  "dV": 1.0,  "dW": 0.0},
+    39: {"name": "FINAL_LHS_3954_Type3_WFreeze_Lab1",         "dU": 3.0,  "dV": 1.0,  "dW": 0.0},
+    40: {"name": "FINAL_LHS_3954_Type3_WFreeze_Lab1",         "dU": 4.0,  "dV": 1.0,  "dW": 0.0},
+    41: {"name": "FINAL_LHS_3954_Type3_WFreeze_Lab1",         "dU": 1.0,  "dV": 2.0,  "dW": 0.0},
+    42: {"name": "FINAL_LHS_3954_Type3_WFreeze_Lab1",         "dU": 1.0,  "dV": 3.0,  "dW": 0.0},
+    43: {"name": "FINAL_LHS_3954_Type3_WFreeze_Lab1",         "dU": 1.0,  "dV": 4.0,  "dW": 0.0},
+
+    44: {"name": "FINAL_LHS_3954_Type3_WFreeze_Unequal1",     "dU": 1.0,  "dV": 0.1,  "dW": 0.0},
+    45: {"name": "FINAL_LHS_3954_Type3_WFreeze_Unequal2",     "dU": 0.1,  "dV": 1.0,  "dW": 0.0},
+    46: {"name": "FINAL_LHS_3954_Type3_WFreeze_Unequal3",     "dU": 10.0, "dV": 1.0,  "dW": 0.0},
+    47: {"name": "FINAL_LHS_3954_Type3_WFreeze_Unequal4",     "dU": 1.0,  "dV": 10.0, "dW": 0.0},
+    48: {"name": "FINAL_LHS_3954_Type3_WFreeze_Unequal5",     "dU": 0.1,  "dV": 10.0, "dW": 0.0},
+    49: {"name": "FINAL_LHS_3954_Type3_WFreeze_Unequal6",     "dU": 10.0, "dV": 0.1,  "dW": 0.0},
 
     # node u + w immobile
-    44: {"name": "FINAL_LHS_3954_Type3_UWFreeze_Equal1",      "dU": 0.0,  "dV": 1.0,  "dW": 0.0},
-    45: {"name": "FINAL_LHS_3954_Type3_UWFreeze_Equal2",      "dU": 0.0,  "dV": 0.1,  "dW": 0.0},
-    46: {"name": "FINAL_LHS_3954_Type3_UWFreeze_Equal3",      "dU": 0.0,  "dV": 10.0, "dW": 0.0},
+    50: {"name": "FINAL_LHS_3954_Type3_UWFreeze_Equal1",      "dU": 0.0,  "dV": 1.0,  "dW": 0.0},
+    51: {"name": "FINAL_LHS_3954_Type3_UWFreeze_Equal2",      "dU": 0.0,  "dV": 0.1,  "dW": 0.0},
+    52: {"name": "FINAL_LHS_3954_Type3_UWFreeze_Equal3",      "dU": 0.0,  "dV": 10.0, "dW": 0.0},
 
     # node v + w immobile
-    47: {"name": "FINAL_LHS_3954_Type3_VWFreeze_Equal1",      "dU": 1.0,  "dV": 0.0, "dW": 0.0},
-    48: {"name": "FINAL_LHS_3954_Type3_VWFreeze_Equal2",      "dU": 0.1,  "dV": 0.0, "dW": 0.0},
-    49: {"name": "FINAL_LHS_3954_Type3_VWFreeze_Equal3",      "dU": 10.0, "dV": 0.0, "dW": 0.0},
+    53: {"name": "FINAL_LHS_3954_Type3_VWFreeze_Equal1",      "dU": 1.0,  "dV": 0.0, "dW": 0.0},
+    54: {"name": "FINAL_LHS_3954_Type3_VWFreeze_Equal2",      "dU": 0.1,  "dV": 0.0, "dW": 0.0},
+    55: {"name": "FINAL_LHS_3954_Type3_VWFreeze_Equal3",      "dU": 10.0, "dV": 0.0, "dW": 0.0},
 }
 
 # add one version where node W is always immobile so like DCI, also 100 i think is type 2 when node w is immobile but not sure could also be type 3 when we freeze the entire destabilising cycle so VW??

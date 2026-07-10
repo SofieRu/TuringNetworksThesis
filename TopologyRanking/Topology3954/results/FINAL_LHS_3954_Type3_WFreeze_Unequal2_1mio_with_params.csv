@@ -1,2 +1,2 @@
 config_name,config_id,dU,dV,dW,n_samples,steady_states,stable_without_diffusion,diego_turing,shaberi_total,shaberi_type_I,shaberi_type_II,shaberi_hopf,filter_count,rob_diego,rob_shaberi_total,rob_shaberi_type_I
-FINAL_LHS_3954_Type3_WFreeze_Unequal2,39,0.1,1.0,0.0,1000000,969615,951296,404,403,108,203,0,92,0.0404,0.0403,0.0108
+FINAL_LHS_3954_Type3_WFreeze_Unequal2,39,0.1,1.0,0.0,1000000,969615,951296,404,403,108,203,11,92,0.0404,0.0403,0.0108
