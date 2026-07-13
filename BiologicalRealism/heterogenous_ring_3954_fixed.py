@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import numpy as np
-from scipy.optimize import fsolve
+from scipy.optimize import fsolve, least_squares
 import pandas as pd
 import pickle
 
@@ -251,29 +251,6 @@ def build_ring_jacobian_homogeneous(N_cells, steady_state, params, hopping):
 
 
 # NEW VERSION TO BUILD THE HETEROGENEOUS RING
-def solve_ring_steady_state(params_list, baseline_params, Ldiff, N_cells, baseline_ss):
-    """Solve coupled ring SS, tracking the pattern-forming branch.
-       1) Newton from tiled baseline (smooth guess); 2) continuation fallback."""
-    # Strategy 1: direct solve from a smooth, near-uniform guess
-    X = np.tile(baseline_ss, N_cells)
-    X, info, ier, msg = fsolve(ring_residual, X,
-                               args=(params_list, Ldiff, N_cells),
-                               fprime=ring_jacobian_full, full_output=True)
-    if np.max(np.abs(ring_residual(X, params_list, Ldiff, N_cells))) < 1e-6:
-        return X
-
-    # Strategy 2: ramp params baseline -> target in small steps, re-solving each step
-    X = np.tile(baseline_ss, N_cells)
-    for t in np.linspace(0, 1, 9)[1:]:
-        interp = [(1 - t) * baseline_params + t * p for p in params_list]
-        X, info, ier, msg = fsolve(ring_residual, X,
-                                   args=(interp, Ldiff, N_cells),
-                                   fprime=ring_jacobian_full, full_output=True)
-    if np.max(np.abs(ring_residual(X, params_list, Ldiff, N_cells))) < 1e-6:
-        return X
-
-    return None
-
 def build_diffusion_operator(N_cells, hopping):
     h = np.array([hopping["h_u"], hopping["h_v"], hopping["h_w"]])
     size = 3 * N_cells
@@ -304,74 +281,85 @@ def ring_jacobian_full(X, params_list, Ldiff, N_cells):
     return J
 
 # 
-# def build_ring_jacobian_heterogeneous(N_cells, baseline_params, hopping, CV,baseline_ss=None):
-#     params_list = []
-#     sigma = np.sqrt(np.log(1 + CV**2))
-#     mu = -sigma**2 / 2
-#     guess = np.zeros(3 * N_cells)
-
-#     for i in range(N_cells):
-#         params_i = baseline_params * np.random.lognormal(mu, sigma, size=16)
-#         params_list.append(params_i)
-#         ss_i = find_steady_state(params_i)
-#         if ss_i is None:
-#             ss_i = baseline_ss if baseline_ss is not None else find_steady_state(baseline_params)
-#         if ss_i is None:
-#             return None, None, None
-#         guess[3*i:3*i+3] = ss_i
-
-#     Ldiff = build_diffusion_operator(N_cells, hopping)
-
-#     # X_star, info, ier, msg = fsolve(ring_residual, guess, args=(params_list, Ldiff, N_cells), full_output=True)
-#     X_star, info, ier, msg = fsolve(ring_residual, guess, args=(params_list, Ldiff, N_cells), fprime=ring_jacobian_full, full_output=True)
-#     residual = ring_residual(X_star, params_list, Ldiff, N_cells)
-    
-#     # previous old
-#     # if ier != 1 or np.max(np.abs(residual)) > 1e-8 or np.any(X_star <= 0):
-#     #     return None, None, None
-
-#     # judge by residual, not by ier
-#     max_residual = np.max(np.abs(residual))
-#     if max_residual > 1e-6:
-#         print("FAIL_RESIDUAL", max_residual, "ier:", ier, "msg:", msg)
-#         return None, None, None
-#     if np.any(X_star <= 0):
-#         print("FAIL_NEGATIVE", np.min(X_star), "ier:", ier, "msg:", msg)
-#         return None, None, None
-
-#     steady_states = [X_star[3*i:3*i+3] for i in range(N_cells)]
-#     J_ring = Ldiff.copy()
-#     for i in range(N_cells):
-#         idx = 3 * i
-#         J_ring[idx:idx+3, idx:idx+3] += compute_jacobian(steady_states[i], params_list[i])
-
-#     return J_ring, steady_states, params_list
-
-def build_ring_jacobian_heterogeneous(N_cells, baseline_params, hopping, CV, baseline_ss=None):
-    sigma = np.sqrt(np.log(1 + CV**2))
-    mu = -sigma**2 / 2
-    params_list = [baseline_params * np.random.lognormal(mu, sigma, size=16)
-                   for _ in range(N_cells)]
-
+def build_ring_jacobian_heterogeneous(
+    N_cells,
+    baseline_params,
+    hopping,
+    CV,
+    baseline_ss=None,
+    residual_tol=1e-6,
+    debug=False,
+):
     if baseline_ss is None:
         baseline_ss = find_steady_state(baseline_params)
-        if baseline_ss is None:
-            return None, None, None
+    if baseline_ss is None:
+        if debug:
+            print("FAIL_BASELINE_SS")
+        return None, None, None
+
+    sigma = np.sqrt(np.log(1 + CV**2))
+    mu = -sigma**2 / 2
+    params_list = [
+        baseline_params * np.random.lognormal(mu, sigma, size=16)
+        for _ in range(N_cells)
+    ]
 
     Ldiff = build_diffusion_operator(N_cells, hopping)
+    y_guess = np.log(np.tile(baseline_ss, N_cells))
 
-    X_star = solve_ring_steady_state(params_list, baseline_params, Ldiff, N_cells, baseline_ss)
-    if X_star is None:
-        return None, None, None          # solver genuinely could not converge
-    if np.any(X_star <= 0):
-        return None, None, None          # genuine: no positive coupled steady state
+    def residual_log(y, params_current):
+        X = np.exp(y)
+        return ring_residual(X, params_current, Ldiff, N_cells)
+
+    def jacobian_log(y, params_current):
+        X = np.exp(y)
+        return ring_jacobian_full(X, params_current, Ldiff, N_cells) @ np.diag(X)
+
+    # Homotopy/continuation: solve a sequence of easier problems from the
+    # homogeneous baseline to the final noisy heterogeneous ring.
+    for lam in [0.0, 0.25, 0.5, 0.75, 1.0]:
+        params_current = [
+            baseline_params + lam * (params_i - baseline_params)
+            for params_i in params_list
+        ]
+
+        sol = least_squares(
+            residual_log,
+            y_guess,
+            jac=jacobian_log,
+            args=(params_current,),
+            max_nfev=5000,
+            ftol=1e-10,
+            xtol=1e-10,
+            gtol=1e-10,
+        )
+
+        X_star = np.exp(sol.x)
+        residual = ring_residual(X_star, params_current, Ldiff, N_cells)
+        max_residual = np.max(np.abs(residual))
+
+        if max_residual > residual_tol:
+            if debug:
+                print(
+                    "FAIL_RESIDUAL",
+                    max_residual,
+                    "lambda:",
+                    lam,
+                    "status:",
+                    sol.status,
+                    "message:",
+                    sol.message,
+                )
+            return None, None, None
+
+        y_guess = sol.x
 
     steady_states = [X_star[3*i:3*i+3] for i in range(N_cells)]
-    J_ring = Ldiff.copy()
-    for i in range(N_cells):
-        idx = 3 * i
-        J_ring[idx:idx+3, idx:idx+3] += compute_jacobian(steady_states[i], params_list[i])
+    J_ring = ring_jacobian_full(X_star, params_list, Ldiff, N_cells)
+
     return J_ring, steady_states, params_list
+
+
 
 ###########################################
 
@@ -438,7 +426,9 @@ if __name__ == "__main__":
                     N_cells=N_cells,
                     baseline_params=baseline_params,
                     hopping=hopping,
-                    CV=CV
+                    CV=CV,
+                    baseline_ss=steady_state_expected,
+                    debug=False,
                 )
                 
                 # NEW CHANGES
@@ -537,139 +527,3 @@ if __name__ == "__main__":
 
     with open(output_file, 'wb') as f:
         pickle.dump(output_data, f)
-
-
-
-
-# print("\n" + "="*70)
-# print("STEP 4: MONTE CARLO - CV SWEEP")
-# print("="*70)
-
-# # Settings, CHANGE HERE FOR VARIATION
-# # n_trials = 1000
-# # N_cells = 10 # for sanity check run with N = 5, 10 and 20, 30??
-
-# if turing == 'Type-I':
-#     # N_cells = 10
-#     J_ring = build_ring_jacobian_homogeneous(N_cells, steady_state_expected, baseline_params, hopping)
-#     eigs_ring = np.linalg.eigvals(J_ring)
-#     max_real_ring = np.max(np.real(eigs_ring))
-#     print(f"Homogeneous ring baseline Re(λ) = {max_real_ring:.6f}")
-#     if max_real_ring < 0:
-#         print("WARNING: Ring baseline is stable (continuous Turing peak between discrete k_m values)")
-# else:
-#     print(f"WARNING: This config is not Type-I in continuous analysis (got: {turing})")
-
-# np.random.seed(42)
-# results_by_cv = []
-
-# for CV in [0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4]:
-#     print(f"\n{'='*70}")
-#     print(f"CV = {CV}")
-#     print(f"{'='*70}")
-    
-#     max_eigenvalues = []
-#     turing_count = 0
-#     discarded_count = 0
-    
-#     for trial in range(n_trials):
-#         if CV == 0:
-#             J_ring = build_ring_jacobian_homogeneous(
-#                 N_cells=N_cells,
-#                 steady_state=steady_state_expected,
-#                 params=baseline_params,
-#                 hopping=hopping
-#             )
-#         else:
-#             J_ring, ss_hetero, params_hetero = build_ring_jacobian_heterogeneous(
-#                 N_cells=N_cells,
-#                 baseline_params=baseline_params,
-#                 hopping=hopping,
-#                 CV=CV
-#             )
-            
-#             if J_ring is None:
-#                 discarded_count += 1
-#                 continue  # Skip this trial entirely
-        
-#         eigs = np.linalg.eigvals(J_ring)
-#         max_real = np.max(np.real(eigs))
-        
-#         max_eigenvalues.append(max_real)
-        
-#         if max_real > 0:
-#             turing_count += 1
-    
-#     # Statistics on VALID trials only
-#     max_eigenvalues = np.array(max_eigenvalues)
-#     n_valid = len(max_eigenvalues)
-#     discard_rate = 100 * discarded_count / n_trials
-    
-#     if n_valid > 0:
-#         robustness = 100 * turing_count / n_valid
-#         result = {
-#             'CV': CV,
-#             'mean_eig': np.mean(max_eigenvalues),
-#             'std_eig': np.std(max_eigenvalues),
-#             'median_eig': np.median(max_eigenvalues),
-#             'min_eig': np.min(max_eigenvalues),
-#             'max_eig': np.max(max_eigenvalues),
-#             'turing_count': turing_count,
-#             'n_valid': n_valid,
-#             'n_discarded': discarded_count,
-#             'discard_rate': discard_rate,
-#             'robustness': robustness,
-#             'all_eigenvalues': max_eigenvalues
-#         }
-#     else:
-#         result = {
-#             'CV': CV,
-#             'mean_eig': np.nan, 'std_eig': np.nan, 'median_eig': np.nan,
-#             'min_eig': np.nan, 'max_eig': np.nan,
-#             'turing_count': 0, 'n_valid': 0,
-#             'n_discarded': discarded_count,
-#             'discard_rate': discard_rate, 'robustness': np.nan,
-#             'all_eigenvalues': np.array([])
-#         }
-    
-#     results_by_cv.append(result)
-    
-#     print(f"  Valid trials: {n_valid}/{n_trials}")
-#     print(f"  Discarded:    {discarded_count} ({discard_rate:.1f}%)")
-#     if n_valid > 0:
-#         print(f"  Mean Re(λ):   {result['mean_eig']:.6f} ± {result['std_eig']:.6f}")
-#         print(f"  Robustness:   {robustness:.1f}% ({turing_count}/{n_valid})")
-
-
-# # Print summary table
-# print("\n" + "="*70)
-# print("SUMMARY TABLE")
-# print("="*70)
-# print(f"{'CV':<6} {'Mean Re(λ)':<14} {'Std':<12} {'Valid':<8} {'Discard%':<10} {'Robustness'}")
-# print("-"*70)
-
-# for r in results_by_cv:
-#     if r['n_valid'] > 0:
-#         print(f"{r['CV']:<6.2f} {r['mean_eig']:<14.6f} {r['std_eig']:<12.6f} "
-#               f"{r['n_valid']:<8} {r['discard_rate']:<10.1f} "
-#               f"{r['robustness']:.1f}% ({r['turing_count']}/{r['n_valid']})")
-#     else:
-#         print(f"{r['CV']:<6.2f} {'all discarded':<14} {'-':<12} "
-#               f"{0:<8} {r['discard_rate']:<10.1f} -")
-
-# print("="*70)
-
-# # Save results to file
-# output_data = {
-#     'results': results_by_cv,
-#     'baseline_params': baseline_params,
-#     'hopping': hopping,
-#     'n_trials': n_trials,
-#     'config_id': CONFIG_TO_TEST,
-#     'config_name': row['config_name']
-# }
-
-# output_file = f'3954_cv_sweep_{CONFIG_LABEL}_config{CONFIG_TO_TEST}_N{N_cells}.pkl'
-
-# with open(output_file, 'wb') as f:
-#     pickle.dump(output_data, f)
