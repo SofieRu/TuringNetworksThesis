@@ -303,50 +303,6 @@ def ring_jacobian_full(X, params_list, Ldiff, N_cells):
         J[idx:idx+3, idx:idx+3] += compute_jacobian(X[idx:idx+3], params_list[i])
     return J
 
-# 
-# def build_ring_jacobian_heterogeneous(N_cells, baseline_params, hopping, CV,baseline_ss=None):
-#     params_list = []
-#     sigma = np.sqrt(np.log(1 + CV**2))
-#     mu = -sigma**2 / 2
-#     guess = np.zeros(3 * N_cells)
-
-#     for i in range(N_cells):
-#         params_i = baseline_params * np.random.lognormal(mu, sigma, size=16)
-#         params_list.append(params_i)
-#         ss_i = find_steady_state(params_i)
-#         if ss_i is None:
-#             ss_i = baseline_ss if baseline_ss is not None else find_steady_state(baseline_params)
-#         if ss_i is None:
-#             return None, None, None
-#         guess[3*i:3*i+3] = ss_i
-
-#     Ldiff = build_diffusion_operator(N_cells, hopping)
-
-#     # X_star, info, ier, msg = fsolve(ring_residual, guess, args=(params_list, Ldiff, N_cells), full_output=True)
-#     X_star, info, ier, msg = fsolve(ring_residual, guess, args=(params_list, Ldiff, N_cells), fprime=ring_jacobian_full, full_output=True)
-#     residual = ring_residual(X_star, params_list, Ldiff, N_cells)
-    
-#     # previous old
-#     # if ier != 1 or np.max(np.abs(residual)) > 1e-8 or np.any(X_star <= 0):
-#     #     return None, None, None
-
-#     # judge by residual, not by ier
-#     max_residual = np.max(np.abs(residual))
-#     if max_residual > 1e-6:
-#         print("FAIL_RESIDUAL", max_residual, "ier:", ier, "msg:", msg)
-#         return None, None, None
-#     if np.any(X_star <= 0):
-#         print("FAIL_NEGATIVE", np.min(X_star), "ier:", ier, "msg:", msg)
-#         return None, None, None
-
-#     steady_states = [X_star[3*i:3*i+3] for i in range(N_cells)]
-#     J_ring = Ldiff.copy()
-#     for i in range(N_cells):
-#         idx = 3 * i
-#         J_ring[idx:idx+3, idx:idx+3] += compute_jacobian(steady_states[i], params_list[i])
-
-#     return J_ring, steady_states, params_list
-
 def build_ring_jacobian_heterogeneous(N_cells, baseline_params, hopping, CV, baseline_ss=None):
     sigma = np.sqrt(np.log(1 + CV**2))
     mu = -sigma**2 / 2
