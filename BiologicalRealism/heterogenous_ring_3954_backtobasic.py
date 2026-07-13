@@ -275,8 +275,7 @@ if __name__ == "__main__":
             eigs = np.linalg.eigvals(J_ring)
             max_real = np.max(np.real(eigs))
             max_eigenvalues.append(max_real)
-            #if max_real > 0:
-            if disp[0] < 0 and np.max(disp[1:]) > 0:
+            if max_real > 0:
                 turing_count += 1
 
         max_eigenvalues = np.array(max_eigenvalues)

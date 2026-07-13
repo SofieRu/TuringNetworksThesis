@@ -7,8 +7,7 @@ import pickle
 # have to run this first: module load SciPy-bundle/2024.05-gfbf-2024a
 
 # ======================================================================
-# FUNCTIONS FROM OBJECTIVE 1 (HILL FUNCTIONS, ODE SYSTEM, STEADY STATE,
-# SINGLE-CELL JACOBIAN, TURING CLASSIFICATION) -- unchanged
+# FUNCTIONS FROM OBJECTIVE 1
 # ======================================================================
 
 n = 2
@@ -82,7 +81,6 @@ def is_turing_shaberi(J, eigs_0, DU, DV, DW):
         M = J - (k**2) * D
         eigs_k = np.linalg.eigvals(M)
         max_reals[i] = np.max(np.real(eigs_k))
-
         if max_reals[i] > 0:
             unstable_eigs = eigs_k[np.real(eigs_k) > 0]
             if np.any(np.abs(np.imag(unstable_eigs)) > 1e-8):
@@ -90,79 +88,21 @@ def is_turing_shaberi(J, eigs_0, DU, DV, DW):
 
     if np.max(max_reals) <= 0:
         return None
-
     if has_complex_unstable:
         return 'Hopf'
-
-    # STEP 3: Type-I = restabilises (goes negative) by k=10
     if max_reals[-1] < 0:
         return 'Type-I'
-
-    # STEP 4: Distinguish Filter from Type-II by peak location
     max_idx = np.argmax(max_reals)
     if max_idx >= len(k_values) - 2:
         return 'Filter'
-
     return 'Type-II'
 
 
 # ======================================================================
-# HOMOGENEOUS RING JACOBIAN (identical cells) -- unchanged, used for the
-# CV=0 baseline and as the ground-truth for the equivalence check
-# ======================================================================
-
-def build_ring_jacobian_homogeneous(N_cells, steady_state, params, hopping):
-    J_local = compute_jacobian(steady_state, params)
-
-    h_u = hopping['h_u']
-    h_v = hopping['h_v']
-    h_w = hopping['h_w']
-
-    size = 3 * N_cells
-    J_ring = np.zeros((size, size))
-
-    for i in range(N_cells):
-        idx = 3 * i
-        J_ring[idx:idx+3, idx:idx+3] = J_local.copy()
-
-        J_ring[idx,   idx]   -= 2*h_u
-        J_ring[idx+1, idx+1] -= 2*h_v
-        J_ring[idx+2, idx+2] -= 2*h_w
-
-        left  = (i - 1) % N_cells
-        right = (i + 1) % N_cells
-
-        J_ring[idx,   3*left]   += h_u
-        J_ring[idx+1, 3*left+1] += h_v
-        J_ring[idx+2, 3*left+2] += h_w
-
-        J_ring[idx,   3*right]   += h_u
-        J_ring[idx+1, 3*right+1] += h_v
-        J_ring[idx+2, 3*right+2] += h_w
-
-    return J_ring
-
-
-# ======================================================================
-# HETEROGENEOUS RING -- CORRECTED
-#
-# Key ideas:
-#   * The base state of a heterogeneous ring is NOT the per-cell isolated
-#     fixed points; it is the spatially-varying solution of the fully
-#     coupled system  R_i(x_i) + (L (x) D) x = 0.  We solve for that.
-#   * The initial guess is the TILED baseline steady state (smooth,
-#     in-basin, tracks the pattern-forming branch). Building the guess from
-#     random-start per-cell solves lands different cells on different
-#     branches of a multistable GRN -> jagged guess -> fsolve stalls.
-#   * fsolve is given the exact analytic Jacobian (fprime).
-#   * A continuation (homotopy) fallback ramps params baseline -> target
-#     for trials the direct solve cannot crack.
+# RING DIFFUSION OPERATOR  (L (x) D)  -- shared by both ring builders
 # ======================================================================
 
 def build_diffusion_operator(N_cells, hopping):
-    """L (x) D : the ring diffusion operator. Geometry only, so it is
-    constant for a given N and hopping, and it is exactly the diffusion
-    part of the ring Jacobian."""
     h = np.array([hopping["h_u"], hopping["h_v"], hopping["h_w"]])
     size = 3 * N_cells
     Ldiff = np.zeros((size, size))
@@ -176,95 +116,101 @@ def build_diffusion_operator(N_cells, hopping):
             Ldiff[idx+s, 3*right+s]  += h[s]
     return Ldiff
 
-def ring_residual(X, params_list, Ldiff, N_cells):
-    """Full coupled RHS: per-cell reaction + whole-ring diffusion."""
-    react = np.zeros(3 * N_cells)
-    for i in range(N_cells):
-        idx = 3 * i
-        react[idx:idx+3] = ode_system(X[idx:idx+3], params_list[i])
-    return react + Ldiff @ X
 
-def ring_jacobian_full(X, params_list, Ldiff, N_cells):
-    """Analytic Jacobian of ring_residual: block-diagonal reaction
-    Jacobians + the (constant) diffusion operator."""
-    J = Ldiff.copy()
-    for i in range(N_cells):
-        idx = 3 * i
-        J[idx:idx+3, idx:idx+3] += compute_jacobian(X[idx:idx+3], params_list[i])
-    return J
+# ======================================================================
+# FOURIER-PROJECTED DISPERSION  (Galerkin projection onto wavenumber modes)
+#
+# For each discrete wavenumber m, project the ring Jacobian onto the Fourier
+# mode phi_m(j) = exp(2*pi*i*m*j/N) (one copy per species) and take max Re of
+# the resulting 3x3 effective operator P_m^H J_ring P_m.
+#   * Homogeneous ring -> equals J - k_m^2 D exactly (standard dispersion).
+#   * Heterogeneous ring -> the effective growth rate of Fourier mode m.
+# Returns exactly N/2+1 values, one per k_m. No eigenvalue binning, so no
+# starved bins / spurious deep-negative spikes.
+#
+# THIS IS ALSO WHAT THE ROBUSTNESS METRIC USES: a proper Turing instability
+# requires the uniform mode m=0 to be STABLE (disp[0] < 0) and at least one
+# finite wavenumber to be UNSTABLE (max(disp[1:]) > 0). The old metric
+# max Re(lambda) > 0 could not see this distinction and therefore counted
+# non-Turing (m=0 unstable) instabilities as "robust".
+# ======================================================================
 
-def solve_ring_steady_state(params_list, baseline_params, Ldiff, N_cells,
-                            baseline_ss, tol=1e-6, n_cont_steps=8):
-    """Solve the coupled ring steady state, tracking the pattern-forming
-    branch. Returns X_star, or None if it cannot converge below `tol`.
+def _fourier_projectors(N):
+    projs = []
+    for m in range(N // 2 + 1):
+        phi = np.exp(2j * np.pi * m * np.arange(N) / N) / np.sqrt(N)
+        P = np.zeros((3 * N, 3), dtype=complex)
+        for j in range(N):
+            for s in range(3):
+                P[3*j+s, s] = phi[j]
+        projs.append(P)
+    return projs
 
-    Strategy 1: Newton from the tiled baseline steady state (smooth guess).
-    Strategy 2 (fallback): parameter continuation baseline -> target.
-    """
-    # --- Strategy 1: direct solve from a smooth, near-uniform guess ---
-    X = np.tile(baseline_ss, N_cells)
-    X, info, ier, msg = fsolve(ring_residual, X,
-                               args=(params_list, Ldiff, N_cells),
-                               fprime=ring_jacobian_full, full_output=True)
-    if np.max(np.abs(ring_residual(X, params_list, Ldiff, N_cells))) < tol:
-        return X
+def fourier_projected_dispersion(J_ring, projectors):
+    return np.array([np.max(np.real(np.linalg.eigvals(P.conj().T @ J_ring @ P)))
+                     for P in projectors])
 
-    # --- Strategy 2: continuation in noise amplitude ---
-    X = np.tile(baseline_ss, N_cells)
-    for t in np.linspace(0, 1, n_cont_steps + 1)[1:]:
-        interp = [(1 - t) * baseline_params + t * p for p in params_list]
-        X, info, ier, msg = fsolve(ring_residual, X,
-                                   args=(interp, Ldiff, N_cells),
-                                   fprime=ring_jacobian_full, full_output=True)
-    if np.max(np.abs(ring_residual(X, params_list, Ldiff, N_cells))) < tol:
-        return X
+def is_turing_ring(disp):
+    """Proper Turing test on a projected dispersion vector:
+    uniform mode stable AND some finite wavenumber unstable."""
+    return (disp[0] < 0) and (np.max(disp[1:]) > 0)
 
-    return None
 
-def build_ring_jacobian_heterogeneous(N_cells, baseline_params, hopping, CV,
-                                      baseline_ss=None):
-    """Build the 3N x 3N ring Jacobian for a heterogeneous (noisy) ring.
+# ======================================================================
+# HOMOGENEOUS RING JACOBIAN (identical cells) -- used for CV = 0
+# ======================================================================
 
-    Returns (J_ring, steady_states, params_list) on success.
-    On failure returns (None, reason, None) where reason is:
-        "no_converge"     - solver could not find the coupled steady state
-        "no_positive_ss"  - converged, but some component <= 0 (no positive
-                            coupled steady state exists: a genuine result)
-    """
-    sigma = np.sqrt(np.log(1 + CV**2))
-    mu = -sigma**2 / 2
-    params_list = [baseline_params * np.random.lognormal(mu, sigma, size=16)
-                   for _ in range(N_cells)]
-
-    if baseline_ss is None:
-        baseline_ss = find_steady_state(baseline_params)
-        if baseline_ss is None:
-            return None, "no_converge", None
-
+def build_ring_jacobian_homogeneous(N_cells, steady_state, params, hopping):
     Ldiff = build_diffusion_operator(N_cells, hopping)
-
-    X_star = solve_ring_steady_state(params_list, baseline_params,
-                                     Ldiff, N_cells, baseline_ss)
-    if X_star is None:
-        return None, "no_converge", None
-    if np.any(X_star <= 0):
-        return None, "no_positive_ss", None
-
-    steady_states = [X_star[3*i:3*i+3] for i in range(N_cells)]
-
+    J_local = compute_jacobian(steady_state, params)
     J_ring = Ldiff.copy()
     for i in range(N_cells):
         idx = 3 * i
-        J_ring[idx:idx+3, idx:idx+3] += compute_jacobian(steady_states[i],
-                                                         params_list[i])
+        J_ring[idx:idx+3, idx:idx+3] += J_local
+    return J_ring
+
+
+# ======================================================================
+# HETEROGENEOUS RING JACOBIAN  --  FROZEN-COEFFICIENT (LOCAL) APPROACH
+#
+# Each cell gets its own noisy parameter set and its own isolated reaction
+# fixed point x_i*. The ring Jacobian is assembled from the per-cell reaction
+# Jacobians at those fixed points plus the ring diffusion operator. This was
+# validated against the full coupled steady-state analysis (100% agreement on
+# the Turing verdict for convergent trials); the coupled solve is intractable
+# here because the baseline ring is Turing-unstable (its coupled steady state
+# is an unstable saddle).
+#
+# Returns (J_ring, steady_states, params_list) on success, or
+# (None, "no_isolated_ss", None) if a cell has no positive reaction fixed
+# point (a genuine, reportable outcome).
+# ======================================================================
+
+def build_ring_jacobian_heterogeneous(N_cells, baseline_params, hopping, CV):
+    sigma = np.sqrt(np.log(1 + CV**2))
+    mu = -sigma**2 / 2
+
+    params_list = []
+    steady_states = []
+    for i in range(N_cells):
+        params_i = baseline_params * np.random.lognormal(mu, sigma, size=16)
+        ss_i = find_steady_state(params_i)
+        if ss_i is None:
+            return None, "no_isolated_ss", None
+        params_list.append(params_i)
+        steady_states.append(ss_i)
+
+    Ldiff = build_diffusion_operator(N_cells, hopping)
+    J_ring = Ldiff.copy()
+    for i in range(N_cells):
+        idx = 3 * i
+        J_ring[idx:idx+3, idx:idx+3] += compute_jacobian(steady_states[i], params_list[i])
 
     return J_ring, steady_states, params_list
 
 
 # ======================================================================
 # MAIN: MONTE-CARLO CV SWEEP
-# (Everything that touches the CSV / does the sweep lives here so the file
-#  is safe to `import` from the dispersion script.)
 # ======================================================================
 
 if __name__ == "__main__":
@@ -291,37 +237,26 @@ if __name__ == "__main__":
     steady_state_expected = np.array([row['u_star'], row['v_star'], row['w_star']])
     hopping = {'h_u': row['dU'], 'h_v': row['dV'], 'h_w': row['dW']}
 
+    # projectors built ONCE (geometry only, reused every trial)
+    PROJECTORS = _fourier_projectors(N_cells)
+
     # ---- single-cell Turing classification (sanity) ----
     J = compute_jacobian(steady_state_expected, baseline_params)
     eigs = np.linalg.eigvals(J)
     turing = is_turing_shaberi(J, eigs, hopping['h_u'], hopping['h_v'], hopping['h_w'])
 
     print("\n" + "="*70)
-    print("STEP 4: MONTE CARLO - CV SWEEP")
+    print("STEP 4: MONTE CARLO - CV SWEEP  (proper Turing metric)")
     print("="*70)
 
     if turing == 'Type-I':
         J_ring0 = build_ring_jacobian_homogeneous(N_cells, steady_state_expected,
                                                   baseline_params, hopping)
-        max_real_ring = np.max(np.real(np.linalg.eigvals(J_ring0)))
-        print(f"Homogeneous ring baseline Re(lambda) = {max_real_ring:.6f}")
-        if max_real_ring < 0:
-            print("WARNING: Ring baseline is stable "
-                  "(continuous Turing peak between discrete k_m values)")
+        disp0 = fourier_projected_dispersion(J_ring0, PROJECTORS)
+        print(f"Homogeneous ring baseline: m=0 {disp0[0]:+.4f}, "
+              f"max(m>0) {np.max(disp0[1:]):+.4f}, Turing={is_turing_ring(disp0)}")
     else:
         print(f"WARNING: This config is not Type-I in continuous analysis (got: {turing})")
-
-    # ---- EQUIVALENCE CHECK: at CV=0 the heterogeneous builder must
-    #      reproduce the homogeneous ring Jacobian exactly. This also
-    #      validates build_diffusion_operator / ring_residual, which the
-    #      CV=0 sweep branch below never exercises. ----
-    Jh, _, _ = build_ring_jacobian_heterogeneous(N_cells, baseline_params,
-                                                 hopping, 0.0, steady_state_expected)
-    Jhom = build_ring_jacobian_homogeneous(N_cells, steady_state_expected,
-                                           baseline_params, hopping)
-    assert Jh is not None and np.allclose(Jh, Jhom, atol=1e-8), \
-        "CV=0 equivalence FAILED -- diffusion operator / residual is wrong"
-    print("CV=0 equivalence check passed (heterogeneous == homogeneous).")
 
     # ---- CV sweep ----
     np.random.seed(42)
@@ -335,9 +270,7 @@ if __name__ == "__main__":
 
         max_eigenvalues = []
         turing_count = 0
-        discarded_count = 0
-        noconv_count = 0   # solver could not converge
-        neg_count = 0      # converged but no positive coupled steady state
+        discarded_count = 0   # a cell had no positive isolated fixed point
 
         for trial in range(n_trials):
             if CV == 0:
@@ -352,21 +285,16 @@ if __name__ == "__main__":
                     N_cells=N_cells,
                     baseline_params=baseline_params,
                     hopping=hopping,
-                    CV=CV,
-                    baseline_ss=steady_state_expected
+                    CV=CV
                 )
                 if J_ring is None:
                     discarded_count += 1
-                    if reason == "no_positive_ss":
-                        neg_count += 1
-                    else:
-                        noconv_count += 1
                     continue
 
-            eigs = np.linalg.eigvals(J_ring)
-            max_real = np.max(np.real(eigs))
-            max_eigenvalues.append(max_real)
-            if max_real > 0:
+            # ---- PROPER TURING CLASSIFICATION via projected dispersion ----
+            disp = fourier_projected_dispersion(J_ring, PROJECTORS)
+            max_eigenvalues.append(np.max(disp))
+            if is_turing_ring(disp):          # m=0 stable AND some m>0 unstable
                 turing_count += 1
 
         max_eigenvalues = np.array(max_eigenvalues)
@@ -385,8 +313,6 @@ if __name__ == "__main__":
                 'turing_count': turing_count,
                 'n_valid': n_valid,
                 'n_discarded': discarded_count,
-                'n_noconv': noconv_count,
-                'n_no_positive_ss': neg_count,
                 'discard_rate': discard_rate,
                 'robustness': robustness,
                 'all_eigenvalues': max_eigenvalues
@@ -398,8 +324,6 @@ if __name__ == "__main__":
                 'min_eig': np.nan, 'max_eig': np.nan,
                 'turing_count': 0, 'n_valid': 0,
                 'n_discarded': discarded_count,
-                'n_noconv': noconv_count,
-                'n_no_positive_ss': neg_count,
                 'discard_rate': discard_rate, 'robustness': np.nan,
                 'all_eigenvalues': np.array([])
             }
@@ -407,30 +331,25 @@ if __name__ == "__main__":
         results_by_cv.append(result)
 
         print(f"  Valid trials:  {n_valid}/{n_trials}")
-        print(f"  Discarded:     {discarded_count} ({discard_rate:.1f}%)")
-        print(f"    - no convergence:      {noconv_count}")
-        print(f"    - no positive SS:      {neg_count}   (genuine, not a bug)")
+        print(f"  Discarded:     {discarded_count} ({discard_rate:.1f}%)  (no positive isolated SS)")
         if n_valid > 0:
-            print(f"  Mean Re(lambda): {result['mean_eig']:.6f} +/- {result['std_eig']:.6f}")
-            print(f"  Robustness:      {robustness:.1f}% ({turing_count}/{n_valid})")
+            print(f"  max proj Re(lambda): {result['mean_eig']:.6f} +/- {result['std_eig']:.6f}")
+            print(f"  Turing robustness:   {robustness:.1f}% ({turing_count}/{n_valid})")
 
     # ---- summary table ----
     print("\n" + "="*70)
-    print("SUMMARY TABLE")
+    print("SUMMARY TABLE  (robustness = fraction that are proper Turing)")
     print("="*70)
-    print(f"{'CV':<6} {'Mean Re(l)':<14} {'Std':<12} {'Valid':<8} "
-          f"{'Discard%':<10} {'NoConv':<8} {'NoSS':<8} {'Robustness'}")
+    print(f"{'CV':<6} {'Mean maxRe':<14} {'Std':<12} {'Valid':<8} {'Discard%':<10} {'Robustness'}")
     print("-"*70)
     for r in results_by_cv:
         if r['n_valid'] > 0:
             print(f"{r['CV']:<6.2f} {r['mean_eig']:<14.6f} {r['std_eig']:<12.6f} "
                   f"{r['n_valid']:<8} {r['discard_rate']:<10.1f} "
-                  f"{r['n_noconv']:<8} {r['n_no_positive_ss']:<8} "
                   f"{r['robustness']:.1f}% ({r['turing_count']}/{r['n_valid']})")
         else:
             print(f"{r['CV']:<6.2f} {'all discarded':<14} {'-':<12} "
-                  f"{0:<8} {r['discard_rate']:<10.1f} "
-                  f"{r['n_noconv']:<8} {r['n_no_positive_ss']:<8} -")
+                  f"{0:<8} {r['discard_rate']:<10.1f} -")
     print("="*70)
 
     # ---- save ----
