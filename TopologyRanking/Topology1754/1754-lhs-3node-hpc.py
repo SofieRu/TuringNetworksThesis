@@ -312,11 +312,11 @@ DIFFUSION_CONFIGS = {
     37: {"name": "FINAL_LHS_1754_Type3_WFreeze_Equal3",       "dU": 10.0, "dV": 10.0, "dW": 0.0},
 
     38: {"name": "FINAL_LHS_1754_Type3_WFreeze_Lab1",         "dU": 2.0,  "dV": 1.0,  "dW": 0.0},
-    39: {"name": "FINAL_LHS_1754_Type3_WFreeze_Lab1",         "dU": 3.0,  "dV": 1.0,  "dW": 0.0},
-    40: {"name": "FINAL_LHS_1754_Type3_WFreeze_Lab1",         "dU": 4.0,  "dV": 1.0,  "dW": 0.0},
-    41: {"name": "FINAL_LHS_1754_Type3_WFreeze_Lab1",         "dU": 1.0,  "dV": 2.0,  "dW": 0.0},
-    42: {"name": "FINAL_LHS_1754_Type3_WFreeze_Lab1",         "dU": 1.0,  "dV": 3.0,  "dW": 0.0},
-    43: {"name": "FINAL_LHS_1754_Type3_WFreeze_Lab1",         "dU": 1.0,  "dV": 4.0,  "dW": 0.0},
+    39: {"name": "FINAL_LHS_1754_Type3_WFreeze_Lab2",         "dU": 3.0,  "dV": 1.0,  "dW": 0.0},
+    40: {"name": "FINAL_LHS_1754_Type3_WFreeze_Lab3",         "dU": 4.0,  "dV": 1.0,  "dW": 0.0},
+    41: {"name": "FINAL_LHS_1754_Type3_WFreeze_Lab4",         "dU": 1.0,  "dV": 2.0,  "dW": 0.0},
+    42: {"name": "FINAL_LHS_1754_Type3_WFreeze_Lab5",         "dU": 1.0,  "dV": 3.0,  "dW": 0.0},
+    43: {"name": "FINAL_LHS_1754_Type3_WFreeze_Lab6",         "dU": 1.0,  "dV": 4.0,  "dW": 0.0},
 
     44: {"name": "FINAL_LHS_1754_Type3_WFreeze_Unequal1",     "dU": 1.0,  "dV": 0.1,  "dW": 0.0},
     45: {"name": "FINAL_LHS_1754_Type3_WFreeze_Unequal2",     "dU": 0.1,  "dV": 1.0,  "dW": 0.0},
