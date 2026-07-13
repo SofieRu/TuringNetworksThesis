@@ -140,21 +140,24 @@ type_i = df[df['classification'] == 'Type-I']
 
 #### HETEROGENOUS VERSION
 
+# def find_dominant_k(eigenvector, N):
+#     #NEW
+#     reshaped = eigenvector.reshape((N, 3))
+#     # FFT each species separately, take magnitudes, sum across species
+#     fft_per_species = np.abs(np.fft.fft(reshaped, axis=0))  # shape (N, 3)
+#     fft_mag = np.sum(fft_per_species, axis=1)  # combined power per spatial frequency, length N
+
+#     relevant_magnitudes = fft_mag[:N // 2 + 1]
+#     return int(np.argmax(relevant_magnitudes))
+
 def find_dominant_k(eigenvector, N):
-    #OLD 
-    # reshaped = eigenvector.reshape((N, 3)) # Reshape to (N_cells, N_species) -> (30, 3)
-    # # Take the spatial profile magnitude across all species combined
-    # spatial_profile = np.linalg.norm(reshaped, axis=1)
-    # fft_mag = np.abs(np.fft.fft(spatial_profile))
-
-    #NEW
-    reshaped = eigenvector.reshape((N, 3))
-    # FFT each species separately, take magnitudes, sum across species
-    fft_per_species = np.abs(np.fft.fft(reshaped, axis=0))  # shape (N, 3)
-    fft_mag = np.sum(fft_per_species, axis=1)  # combined power per spatial frequency, length N
-
-    relevant_magnitudes = fft_mag[:N // 2 + 1]
-    return int(np.argmax(relevant_magnitudes))
+    reshaped = eigenvector.reshape((N, 3))          # cell-major: confirmed correct
+    power = np.abs(np.fft.fft(reshaped, axis=0))**2 # (N, 3), power per species
+    total = power.sum(axis=1)                        # combine species, length N
+    folded = np.zeros(N // 2 + 1)                    # bins m = 0 .. N/2
+    for f in range(N):
+        folded[min(f, N - f)] += total[f]
+    return int(np.argmax(folded))
 
 def compute_heterogeneous_dispersion(baseline_params, hopping, N, CV, k_discrete):
     # Pass diffusion rates packaged as expected by your module (usually [dU, dV, dW])

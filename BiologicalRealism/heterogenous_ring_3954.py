@@ -151,7 +151,7 @@ def is_turing_shaberi(J, eigs_0, DU, DV, DW):
 
 # THINGS TO CHECK: WHY ARE THERE SOO MANY DISCARDED...??!!
 CONFIG_TO_TEST = 49
-CONFIG_LABEL = "low"  # " high" or "low" — change this once when you switch configs
+CONFIG_LABEL = "high"  # " high" or "low" — change this once when you switch configs
 n_trials = 1000
 N_cells = 10
 
@@ -316,6 +316,13 @@ def ring_residual(X, params_list, Ldiff, N_cells):
         react[idx:idx+3] = ode_system(X[idx:idx+3], params_list[i])
     return react + Ldiff @ X
 
+def ring_jacobian_full(X, params_list, Ldiff, N_cells):
+    J = Ldiff.copy()
+    for i in range(N_cells):
+        idx = 3 * i
+        J[idx:idx+3, idx:idx+3] += compute_jacobian(X[idx:idx+3], params_list[i])
+    return J
+
 # 
 def build_ring_jacobian_heterogeneous(N_cells, baseline_params, hopping, CV,baseline_ss=None):
     params_list = []
@@ -334,11 +341,20 @@ def build_ring_jacobian_heterogeneous(N_cells, baseline_params, hopping, CV,base
         guess[3*i:3*i+3] = ss_i
 
     Ldiff = build_diffusion_operator(N_cells, hopping)
-    X_star, info, ier, msg = fsolve(ring_residual, guess, args=(params_list, Ldiff, N_cells), full_output=True)
+
+    # X_star, info, ier, msg = fsolve(ring_residual, guess, args=(params_list, Ldiff, N_cells), full_output=True)
+    X_star, info, ier, msg = fsolve(ring_residual, guess, args=(params_list, Ldiff, N_cells), fprime=ring_jacobian_full, full_output=True)
     residual = ring_residual(X_star, params_list, Ldiff, N_cells)
     
-    if ier != 1 or np.max(np.abs(residual)) > 1e-8 or np.any(X_star <= 0):
-        return None, None, None
+    # previous old
+    # if ier != 1 or np.max(np.abs(residual)) > 1e-8 or np.any(X_star <= 0):
+    #     return None, None, None
+
+    # judge by residual, not by ier
+    if np.max(np.abs(residual)) > 1e-8:
+        return "FAIL_RESIDUAL", None, None
+    if np.any(X_star <= 0):
+        return "FAIL_NEGATIVE", None, None
 
     steady_states = [X_star[3*i:3*i+3] for i in range(N_cells)]
     J_ring = Ldiff.copy()
@@ -533,6 +549,9 @@ if __name__ == "__main__":
         max_eigenvalues = []
         turing_count = 0
         discarded_count = 0
+        cellfail_count = 0
+        resid_count = 0
+        neg_count = 0
         
         for trial in range(n_trials):
             if CV == 0:
@@ -550,9 +569,19 @@ if __name__ == "__main__":
                     CV=CV
                 )
                 
+                # NEW CHANGES
                 if J_ring is None:
                     discarded_count += 1
+                    cellfail_count += 1 # per-cell loop couldn't seed a guess
                     continue  # Skip this trial entirely
+                if isinstance(J_ring, str):
+                    discarded_count += 1
+                    if J_ring == "FAIL_RESIDUAL":
+                        resid_count += 1
+                    else:
+                        neg_count += 1
+                    continue  # Skip this trial entirely
+
             
             eigs = np.linalg.eigvals(J_ring)
             max_real = np.max(np.real(eigs))
@@ -620,6 +649,8 @@ if __name__ == "__main__":
                 f"{0:<8} {r['discard_rate']:<10.1f} -")
 
     print("="*70)
+
+    print(f"  Discard reasons: cell-solve {cellfail_count}, "f"residual {resid_count}, negative-ss {neg_count}")
 
     # Save results to file
     output_data = {
