@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.lines as mlines
-from heterogenous_ring_3954 import (compute_jacobian, find_steady_state,
+from heterogenous_ring_3954_finalhopefully import (compute_jacobian, find_steady_state,
                                     build_ring_jacobian_heterogeneous,
                                     _fourier_projectors, fourier_projected_dispersion,
                                     is_turing_ring)
@@ -11,7 +11,7 @@ from heterogenous_ring_3954 import (compute_jacobian, find_steady_state,
 # module load SciPy-bundle/2024.05-gfbf-2024a
 
 CSV_PATH = '../TopologyRanking/Topology3954/3954_FINAL_lhs_results_parameters.csv'
-CONFIG_IDS = [49, 17]
+CONFIG_IDS = [49, 21]
 N_RING = 10
 N_TRIALS = 30                       # raised so thin panels fill in
 CV_VALUES = [0.0, 0.1, 0.2, 0.3, 0.4]
