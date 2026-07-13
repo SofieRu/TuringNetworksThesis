@@ -1,0 +1,32 @@
+Starting job 41 at Fri 10 Jul 15:28:11 BST 2026
+Starting FINAL_LHS_3954_Type3_WFreeze_Lab1: dU=1.0, dV=2.0, dW=0.0, n_samples=1,000,000
+[FINAL_LHS_3954_Type3_WFreeze_Lab1] 100,000/1,000,000 | Stable: 95180 | Diego: 48 | Shaberi: 48
+[FINAL_LHS_3954_Type3_WFreeze_Lab1] 200,000/1,000,000 | Stable: 190103 | Diego: 85 | Shaberi: 85
+[FINAL_LHS_3954_Type3_WFreeze_Lab1] 300,000/1,000,000 | Stable: 285166 | Diego: 136 | Shaberi: 136
+[FINAL_LHS_3954_Type3_WFreeze_Lab1] 400,000/1,000,000 | Stable: 380343 | Diego: 176 | Shaberi: 176
+[FINAL_LHS_3954_Type3_WFreeze_Lab1] 500,000/1,000,000 | Stable: 475497 | Diego: 211 | Shaberi: 211
+[FINAL_LHS_3954_Type3_WFreeze_Lab1] 600,000/1,000,000 | Stable: 570769 | Diego: 266 | Shaberi: 266
+[FINAL_LHS_3954_Type3_WFreeze_Lab1] 700,000/1,000,000 | Stable: 665900 | Diego: 310 | Shaberi: 310
+[FINAL_LHS_3954_Type3_WFreeze_Lab1] 800,000/1,000,000 | Stable: 760988 | Diego: 360 | Shaberi: 360
+[FINAL_LHS_3954_Type3_WFreeze_Lab1] 900,000/1,000,000 | Stable: 856080 | Diego: 409 | Shaberi: 409
+[FINAL_LHS_3954_Type3_WFreeze_Lab1] 1,000,000/1,000,000 | Stable: 951296 | Diego: 453 | Shaberi: 453
+Diego Turing:    453 (0.0453%)
+Shaberi Total:   453 (0.0453%)
+  Type-I:        159
+  Type-II:       273
+  Hopf:          0
+  Filter:        21
+
+Saved to:
+  results/FINAL_LHS_3954_Type3_WFreeze_Lab1_1mio_with_params.pkl
+  results/FINAL_LHS_3954_Type3_WFreeze_Lab1_1mio_with_params.csv
+Finished job 41 at Sat 11 Jul 04:22:59 BST 2026
+
+====================================
+CPU Time used: 12:44:11
+CPU Percent: 98%
+Memory usage: 581484kb
+Approx Power usage: 0.1528
+Walltime usage: 12:54:58
+
+====================================
