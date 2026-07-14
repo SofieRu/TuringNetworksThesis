@@ -81,6 +81,7 @@ def is_turing_shaberi(J, eigs_0, DU, DV, DW):
         M = J - (k**2) * D
         eigs_k = np.linalg.eigvals(M)
         max_reals[i] = np.max(np.real(eigs_k))
+
         if max_reals[i] > 0:
             unstable_eigs = eigs_k[np.real(eigs_k) > 0]
             if np.any(np.abs(np.imag(unstable_eigs)) > 1e-8):
@@ -88,14 +89,17 @@ def is_turing_shaberi(J, eigs_0, DU, DV, DW):
 
     if np.max(max_reals) <= 0:
         return None
+
     if has_complex_unstable:
         return 'Hopf'
+
     if max_reals[-1] < 0:
         return 'Type-I'
+
     max_idx = np.argmax(max_reals)
     if max_idx >= len(k_values) - 2:
         return 'Filter'
-    return 'Type-II'
+
 
 
 # ======================================================================

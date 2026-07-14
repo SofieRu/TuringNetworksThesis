@@ -187,147 +187,68 @@ def build_ring_jacobian_homogeneous(N_cells, steady_state, params, hopping):
 
 
 # OLD VERSION THAT IS APPARNETLY NOT CORRECT :((
-# def build_ring_jacobian_heterogeneous(N_cells, baseline_params, hopping, CV):
+def build_ring_jacobian_heterogeneous(N_cells, baseline_params, hopping, CV):
     
-#     # Generate perturbed parameters AND find steady states
-#     params_list = []
-#     steady_states = []
+    # Generate perturbed parameters AND find steady states
+    params_list = []
+    steady_states = []
     
-#     # Lognormal parameters
-#     sigma = np.sqrt(np.log(1 + CV**2))
-#     mu = -sigma**2 / 2
-    
-#     for i in range(N_cells):
-#         # Generate noise
-#         noise_factors = np.random.lognormal(mu, sigma, size=16)
-#         params_i = baseline_params * noise_factors
-        
-#         # Try to find steady state
-#         ss_i = find_steady_state(params_i)
-        
-#         if ss_i is None:
-#             # Can't find steady state - revert to wild-type
-#             # params_i = baseline_params.copy()  # Use baseline params
-#             # ss_i = steady_state_expected.copy()          # Use baseline steady state
-#             return None, None, None # NEW: be honest about how many didnt find steady state 
-        
-#         # Append MATCHED pair
-#         params_list.append(params_i)
-#         steady_states.append(ss_i)
-    
-#     # Build Jacobian (rest stays the same)
-#     h_u = hopping['h_u']
-#     h_v = hopping['h_v']
-#     h_w = hopping['h_w']
-    
-#     size = 3 * N_cells
-#     J_ring = np.zeros((size, size))
-    
-#     for i in range(N_cells):
-#         idx = 3 * i
-        
-#         # Local Jacobian with MATCHED params and steady state
-#         J_local = compute_jacobian(steady_states[i], params_list[i])
-#         J_ring[idx:idx+3, idx:idx+3] = J_local
-        
-#         # Hopping
-#         J_ring[idx, idx] -= 2*h_u
-#         J_ring[idx+1, idx+1] -= 2*h_v
-#         J_ring[idx+2, idx+2] -= 2*h_w
-        
-#         # Coupling
-#         left = (i - 1) % N_cells
-#         right = (i + 1) % N_cells
-        
-#         J_ring[idx, 3*left] += h_u
-#         J_ring[idx+1, 3*left+1] += h_v
-#         J_ring[idx+2, 3*left+2] += h_w
-        
-#         J_ring[idx, 3*right] += h_u
-#         J_ring[idx+1, 3*right+1] += h_v
-#         J_ring[idx+2, 3*right+2] += h_w
-    
-#     return J_ring, steady_states, params_list
-
-
-# NEW VERSION TO BUILD THE HETEROGENEOUS RING
-def solve_ring_steady_state(params_list, baseline_params, Ldiff, N_cells, baseline_ss):
-    """Solve coupled ring SS, tracking the pattern-forming branch.
-       1) Newton from tiled baseline (smooth guess); 2) continuation fallback."""
-    # Strategy 1: direct solve from a smooth, near-uniform guess
-    X = np.tile(baseline_ss, N_cells)
-    X, info, ier, msg = fsolve(ring_residual, X,
-                               args=(params_list, Ldiff, N_cells),
-                               fprime=ring_jacobian_full, full_output=True)
-    if np.max(np.abs(ring_residual(X, params_list, Ldiff, N_cells))) < 1e-6:
-        return X
-
-    # Strategy 2: ramp params baseline -> target in small steps, re-solving each step
-    X = np.tile(baseline_ss, N_cells)
-    for t in np.linspace(0, 1, 9)[1:]:
-        interp = [(1 - t) * baseline_params + t * p for p in params_list]
-        X, info, ier, msg = fsolve(ring_residual, X,
-                                   args=(interp, Ldiff, N_cells),
-                                   fprime=ring_jacobian_full, full_output=True)
-    if np.max(np.abs(ring_residual(X, params_list, Ldiff, N_cells))) < 1e-6:
-        return X
-
-    return None
-
-def build_diffusion_operator(N_cells, hopping):
-    h = np.array([hopping["h_u"], hopping["h_v"], hopping["h_w"]])
-    size = 3 * N_cells
-    Ldiff = np.zeros((size, size))
-    for i in range(N_cells):
-        idx = 3 * i
-        left = (i - 1) % N_cells
-        right = (i + 1) % N_cells
-        for s in range(3):
-            Ldiff[idx+s, idx+s] -= 2 * h[s]
-            Ldiff[idx+s, 3*left+s] += h[s]
-            Ldiff[idx+s, 3*right+s] += h[s]
-    return Ldiff
-
-# Full coupled RHS: per-cell reaction + whole-ring diffusion
-def ring_residual(X, params_list, Ldiff, N_cells):
-    react = np.zeros(3 * N_cells)
-    for i in range(N_cells):
-        idx = 3 * i
-        react[idx:idx+3] = ode_system(X[idx:idx+3], params_list[i])
-    return react + Ldiff @ X
-
-def ring_jacobian_full(X, params_list, Ldiff, N_cells):
-    J = Ldiff.copy()
-    for i in range(N_cells):
-        idx = 3 * i
-        J[idx:idx+3, idx:idx+3] += compute_jacobian(X[idx:idx+3], params_list[i])
-    return J
-
-def build_ring_jacobian_heterogeneous(N_cells, baseline_params, hopping, CV, baseline_ss=None):
+    # Lognormal parameters
     sigma = np.sqrt(np.log(1 + CV**2))
     mu = -sigma**2 / 2
-    params_list = [baseline_params * np.random.lognormal(mu, sigma, size=16)
-                   for _ in range(N_cells)]
-
-    if baseline_ss is None:
-        baseline_ss = find_steady_state(baseline_params)
-        if baseline_ss is None:
-            return None, None, None
-
-    Ldiff = build_diffusion_operator(N_cells, hopping)
-
-    X_star = solve_ring_steady_state(params_list, baseline_params, Ldiff, N_cells, baseline_ss)
-    if X_star is None:
-        return None, None, None          # solver genuinely could not converge
-    if np.any(X_star <= 0):
-        return None, None, None          # genuine: no positive coupled steady state
-
-    steady_states = [X_star[3*i:3*i+3] for i in range(N_cells)]
-    J_ring = Ldiff.copy()
+    
+    for i in range(N_cells):
+        # Generate noise
+        noise_factors = np.random.lognormal(mu, sigma, size=16)
+        params_i = baseline_params * noise_factors
+        
+        # Try to find steady state
+        ss_i = find_steady_state(params_i)
+        
+        if ss_i is None:
+            # Can't find steady state - revert to wild-type
+            # params_i = baseline_params.copy()  # Use baseline params
+            # ss_i = steady_state_expected.copy()          # Use baseline steady state
+            return None, None, None # NEW: be honest about how many didnt find steady state 
+        
+        # Append MATCHED pair
+        params_list.append(params_i)
+        steady_states.append(ss_i)
+    
+    # Build Jacobian (rest stays the same)
+    h_u = hopping['h_u']
+    h_v = hopping['h_v']
+    h_w = hopping['h_w']
+    
+    size = 3 * N_cells
+    J_ring = np.zeros((size, size))
+    
     for i in range(N_cells):
         idx = 3 * i
-        J_ring[idx:idx+3, idx:idx+3] += compute_jacobian(steady_states[i], params_list[i])
+        
+        # Local Jacobian with MATCHED params and steady state
+        J_local = compute_jacobian(steady_states[i], params_list[i])
+        J_ring[idx:idx+3, idx:idx+3] = J_local
+        
+        # Hopping
+        J_ring[idx, idx] -= 2*h_u
+        J_ring[idx+1, idx+1] -= 2*h_v
+        J_ring[idx+2, idx+2] -= 2*h_w
+        
+        # Coupling
+        left = (i - 1) % N_cells
+        right = (i + 1) % N_cells
+        
+        J_ring[idx, 3*left] += h_u
+        J_ring[idx+1, 3*left+1] += h_v
+        J_ring[idx+2, 3*left+2] += h_w
+        
+        J_ring[idx, 3*right] += h_u
+        J_ring[idx+1, 3*right+1] += h_v
+        J_ring[idx+2, 3*right+2] += h_w
+    
     return J_ring, steady_states, params_list
+
 
 ###########################################
 
