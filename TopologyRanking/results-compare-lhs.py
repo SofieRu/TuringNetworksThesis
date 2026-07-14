@@ -55,6 +55,9 @@ TOPO_MARKERS = {
     "#3954": "D",
 }
 
+topo_colors = {"#1754": "blueviolet", "#3954": "cornflowerblue"}
+topo_order = ["#1754", "#3954"]
+
 PATTERN_COLORS = {
     "Type I"  : 'steelblue',
     "Type II" : 'mediumvioletred',
@@ -898,8 +901,8 @@ def fig_thesis_combined_robustness_analysis(df):
     target_topologies = ["#1754", "#3954"]
     df_box = df_box[df_box["topology_id"].isin(target_topologies)]
 
-    topo_colors = {"#1754": "blueviolet", "#3954": "cornflowerblue"}
-    topo_order = ["#1754", "#3954"]
+    # topo_colors = {"#1754": "blueviolet", "#3954": "cornflowerblue"}
+    # topo_order = ["#1754", "#3954"]
 
     # Calculate Boxplot Metrics
     med_tot_1754 = df_box[df_box["topology_id"] == "#1754"][
@@ -1110,6 +1113,123 @@ def fig_thesis_combined_robustness_analysis(df):
 
     save(fig, "thesis_combined_robustness_analysis")
 
+
+
+
+
+
+
+# LAB FOCUS
+def fig6_lab_configs_comparison(df):
+    lab_suffixes = ["WFreeze_Equal1", "Lab1", "Lab2", "Lab3", "Lab4", "Lab5", "Lab6"]
+
+    def extract_suffix(config_name):
+        for suffix in lab_suffixes:
+            if str(config_name).endswith(suffix):
+                return suffix
+        return None
+
+    df_lab = df.copy()
+    df_lab["lab_suffix"] = df_lab["config_name"].apply(extract_suffix)
+    df_lab = df_lab[df_lab["lab_suffix"].notna()]
+    df_lab = df_lab[df_lab["topology_id"].isin(topo_order)]
+
+    type_i_rob = {}
+    for topo_id in topo_order:
+        subset = df_lab[df_lab["topology_id"] == topo_id]
+        values = []
+        for suffix in lab_suffixes:
+            row = subset[subset["lab_suffix"] == suffix]
+            if len(row) > 0:
+                values.append(row["rob_shaberi_type_I"].iloc[0])
+            else:
+                values.append(np.nan)
+        type_i_rob[topo_id] = values
+
+    # X-axis labels: config name + diffusion ratios
+    reference_subset = df_lab[df_lab["topology_id"] == "#3954"]
+    x_labels = []
+    for suffix in lab_suffixes:
+        row = reference_subset[reference_subset["lab_suffix"] == suffix]
+        if len(row) > 0:
+            dU = row["dU"].iloc[0]
+            dV = row["dV"].iloc[0]
+            dW = row["dW"].iloc[0]
+            x_labels.append(f"{suffix}\n$d_U$={dU}, $d_V$={dV}, $d_W$={dW}")
+        else:
+            x_labels.append(suffix)
+
+    n_configs = len(lab_suffixes)
+    x = np.arange(n_configs)
+    bar_width = 0.38
+
+    print(f"\n=== DEBUG ===")
+    print(f"df_lab shape: {df_lab.shape}")
+    print(f"Topologies in df_lab: {df_lab['topology_id'].unique()}")
+    print(f"Suffixes found per topology:")
+    for topo_id in topo_order:
+        subset = df_lab[df_lab["topology_id"] == topo_id]
+        print(f"  {topo_id}: {subset['lab_suffix'].tolist()}")
+    print(f"=============\n")
+
+    fig, ax = plt.subplots(figsize=(13, 6))
+
+    bars_by_topo = {}
+    for i, topo_id in enumerate(topo_order):
+        offset = (i - 0.5) * bar_width
+        bars = ax.bar(
+            x + offset,
+            type_i_rob[topo_id],
+            bar_width,
+            label=f"Topology {topo_id}",
+            color=topo_colors[topo_id],
+            edgecolor="none",
+        )
+        bars_by_topo[topo_id] = bars
+
+    # Value labels on top of each bar
+    for topo_id, bars in bars_by_topo.items():
+        for bar, val in zip(bars, type_i_rob[topo_id]):
+            if not np.isnan(val):
+                ax.text(
+                    bar.get_x() + bar.get_width() / 2,
+                    val + max(val * 0.03, 0.002),
+                    f"{val:.3f}%",
+                    ha="center",
+                    va="bottom",
+                    fontsize=9,
+                    color="#222222",
+                )
+
+    ax.set_xlabel("Diffusion configuration", fontsize=11, labelpad=8)
+    ax.set_ylabel("Type-I Turing robustness (%)", fontsize=11, labelpad=8)
+    ax.set_title(
+        "Type-I robustness across biologically-realistic diffusion configurations "
+        "(#3954 vs #1754)",
+        fontsize=12, loc="left", pad=12,
+    )
+    ax.set_xticks(x)
+    ax.set_xticklabels(x_labels, rotation=0, ha="center", fontsize=9)
+
+    legend = ax.legend(
+        fontsize=10,
+        loc="upper right",
+        frameon=True,
+        framealpha=1.0,
+        edgecolor="#dddddd",
+    )
+    legend.get_frame().set_facecolor("white")
+
+    all_values = [v for topo_values in type_i_rob.values() for v in topo_values if not np.isnan(v)]
+    if all_values:
+        ax.set_ylim(0, max(all_values) * 1.20)
+
+    fig.tight_layout()
+    save(fig, "new_compare_fig6_lab_configs")
+
+
+
+
 ########### RUN THE WHOLE THING ############
 
 df = load_all()
@@ -1124,3 +1244,4 @@ fig_pseudo_phase_combined(df)
 fig_3d_parameter_space_comparison()
 fig_topology_robustness_comparison_final(df)
 fig_thesis_combined_robustness_analysis(df)
+fig6_lab_configs_comparison(df)
