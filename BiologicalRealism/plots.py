@@ -37,11 +37,11 @@ def diff_str(hopping):
 
 
 # LOADING ALL FILES
-with open('3954_cv_sweep_high_config49_N10.pkl', 'rb') as f: 
+with open('3954_cv_sweep_lab_config49_N10.pkl', 'rb') as f: 
     cv_robust_3954_N10 = pickle.load(f)
-with open('3954_cv_sweep_high_config49_N20.pkl', 'rb') as f:
+with open('3954_cv_sweep_lab_config49_N20.pkl', 'rb') as f:
     cv_robust_3954_N20 = pickle.load(f)
-with open('pastconfigs/3954_cv_sweep_high_config43_N30.pkl', 'rb') as f:
+with open('pastconfigs/3954_cv_sweep_lab_config43_N30.pkl', 'rb') as f:
     cv_robust_3954_N30 = pickle.load(f)
 
 with open('3954_cv_sweep_low_config21_N10.pkl', 'rb') as f:
@@ -65,6 +65,13 @@ with open('1754_cv_sweep_low_config14_N20.pkl', 'rb') as f:
 with open('1754_cv_sweep_low_config14_N30.pkl', 'rb') as f:
     cv_fragile_1754_N30 = pickle.load(f)
 
+
+# LAB CONFIGS
+with open('3954_cv_sweep_lab_config40_N10.pkl', 'rb') as f:
+    cv_lab_3954_N10 = pickle.load(f)
+with open('3954_cv_sweep_lab_config40_N20.pkl', 'rb') as f:
+    cv_lab_3954_N20 = pickle.load(f)
+
 # Extract robustness arrays using your existing helper
 cv_robust_3954_N10 = extract_cv_arrays(cv_robust_3954_N10)
 cv_robust_3954_N20 = extract_cv_arrays(cv_robust_3954_N20)
@@ -79,6 +86,9 @@ cv_robust_1754_N30 = extract_cv_arrays(cv_robust_1754_N30)
 cv_fragile_1754_N10 = extract_cv_arrays(cv_fragile_1754_N10)
 cv_fragile_1754_N20 = extract_cv_arrays(cv_fragile_1754_N20)
 cv_fragile_1754_N30 = extract_cv_arrays(cv_fragile_1754_N30)
+
+cv_lab_3954_N10 = extract_cv_arrays(cv_lab_3954_N10)
+cv_lab_3954_N20 = extract_cv_arrays(cv_lab_3954_N20)
 
 # SENSITIVITY ANALYSIS FILES
 with open('3954_sensitivity_results_config43_N10.pkl', 'rb') as f:
@@ -484,13 +494,13 @@ plot_sensitivity(sens_1754_fragile, 'ID 14 (fragile)', '1754_config14_sensitivit
 # ========================================================================================================================================================
 
 robustness_curves = [
-    {'label': '#3954 Robust (ID 43, N=10)','CV': cv_robust_3954_N10['CV'], 'robustness': cv_robust_3954_N10['robustness'],'color': 'blue', 'marker': 'o', 'linestyle': '-',},
-    {'label': '#3954 Robust (ID 43, N=20)','CV': cv_robust_3954_N20['CV'], 'robustness': cv_robust_3954_N20['robustness'],'color': 'blue', 'marker': 'o', 'linestyle': '--',},
-    {'label': '#3954 Robust (ID 43, N=30)','CV': cv_robust_3954_N30['CV'], 'robustness': cv_robust_3954_N30['robustness'],'color': 'blue', 'marker': 'o', 'linestyle': ':',},
+    {'label': '#3954 Robust (ID 40, N=10)','CV': cv_robust_3954_N10['CV'], 'robustness': cv_robust_3954_N10['robustness'],'color': 'blue', 'marker': 'o', 'linestyle': '-',},
+    {'label': '#3954 Robust (ID 40, N=20)','CV': cv_robust_3954_N20['CV'], 'robustness': cv_robust_3954_N20['robustness'],'color': 'blue', 'marker': 'o', 'linestyle': '--',},
+    #{'label': '#3954 Robust (ID 40, N=30)','CV': cv_robust_3954_N30['CV'], 'robustness': cv_robust_3954_N30['robustness'],'color': 'blue', 'marker': 'o', 'linestyle': ':',},
     
-    {'label': '#3954 Fragile (ID 17, N=10)','CV':  cv_fragile_3954_N10['CV'], 'robustness': cv_fragile_3954_N10['robustness'],'color': 'cornflowerblue', 'marker': 's', 'linestyle': '-',},
-    {'label': '#3954 Fragile (ID 17, N=20)','CV':  cv_fragile_3954_N20['CV'], 'robustness': cv_fragile_3954_N20['robustness'],'color': 'cornflowerblue', 'marker': 's', 'linestyle': '--',},
-    {'label': '#3954 Fragile (ID 17, N=30)','CV':  cv_fragile_3954_N30['CV'], 'robustness': cv_fragile_3954_N30['robustness'],'color': 'cornflowerblue', 'marker': 's', 'linestyle': ':',},
+    # {'label': '#3954 Fragile (ID 17, N=10)','CV':  cv_fragile_3954_N10['CV'], 'robustness': cv_fragile_3954_N10['robustness'],'color': 'cornflowerblue', 'marker': 's', 'linestyle': '-',},
+    # {'label': '#3954 Fragile (ID 17, N=20)','CV':  cv_fragile_3954_N20['CV'], 'robustness': cv_fragile_3954_N20['robustness'],'color': 'cornflowerblue', 'marker': 's', 'linestyle': '--',},
+    #{'label': '#3954 Fragile (ID 17, N=30)','CV':  cv_fragile_3954_N30['CV'], 'robustness': cv_fragile_3954_N30['robustness'],'color': 'cornflowerblue', 'marker': 's', 'linestyle': ':',},
     
     {'label': '#1754 Robust (ID 43, N=10)','CV': cv_robust_1754_N10['CV'], 'robustness': cv_robust_1754_N10['robustness'],'color': 'purple', 'marker': '^', 'linestyle': '-',},
     {'label': '#1754 Robust (ID 43, N=20)','CV': cv_robust_1754_N20['CV'], 'robustness': cv_robust_1754_N20['robustness'],'color': 'purple', 'marker': '^', 'linestyle': '--',},
