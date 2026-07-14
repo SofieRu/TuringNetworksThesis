@@ -1121,7 +1121,7 @@ def fig_thesis_combined_robustness_analysis(df):
 
 # LAB FOCUS
 def fig6_lab_configs_comparison(df):
-    lab_suffixes = ["WFreeze_Equal1", "Lab1", "Lab2", "Lab3", "Lab4", "Lab5", "Lab6"]
+    lab_suffixes = ["_WFreeze_Equal1","_WFreeze_Lab1","_WFreeze_Lab2","_WFreeze_Lab3","_WFreeze_Lab4","_WFreeze_Lab5","_WFreeze_Lab6",]
 
     def extract_suffix(config_name):
         for suffix in lab_suffixes:
@@ -1146,7 +1146,7 @@ def fig6_lab_configs_comparison(df):
                 values.append(np.nan)
         type_i_rob[topo_id] = values
 
-    # X-axis labels: config name + diffusion ratios
+    # X-axis labels: short config name on top, diffusion ratio on bottom
     reference_subset = df_lab[df_lab["topology_id"] == "#3954"]
     x_labels = []
     for suffix in lab_suffixes:
@@ -1155,22 +1155,17 @@ def fig6_lab_configs_comparison(df):
             dU = row["dU"].iloc[0]
             dV = row["dV"].iloc[0]
             dW = row["dW"].iloc[0]
-            x_labels.append(f"{suffix}\n$d_U$={dU}, $d_V$={dV}, $d_W$={dW}")
+            # Short display: strip "WFreeze_" prefix
+            short_name = suffix.replace("_WFreeze_", "")
+            # Format diffusion as ratio (dU:dV:dW)
+            diff_str = f"{dU:g},{dV:g},{dW:g}"
+            x_labels.append(f"{short_name}\n({diff_str})")
         else:
-            x_labels.append(suffix)
+            x_labels.append(suffix.replace("_WFreeze_", ""))
 
     n_configs = len(lab_suffixes)
     x = np.arange(n_configs)
     bar_width = 0.38
-
-    print(f"\n=== DEBUG ===")
-    print(f"df_lab shape: {df_lab.shape}")
-    print(f"Topologies in df_lab: {df_lab['topology_id'].unique()}")
-    print(f"Suffixes found per topology:")
-    for topo_id in topo_order:
-        subset = df_lab[df_lab["topology_id"] == topo_id]
-        print(f"  {topo_id}: {subset['lab_suffix'].tolist()}")
-    print(f"=============\n")
 
     fig, ax = plt.subplots(figsize=(13, 6))
 
