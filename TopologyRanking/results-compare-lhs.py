@@ -91,7 +91,7 @@ def fig_all_patterns_profile_trends_complete(df):
     )
 
     # 2. Changed layout to 2x2 grid. sharey=False because absolute numbers vs percents need different scales.
-    fig, axes = plt.subplots(2, 2, figsize=(16, 8.5), sharey=False)
+    fig, axes = plt.subplots(2, 2, figsize=(14, 8.5), sharey=False)
 
     for row_idx, topo in enumerate(topo_order):
         topo_data = grouped[grouped["topology_id"] == topo]
@@ -146,18 +146,18 @@ def fig_all_patterns_profile_trends_complete(df):
 
             # Contextual labels and limits based on column type
             if col_idx == 0:
-                ax.set_title(f"Topology {topo} Composition Proportion", fontsize=11, color="#222222", pad=10)
-                ax.set_ylabel("Pattern Composition Proportion (%)", fontsize=10, color="#333333", labelpad=8)
+                ax.set_title(f"Topology {topo} Composition Proportion", fontsize=12.5, color="#222222", pad=10)
+                ax.set_ylabel("Pattern Composition Proportion (%)", fontsize=12.5, color="#333333", labelpad=8)
                 ax.set_ylim(-3, 103)
             else:
-                ax.set_title(f"Topology {topo} Absolute Densities", fontsize=11, color="#222222", pad=10)
-                ax.set_ylabel("Absolute Pattern Count (Total)", fontsize=10, color="#333333", labelpad=8)
+                ax.set_title(f"Topology {topo} Absolute Densities", fontsize=12.5, color="#222222", pad=10)
+                ax.set_ylabel("Absolute Pattern Count (Total)", fontsize=12.5, color="#333333", labelpad=8)
                 # Let absolute limits autoscale elegantly with small baseline padding
                 ax.autoscale(enable=True, axis='y', tight=False)
 
             # Panel styling and visual polish
-            ax.set_xlabel("Type (Diego et al. 2018)", fontsize=10, color="#333333", labelpad=6)
-            ax.tick_params(axis="both", which="major", labelsize=9.5, labelleft=True, colors="#444444")
+            ax.set_xlabel("Type (Diego et al. 2018)", fontsize=12.5, color="#333333", labelpad=6)
+            ax.tick_params(axis="both", which="major", labelsize=11, labelleft=True, colors="#444444")
             ax.grid(True, axis="both", linestyle=":", alpha=0.5, color="#cccccc", zorder=0)
             
             # Remove top and right borders
@@ -166,14 +166,14 @@ def fig_all_patterns_profile_trends_complete(df):
             ax.spines["left"].set_color("#cccccc")
             ax.spines["bottom"].set_color("#cccccc")
 
-    plt.suptitle("Distribution of Turing Instability Types Across Topological Types", fontsize=13, x=0.09, y=0.97,ha="left",color="#111111")
+    plt.suptitle("Distribution of Turing Instability Types Across Topological Types", fontsize=14, y=0.97,ha="center",color="#111111")
 
     legend_handles = [mlines.Line2D([], [], color=c,linewidth=3.0, marker="o", markersize=7, markeredgecolor="white", markeredgewidth=1.5, label=l) for l, c in PATTERN_COLORS.items()]
     
-    fig.legend(handles=legend_handles,loc="lower center",bbox_to_anchor=(0.5, 0.02),ncol=4,frameon=False,fontsize=10.5)
-    fig.subplots_adjust(left=0.08, right=0.95, top=0.88, bottom=0.12, wspace=0.15, hspace=0.30)
+    fig.legend(handles=legend_handles,loc="lower center",bbox_to_anchor=(0.5, 0.02),ncol=4,frameon=False,fontsize=12.5)
+    fig.subplots_adjust(left=0.08, right=0.95, top=0.88, bottom=0.12, wspace=0.18, hspace=0.35)
     
-    save(fig, "thesis_complete_type_profile_trends")
+    save(fig, "final_type_profile_trends")
 
 
 def fig_pseudo_phase_combined(df):
@@ -430,7 +430,7 @@ def fig_thesis_combined_robustness_analysis(df):
     # Adjust margins tightly to avoid overlap with labels/titles
     fig.subplots_adjust(left=0.1, right=0.95, top=0.92, bottom=0.07, wspace=0.12, hspace=0.27)
 
-    save(fig, "thesis_combined_robustness_analysis")
+    save(fig, "final_robustness_analysis")
 
 
 
