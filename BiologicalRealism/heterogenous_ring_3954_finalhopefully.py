@@ -29,7 +29,6 @@ def ode_system(state, params):
     alpha_u, beta_u, K_uu, K_vu, delta_u = params[0:5]
     alpha_v, beta_v, K_uv, K_wv, delta_v = params[5:10]
     alpha_w, beta_w, K_ww, K_uw, K_vw, delta_w = params[10:16]
-
     du = alpha_u + beta_u * hill_activation(u, K_uu) * hill_inhibition(v, K_vu) - delta_u * u
     dv = alpha_v + beta_v * hill_activation(u, K_uv) * hill_inhibition(w, K_wv) - delta_v * v
     dw = alpha_w + beta_w * hill_activation(w, K_ww) * hill_inhibition(u, K_uw) * hill_inhibition(v, K_vw) - delta_w * w
@@ -219,13 +218,11 @@ def build_ring_jacobian_heterogeneous(N_cells, baseline_params, hopping, CV):
 
 if __name__ == "__main__":
 
-    # ---- config selection ----
-    CONFIG_TO_TEST = 49 #maybe 21 or 3 
-    CONFIG_LABEL = "lab"   # "high" or "low" -- change when you switch configs
-    n_trials = 500
-    N_cells = 30
+    CONFIG_TO_TEST = 21 #maybe 21 or 3 
+    CONFIG_LABEL = "low"   # "high" or "low"
+    n_trials = 1000
+    N_cells = 20
 
-    # ---- load parameters ----
     df_file = pd.read_csv('../TopologyRanking/Topology3954/3954_FINAL_lhs_results_parameters.csv')
     df_params = df_file[df_file['classification'] == 'Type-I']
 
@@ -253,8 +250,7 @@ if __name__ == "__main__":
     print("="*70)
 
     if turing == 'Type-I':
-        J_ring0 = build_ring_jacobian_homogeneous(N_cells, steady_state_expected,
-                                                  baseline_params, hopping)
+        J_ring0 = build_ring_jacobian_homogeneous(N_cells, steady_state_expected,baseline_params, hopping)
         disp0 = fourier_projected_dispersion(J_ring0, PROJECTORS)
         print(f"Homogeneous ring baseline: m=0 {disp0[0]:+.4f}, "
               f"max(m>0) {np.max(disp0[1:]):+.4f}, Turing={is_turing_ring(disp0)}")
@@ -339,7 +335,6 @@ if __name__ == "__main__":
             print(f"  max proj Re(lambda): {result['mean_eig']:.6f} +/- {result['std_eig']:.6f}")
             print(f"  Turing robustness:   {robustness:.1f}% ({turing_count}/{n_valid})")
 
-    # ---- summary table ----
     print("\n" + "="*70)
     print("SUMMARY TABLE  (robustness = fraction that are proper Turing)")
     print("="*70)
@@ -355,7 +350,6 @@ if __name__ == "__main__":
                   f"{0:<8} {r['discard_rate']:<10.1f} -")
     print("="*70)
 
-    # ---- save ----
     output_data = {
         'results': results_by_cv,
         'baseline_params': baseline_params,
