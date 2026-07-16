@@ -119,8 +119,6 @@ def fig_combined_overview_and_raincloud(df):
     save(fig, "final_1838_lhs_overview")
 
 
-
-
 ########### RUN THE WHOLE THING ############
 
 df = load_data()
