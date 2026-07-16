@@ -140,8 +140,6 @@ def is_turing_shaberi(J, eigs_0, DU, DV, DW):
 
 DIFFUSION_CONFIGS = {
     # TYPE 1
-    # 0:  {"name": "NEW_LHS_3954_Type1_Control_Slow",         "dU": 0.1,  "dV": 0.1,  "dW": 0.1},
-    # 2:  {"name": "NEW_LHS_3954_Type1_Control_Fast",         "dU": 10.0, "dV": 10.0, "dW": 10.0},
     0:  {"name": "FINAL_RMT_3954_Type1_Control",              "dU": 1.0,  "dV": 1.0,  "dW": 1.0},
 
     # node u diffuses faster than v and w
@@ -196,26 +194,34 @@ DIFFUSION_CONFIGS = {
     35: {"name": "FINAL_RMT_3954_Type3_WFreeze_Equal1",       "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
     36: {"name": "FINAL_RMT_3954_Type3_WFreeze_Equal2",       "dU": 0.1,  "dV": 0.1,  "dW": 0.0},
     37: {"name": "FINAL_RMT_3954_Type3_WFreeze_Equal3",       "dU": 10.0, "dV": 10.0, "dW": 0.0},
-    38: {"name": "FINAL_RMT_3954_Type3_WFreeze_Unequal1",     "dU": 1.0,  "dV": 0.1,  "dW": 0.0},
-    39: {"name": "FINAL_RMT_3954_Type3_WFreeze_Unequal2",     "dU": 0.1,  "dV": 1.0,  "dW": 0.0},
-    40: {"name": "FINAL_RMT_3954_Type3_WFreeze_Unequal3",     "dU": 10.0, "dV": 1.0,  "dW": 0.0},
-    41: {"name": "FINAL_RMT_3954_Type3_WFreeze_Unequal4",     "dU": 1.0,  "dV": 10.0, "dW": 0.0},
-    42: {"name": "FINAL_RMT_3954_Type3_WFreeze_Unequal5",     "dU": 0.1,  "dV": 10.0, "dW": 0.0},
-    43: {"name": "FINAL_RMT_3954_Type3_WFreeze_Unequal6",     "dU": 10.0, "dV": 0.1,  "dW": 0.0},
+
+    38: {"name": "FINAL_RMT_3954_Type3_WFreeze_Lab1",         "dU": 2.0,  "dV": 1.0,  "dW": 0.0},
+    39: {"name": "FINAL_RMT_3954_Type3_WFreeze_Lab2",         "dU": 3.0,  "dV": 1.0,  "dW": 0.0},
+    40: {"name": "FINAL_RMT_3954_Type3_WFreeze_Lab3",         "dU": 4.0,  "dV": 1.0,  "dW": 0.0},
+    41: {"name": "FINAL_RMT_3954_Type3_WFreeze_Lab4",         "dU": 1.0,  "dV": 2.0,  "dW": 0.0},
+    42: {"name": "FINAL_RMT_3954_Type3_WFreeze_Lab5",         "dU": 1.0,  "dV": 3.0,  "dW": 0.0},
+    43: {"name": "FINAL_RMT_3954_Type3_WFreeze_Lab6",         "dU": 1.0,  "dV": 4.0,  "dW": 0.0},
+
+    44: {"name": "FINAL_RMT_3954_Type3_WFreeze_Unequal1",     "dU": 1.0,  "dV": 0.1,  "dW": 0.0},
+    45: {"name": "FINAL_RMT_3954_Type3_WFreeze_Unequal2",     "dU": 0.1,  "dV": 1.0,  "dW": 0.0},
+    46: {"name": "FINAL_RMT_3954_Type3_WFreeze_Unequal3",     "dU": 10.0, "dV": 1.0,  "dW": 0.0},
+    47: {"name": "FINAL_RMT_3954_Type3_WFreeze_Unequal4",     "dU": 1.0,  "dV": 10.0, "dW": 0.0},
+    48: {"name": "FINAL_RMT_3954_Type3_WFreeze_Unequal5",     "dU": 0.1,  "dV": 10.0, "dW": 0.0},
+    49: {"name": "FINAL_RMT_3954_Type3_WFreeze_Unequal6",     "dU": 10.0, "dV": 0.1,  "dW": 0.0},
 
     # node u + w immobile
-    44: {"name": "FINAL_RMT_3954_Type3_UWFreeze_Equal1",      "dU": 0.0,  "dV": 1.0,  "dW": 0.0},
-    45: {"name": "FINAL_RMT_3954_Type3_UWFreeze_Equal2",      "dU": 0.0,  "dV": 0.1,  "dW": 0.0},
-    46: {"name": "FINAL_RMT_3954_Type3_UWFreeze_Equal3",      "dU": 0.0,  "dV": 10.0, "dW": 0.0},
+    50: {"name": "FINAL_RMT_3954_Type3_UWFreeze_Equal1",      "dU": 0.0,  "dV": 1.0,  "dW": 0.0},
+    51: {"name": "FINAL_RMT_3954_Type3_UWFreeze_Equal2",      "dU": 0.0,  "dV": 0.1,  "dW": 0.0},
+    52: {"name": "FINAL_RMT_3954_Type3_UWFreeze_Equal3",      "dU": 0.0,  "dV": 10.0, "dW": 0.0},
 
     # node v + w immobile
-    47: {"name": "FINAL_RMT_3954_Type3_VWFreeze_Equal1",      "dU": 1.0,  "dV": 0.0, "dW": 0.0},
-    48: {"name": "FINAL_RMT_3954_Type3_VWFreeze_Equal2",      "dU": 0.1,  "dV": 0.0, "dW": 0.0},
-    49: {"name": "FINAL_RMT_3954_Type3_VWFreeze_Equal3",      "dU": 10.0, "dV": 0.0, "dW": 0.0},
+    53: {"name": "FINAL_RMT_3954_Type3_VWFreeze_Equal1",      "dU": 1.0,  "dV": 0.0, "dW": 0.0},
+    54: {"name": "FINAL_RMT_3954_Type3_VWFreeze_Equal2",      "dU": 0.1,  "dV": 0.0, "dW": 0.0},
+    55: {"name": "FINAL_RMT_3954_Type3_VWFreeze_Equal3",      "dU": 10.0, "dV": 0.0, "dW": 0.0},
 }
 
 #full range sigma values but to test we do less values
-SIGMA_VALUES = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.8, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 3.6, 3.8, 4.0, 5.0, 6.0, 7.0 , 8.0] # 9.0, 10.0
+SIGMA_VALUES = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.8, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 3.6, 3.8, 4.0, 4.5, 5.0, 5.5, 6.0, 7.0 , 8.0, 9.0, 10.0]
 
 # MAIN ANALYSIS FUNCTION
 
@@ -259,17 +265,18 @@ def run_analysis(config_id, n_samples):
                 # Shaberi method
                 turing_type = is_turing_shaberi(J, eigs_0, DU, DV, DW)
                 
-                if turing_type is not None:
-                    shaberi_total += 1
-                    if turing_type == 'Type-I':
-                        shaberi_type_I += 1
-                    elif turing_type == 'Type-II':
-                        shaberi_type_II += 1
-                    elif turing_type == 'Hopf':
+                if turing_type is not None: # NEW, do not count Hopf as Turing for Shaberi
+                    if turing_type == 'Hopf':
                         shaberi_hopf += 1
-                    elif turing_type == 'Filter':
-                        filter_count += 1
-            
+                    else:
+                        shaberi_total += 1
+                        if turing_type == 'Type-I':
+                            shaberi_type_I += 1
+                        elif turing_type == 'Type-II':
+                            shaberi_type_II += 1
+                        elif turing_type == 'Filter':
+                            filter_count += 1
+                    
             # Progress indicator
             if (i + 1) % 100000 == 0:
                 print(f"  [sig={sigma:.1f}] {i+1:,}/{n_samples:,} | Stable: {stable} | "
@@ -319,12 +326,12 @@ if __name__ == "__main__":
         sys.exit(1)
     
     config_id = int(sys.argv[1])
-    n_samples = 100_000  # 100K samples per sigma value but ater 1mio
+    n_samples = 1_000_000  # 100K samples per sigma value but ater 1mio
     
     results = run_analysis(config_id, n_samples)
     
     # Save as pickle
-    output_pkl = f"results/{results['config_name']}_100k.pkl"
+    output_pkl = f"results/{results['config_name']}_1mio.pkl"
     with open(output_pkl, 'wb') as f:
         pickle.dump(results, f)
     
