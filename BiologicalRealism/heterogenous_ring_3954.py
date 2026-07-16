@@ -111,9 +111,9 @@ def is_turing_shaberi(J, eigs_0, DU, DV, DW):
 # PARAMETRS FOR RING (EXAMPLE)
 
 # THINGS TO CHECK: WHY ARE THERE SOO MANY DISCARDED...??!!
-CONFIG_TO_TEST = 40
-CONFIG_LABEL = "lab"  # " high" or "low" — change this once when you switch configs
-n_trials = 100
+CONFIG_TO_TEST = 21
+CONFIG_LABEL = "low"  # " high" or "low" — change this once when you switch configs
+n_trials = 1000
 N_cells = 10
 
 # Load parameters from CSV

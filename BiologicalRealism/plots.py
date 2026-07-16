@@ -496,7 +496,7 @@ plot_sensitivity(sens_1754_fragile, 'ID 14 (fragile)', '1754_config14_sensitivit
 robustness_curves = [
     {'label': '#3954 Robust (ID 40, N=10)','CV': cv_robust_3954_N10['CV'], 'robustness': cv_robust_3954_N10['robustness'],'color': 'blue', 'marker': 'o', 'linestyle': '-',},
     {'label': '#3954 Robust (ID 40, N=20)','CV': cv_robust_3954_N20['CV'], 'robustness': cv_robust_3954_N20['robustness'],'color': 'blue', 'marker': 'o', 'linestyle': '--',},
-    #{'label': '#3954 Robust (ID 40, N=30)','CV': cv_robust_3954_N30['CV'], 'robustness': cv_robust_3954_N30['robustness'],'color': 'blue', 'marker': 'o', 'linestyle': ':',},
+    {'label': '#3954 Robust (ID 40, N=30)','CV': cv_robust_3954_N30['CV'], 'robustness': cv_robust_3954_N30['robustness'],'color': 'blue', 'marker': 'o', 'linestyle': ':',},
     
     # {'label': '#3954 Fragile (ID 17, N=10)','CV':  cv_fragile_3954_N10['CV'], 'robustness': cv_fragile_3954_N10['robustness'],'color': 'cornflowerblue', 'marker': 's', 'linestyle': '-',},
     # {'label': '#3954 Fragile (ID 17, N=20)','CV':  cv_fragile_3954_N20['CV'], 'robustness': cv_fragile_3954_N20['robustness'],'color': 'cornflowerblue', 'marker': 's', 'linestyle': '--',},
