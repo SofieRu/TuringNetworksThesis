@@ -146,7 +146,7 @@ def fig_combined_overview_and_raincloud(df):
                     for _, row in df[(df["turing_type"] == t) & (df["rob_shaberi_total"] == val)].iterrows())
                 else "o"
             )
-            ax2.scatter(jitter,val,color=color,marker=marker,s=95,edgecolors="white",linewidths=0.4,zorder=3,)
+            ax2.scatter(jitter,val,color=color,marker=marker,s=120,edgecolors="white",linewidths=0.4,zorder=3,)
 
     ax2.set_xticks(range(len(types)))
     ax2.set_xticklabels(labels, fontsize=12.5)
