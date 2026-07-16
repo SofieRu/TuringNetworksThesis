@@ -229,8 +229,8 @@ if __name__ == "__main__":
 
     # ---- config selection ----
     CONFIG_TO_TEST = 49
-    CONFIG_LABEL = "high"   # "high" or "low" -- change when you switch configs
-    n_trials = 100
+    CONFIG_LABEL = "high"   # "high" or "low" or "lab"
+    n_trials = 1000
     N_cells = 10
 
     # ---- load parameters ----

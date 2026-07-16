@@ -98,6 +98,7 @@ def is_turing_shaberi(J, eigs_0, DU, DV, DW):
     max_idx = np.argmax(max_reals)
     if max_idx >= len(k_values) - 2:
         return 'Filter'
+    return 'Type-II'
 
 
 
@@ -218,8 +219,8 @@ def build_ring_jacobian_heterogeneous(N_cells, baseline_params, hopping, CV):
 
 if __name__ == "__main__":
 
-    CONFIG_TO_TEST = 21 #maybe 21 or 3 
-    CONFIG_LABEL = "low"   # "high" or "low"
+    CONFIG_TO_TEST = 40 #maybe 21 or 3 
+    CONFIG_LABEL = "lab"   # "high" or "low" or "lab"
     n_trials = 1000
     N_cells = 20
 

@@ -102,74 +102,50 @@ def is_turing_diego(J, DU, DV, DW):
 
 
 def is_turing_shaberi(J, eigs_0, DU, DV, DW):
-    # STEP 1: Check stability at k=0
+    # STEP 1: Homogeneous steady state must be stable
     if np.max(np.real(eigs_0)) >= 0:
         return None
     
-    # STEP 2: Check for instability with diffusion
-    # SUPPOSED TO BE 0.01 STEP, BUT INCREASED TO 0.1 FOR SPEED, CHANGE BACK LATER
+    # STEP 2: Sweep k ∈ [0, 10] with step 0.01 (Shaberi 2025 methodology)
     D = np.diag([DU, DV, DW])
-    k_values = np.arange(0.01, 10.01, 0.01)
+    k_values = np.arange(0.01, 10.01, 0.01) # change later back to 0.01
     
-    has_instability = False
-    is_oscillatory = False
+    max_reals = np.zeros(len(k_values))
+    has_complex_unstable = False
     
-    for k in k_values:
-        M = J - k**2 * D
+    for i, k in enumerate(k_values):
+        M = J - (k**2) * D
         eigs_k = np.linalg.eigvals(M)
+        max_reals[i] = np.max(np.real(eigs_k))
         
-        if np.max(np.real(eigs_k)) > 0:
-            has_instability = True
-            
+        if max_reals[i] > 0:
             unstable_eigs = eigs_k[np.real(eigs_k) > 0]
             if np.any(np.abs(np.imag(unstable_eigs)) > 1e-8):
-                is_oscillatory = True
-                break
+                has_complex_unstable = True
     
-    if not has_instability:
+    if np.max(max_reals) <= 0:
         return None
     
-    if is_oscillatory:
+    if has_complex_unstable:
         return 'Hopf'
     
-    # STEP 3: Type I vs Type II
-    k_high_values = np.linspace(10, 50, 20)
-    for k in k_high_values:
-        M = J - k**2 * D
-        eigs_k = np.linalg.eigvals(M)
-        if np.max(np.real(eigs_k)) < 0:
-            return 'Type-I'
+    # STEP 3: Type-I = restabilises (goes negative) by k=10
+    if max_reals[-1] < 0:
+        return 'Type-I'
     
+    # STEP 4: Distinguish Filter from Type-II by peak location
+    # Filter (Diego 2018): monotonic — max sits at the END of the range
+    # Type-II: has an interior peak — max is somewhere in the middle
+    max_idx = np.argmax(max_reals)
+    
+    # Allow a tiny buffer for floating-point noise (last 0.2% of range)
+    if max_idx >= len(k_values) - 2:
+        return 'Filter'
     return 'Type-II'
 
 
 
 # DIFFUSION CONFIGURATIONS
-# LATER ADD VARIATIONS SO EQUAL AND UNEQUAL AND LIMIT DIFFUSION RATES!!
-
-# DIFFUSION_CONFIGS = {
-#     # DDC: A=Destable, B=Destable, C=Destable
-#     0:  {"name": "LHS_1838_DDC_Type1",          "dU": 1.0,  "dV": 0.0,  "dW": 10.0},
-#     1:  {"name": "LHS_1838_DDC_Type1_Var1",     "dU": 1.0,  "dV": 1.0,  "dW": 10.0},
-#     2:  {"name": "LHS_1838_DDC_Type1_Var2",     "dU": 0.0,  "dV": 1.0,  "dW": 10.0},
-#     3:  {"name": "LHS_1838_DDC_Type1_Control",  "dU": 1.0,  "dV": 0.0,  "dW": 1.0},
-
-#     4:  {"name": "LHS_1838_DDC_Type2_Equal",    "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
-#     5:  {"name": "LHS_1838_DDC_Type2_Unequal1", "dU": 1.0,  "dV": 0.1,  "dW": 0.0},
-#     6:  {"name": "LHS_1838_DDC_Type2_Unequal2", "dU": 0.1,  "dV": 1.0,  "dW": 0.0},
-#     7:  {"name": "LHS_1838_DDC_Type2_Unequal3", "dU": 10.0, "dV": 1.0,  "dW": 0.0},
-#     8:  {"name": "LHS_1838_DDC_Type2_Unequal4", "dU": 1.0,  "dV": 10.0, "dW": 0.0},
-#     9:  {"name": "LHS_1838_DDC_Type2_Var1",     "dU": 0.0,  "dV": 1.0,  "dW": 0.0},
-#     10: {"name": "LHS_1838_DDC_Type2_Var2",     "dU": 1.0,  "dV": 0.0,  "dW": 0.0},
-
-#     11: {"name": "LHS_1838_DDC_Type3_Equal",    "dU": 0.0,  "dV": 1.0,  "dW": 1.0},
-#     12: {"name": "LHS_1838_DDC_Type3_Unequal1", "dU": 0.0,  "dV": 0.1,  "dW": 1.0},
-#     13: {"name": "LHS_1838_DDC_Type3_Unequal2", "dU": 0.0,  "dV": 1.0,  "dW": 0.1},
-#     14: {"name": "LHS_1838_DDC_Type3_Unequal3", "dU": 0.0,  "dV": 1.0,  "dW": 10.0},
-#     15: {"name": "LHS_1838_DDC_Type3_Unequal4", "dU": 0.0,  "dV": 10.0, "dW": 1.0},
-#     16: {"name": "LHS_1838_DDC_Type3_Var1",     "dU": 0.0,  "dV": 0.0,  "dW": 1.0},
-#     17: {"name": "LHS_1838_DDC_Type3_Var2",     "dU": 1.0,  "dV": 0.0,  "dW": 1.0},
-# }
 
 DIFFUSION_CONFIGS = {
     

@@ -325,7 +325,7 @@ if __name__ == "__main__":
         sys.exit(1)
     
     config_id = int(sys.argv[1])
-    n_samples = 1_000_000  # 100K samples per sigma value but ater 1mio
+    n_samples = 500_000  # 100K samples per sigma value but ater 1mio
     
     results = run_analysis(config_id, n_samples)
     

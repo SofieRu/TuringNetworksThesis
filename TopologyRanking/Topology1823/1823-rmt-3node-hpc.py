@@ -85,44 +85,45 @@ def is_turing_diego(J, DU, DV, DW):
 
 
 def is_turing_shaberi(J, eigs_0, DU, DV, DW):
-    # STEP 1: Check stability at k=0
+    # STEP 1: Homogeneous steady state must be stable
     if np.max(np.real(eigs_0)) >= 0:
         return None
     
-    # STEP 2: Check for instability with diffusion
-    # SUPPOSED TO BE 0.01 STEP, BUT INCREASED TO 0.1 FOR SPEED, CHANGE BACK LATER
+    # STEP 2: Sweep k ∈ [0, 10] with step 0.01 (Shaberi 2025 methodology)
     D = np.diag([DU, DV, DW])
-    k_values = np.arange(0.01, 10.01, 0.1)
+    k_values = np.arange(0.01, 10.01, 0.1) # change later back to 0.01
     
-    has_instability = False
-    is_oscillatory = False
+    max_reals = np.zeros(len(k_values))
+    has_complex_unstable = False
     
-    for k in k_values:
-        M = J - k**2 * D
+    for i, k in enumerate(k_values):
+        M = J - (k**2) * D
         eigs_k = np.linalg.eigvals(M)
+        max_reals[i] = np.max(np.real(eigs_k))
         
-        if np.max(np.real(eigs_k)) > 0:
-            has_instability = True
-            
+        if max_reals[i] > 0:
             unstable_eigs = eigs_k[np.real(eigs_k) > 0]
             if np.any(np.abs(np.imag(unstable_eigs)) > 1e-8):
-                is_oscillatory = True
-                break
+                has_complex_unstable = True
     
-    if not has_instability:
+    if np.max(max_reals) <= 0:
         return None
     
-    if is_oscillatory:
+    if has_complex_unstable:
         return 'Hopf'
     
-    # STEP 3: Type I vs Type II
-    k_high_values = np.linspace(10, 50, 20)
-    for k in k_high_values:
-        M = J - k**2 * D
-        eigs_k = np.linalg.eigvals(M)
-        if np.max(np.real(eigs_k)) < 0:
-            return 'Type-I'
+    # STEP 3: Type-I = restabilises (goes negative) by k=10
+    if max_reals[-1] < 0:
+        return 'Type-I'
     
+    # STEP 4: Distinguish Filter from Type-II by peak location
+    # Filter (Diego 2018): monotonic — max sits at the END of the range
+    # Type-II: has an interior peak — max is somewhere in the middle
+    max_idx = np.argmax(max_reals)
+    
+    # Allow a tiny buffer for floating-point noise (last 0.2% of range)
+    if max_idx >= len(k_values) - 2:
+        return 'Filter'
     return 'Type-II'
 
 
@@ -181,10 +182,9 @@ DIFFUSION_CONFIGS = {
 }
 
 #full range sigma values but to test we do less values
-SIGMA_VALUES = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.8, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 3.6, 3.8, 4.0, 5.0, 6.0, 7.0 , 8.0, 9.0, 10.0]
+SIGMA_VALUES = [0.1, 0.2, 0.3, 0.4, 0.5, 0.58, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.8, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 3.6, 3.8, 4.0, 4.5, 5.0, 5.5, 6.0, 7.0 , 8.0, 9.0, 10.0]
 
 # MAIN ANALYSIS FUNCTION
-
 def run_analysis(config_id, n_samples):
     
     config = DIFFUSION_CONFIGS[config_id]
@@ -208,12 +208,13 @@ def run_analysis(config_id, n_samples):
         shaberi_type_I = 0
         shaberi_type_II = 0
         shaberi_hopf = 0
+        filter_count = 0
         
         # Main loop
         for i in range(n_samples):
             J = generate_jacobian_1823(sigma)
             eigs_0 = eigvals(J)
-            
+
             if np.max(np.real(eigs_0)) < 0:  #Use existing eigenvalues!
                 stable += 1
                 
@@ -224,15 +225,18 @@ def run_analysis(config_id, n_samples):
                 # Shaberi method
                 turing_type = is_turing_shaberi(J, eigs_0, DU, DV, DW)
                 
-                if turing_type is not None:
-                    shaberi_total += 1
-                    if turing_type == 'Type-I':
-                        shaberi_type_I += 1
-                    elif turing_type == 'Type-II':
-                        shaberi_type_II += 1
-                    elif turing_type == 'Hopf':
+                if turing_type is not None: # NEW, do not count Hopf as Turing for Shaberi
+                    if turing_type == 'Hopf':
                         shaberi_hopf += 1
-            
+                    else:
+                        shaberi_total += 1
+                        if turing_type == 'Type-I':
+                            shaberi_type_I += 1
+                        elif turing_type == 'Type-II':
+                            shaberi_type_II += 1
+                        elif turing_type == 'Filter':
+                            filter_count += 1
+                    
             # Progress indicator
             if (i + 1) % 100000 == 0:
                 print(f"  [sig={sigma:.1f}] {i+1:,}/{n_samples:,} | Stable: {stable} | "
@@ -242,11 +246,6 @@ def run_analysis(config_id, n_samples):
         rob_diego = 100 * diego_turing / n_samples
         rob_shaberi_total = 100 * shaberi_total / n_samples
         rob_shaberi_type_I = 100 * shaberi_type_I / n_samples
-
-        # rob_diego = 100 * diego_turing / stable if stable > 0 else 0.0
-        # rob_shaberi_total = 100 * shaberi_total / stable if stable > 0 else 0.0
-        # rob_shaberi_type_I = 100 * shaberi_type_I / stable if stable > 0 else 0.0
-        # rob_shaberi_excl_II = 100 * (shaberi_type_I + shaberi_hopf) / stable if stable > 0 else 0.0
         
         # Store results for this sigma
         sigma_result = {
@@ -258,11 +257,12 @@ def run_analysis(config_id, n_samples):
             "shaberi_type_I": shaberi_type_I,
             "shaberi_type_II": shaberi_type_II,
             "shaberi_hopf": shaberi_hopf,
+            "filter_count": filter_count,
             "rob_diego": rob_diego,
             "rob_shaberi_total": rob_shaberi_total,
             "rob_shaberi_type_I": rob_shaberi_type_I,
         }
-        
+
         results_by_sigma.append(sigma_result)
     
     # Create summary results
@@ -286,12 +286,12 @@ if __name__ == "__main__":
         sys.exit(1)
     
     config_id = int(sys.argv[1])
-    n_samples = 100_000  # 100K samples per sigma value
+    n_samples = 500_000  # 100K samples per sigma value but ater 1mio
     
     results = run_analysis(config_id, n_samples)
     
     # Save as pickle
-    output_pkl = f"results/{results['config_name']}_100k.pkl"
+    output_pkl = f"results/{results['config_name']}_1mio.pkl"
     with open(output_pkl, 'wb') as f:
         pickle.dump(results, f)
     
@@ -312,6 +312,7 @@ if __name__ == "__main__":
             'shaberi_type_I': sigma_result['shaberi_type_I'],
             'shaberi_type_II': sigma_result['shaberi_type_II'],
             'shaberi_hopf': sigma_result['shaberi_hopf'],
+            'filter_count': sigma_result['filter_count'],
             'rob_diego': sigma_result['rob_diego'],
             'rob_shaberi_total': sigma_result['rob_shaberi_total'],
             'rob_shaberi_type_I': sigma_result['rob_shaberi_type_I'],
@@ -329,6 +330,3 @@ if __name__ == "__main__":
     print(f"{n_samples:,} samples per sigma")
     print(f"Total: {len(SIGMA_VALUES) * n_samples:,} Jacobians generated")
     print(f"\nSaved to:")
-    print(f"  {output_pkl}")
-    print(f"  {output_csv}")
-    print(f"{'='*70}")
