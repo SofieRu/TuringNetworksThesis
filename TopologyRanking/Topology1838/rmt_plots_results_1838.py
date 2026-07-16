@@ -2,6 +2,11 @@ from pathlib import Path
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+import random
+import matplotlib.lines as mlines
+import matplotlib.patches as mpatches
+from scipy.stats import gaussian_kde
+import matplotlib.gridspec as gridspec
 
 CSV     = "1838_rmt_results_summary.csv"
 OUT_DIR = Path("plots")
@@ -22,12 +27,6 @@ plt.rcParams.update({
     "axes.spines.right": False,
 })
 
-TYPE_COLORS = {
-    "Type1": "#444EA6",
-    "Type2": "#AE2BA1",
-    "Type3": "#3FA051",
-} 
-
 def save(fig, name):
     for ext in ("png",):
         fig.savefig(OUT_DIR / f"{name}.{ext}", bbox_inches="tight", dpi=300)
@@ -41,274 +40,127 @@ def load_data():
     df["turing_type"] = df["config_name"].str.extract(r"(Type[123])")
     return df
 
+TYPE_COLORS = {"Type1": 'lightseagreen', "Type2": 'teal', "Type3": 'mediumpurple',} 
 
-########## FIGURE 1: Robustness vs Sigma overview ##########
 
-def fig1_sigma_vs_robustness(df):
-    fig, ax_stable = plt.subplots(figsize=(12, 6))
+########## Robustness vs Sigma overview ##########
 
-    # Left y-axis: stable count (dashed black)
+def complete_robustness_figure(df, sigma_val):
+    random.seed(42)
+    
+    fig = plt.figure(figsize=(13, 11))
+    gs = gridspec.GridSpec(2, 2, figure=fig, height_ratios=[1, 1])
+    ax_stable = fig.add_subplot(gs[0, :])
+    ax_avg = fig.add_subplot(gs[1, 0])
+    ax_dot = fig.add_subplot(gs[1, 1])
+
+    # PANEL A: SIGMA VS ROBUSTNESS OVERVIEW (TOP ROW)
     stable = df.groupby("sigma")["stable_without_diffusion"].first()
-    ax_stable.plot(stable.index, stable.values, color="black", linewidth=1.5, linestyle="--", label="Stable steady state count")
-    ax_stable.set_xlabel("Sigma (σ)", fontsize=11)
-    ax_stable.set_ylabel("Number of stable steady states", fontsize=11)
+    ax_stable.plot(stable.index, stable.values, color="black", linewidth=2, linestyle="--", label="Stable steady state count", zorder=5)
+    ax_stable.set_xlabel("Sigma (σ)", fontsize=12)
+    ax_stable.set_ylabel("Number of stable steady states", fontsize=12)
     ax_stable.xaxis.grid(False)
-
-    # Right y-axis: all configs in one colour, label only on first
+    ax_stable.ticklabel_format(style="plain", axis="y")
     ax_rob = ax_stable.twinx()
-    for i, cfg in enumerate(df["config_name"].unique()):
+    labeled_types = set()
+
+    for cfg in df["config_name"].unique():
         subset = df[df["config_name"] == cfg].sort_values("sigma")
-        ax_rob.plot(
-            subset["sigma"],
-            subset["rob_shaberi_total"],
-            color="#A325A9",
-            linewidth=1,
-            #alpha=0.6,     # keep there if you want: it shows where values cluster so it gets thicker if there is another value exactly like that bc then they are on top of each other but if we dont want thicker lines just remove it
-            label="Robustness all configurations" if i == 0 else "",
-        )
-    ax_rob.set_ylabel("Robustness (rob_shaberi_total)", fontsize=11)
+        t_type = subset["turing_type"].iloc[0]
+        line_color = TYPE_COLORS.get(t_type, "black") 
+        formatted_label = f"Type {t_type[-1]}" if t_type else "Unknown Type"
+
+        if t_type not in labeled_types:
+            label = formatted_label
+            labeled_types.add(t_type)
+        else:
+            label = ""
+
+        ax_rob.plot(subset["sigma"], subset["rob_shaberi_total"], color=line_color, linewidth=1.5, label=label, zorder=3)
+        
+    ax_rob.set_ylabel("Robustness Score (in %)", fontsize=12)
     ax_rob.spines["right"].set_visible(True)
     ax_rob.spines["top"].set_visible(False)
     ax_rob.yaxis.grid(False)
     ax_rob.xaxis.grid(False)
 
-    ax_stable.set_title(
-        "Topology #1838 RMT Sigma vs Robustness and Stability",
-        fontsize=12, loc="left", pad=10,
-    )
+    ax_stable.set_title("(A) Sigma vs Robustness and Stability Profile", fontsize=12.5, loc="left", pad=10)
 
     lines1, labels1 = ax_stable.get_legend_handles_labels()
     lines2, labels2 = ax_rob.get_legend_handles_labels()
-    ax_stable.legend(lines1 + lines2, labels1 + labels2, frameon=False,
-                     loc="upper center", bbox_to_anchor=(0.5, -0.12), ncol=2)
+    ax_stable.legend(lines1 + lines2, labels1 + labels2, frameon=False, loc="upper center", bbox_to_anchor=(0.5, -0.12), ncol=4)
 
-    fig.tight_layout()
-    save(fig, "1838_rmt_fig1_sigma_vs_robustness_all")
+    # PANEL B: FOCUSED AVERAGE ROBUSTNESS LINE (BOTTOM LEFT)
+    focused_df = df[(df["sigma"] >= 0.2) & (df["sigma"] <= 0.8)].copy()
+    avg_df = focused_df.groupby(["sigma", "turing_type"])["rob_shaberi_total"].mean().reset_index()
+    types = ["Type1", "Type2", "Type3"]
+    labels = ["Type 1 Average", "Type 2 Average", "Type 3 Average"]
 
-
-########## FIGURE 2: Corrected robustness vs Sigma, coloured by type ##########
-
-def fig2_corrected_robustness(df):
-    df = df.copy()
-    #df["rob_corrected"] = df["shaberi_total"] / df["n_samples"]
-
-    fig, ax_stable = plt.subplots(figsize=(12, 6))
-
-    # Left y-axis: stable count (dashed black)
-    stable = df.groupby("sigma")["stable_without_diffusion"].first()
-    ax_stable.plot(stable.index, stable.values, color="black", linewidth=1.5, linestyle="--", label="Stable steady state count")
-    ax_stable.set_xlabel("Sigma (σ)", fontsize=11)
-    ax_stable.set_ylabel("Number of stable steady states", fontsize=11)
-    ax_stable.xaxis.grid(False)
-
-    # Right y-axis: corrected robustness, coloured by Turing type
-    ax_rob = ax_stable.twinx()
-    for t in ["Type1", "Type2", "Type3"]:
-        subset = df[df["turing_type"] == t]
+    for t, label in zip(types, labels):
+        subset = avg_df[avg_df["turing_type"] == t].sort_values("sigma")
         if subset.empty:
             continue
-        mean_rob = subset.groupby("sigma")["rob_shaberi_total"].mean()
-        ax_rob.plot(mean_rob.index, mean_rob.values, color=TYPE_COLORS[t],
-                    linewidth=2, label=t)
-    ax_rob.set_ylabel("Robustness (shaberi_total / n_samples)", fontsize=11)
-    ax_rob.spines["right"].set_visible(True)
-    ax_rob.spines["top"].set_visible(False)
-    ax_rob.yaxis.grid(False)
-    ax_rob.xaxis.grid(False)
+        color = TYPE_COLORS.get(t, "black")
+        
+        ax_avg.plot(subset["sigma"], subset["rob_shaberi_total"], color=color, linewidth=2.5, label=label,)
+        
+    ax_avg.set_xlabel("Sigma (σ)", fontsize=11)
+    ax_avg.set_ylabel("Average Robustness Score (in %)", fontsize=12)
+    ax_avg.set_xlim(0.2, 0.8)
+    ax_avg.spines[["top", "right"]].set_visible(False)
+    ax_avg.xaxis.grid(False)
+    ax_avg.yaxis.grid(True)
+    ax_avg.set_title("(B) Average Robustness by Diffusion Type (Focus on σ = 0.2 to 0.8)", fontsize=12, loc="left", pad=10)
+    ax_avg.legend(frameon=False, loc="upper center", bbox_to_anchor=(0.5, -0.12), ncol=3)
 
-    ax_stable.set_title(
-        "Topology #1838 RMT Corrected robustness vs σ",
-        fontsize=12, loc="left", pad=10,
-    )
+    # PANEL C: RAINCLOUD DOT PLOT AT FIXED SIGMA (BOTTOM RIGHT)
+    subset_df = df[df["sigma"] == sigma_val].copy()
+    dot_labels = ["Type 1", "Type 2", "Type 3"]
 
-    lines1, labels1 = ax_stable.get_legend_handles_labels()
-    lines2, labels2 = ax_rob.get_legend_handles_labels()
-    ax_stable.legend(lines1 + lines2, labels1 + labels2, frameon=False,
-                     loc="upper center", bbox_to_anchor=(0.5, -0.12), ncol=4)
-
-    fig.tight_layout()
-    save(fig, "1838_rmt_fig2_corrected_robustness")
-
-
-########## FIGURE 3: Corrected robustness overview (all configs, one colour) ##########
-
-def fig3_corrected_overview(df):
-    df = df.copy()
-    # df["rob_corrected"] = df["shaberi_total"] / df["n_samples"]
-
-    fig, ax_stable = plt.subplots(figsize=(12, 7))
-
-    # Left y-axis: stable count (dashed black)
-    stable = df.groupby("sigma")["stable_without_diffusion"].first()
-    ax_stable.plot(stable.index, stable.values, color="black", linewidth=1.5,
-                   linestyle="--", label="Stable steady state count")
-    ax_stable.set_xlabel("Sigma (σ)", fontsize=11)
-    ax_stable.set_ylabel("Number of stable steady states", fontsize=11)
-    ax_stable.xaxis.grid(False)
-
-    # Right y-axis: all configs in one colour, label only on first
-    # CHANGED subset[rob_corrected] to subset["shaberi_total"]!! CHANGE BACK LATER IF NEEDED
-    ax_rob = ax_stable.twinx()
-    for i, cfg in enumerate(df["config_name"].unique()):
-        subset = df[df["config_name"] == cfg].sort_values("sigma")
-        ax_rob.plot(
-            subset["sigma"],
-            subset["rob_shaberi_type_I"],  # CHANGED subset["rob_corrected"] to subset["shaberi_type_I"]!! CHANGE BACK LATER IF NEEDED
-            color="#931C99",
-            linewidth=1,
-            #alpha=0.6,     # keep there if you want: it shows where values cluster so it gets thicker if there is another value exactly like that bc then they are on top of each other but if we dont want thicker lines just remove it
-            label="Robustness Score for all configurations for Type I TI" if i == 0 else "",
-        )
-    ax_rob.set_ylabel("RobuTuring instabilities (rob_shaberi_type_I)", fontsize=11)
-    ax_rob.spines["right"].set_visible(True)
-    ax_rob.spines["top"].set_visible(False)
-    ax_rob.yaxis.grid(False)
-    ax_rob.xaxis.grid(False)
-
-    ax_stable.set_title(
-        "Topology #3954 RMT Sigma vs Corrected Robustness overview (all configurations)",
-        fontsize=12, loc="left", pad=10,
-    )
-
-    lines1, labels1 = ax_stable.get_legend_handles_labels()
-    lines2, labels2 = ax_rob.get_legend_handles_labels()
-    ax_stable.legend(lines1 + lines2, labels1 + labels2, frameon=False, loc="upper center", bbox_to_anchor=(0.5, -0.12), ncol=2)
-
-    # Inset: zoomed view sigma 0.1 to 1.0
-    # ax_inset = ax_stable.inset_axes([0.55, 0.55, 0.4, 0.35])  # [x, y, width, height] in axes coords
-    ax_inset = ax_stable.inset_axes([0.72, 0.6, 0.25, 0.35])
-    ax_inset.set_facecolor("white")
-    ax_inset.patch.set_alpha(1.0)
-    ax_inset.set_zorder(ax_rob.get_zorder() + 1)
-    ax_stable.patch.set_visible(False)
-
-    zoom = df[df["sigma"] <= 1.0]
-    for i, cfg in enumerate(zoom["config_name"].unique()):
-        subset = zoom[zoom["config_name"] == cfg].sort_values("sigma")
-        ax_inset.plot(subset["sigma"], subset["rob_shaberi_type_I"],
-                    color="#931C99", linewidth=1)
-
-    ax_inset.set_xlabel("σ", fontsize=8)
-    ax_inset.set_ylabel("Robustness", fontsize=8)
-    # ax_inset.set_title("σ = 0.1 – 1.0", fontsize=8)
-    ax_inset.tick_params(labelsize=7)
-    # ax_inset.yaxis.grid(True, color="#dddddd", linewidth=0.7)
-    ax_inset.yaxis.grid(False)
-    ax_inset.xaxis.grid(False)
-
-    fig.tight_layout()
-    save(fig, "3954_rmt_fig3_corrected_overview")
-
-
-
-
-
-
-########## FIGURE 4: Dot plot – Robustness by Turing Type at fixed sigma ##########
- 
-def fig4_dotplot_fixed_sigma(df, sigma_val=1.0):
-    import random
-    random.seed(42)
- 
-    subset = df[df["sigma"] == sigma_val].copy()
- 
-    fig, ax = plt.subplots(figsize=(7, 5))
- 
-    types = ["Type1", "Type2", "Type3"]
     for i, t in enumerate(types):
-        t_data = subset[subset["turing_type"] == t]["rob_shaberi_total"]  # CHANGED from "rob_shaberi_total" to "rob_shaberi_type_I"!! CHANGE BACK LATER IF NEEDED
-        jitter = [i + random.uniform(-0.15, 0.15) for _ in t_data]
-        ax.scatter(
-            jitter,
-            t_data,
-            color=TYPE_COLORS[t],
-            s=80,
-            edgecolors="white",
-            linewidths=0.5,
-        )
- 
-    ax.set_xticks([0, 1, 2])
-    ax.set_xticklabels(["Type 1", "Type 2", "Type 3"], fontsize=11)
-    ax.set_ylabel("Robustness (rob_shaberi_total)", fontsize=11)
-    ax.set_title(
-        f"Topology #1838 RMT – Robustness by Turing Type at σ = {sigma_val}",
-        fontsize=12, loc="left", pad=10,
-    )
-    ax.xaxis.grid(False)
-    ax.set_xlim(-0.5, 2.5)
- 
-    fig.tight_layout()
-    save(fig, f"1838_rmt_fig4_dotplot_sigma{sigma_val}")
+        t_data = subset_df[subset_df["turing_type"] == t]["rob_shaberi_total"].dropna().values
+        if len(t_data) == 0:
+            continue
+        color = TYPE_COLORS[t]
+        
+        kde = gaussian_kde(t_data, bw_method=0.3)
+        y_range = np.linspace(t_data.min() - t_data.std()*0.3, t_data.max() + t_data.std()*0.3, 200)
+        kde_vals = kde(y_range)
+        kde_vals = kde_vals / kde_vals.max() * 0.35
+        ax_dot.fill_betweenx(y_range, i - kde_vals, i, color=color, alpha=1.0, linewidth=0, zorder=2)
 
+        mean_val = t_data.mean()
+        closest_idx = np.argmin(np.abs(y_range - mean_val))
+        kde_at_mean = kde_vals[closest_idx]
+        ax_dot.hlines(mean_val, i - kde_at_mean, i, color="black", linewidth=1.0, zorder=4)
 
+        for val in t_data:
+            jitter = i + random.uniform(0.08, 0.35)
+            marker = ("^" if any("Unequal" in row["config_name"] for _, row in subset_df[(subset_df["turing_type"] == t) & (subset_df["rob_shaberi_total"] == val)].iterrows()) else "o")
+            ax_dot.scatter(jitter, val, color=color, marker=marker, s=120, edgecolors="white", linewidths=0.4, zorder=3)
 
+    ax_dot.set_xticks(range(len(types)))
+    ax_dot.set_xticklabels(dot_labels, fontsize=12)
+    ax_dot.set_ylabel("Robustness Score (in %)", fontsize=12, labelpad=10)
+    ax_dot.xaxis.grid(False)
+    ax_dot.yaxis.grid(True)
+    ax_dot.set_xlim(-0.5, len(types) - 0.5)
+    ax_dot.spines[["top", "right"]].set_visible(False)
+    ax_dot.set_title(f"(C) Robustness Distribution by Diffusion Type at σ = {sigma_val}", fontsize=12.5, loc="left", pad=10)
 
+    rain_handles = [
+        mlines.Line2D([], [], color="#313131", marker="o", linestyle="None", markersize=8, markeredgecolor="white", label="Equal Diffusion"),
+        mlines.Line2D([], [], color="#313131", marker="^", linestyle="None", markersize=8, markeredgecolor="white", label="Unequal Diffusion")
+    ]
+    ax_dot.legend(handles=rain_handles, frameon=False, loc="upper center", bbox_to_anchor=(0.5, -0.12), ncol=2, fontsize=12)
 
-
-
-########## FIGURE 5: Grouped topology bars – Max robustness per topology × type at fixed sigma ##########
- 
-# def fig5_grouped_topology(df, sigma_val=1.0):
-
-#     # Option A: raw Shaberi count (absolute number of Turing instabilities)
-#     METRIC     = "shaberi_type_I"
-#     METRIC_LABEL = "Number of Turing instabilities (shaberi_type_I)"  # CHANGED from "shaberi_total" to "shaberi_type_I"!! CHANGE BACK LATER IF NEEDED
- 
-#     # Option B: inflated robustness score (shaberi / stable steady states)
-#     # METRIC     = "rob_shaberi_total"
-#     # METRIC_LABEL = "Robustness score (shaberi_total / stable)"
- 
-#     # Option C: corrected robustness (shaberi / total samples, removes inflation)
-#     # df = df.copy()
-#     # df["rob_corrected"] = df["shaberi_total"] / df["n_samples"]
-#     # METRIC     = "rob_corrected"
-#     # METRIC_LABEL = "Corrected robustness (shaberi_total / n_samples)"
- 
-#     subset = df[df["sigma"] == sigma_val].copy()
- 
-#     topos = subset["topology"].dropna().unique()
-#     types = ["Type1", "Type2", "Type3"]
-#     x     = np.arange(len(topos))
-#     w     = 0.25
- 
-#     fig, ax = plt.subplots(figsize=(10, 5))
- 
-#     for i, t in enumerate(types):
-#         vals = [
-#             subset[(subset["topology"] == topo) & (subset["turing_type"] == t)][METRIC].max()
-#             for topo in topos
-#         ]
-#         ax.bar(
-#             x + (i - 1) * w,
-#             vals,
-#             width=w,
-#             color=TYPE_COLORS[t],
-#             label=t,
-#             edgecolor="white",
-#             linewidth=0.5,
-#         )
- 
-#     ax.set_xticks(x)
-#     ax.set_xticklabels(topos, fontsize=11)
-#     ax.set_ylabel(METRIC_LABEL, fontsize=11)
-#     ax.set_title(
-#         f"Topology #3954 RMT Max robustness per topology and Turing Type at σ = {sigma_val}",
-#         fontsize=12, loc="left", pad=10,
-#     )
-#     ax.xaxis.grid(False)
-#     ax.legend(title="Turing Type", frameon=False,
-#               loc="upper center", bbox_to_anchor=(0.5, -0.12), ncol=3)
- 
-#     fig.tight_layout()
-#     save(fig, f"3954_rmt_fig5_grouped_topology_sigma{sigma_val}")
-
+    fig.suptitle("Random Matrix Theory Results, 1 million simulations\nRobustness of different diffusion rate configurations for Topology #1823", fontsize=14, y=0.98)
+    fig.subplots_adjust(left=0.06, right=0.94, top=0.89, bottom=0.10, hspace=0.38, wspace=0.2)
+    
+    save(fig, f"final_1823_rmt_overview_sigma{sigma_val}")
 
 
 ########### RUN THE WHOLE THING ############
 
 df = load_data()
-fig1_sigma_vs_robustness(df)
-fig2_corrected_robustness(df)
-fig3_corrected_overview(df)
-fig4_dotplot_fixed_sigma(df, sigma_val=1.0)
-#fig5_grouped_topology(df, sigma_val=1.0)
+complete_robustness_figure(df, sigma_val=0.6)

@@ -48,7 +48,7 @@ TYPE_COLORS = {"Type1": 'lightseagreen', "Type2": 'teal', "Type3": 'mediumpurple
 def complete_robustness_figure(df, sigma_val):
     random.seed(42)
     
-    fig = plt.figure(figsize=(14, 11))
+    fig = plt.figure(figsize=(13, 11))
     gs = gridspec.GridSpec(2, 2, figure=fig, height_ratios=[1, 1])
     ax_stable = fig.add_subplot(gs[0, :])
     ax_avg = fig.add_subplot(gs[1, 0])
