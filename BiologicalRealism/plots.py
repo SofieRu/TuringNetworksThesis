@@ -37,11 +37,11 @@ def diff_str(hopping):
 
 
 # LOADING ALL FILES
-with open('3954_cv_sweep_lab_config49_N10.pkl', 'rb') as f: 
+with open('3954_cv_sweep_high_config49_N10.pkl', 'rb') as f: 
     cv_robust_3954_N10 = pickle.load(f)
-with open('3954_cv_sweep_lab_config49_N20.pkl', 'rb') as f:
+with open('3954_cv_sweep_high_config49_N20.pkl', 'rb') as f:
     cv_robust_3954_N20 = pickle.load(f)
-with open('pastconfigs/3954_cv_sweep_lab_config43_N30.pkl', 'rb') as f:
+with open('3954_cv_sweep_high_config49_N30.pkl', 'rb') as f:
     cv_robust_3954_N30 = pickle.load(f)
 
 with open('3954_cv_sweep_low_config21_N10.pkl', 'rb') as f:
