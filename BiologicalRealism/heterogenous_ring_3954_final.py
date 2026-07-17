@@ -236,6 +236,20 @@ if __name__ == "__main__":
     steady_state_expected = np.array([row['u_star'], row['v_star'], row['w_star']])
     hopping = {'h_u': row['dU'], 'h_v': row['dV'], 'h_w': row['dW']}
 
+    # ================= NEW DIAGNOSTIC =================
+    print("\n" + "="*70)
+    print("DIAGNOSTIC: is the CSV steady state actually a root of ode_system?")
+    print("="*70)
+    res = ode_system(steady_state_expected, baseline_params)
+    print("CSV steady state:", steady_state_expected)
+    print("residual of CSV steady state:", np.max(np.abs(res)))
+
+    print("\nfind_steady_state on UNPERTURBED params, 10 draws:")
+    for _ in range(10):
+        print("   ", find_steady_state(baseline_params))
+    print("="*70)
+    # ============== END DIAGNOSTIC ================
+
     # projectors built ONCE (geometry only, reused every trial)
     PROJECTORS = _fourier_projectors(N_cells)
 
@@ -267,106 +281,228 @@ if __name__ == "__main__":
     np.random.seed(42)
     results_by_cv = []
 
+    # for CV in [0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4]:
+
+    #     print(f"\n{'='*70}")
+    #     print(f"CV = {CV}")
+    #     print(f"{'='*70}")
+
+    #     max_eigenvalues = []
+    #     turing_count = 0
+    #     discarded_count = 0   # a cell had no positive isolated fixed point
+
+    #     for trial in range(n_trials):
+    #         if CV == 0:
+    #             J_ring = build_ring_jacobian_homogeneous(
+    #                 N_cells=N_cells,
+    #                 steady_state=steady_state_expected,
+    #                 params=baseline_params,
+    #                 hopping=hopping
+    #             )
+    #         else:
+    #             J_ring, reason, params_hetero = build_ring_jacobian_heterogeneous(
+    #                 N_cells=N_cells,
+    #                 baseline_params=baseline_params,
+    #                 hopping=hopping,
+    #                 CV=CV
+    #             )
+    #             if J_ring is None:
+    #                 discarded_count += 1
+    #                 continue
+
+    #         # NEW ---- PROPER TURING CLASSIFICATION via projected dispersion ----
+    #         disp = fourier_projected_dispersion(J_ring, PROJECTORS)
+    #         max_eigenvalues.append(np.max(disp))
+            
+    #         # if is_turing_ring(disp):          # m=0 stable AND some m>0 unstable
+    #         #     turing_count += 1
+
+    #         if is_turing_ring(disp):
+    #             turing_count += 1
+
+    #     max_eigenvalues = np.array(max_eigenvalues)
+    #     n_valid = len(max_eigenvalues)
+    #     discard_rate = 100 * discarded_count / n_trials
+
+    #     if n_valid > 0:
+    #         robustness = 100 * turing_count / n_valid
+    #         result = {
+    #             'CV': CV,
+    #             'mean_eig': np.mean(max_eigenvalues),
+    #             'std_eig': np.std(max_eigenvalues),
+    #             'median_eig': np.median(max_eigenvalues),
+    #             'min_eig': np.min(max_eigenvalues),
+    #             'max_eig': np.max(max_eigenvalues),
+    #             'turing_count': turing_count,
+    #             'n_valid': n_valid,
+    #             'n_discarded': discarded_count,
+    #             'discard_rate': discard_rate,
+    #             'robustness': robustness,
+    #             'all_eigenvalues': max_eigenvalues
+    #         }
+    #     else:
+    #         result = {
+    #             'CV': CV,
+    #             'mean_eig': np.nan, 'std_eig': np.nan, 'median_eig': np.nan,
+    #             'min_eig': np.nan, 'max_eig': np.nan,
+    #             'turing_count': 0, 'n_valid': 0,
+    #             'n_discarded': discarded_count,
+    #             'discard_rate': discard_rate, 'robustness': np.nan,
+    #             'all_eigenvalues': np.array([])
+    #         }
+
+    #     results_by_cv.append(result)
+
+    #     print(f"  Valid trials:  {n_valid}/{n_trials}")
+    #     print(f"  Discarded:     {discarded_count} ({discard_rate:.1f}%)  (no positive isolated SS)")
+    #     if n_valid > 0:
+    #         print(f"  max proj Re(lambda): {result['mean_eig']:.6f} +/- {result['std_eig']:.6f}")
+    #         print(f"  Turing robustness:   {robustness:.1f}% ({turing_count}/{n_valid})")
+
+    # print("\n" + "="*70)
+    # print("SUMMARY TABLE  (robustness = fraction that are proper Turing)")
+    # print("="*70)
+    # print(f"{'CV':<6} {'Mean maxRe':<14} {'Std':<12} {'Valid':<8} {'Discard%':<10} {'Robustness'}")
+    # print("-"*70)
+    # for r in results_by_cv:
+        
+    #     if r['n_valid'] > 0:
+    #         print(f"{r['CV']:<6.2f} {r['mean_eig']:<14.6f} {r['std_eig']:<12.6f} "
+    #               f"{r['n_valid']:<8} {r['discard_rate']:<10.1f} "
+    #               f"{r['robustness']:.1f}% ({r['turing_count']}/{r['n_valid']})")
+    #     else:
+    #         print(f"{r['CV']:<6.2f} {'all discarded':<14} {'-':<12} "
+    #               f"{0:<8} {r['discard_rate']:<10.1f} -")
+            
+    # print("="*70)
+
     for CV in [0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4]:
 
-        print(f"\n{'='*70}")
-        print(f"CV = {CV}")
-        print(f"{'='*70}")
+            print(f"\n{'='*70}")
+            print(f"CV = {CV}")
+            print(f"{'='*70}")
 
-        max_eigenvalues = []
-        turing_count = 0
-        discarded_count = 0   # a cell had no positive isolated fixed point
-        fail_m0 = 0; fail_band = 0
+            max_eigenvalues = []      # max over ALL modes (kept for continuity)
+            band_eigenvalues = []     # max over m>0 only  (the Turing band itself)
+            m0_eigenvalues = []       # the uniform mode
+            turing_count = 0
+            discarded_count = 0       # a cell had no positive isolated fixed point
+            fail_m0 = 0               # uniform mode went unstable
+            fail_band = 0             # band collapsed
 
-        for trial in range(n_trials):
-            if CV == 0:
-                J_ring = build_ring_jacobian_homogeneous(
-                    N_cells=N_cells,
-                    steady_state=steady_state_expected,
-                    params=baseline_params,
-                    hopping=hopping
-                )
+            for trial in range(n_trials):
+                if CV == 0:
+                    J_ring = build_ring_jacobian_homogeneous(
+                        N_cells=N_cells,
+                        steady_state=steady_state_expected,
+                        params=baseline_params,
+                        hopping=hopping
+                    )
+                else:
+                    J_ring, reason, params_hetero = build_ring_jacobian_heterogeneous(
+                        N_cells=N_cells,
+                        baseline_params=baseline_params,
+                        hopping=hopping,
+                        CV=CV
+                    )
+                    if J_ring is None:
+                        discarded_count += 1
+                        continue
+
+                # ---- TURING CLASSIFICATION via projected dispersion ----
+                disp = fourier_projected_dispersion(J_ring, PROJECTORS)
+
+                max_eigenvalues.append(np.max(disp))
+                band_eigenvalues.append(np.max(disp[1:]))
+                m0_eigenvalues.append(disp[0])
+
+                # counted independently so the two failure modes can overlap
+                m0_unstable = disp[0] >= 0
+                band_dead = np.max(disp[1:]) <= 0
+
+                if not m0_unstable and not band_dead:
+                    turing_count += 1
+                if m0_unstable:
+                    fail_m0 += 1
+                if band_dead:
+                    fail_band += 1
+
+            max_eigenvalues = np.array(max_eigenvalues)
+            band_eigenvalues = np.array(band_eigenvalues)
+            m0_eigenvalues = np.array(m0_eigenvalues)
+            n_valid = len(max_eigenvalues)
+            discard_rate = 100 * discarded_count / n_trials
+
+            if n_valid > 0:
+                robustness = 100 * turing_count / n_valid
+                result = {
+                    'CV': CV,
+                    'mean_eig': np.mean(max_eigenvalues),
+                    'std_eig': np.std(max_eigenvalues),
+                    'median_eig': np.median(max_eigenvalues),
+                    'min_eig': np.min(max_eigenvalues),
+                    'max_eig': np.max(max_eigenvalues),
+                    'mean_band': np.mean(band_eigenvalues),
+                    'std_band': np.std(band_eigenvalues),
+                    'mean_m0': np.mean(m0_eigenvalues),
+                    'std_m0': np.std(m0_eigenvalues),
+                    'turing_count': turing_count,
+                    'n_valid': n_valid,
+                    'n_discarded': discarded_count,
+                    'discard_rate': discard_rate,
+                    'fail_m0': fail_m0,
+                    'fail_band': fail_band,
+                    'robustness': robustness,
+                    'all_eigenvalues': max_eigenvalues,
+                    'all_band_eigenvalues': band_eigenvalues,
+                    'all_m0_eigenvalues': m0_eigenvalues
+                }
             else:
-                J_ring, reason, params_hetero = build_ring_jacobian_heterogeneous(
-                    N_cells=N_cells,
-                    baseline_params=baseline_params,
-                    hopping=hopping,
-                    CV=CV
-                )
-                if J_ring is None:
-                    discarded_count += 1
-                    continue
+                result = {
+                    'CV': CV,
+                    'mean_eig': np.nan, 'std_eig': np.nan, 'median_eig': np.nan,
+                    'min_eig': np.nan, 'max_eig': np.nan,
+                    'mean_band': np.nan, 'std_band': np.nan,
+                    'mean_m0': np.nan, 'std_m0': np.nan,
+                    'turing_count': 0, 'n_valid': 0,
+                    'n_discarded': discarded_count,
+                    'discard_rate': discard_rate,
+                    'fail_m0': fail_m0,
+                    'fail_band': fail_band,
+                    'robustness': np.nan,
+                    'all_eigenvalues': np.array([]),
+                    'all_band_eigenvalues': np.array([]),
+                    'all_m0_eigenvalues': np.array([])
+                }
 
-            # NEW ---- PROPER TURING CLASSIFICATION via projected dispersion ----
-            disp = fourier_projected_dispersion(J_ring, PROJECTORS)
-            max_eigenvalues.append(np.max(disp))
-            
-            # if is_turing_ring(disp):          # m=0 stable AND some m>0 unstable
-            #     turing_count += 1
+            results_by_cv.append(result)
 
-            if is_turing_ring(disp):
-                turing_count += 1
-            elif disp[0] >= 0:
-                fail_m0 += 1          # uniform mode went unstable
-            else:
-                fail_band += 1        # band collapsed
+            print(f"  Valid trials:  {n_valid}/{n_trials}")
+            print(f"  Discarded:     {discarded_count} ({discard_rate:.1f}%)  (no positive isolated SS)")
+            if n_valid > 0:
+                print(f"  max proj Re(lambda): {result['mean_eig']:.6f} +/- {result['std_eig']:.6f}")
+                print(f"  band  max Re(m>0):   {result['mean_band']:+.6f} +/- {result['std_band']:.6f}")
+                print(f"  uniform mode Re(m=0):{result['mean_m0']:+.6f} +/- {result['std_m0']:.6f}")
+                print(f"  Turing robustness:   {robustness:.1f}% ({turing_count}/{n_valid})")
+                print(f"  Failures: m0={fail_m0} ({100*fail_m0/n_valid:.1f}%)  "
+                    f"band={fail_band} ({100*fail_band/n_valid:.1f}%)")
 
-        print(f"  Failures: m0={fail_m0}  band={fail_band}")
-        max_eigenvalues = np.array(max_eigenvalues)
-        n_valid = len(max_eigenvalues)
-        discard_rate = 100 * discarded_count / n_trials
-
-        if n_valid > 0:
-            robustness = 100 * turing_count / n_valid
-            result = {
-                'CV': CV,
-                'mean_eig': np.mean(max_eigenvalues),
-                'std_eig': np.std(max_eigenvalues),
-                'median_eig': np.median(max_eigenvalues),
-                'min_eig': np.min(max_eigenvalues),
-                'max_eig': np.max(max_eigenvalues),
-                'turing_count': turing_count,
-                'n_valid': n_valid,
-                'n_discarded': discarded_count,
-                'discard_rate': discard_rate,
-                'robustness': robustness,
-                'all_eigenvalues': max_eigenvalues
-            }
-        else:
-            result = {
-                'CV': CV,
-                'mean_eig': np.nan, 'std_eig': np.nan, 'median_eig': np.nan,
-                'min_eig': np.nan, 'max_eig': np.nan,
-                'turing_count': 0, 'n_valid': 0,
-                'n_discarded': discarded_count,
-                'discard_rate': discard_rate, 'robustness': np.nan,
-                'all_eigenvalues': np.array([])
-            }
-
-        results_by_cv.append(result)
-
-        print(f"  Valid trials:  {n_valid}/{n_trials}")
-        print(f"  Discarded:     {discarded_count} ({discard_rate:.1f}%)  (no positive isolated SS)")
-        if n_valid > 0:
-            print(f"  max proj Re(lambda): {result['mean_eig']:.6f} +/- {result['std_eig']:.6f}")
-            print(f"  Turing robustness:   {robustness:.1f}% ({turing_count}/{n_valid})")
-
-    print("\n" + "="*70)
-    print("SUMMARY TABLE  (robustness = fraction that are proper Turing)")
-    print("="*70)
-    print(f"{'CV':<6} {'Mean maxRe':<14} {'Std':<12} {'Valid':<8} {'Discard%':<10} {'Robustness'}")
-    print("-"*70)
-    for r in results_by_cv:
+    # print("\n" + "="*70)
+    print("\n" + "="*95)
+    print("SUMMARY TABLE  (robustness = m=0 stable AND some m>0 unstable)")
+    print("="*95)
+    print(f"{'CV':<6} {'Mean m=0':<12} {'Mean band':<12} {'Valid':<8} {'Discard%':<10} "f"{'m0 fail':<9} {'band fail':<11} {'Robustness'}")
+    print("-"*95)
         
+    for r in results_by_cv:
         if r['n_valid'] > 0:
-            print(f"{r['CV']:<6.2f} {r['mean_eig']:<14.6f} {r['std_eig']:<12.6f} "
-                  f"{r['n_valid']:<8} {r['discard_rate']:<10.1f} "
-                  f"{r['robustness']:.1f}% ({r['turing_count']}/{r['n_valid']})")
+            print(f"{r['CV']:<6.2f} {r['mean_m0']:<+12.6f} {r['mean_band']:<+12.6f} "
+                f"{r['n_valid']:<8} {r['discard_rate']:<10.1f} "
+                f"{r['fail_m0']:<9} {r['fail_band']:<11} "
+                f"{r['robustness']:.1f}% ({r['turing_count']}/{r['n_valid']})")
         else:
-            print(f"{r['CV']:<6.2f} {'all discarded':<14} {'-':<12} "
-                  f"{0:<8} {r['discard_rate']:<10.1f} -")
-            
-    print("="*70)
+            print(f"{r['CV']:<6.2f} {'all discarded':<12} {'-':<12} "f"{0:<8} {r['discard_rate']:<10.1f} {'-':<9} {'-':<11} -")
+    print("="*95)
 
     output_data = {
         'results': results_by_cv,
