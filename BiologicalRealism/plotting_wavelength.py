@@ -75,7 +75,7 @@ CSV_PATH = '../TopologyRanking/Topology3954/3954_FINAL_lhs_results_parameters.cs
 # }
 
 CONFIG_PER_CATEGORY = {
-    'Type-I':  49,
+    'Type-I':  13,
     'Type-II': 49,
     'Hopf':    50,
     'Filter':  55,
