@@ -173,8 +173,8 @@ def build_ring_jacobian_heterogeneous(N_cells, baseline_params, hopping, CV):
 
 if __name__ == "__main__":
 
-    CONFIG_TO_TEST = 18 #maybe 21 or 3 
-    CONFIG_LABEL = "low"   # "high" or "low" or "lab"
+    CONFIG_TO_TEST = 49 #maybe 21 or 3 
+    CONFIG_LABEL = "high"   # "high" or "low" or "lab"
     n_trials = 1000
     N_cells = 10
 
@@ -200,18 +200,37 @@ if __name__ == "__main__":
     eigs = np.linalg.eigvals(J)
     turing = is_turing_shaberi(J, eigs, hopping['h_u'], hopping['h_v'], hopping['h_w'])
 
+    # print("\n" + "="*70)
+    # print("STEP 4: MONTE CARLO - CV SWEEP  (proper Turing metric)")
+    # print("="*70)
+
+    # if turing == 'Type-I':
+    #     J_ring0 = build_ring_jacobian_homogeneous(N_cells, steady_state_expected,baseline_params, hopping)
+    #     disp0 = fourier_projected_dispersion(J_ring0, PROJECTORS)
+    #     print(f"Homogeneous ring baseline: m=0 {disp0[0]:+.4f}, "
+    #           f"max(m>0) {np.max(disp0[1:]):+.4f}, Turing={is_turing_ring(disp0)}")
+    # else:
+    #     print(f"WARNING: This config is not Type-I in continuous analysis (got: {turing})")
+
     print("\n" + "="*70)
     print("STEP 4: MONTE CARLO - CV SWEEP  (proper Turing metric)")
     print("="*70)
 
-    if turing == 'Type-I':
-        J_ring0 = build_ring_jacobian_homogeneous(N_cells, steady_state_expected,baseline_params, hopping)
-        disp0 = fourier_projected_dispersion(J_ring0, PROJECTORS)
-        print(f"Homogeneous ring baseline: m=0 {disp0[0]:+.4f}, "
-              f"max(m>0) {np.max(disp0[1:]):+.4f}, Turing={is_turing_ring(disp0)}")
-    else:
-        print(f"WARNING: This config is not Type-I in continuous analysis (got: {turing})")
+    J_ring0 = build_ring_jacobian_homogeneous(N_cells, steady_state_expected, baseline_params, hopping)
+    disp0 = fourier_projected_dispersion(J_ring0, PROJECTORS)
 
+    print(f"Continuous classification: {turing}")
+    print(f"Homogeneous ring baseline: m=0 {disp0[0]:+.4f}, " f"max(m>0) {np.max(disp0[1:]):+.4f}, Turing={is_turing_ring(disp0)}")
+    print("disp0 per mode:", np.round(disp0, 5))
+    print("unstable modes:", np.where(disp0[1:] > 0)[0] + 1)
+
+    k_eff = 2 * np.sin(np.pi * np.arange(N_cells // 2 + 1) / N_cells)
+    for m, (k, g) in enumerate(zip(k_eff, disp0)):
+        print(f"  m={m}  k_eff={k:.4f}  Re(lambda)={g:+.5f}  {'UNSTABLE' if g > 0 else ''}")
+
+    if turing != 'Type-I':
+        print(f"WARNING: not Type-I in continuous analysis (got: {turing})")
+    
     np.random.seed(42)
     results_by_cv = []
 

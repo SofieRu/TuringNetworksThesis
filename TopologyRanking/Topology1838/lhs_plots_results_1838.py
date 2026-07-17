@@ -50,7 +50,7 @@ def load_data():
 
 def fig_combined_overview_and_raincloud(df):
     df = df.copy()
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(13,10))
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(13,8.5))
 
     # PANEL 1: OVERVIEW BAR CHART (ax1)
     colors = df["turing_type"].map(TYPE_COLORS).fillna("#aaaaaa")
@@ -113,8 +113,8 @@ def fig_combined_overview_and_raincloud(df):
     rain_handles = [mlines.Line2D([],[],color="#313131",marker="o",linestyle="None",markersize=10,markeredgecolor="white",label="Equal Diffusion",),
                     mlines.Line2D([],[],color="#313131",marker="^",linestyle="None",markersize=10,markeredgecolor="white",label="Unequal Diffusion",),]
 
-    fig.legend(handles=bar_handles,title="Turing Type",frameon=False,loc="lower center",bbox_to_anchor=(0.35, 0.04),ncol=3,fontsize=12.5,)
-    fig.legend(handles=rain_handles,title="Diffusion Variant",frameon=False,loc="lower center",bbox_to_anchor=(0.7, 0.04),ncol=2,fontsize=12.5,)
+    fig.legend(handles=bar_handles,frameon=False,loc="lower center",bbox_to_anchor=(0.35, 0.04),ncol=3,fontsize=12)
+    fig.legend(handles=rain_handles,frameon=False,loc="lower center",bbox_to_anchor=(0.7, 0.04),ncol=2,fontsize=12)
     fig.subplots_adjust(left=0.07, right=0.95, top=0.94, bottom=0.14, hspace=0.5)
     save(fig, "final_1838_lhs_overview")
 

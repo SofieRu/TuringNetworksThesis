@@ -62,16 +62,23 @@ def compute_jacobian(state, params):
     return J
 
 # CONFIG
-CSV_PATH = '../TopologyRanking/Topology3954/3954_NEWTURINGCLASS_lhs_results_parameters.csv'
+CSV_PATH = '../TopologyRanking/Topology3954/3954_FINAL_lhs_results_parameters.csv'
 
 # Pick one config per classification — choose configs you know have good
 # examples of that type. Adjust these based on your CSV's content.
 
+# CONFIG_PER_CATEGORY = {
+#     'Type-I':  44,
+#     'Type-II': 44,
+#     'Hopf':    49,
+#     'Filter':  54,
+# }
+
 CONFIG_PER_CATEGORY = {
-    'Type-I':  44,
-    'Type-II': 44,
-    'Hopf':    49,
-    'Filter':  54,
+    'Type-I':  49,
+    'Type-II': 49,
+    'Hopf':    50,
+    'Filter':  55,
 }
 
 COLOR_PER_CATEGORY = {
@@ -221,16 +228,16 @@ for col_idx, category in enumerate(categories):
         peak_val = max_reals[peak_idx]
         # ax.plot(peak_k, peak_val, 'o', color='black', markersize=8, zorder=5)
         
-        ax.set_xlabel('k', fontsize=10)
-        ax.set_ylabel('Re(λ)', fontsize=10) # QUESTION: is it max Re or just Re???
+        ax.set_xlabel('k', fontsize=11)
+        ax.set_ylabel('Re(λ)', fontsize=11) # QUESTION: is it max Re or just Re???
         # title = (f"{category} (rank {int(row['param_rank'])})\n"f"config {config_id}, peak k={peak_k:.2f}, λ_max={peak_val:.3f}")
         title = (f"{category} (sample {row_idx + 1})\n"f"config {config_id}, peak k={peak_k:.2f}, lambda max={peak_val:.3f}")
-        ax.set_title(title, fontsize=10)
+        ax.set_title(title, fontsize=11)
         ax.grid(alpha=0.5)
 
 fig.suptitle(
     'Dispersion Relations Across the Four Turing Classifications\n''Two samples per class, with classifier boundary at k=10',
-    fontsize=13, y=1.00
+    fontsize=14, y=1.00
 )
 
 plt.tight_layout()

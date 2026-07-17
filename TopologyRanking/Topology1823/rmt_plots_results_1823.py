@@ -48,7 +48,7 @@ TYPE_COLORS = {"Type1": 'lightseagreen', "Type2": 'teal', "Type3": 'mediumpurple
 def complete_robustness_figure(df, sigma_val):
     random.seed(42)
     
-    fig = plt.figure(figsize=(13, 11))
+    fig = plt.figure(figsize=(13, 9.6))
     gs = gridspec.GridSpec(2, 2, figure=fig, height_ratios=[1, 1])
     ax_stable = fig.add_subplot(gs[0, :])
     ax_avg = fig.add_subplot(gs[1, 0])
@@ -157,7 +157,7 @@ def complete_robustness_figure(df, sigma_val):
     fig.suptitle("Random Matrix Theory Results, 1 million simulations\nRobustness of different diffusion rate configurations for Topology #1823", fontsize=14, y=0.98)
     fig.subplots_adjust(left=0.06, right=0.94, top=0.89, bottom=0.10, hspace=0.38, wspace=0.2)
     
-    save(fig, f"final_1823_rmt_overview_sigma{sigma_val}")
+    save(fig, f"final_1823_rmt_overview_sigma")
 
 
 ########### RUN THE WHOLE THING ############

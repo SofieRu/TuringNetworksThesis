@@ -155,8 +155,6 @@ def fourier_projected_dispersion(J_ring, projectors):
                      for P in projectors])
 
 def is_turing_ring(disp):
-    """Proper Turing test on a projected dispersion vector:
-    uniform mode stable AND some finite wavenumber unstable."""
     return (disp[0] < 0) and (np.max(disp[1:]) > 0)
 
 
@@ -221,7 +219,7 @@ if __name__ == "__main__":
 
     CONFIG_TO_TEST = 49 #maybe 21 or 3 
     CONFIG_LABEL = "high"   # "high" or "low" or "lab"
-    n_trials = 1000
+    n_trials = 200
     N_cells = 10
 
     df_file = pd.read_csv('../TopologyRanking/Topology3954/3954_FINAL_lhs_results_parameters.csv')
@@ -250,14 +248,21 @@ if __name__ == "__main__":
     print("STEP 4: MONTE CARLO - CV SWEEP  (proper Turing metric)")
     print("="*70)
 
-    if turing == 'Type-I':
-        J_ring0 = build_ring_jacobian_homogeneous(N_cells, steady_state_expected,baseline_params, hopping)
-        disp0 = fourier_projected_dispersion(J_ring0, PROJECTORS)
-        print(f"Homogeneous ring baseline: m=0 {disp0[0]:+.4f}, "
-              f"max(m>0) {np.max(disp0[1:]):+.4f}, Turing={is_turing_ring(disp0)}")
-    else:
-        print(f"WARNING: This config is not Type-I in continuous analysis (got: {turing})")
+    J_ring0 = build_ring_jacobian_homogeneous(N_cells, steady_state_expected, baseline_params, hopping)
+    disp0 = fourier_projected_dispersion(J_ring0, PROJECTORS)
 
+    print(f"Continuous classification: {turing}")
+    print(f"Homogeneous ring baseline: m=0 {disp0[0]:+.4f}, " f"max(m>0) {np.max(disp0[1:]):+.4f}, Turing={is_turing_ring(disp0)}")
+    print("disp0 per mode:", np.round(disp0, 5))
+    print("unstable modes:", np.where(disp0[1:] > 0)[0] + 1)
+
+    k_eff = 2 * np.sin(np.pi * np.arange(N_cells // 2 + 1) / N_cells)
+    for m, (k, g) in enumerate(zip(k_eff, disp0)):
+        print(f"  m={m}  k_eff={k:.4f}  Re(lambda)={g:+.5f}  {'UNSTABLE' if g > 0 else ''}")
+
+    if turing != 'Type-I':
+        print(f"WARNING: not Type-I in continuous analysis (got: {turing})")
+    
     # ---- CV sweep ----
     np.random.seed(42)
     results_by_cv = []
@@ -271,6 +276,7 @@ if __name__ == "__main__":
         max_eigenvalues = []
         turing_count = 0
         discarded_count = 0   # a cell had no positive isolated fixed point
+        fail_m0 = 0; fail_band = 0
 
         for trial in range(n_trials):
             if CV == 0:
@@ -291,12 +297,21 @@ if __name__ == "__main__":
                     discarded_count += 1
                     continue
 
-            # ---- PROPER TURING CLASSIFICATION via projected dispersion ----
+            # NEW ---- PROPER TURING CLASSIFICATION via projected dispersion ----
             disp = fourier_projected_dispersion(J_ring, PROJECTORS)
             max_eigenvalues.append(np.max(disp))
-            if is_turing_ring(disp):          # m=0 stable AND some m>0 unstable
-                turing_count += 1
+            
+            # if is_turing_ring(disp):          # m=0 stable AND some m>0 unstable
+            #     turing_count += 1
 
+            if is_turing_ring(disp):
+                turing_count += 1
+            elif disp[0] >= 0:
+                fail_m0 += 1          # uniform mode went unstable
+            else:
+                fail_band += 1        # band collapsed
+
+        print(f"  Failures: m0={fail_m0}  band={fail_band}")
         max_eigenvalues = np.array(max_eigenvalues)
         n_valid = len(max_eigenvalues)
         discard_rate = 100 * discarded_count / n_trials
@@ -342,6 +357,7 @@ if __name__ == "__main__":
     print(f"{'CV':<6} {'Mean maxRe':<14} {'Std':<12} {'Valid':<8} {'Discard%':<10} {'Robustness'}")
     print("-"*70)
     for r in results_by_cv:
+        
         if r['n_valid'] > 0:
             print(f"{r['CV']:<6.2f} {r['mean_eig']:<14.6f} {r['std_eig']:<12.6f} "
                   f"{r['n_valid']:<8} {r['discard_rate']:<10.1f} "
@@ -349,6 +365,7 @@ if __name__ == "__main__":
         else:
             print(f"{r['CV']:<6.2f} {'all discarded':<14} {'-':<12} "
                   f"{0:<8} {r['discard_rate']:<10.1f} -")
+            
     print("="*70)
 
     output_data = {
