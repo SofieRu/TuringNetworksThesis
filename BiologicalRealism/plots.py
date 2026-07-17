@@ -48,21 +48,21 @@ with open('3954_cv_sweep_low_config21_N10.pkl', 'rb') as f:
     cv_fragile_3954_N10 = pickle.load(f)
 with open('3954_cv_sweep_low_config21_N20.pkl', 'rb') as f:
     cv_fragile_3954_N20 = pickle.load(f)
-with open('pastconfigs/3954_cv_sweep_low_config17_N30.pkl', 'rb') as f:
+with open('3954_cv_sweep_low_config21_N30.pkl', 'rb') as f:
     cv_fragile_3954_N30 = pickle.load(f)
 
-with open('1754_cv_sweep_high_config43_N10.pkl', 'rb') as f:
+with open('1754_cv_sweep_high_config49_N10.pkl', 'rb') as f:
     cv_robust_1754_N10 = pickle.load(f)
-with open('1754_cv_sweep_high_config43_N20.pkl', 'rb') as f:
+with open('1754_cv_sweep_high_config49_N10.pkl', 'rb') as f:
     cv_robust_1754_N20 = pickle.load(f)
-with open('1754_cv_sweep_high_config43_N30.pkl', 'rb') as f:
+with open('1754_cv_sweep_high_config49_N10.pkl', 'rb') as f:
     cv_robust_1754_N30 = pickle.load(f)
 
-with open('1754_cv_sweep_low_config14_N10.pkl', 'rb') as f:
+with open('1754_cv_sweep_low_config18_N10.pkl', 'rb') as f:
     cv_fragile_1754_N10 = pickle.load(f)
-with open('1754_cv_sweep_low_config14_N20.pkl', 'rb') as f:
+with open('1754_cv_sweep_low_config18_N10.pkl', 'rb') as f:
     cv_fragile_1754_N20 = pickle.load(f)
-with open('1754_cv_sweep_low_config14_N30.pkl', 'rb') as f:
+with open('1754_cv_sweep_low_config18_N10.pkl', 'rb') as f:
     cv_fragile_1754_N30 = pickle.load(f)
 
 
@@ -91,13 +91,13 @@ cv_lab_3954_N10 = extract_cv_arrays(cv_lab_3954_N10)
 cv_lab_3954_N20 = extract_cv_arrays(cv_lab_3954_N20)
 
 # SENSITIVITY ANALYSIS FILES
-with open('3954_sensitivity_results_config43_N10.pkl', 'rb') as f:
+with open('pastconfigs/3954_sensitivity_results_config43_N10.pkl', 'rb') as f:
     sens_3954_robust = pickle.load(f)
-with open('3954_sensitivity_results_config17_N10.pkl', 'rb') as f:
+with open('pastconfigs/3954_sensitivity_results_config17_N10.pkl', 'rb') as f:
     sens_3954_fragile = pickle.load(f)
-with open('1754_sensitivity_results_config43_N10.pkl', 'rb') as f:
+with open('pastconfigs/1754_sensitivity_results_config43_N10.pkl', 'rb') as f:
     sens_1754_robust = pickle.load(f)
-with open('1754_sensitivity_results_config14_N10.pkl', 'rb') as f:
+with open('pastconfigs/1754_sensitivity_results_config14_N10.pkl', 'rb') as f:
     sens_1754_fragile = pickle.load(f)
 
 
@@ -498,9 +498,9 @@ robustness_curves = [
     {'label': '#3954 Robust (ID 40, N=20)','CV': cv_robust_3954_N20['CV'], 'robustness': cv_robust_3954_N20['robustness'],'color': 'blue', 'marker': 'o', 'linestyle': '--',},
     {'label': '#3954 Robust (ID 40, N=30)','CV': cv_robust_3954_N30['CV'], 'robustness': cv_robust_3954_N30['robustness'],'color': 'blue', 'marker': 'o', 'linestyle': ':',},
     
-    # {'label': '#3954 Fragile (ID 17, N=10)','CV':  cv_fragile_3954_N10['CV'], 'robustness': cv_fragile_3954_N10['robustness'],'color': 'cornflowerblue', 'marker': 's', 'linestyle': '-',},
-    # {'label': '#3954 Fragile (ID 17, N=20)','CV':  cv_fragile_3954_N20['CV'], 'robustness': cv_fragile_3954_N20['robustness'],'color': 'cornflowerblue', 'marker': 's', 'linestyle': '--',},
-    #{'label': '#3954 Fragile (ID 17, N=30)','CV':  cv_fragile_3954_N30['CV'], 'robustness': cv_fragile_3954_N30['robustness'],'color': 'cornflowerblue', 'marker': 's', 'linestyle': ':',},
+    {'label': '#3954 Fragile (ID 17, N=10)','CV':  cv_fragile_3954_N10['CV'], 'robustness': cv_fragile_3954_N10['robustness'],'color': 'cornflowerblue', 'marker': 's', 'linestyle': '-',},
+    {'label': '#3954 Fragile (ID 17, N=20)','CV':  cv_fragile_3954_N20['CV'], 'robustness': cv_fragile_3954_N20['robustness'],'color': 'cornflowerblue', 'marker': 's', 'linestyle': '--',},
+    {'label': '#3954 Fragile (ID 17, N=30)','CV':  cv_fragile_3954_N30['CV'], 'robustness': cv_fragile_3954_N30['robustness'],'color': 'cornflowerblue', 'marker': 's', 'linestyle': ':',},
     
     {'label': '#1754 Robust (ID 43, N=10)','CV': cv_robust_1754_N10['CV'], 'robustness': cv_robust_1754_N10['robustness'],'color': 'purple', 'marker': '^', 'linestyle': '-',},
     {'label': '#1754 Robust (ID 43, N=20)','CV': cv_robust_1754_N20['CV'], 'robustness': cv_robust_1754_N20['robustness'],'color': 'purple', 'marker': '^', 'linestyle': '--',},
