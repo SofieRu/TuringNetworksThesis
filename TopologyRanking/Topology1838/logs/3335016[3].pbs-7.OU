@@ -1,0 +1,208 @@
+Starting job 3 at Fri 17 Jul 01:06:31 BST 2026
+Starting NEW_RMT_1838_Type1_WFast_Unequal1: dU=1.0, dV=1.0, dW=10.0
+Testing 37 sigma values with 500,000 samples each
+======================================================================
+  [sig=0.1] 100,000/500,000 | Stable: 100000 | Diego: 0 | Shaberi: 0
+  [sig=0.1] 200,000/500,000 | Stable: 200000 | Diego: 0 | Shaberi: 0
+  [sig=0.1] 300,000/500,000 | Stable: 300000 | Diego: 0 | Shaberi: 0
+  [sig=0.1] 400,000/500,000 | Stable: 400000 | Diego: 0 | Shaberi: 0
+  [sig=0.1] 500,000/500,000 | Stable: 500000 | Diego: 0 | Shaberi: 0
+  [sig=0.2] 100,000/500,000 | Stable: 100000 | Diego: 0 | Shaberi: 0
+  [sig=0.2] 200,000/500,000 | Stable: 200000 | Diego: 0 | Shaberi: 0
+  [sig=0.2] 300,000/500,000 | Stable: 300000 | Diego: 0 | Shaberi: 0
+  [sig=0.2] 400,000/500,000 | Stable: 400000 | Diego: 0 | Shaberi: 0
+  [sig=0.2] 500,000/500,000 | Stable: 500000 | Diego: 0 | Shaberi: 0
+  [sig=0.3] 100,000/500,000 | Stable: 99999 | Diego: 0 | Shaberi: 0
+  [sig=0.3] 200,000/500,000 | Stable: 199999 | Diego: 0 | Shaberi: 0
+  [sig=0.3] 300,000/500,000 | Stable: 299998 | Diego: 0 | Shaberi: 0
+  [sig=0.3] 400,000/500,000 | Stable: 399998 | Diego: 0 | Shaberi: 0
+  [sig=0.3] 500,000/500,000 | Stable: 499997 | Diego: 0 | Shaberi: 0
+  [sig=0.4] 100,000/500,000 | Stable: 99921 | Diego: 0 | Shaberi: 0
+  [sig=0.4] 200,000/500,000 | Stable: 199831 | Diego: 0 | Shaberi: 0
+  [sig=0.4] 300,000/500,000 | Stable: 299754 | Diego: 0 | Shaberi: 0
+  [sig=0.4] 400,000/500,000 | Stable: 399679 | Diego: 0 | Shaberi: 0
+  [sig=0.4] 500,000/500,000 | Stable: 499589 | Diego: 0 | Shaberi: 0
+  [sig=0.5] 100,000/500,000 | Stable: 99071 | Diego: 0 | Shaberi: 0
+  [sig=0.5] 200,000/500,000 | Stable: 198115 | Diego: 1 | Shaberi: 1
+  [sig=0.5] 300,000/500,000 | Stable: 297212 | Diego: 1 | Shaberi: 1
+  [sig=0.5] 400,000/500,000 | Stable: 396303 | Diego: 1 | Shaberi: 1
+  [sig=0.5] 500,000/500,000 | Stable: 495402 | Diego: 2 | Shaberi: 2
+  [sig=0.6] 100,000/500,000 | Stable: 97151 | Diego: 5 | Shaberi: 5
+  [sig=0.6] 200,000/500,000 | Stable: 194259 | Diego: 8 | Shaberi: 8
+  [sig=0.6] 300,000/500,000 | Stable: 291542 | Diego: 16 | Shaberi: 16
+  [sig=0.6] 400,000/500,000 | Stable: 388753 | Diego: 19 | Shaberi: 19
+  [sig=0.6] 500,000/500,000 | Stable: 485969 | Diego: 24 | Shaberi: 24
+  [sig=0.6] 100,000/500,000 | Stable: 96487 | Diego: 4 | Shaberi: 4
+  [sig=0.6] 200,000/500,000 | Stable: 192897 | Diego: 9 | Shaberi: 9
+  [sig=0.6] 300,000/500,000 | Stable: 289521 | Diego: 14 | Shaberi: 14
+  [sig=0.6] 400,000/500,000 | Stable: 386085 | Diego: 23 | Shaberi: 23
+  [sig=0.6] 500,000/500,000 | Stable: 482642 | Diego: 38 | Shaberi: 38
+  [sig=0.7] 100,000/500,000 | Stable: 92090 | Diego: 20 | Shaberi: 20
+  [sig=0.7] 200,000/500,000 | Stable: 184074 | Diego: 53 | Shaberi: 53
+  [sig=0.7] 300,000/500,000 | Stable: 276310 | Diego: 78 | Shaberi: 78
+  [sig=0.7] 400,000/500,000 | Stable: 368587 | Diego: 107 | Shaberi: 107
+  [sig=0.7] 500,000/500,000 | Stable: 460746 | Diego: 125 | Shaberi: 125
+  [sig=0.8] 100,000/500,000 | Stable: 86592 | Diego: 60 | Shaberi: 60
+  [sig=0.8] 200,000/500,000 | Stable: 173093 | Diego: 120 | Shaberi: 120
+  [sig=0.8] 300,000/500,000 | Stable: 259880 | Diego: 195 | Shaberi: 195
+  [sig=0.8] 400,000/500,000 | Stable: 346734 | Diego: 265 | Shaberi: 265
+  [sig=0.8] 500,000/500,000 | Stable: 433299 | Diego: 347 | Shaberi: 347
+  [sig=0.9] 100,000/500,000 | Stable: 80635 | Diego: 145 | Shaberi: 145
+  [sig=0.9] 200,000/500,000 | Stable: 161279 | Diego: 278 | Shaberi: 278
+  [sig=0.9] 300,000/500,000 | Stable: 242188 | Diego: 413 | Shaberi: 413
+  [sig=0.9] 400,000/500,000 | Stable: 323182 | Diego: 528 | Shaberi: 528
+  [sig=0.9] 500,000/500,000 | Stable: 403836 | Diego: 648 | Shaberi: 648
+  [sig=1.0] 100,000/500,000 | Stable: 74716 | Diego: 208 | Shaberi: 208
+  [sig=1.0] 200,000/500,000 | Stable: 149416 | Diego: 433 | Shaberi: 433
+  [sig=1.0] 300,000/500,000 | Stable: 224426 | Diego: 661 | Shaberi: 661
+  [sig=1.0] 400,000/500,000 | Stable: 299509 | Diego: 882 | Shaberi: 882
+  [sig=1.0] 500,000/500,000 | Stable: 374316 | Diego: 1107 | Shaberi: 1107
+  [sig=1.1] 100,000/500,000 | Stable: 69240 | Diego: 338 | Shaberi: 338
+  [sig=1.1] 200,000/500,000 | Stable: 138452 | Diego: 673 | Shaberi: 673
+  [sig=1.1] 300,000/500,000 | Stable: 208071 | Diego: 1006 | Shaberi: 1006
+  [sig=1.1] 400,000/500,000 | Stable: 277668 | Diego: 1354 | Shaberi: 1354
+  [sig=1.1] 500,000/500,000 | Stable: 346971 | Diego: 1684 | Shaberi: 1684
+  [sig=1.2] 100,000/500,000 | Stable: 64207 | Diego: 486 | Shaberi: 486
+  [sig=1.2] 200,000/500,000 | Stable: 128368 | Diego: 928 | Shaberi: 928
+  [sig=1.2] 300,000/500,000 | Stable: 192986 | Diego: 1426 | Shaberi: 1426
+  [sig=1.2] 400,000/500,000 | Stable: 257405 | Diego: 1875 | Shaberi: 1875
+  [sig=1.2] 500,000/500,000 | Stable: 321807 | Diego: 2373 | Shaberi: 2373
+  [sig=1.3] 100,000/500,000 | Stable: 59815 | Diego: 629 | Shaberi: 629
+  [sig=1.3] 200,000/500,000 | Stable: 119507 | Diego: 1245 | Shaberi: 1245
+  [sig=1.3] 300,000/500,000 | Stable: 179637 | Diego: 1871 | Shaberi: 1871
+  [sig=1.3] 400,000/500,000 | Stable: 239683 | Diego: 2478 | Shaberi: 2478
+  [sig=1.3] 500,000/500,000 | Stable: 299433 | Diego: 3074 | Shaberi: 3074
+  [sig=1.4] 100,000/500,000 | Stable: 55835 | Diego: 763 | Shaberi: 763
+  [sig=1.4] 200,000/500,000 | Stable: 111479 | Diego: 1466 | Shaberi: 1466
+  [sig=1.4] 300,000/500,000 | Stable: 167669 | Diego: 2219 | Shaberi: 2219
+  [sig=1.4] 400,000/500,000 | Stable: 223749 | Diego: 3007 | Shaberi: 3007
+  [sig=1.4] 500,000/500,000 | Stable: 279507 | Diego: 3792 | Shaberi: 3792
+  [sig=1.5] 100,000/500,000 | Stable: 52264 | Diego: 909 | Shaberi: 909
+  [sig=1.5] 200,000/500,000 | Stable: 104413 | Diego: 1801 | Shaberi: 1801
+  [sig=1.5] 300,000/500,000 | Stable: 157010 | Diego: 2738 | Shaberi: 2738
+  [sig=1.5] 400,000/500,000 | Stable: 209481 | Diego: 3702 | Shaberi: 3702
+  [sig=1.5] 500,000/500,000 | Stable: 261652 | Diego: 4630 | Shaberi: 4630
+  [sig=1.6] 100,000/500,000 | Stable: 49185 | Diego: 1075 | Shaberi: 1075
+  [sig=1.6] 200,000/500,000 | Stable: 98131 | Diego: 2115 | Shaberi: 2115
+  [sig=1.6] 300,000/500,000 | Stable: 147577 | Diego: 3187 | Shaberi: 3187
+  [sig=1.6] 400,000/500,000 | Stable: 196862 | Diego: 4306 | Shaberi: 4306
+  [sig=1.6] 500,000/500,000 | Stable: 245893 | Diego: 5357 | Shaberi: 5357
+  [sig=1.8] 100,000/500,000 | Stable: 43859 | Diego: 1384 | Shaberi: 1384
+  [sig=1.8] 200,000/500,000 | Stable: 87548 | Diego: 2715 | Shaberi: 2715
+  [sig=1.8] 300,000/500,000 | Stable: 131685 | Diego: 4103 | Shaberi: 4103
+  [sig=1.8] 400,000/500,000 | Stable: 175570 | Diego: 5482 | Shaberi: 5482
+  [sig=1.8] 500,000/500,000 | Stable: 219308 | Diego: 6799 | Shaberi: 6799
+  [sig=2.0] 100,000/500,000 | Stable: 39646 | Diego: 1604 | Shaberi: 1604
+  [sig=2.0] 200,000/500,000 | Stable: 79070 | Diego: 3249 | Shaberi: 3249
+  [sig=2.0] 300,000/500,000 | Stable: 119000 | Diego: 4905 | Shaberi: 4905
+  [sig=2.0] 400,000/500,000 | Stable: 158648 | Diego: 6541 | Shaberi: 6541
+  [sig=2.0] 500,000/500,000 | Stable: 198117 | Diego: 8147 | Shaberi: 8147
+  [sig=2.2] 100,000/500,000 | Stable: 36255 | Diego: 1951 | Shaberi: 1951
+  [sig=2.2] 200,000/500,000 | Stable: 72288 | Diego: 3818 | Shaberi: 3818
+  [sig=2.2] 300,000/500,000 | Stable: 108806 | Diego: 5687 | Shaberi: 5687
+  [sig=2.2] 400,000/500,000 | Stable: 144967 | Diego: 7565 | Shaberi: 7565
+  [sig=2.2] 500,000/500,000 | Stable: 181074 | Diego: 9395 | Shaberi: 9395
+  [sig=2.4] 100,000/500,000 | Stable: 33511 | Diego: 2095 | Shaberi: 2095
+  [sig=2.4] 200,000/500,000 | Stable: 66810 | Diego: 4169 | Shaberi: 4169
+  [sig=2.4] 300,000/500,000 | Stable: 100535 | Diego: 6203 | Shaberi: 6203
+  [sig=2.4] 400,000/500,000 | Stable: 133939 | Diego: 8267 | Shaberi: 8267
+  [sig=2.4] 500,000/500,000 | Stable: 167376 | Diego: 10338 | Shaberi: 10338
+  [sig=2.6] 100,000/500,000 | Stable: 31160 | Diego: 2277 | Shaberi: 2277
+  [sig=2.6] 200,000/500,000 | Stable: 62128 | Diego: 4527 | Shaberi: 4527
+  [sig=2.6] 300,000/500,000 | Stable: 93507 | Diego: 6697 | Shaberi: 6697
+  [sig=2.6] 400,000/500,000 | Stable: 124592 | Diego: 8940 | Shaberi: 8940
+  [sig=2.6] 500,000/500,000 | Stable: 155692 | Diego: 11205 | Shaberi: 11205
+  [sig=2.8] 100,000/500,000 | Stable: 29247 | Diego: 2442 | Shaberi: 2442
+  [sig=2.8] 200,000/500,000 | Stable: 58301 | Diego: 4789 | Shaberi: 4789
+  [sig=2.8] 300,000/500,000 | Stable: 87744 | Diego: 7141 | Shaberi: 7141
+  [sig=2.8] 400,000/500,000 | Stable: 116852 | Diego: 9510 | Shaberi: 9510
+  [sig=2.8] 500,000/500,000 | Stable: 145962 | Diego: 11877 | Shaberi: 11877
+  [sig=3.0] 100,000/500,000 | Stable: 27575 | Diego: 2542 | Shaberi: 2542
+  [sig=3.0] 200,000/500,000 | Stable: 54940 | Diego: 5029 | Shaberi: 5029
+  [sig=3.0] 300,000/500,000 | Stable: 82691 | Diego: 7533 | Shaberi: 7533
+  [sig=3.0] 400,000/500,000 | Stable: 110163 | Diego: 10048 | Shaberi: 10048
+  [sig=3.0] 500,000/500,000 | Stable: 137606 | Diego: 12536 | Shaberi: 12536
+  [sig=3.2] 100,000/500,000 | Stable: 26110 | Diego: 2614 | Shaberi: 2614
+  [sig=3.2] 200,000/500,000 | Stable: 52074 | Diego: 5211 | Shaberi: 5211
+  [sig=3.2] 300,000/500,000 | Stable: 78446 | Diego: 7819 | Shaberi: 7819
+  [sig=3.2] 400,000/500,000 | Stable: 104514 | Diego: 10448 | Shaberi: 10448
+  [sig=3.2] 500,000/500,000 | Stable: 130544 | Diego: 13056 | Shaberi: 13056
+  [sig=3.4] 100,000/500,000 | Stable: 24845 | Diego: 2655 | Shaberi: 2655
+  [sig=3.4] 200,000/500,000 | Stable: 49571 | Diego: 5309 | Shaberi: 5309
+  [sig=3.4] 300,000/500,000 | Stable: 74655 | Diego: 8049 | Shaberi: 8049
+  [sig=3.4] 400,000/500,000 | Stable: 99462 | Diego: 10720 | Shaberi: 10720
+  [sig=3.4] 500,000/500,000 | Stable: 124265 | Diego: 13453 | Shaberi: 13453
+  [sig=3.6] 100,000/500,000 | Stable: 23772 | Diego: 2776 | Shaberi: 2776
+  [sig=3.6] 200,000/500,000 | Stable: 47378 | Diego: 5530 | Shaberi: 5530
+  [sig=3.6] 300,000/500,000 | Stable: 71296 | Diego: 8324 | Shaberi: 8324
+  [sig=3.6] 400,000/500,000 | Stable: 95026 | Diego: 11068 | Shaberi: 11068
+  [sig=3.6] 500,000/500,000 | Stable: 118713 | Diego: 13833 | Shaberi: 13833
+  [sig=3.8] 100,000/500,000 | Stable: 22721 | Diego: 2788 | Shaberi: 2788
+  [sig=3.8] 200,000/500,000 | Stable: 45406 | Diego: 5665 | Shaberi: 5665
+  [sig=3.8] 300,000/500,000 | Stable: 68340 | Diego: 8533 | Shaberi: 8533
+  [sig=3.8] 400,000/500,000 | Stable: 91093 | Diego: 11355 | Shaberi: 11355
+  [sig=3.8] 500,000/500,000 | Stable: 113873 | Diego: 14205 | Shaberi: 14205
+  [sig=4.0] 100,000/500,000 | Stable: 21868 | Diego: 2826 | Shaberi: 2826
+  [sig=4.0] 200,000/500,000 | Stable: 43690 | Diego: 5730 | Shaberi: 5730
+  [sig=4.0] 300,000/500,000 | Stable: 65722 | Diego: 8643 | Shaberi: 8643
+  [sig=4.0] 400,000/500,000 | Stable: 87581 | Diego: 11537 | Shaberi: 11537
+  [sig=4.0] 500,000/500,000 | Stable: 109475 | Diego: 14430 | Shaberi: 14430
+  [sig=4.5] 100,000/500,000 | Stable: 19981 | Diego: 2906 | Shaberi: 2906
+  [sig=4.5] 200,000/500,000 | Stable: 39917 | Diego: 5870 | Shaberi: 5870
+  [sig=4.5] 300,000/500,000 | Stable: 60165 | Diego: 8948 | Shaberi: 8948
+  [sig=4.5] 400,000/500,000 | Stable: 80235 | Diego: 11909 | Shaberi: 11909
+  [sig=4.5] 500,000/500,000 | Stable: 100262 | Diego: 14879 | Shaberi: 14879
+  [sig=5.0] 100,000/500,000 | Stable: 18465 | Diego: 2927 | Shaberi: 2927
+  [sig=5.0] 200,000/500,000 | Stable: 36907 | Diego: 5922 | Shaberi: 5922
+  [sig=5.0] 300,000/500,000 | Stable: 55724 | Diego: 9029 | Shaberi: 9029
+  [sig=5.0] 400,000/500,000 | Stable: 74290 | Diego: 12033 | Shaberi: 12033
+  [sig=5.0] 500,000/500,000 | Stable: 92855 | Diego: 14964 | Shaberi: 14964
+  [sig=5.5] 100,000/500,000 | Stable: 17234 | Diego: 2959 | Shaberi: 2959
+  [sig=5.5] 200,000/500,000 | Stable: 34505 | Diego: 5949 | Shaberi: 5949
+  [sig=5.5] 300,000/500,000 | Stable: 52081 | Diego: 9063 | Shaberi: 9063
+  [sig=5.5] 400,000/500,000 | Stable: 69398 | Diego: 12071 | Shaberi: 12071
+  [sig=5.5] 500,000/500,000 | Stable: 86748 | Diego: 15030 | Shaberi: 15030
+  [sig=6.0] 100,000/500,000 | Stable: 16192 | Diego: 2911 | Shaberi: 2911
+  [sig=6.0] 200,000/500,000 | Stable: 32417 | Diego: 5887 | Shaberi: 5887
+  [sig=6.0] 300,000/500,000 | Stable: 48944 | Diego: 8991 | Shaberi: 8991
+  [sig=6.0] 400,000/500,000 | Stable: 65194 | Diego: 11976 | Shaberi: 11976
+  [sig=6.0] 500,000/500,000 | Stable: 81561 | Diego: 14965 | Shaberi: 14965
+  [sig=7.0] 100,000/500,000 | Stable: 14593 | Diego: 2899 | Shaberi: 2899
+  [sig=7.0] 200,000/500,000 | Stable: 29208 | Diego: 5837 | Shaberi: 5837
+  [sig=7.0] 300,000/500,000 | Stable: 44071 | Diego: 8894 | Shaberi: 8894
+  [sig=7.0] 400,000/500,000 | Stable: 58729 | Diego: 11828 | Shaberi: 11828
+  [sig=7.0] 500,000/500,000 | Stable: 73467 | Diego: 14734 | Shaberi: 14734
+  [sig=8.0] 100,000/500,000 | Stable: 13337 | Diego: 2824 | Shaberi: 2824
+  [sig=8.0] 200,000/500,000 | Stable: 26683 | Diego: 5663 | Shaberi: 5663
+  [sig=8.0] 300,000/500,000 | Stable: 40229 | Diego: 8588 | Shaberi: 8588
+  [sig=8.0] 400,000/500,000 | Stable: 53651 | Diego: 11478 | Shaberi: 11478
+  [sig=8.0] 500,000/500,000 | Stable: 67093 | Diego: 14288 | Shaberi: 14288
+  [sig=9.0] 100,000/500,000 | Stable: 12361 | Diego: 2724 | Shaberi: 2724
+  [sig=9.0] 200,000/500,000 | Stable: 24671 | Diego: 5450 | Shaberi: 5450
+  [sig=9.0] 300,000/500,000 | Stable: 37178 | Diego: 8223 | Shaberi: 8223
+  [sig=9.0] 400,000/500,000 | Stable: 49566 | Diego: 11019 | Shaberi: 11019
+  [sig=9.0] 500,000/500,000 | Stable: 62006 | Diego: 13713 | Shaberi: 13713
+  [sig=10.0] 100,000/500,000 | Stable: 11571 | Diego: 2636 | Shaberi: 2636
+  [sig=10.0] 200,000/500,000 | Stable: 23046 | Diego: 5268 | Shaberi: 5268
+  [sig=10.0] 300,000/500,000 | Stable: 34703 | Diego: 7930 | Shaberi: 7930
+  [sig=10.0] 400,000/500,000 | Stable: 46291 | Diego: 10615 | Shaberi: 10615
+  [sig=10.0] 500,000/500,000 | Stable: 57917 | Diego: 13243 | Shaberi: 13243
+
+======================================================================
+COMPLETED: NEW_RMT_1838_Type1_WFast_Unequal1
+======================================================================
+Tested 37 sigma values
+500,000 samples per sigma
+Total: 18,500,000 Jacobians generated
+
+Saved to:
+Finished job 3 at Fri 17 Jul 14:28:26 BST 2026
+
+====================================
+CPU Time used: 13:13:46
+CPU Percent: 99%
+Memory usage: 168656kb
+Approx Power usage: 0.1586
+Walltime usage: 13:22:04
+
+====================================
