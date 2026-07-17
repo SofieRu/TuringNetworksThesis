@@ -175,7 +175,7 @@ if __name__ == "__main__":
     CONFIG_TO_TEST = 49 #maybe 21 or 3 
     CONFIG_LABEL = "high"   # "high" or "low" or "lab"
     n_trials = 1000
-    N_cells = 30
+    N_cells = 20
 
     df_file = pd.read_csv('../TopologyRanking/Topology1754/1754_FINAL_lhs_results_parameters.csv')
     df_params = df_file[df_file['classification'] == 'Type-I']
