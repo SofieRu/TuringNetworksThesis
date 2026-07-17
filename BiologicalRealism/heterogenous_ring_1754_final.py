@@ -131,7 +131,6 @@ def fourier_projected_dispersion(J_ring, projectors):
 def is_turing_ring(disp):
     return (disp[0] < 0) and (np.max(disp[1:]) > 0)
 
-
 # ======================================================================
 # HOMOGENEOUS RING JACOBIAN (identical cells) -- used for CV = 0
 # ======================================================================
@@ -175,8 +174,8 @@ if __name__ == "__main__":
 
     CONFIG_TO_TEST = 49 #maybe 21 or 3 
     CONFIG_LABEL = "high"   # "high" or "low" or "lab"
-    n_trials = 200
-    N_cells = 10
+    n_trials = 1000
+    N_cells = 30
 
     df_file = pd.read_csv('../TopologyRanking/Topology1754/1754_FINAL_lhs_results_parameters.csv')
     df_params = df_file[df_file['classification'] == 'Type-I']
@@ -205,7 +204,43 @@ if __name__ == "__main__":
         print("   ", find_steady_state(baseline_params))
     print("="*70)
     # ============== END DIAGNOSTIC ================
-    
+
+    print("\n" + "="*70)
+    print("baseline_params:", np.array2string(baseline_params, precision=4))
+    print("="*70)
+
+    np.random.seed(123)
+    CV_test = 0.05
+    sigma = np.sqrt(np.log(1 + CV_test**2))
+    mu = -sigma**2 / 2
+    NP = len(baseline_params)          # 15 for 1754, 16 for 3954
+
+    print(f"\nONE TRIAL AT CV={CV_test}: per-cell steady states and local eigenvalues")
+    print(f"{'cell':<5} {'u*':<10} {'v*':<10} {'w*':<10} {'maxRe J_i':<12} {'||J_i||'}")
+    print("-"*70)
+    J_list = []
+    for i in range(N_cells):
+        params_i = baseline_params * np.random.lognormal(mu, sigma, size=NP)
+        ss_i = find_steady_state(params_i)
+        if ss_i is None:
+            print(f"{i:<5} NO STEADY STATE")
+            continue
+        J_i = compute_jacobian(ss_i, params_i)
+        J_list.append(J_i)
+        print(f"{i:<5} {ss_i[0]:<10.5f} {ss_i[1]:<10.5f} {ss_i[2]:<10.5f} "
+              f"{np.max(np.real(np.linalg.eigvals(J_i))):<+12.5f} "
+              f"{np.linalg.norm(J_i):.3f}")
+
+    print("-"*70)
+    print("baseline  ", np.array2string(steady_state_expected, precision=5))
+    J_base = compute_jacobian(steady_state_expected, baseline_params)
+    print(f"baseline maxRe J = {np.max(np.real(np.linalg.eigvals(J_base))):+.5f}   "
+          f"||J|| = {np.linalg.norm(J_base):.3f}")
+    if J_list:
+        J_mean = np.mean(J_list, axis=0)
+        print(f"mean(J_i) maxRe   = {np.max(np.real(np.linalg.eigvals(J_mean))):+.5f}")
+    print("="*70)
+
     # projectors built ONCE (geometry only, reused every trial)
     PROJECTORS = _fourier_projectors(N_cells)
 
@@ -248,98 +283,6 @@ if __name__ == "__main__":
     np.random.seed(42)
     results_by_cv = []
 
-    # for CV in [0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4]:
-
-    #     print(f"\n{'='*70}")
-    #     print(f"CV = {CV}")
-    #     print(f"{'='*70}")
-
-    #     max_eigenvalues = []
-    #     turing_count = 0
-    #     discarded_count = 0   # a cell had no positive isolated fixed point
-
-    #     for trial in range(n_trials):
-    #         if CV == 0:
-    #             J_ring = build_ring_jacobian_homogeneous(N_cells=N_cells, steady_state=steady_state_expected, params=baseline_params, hopping=hopping)
-    #         else:
-    #             J_ring, reason, params_hetero = build_ring_jacobian_heterogeneous(N_cells=N_cells, baseline_params=baseline_params, hopping=hopping, CV=CV)
-    #             if J_ring is None:
-    #                 discarded_count += 1
-    #                 continue
-
-    #         # ---- PROPER TURING CLASSIFICATION via projected dispersion ----
-    #         disp = fourier_projected_dispersion(J_ring, PROJECTORS)
-    #         max_eigenvalues.append(np.max(disp))
-    #         if is_turing_ring(disp):          # m=0 stable AND some m>0 unstable
-    #             turing_count += 1
-
-    #     max_eigenvalues = np.array(max_eigenvalues)
-    #     n_valid = len(max_eigenvalues)
-    #     discard_rate = 100 * discarded_count / n_trials
-
-    #     if n_valid > 0:
-    #         robustness = 100 * turing_count / n_valid
-    #         result = {
-    #             'CV': CV,
-    #             'mean_eig': np.mean(max_eigenvalues),
-    #             'std_eig': np.std(max_eigenvalues),
-    #             'median_eig': np.median(max_eigenvalues),
-    #             'min_eig': np.min(max_eigenvalues),
-    #             'max_eig': np.max(max_eigenvalues),
-    #             'turing_count': turing_count,
-    #             'n_valid': n_valid,
-    #             'n_discarded': discarded_count,
-    #             'discard_rate': discard_rate,
-    #             'robustness': robustness,
-    #             'all_eigenvalues': max_eigenvalues
-    #         }
-    #     else:
-    #         result = {
-    #             'CV': CV,
-    #             'mean_eig': np.nan, 'std_eig': np.nan, 'median_eig': np.nan,
-    #             'min_eig': np.nan, 'max_eig': np.nan,
-    #             'turing_count': 0, 'n_valid': 0,
-    #             'n_discarded': discarded_count,
-    #             'discard_rate': discard_rate, 'robustness': np.nan,
-    #             'all_eigenvalues': np.array([])
-    #         }
-
-    #     results_by_cv.append(result)
-
-    #     print(f"  Valid trials:  {n_valid}/{n_trials}")
-    #     print(f"  Discarded:     {discarded_count} ({discard_rate:.1f}%)  (no positive isolated SS)")
-    #     if n_valid > 0:
-    #         print(f"  max proj Re(lambda): {result['mean_eig']:.6f} +/- {result['std_eig']:.6f}")
-    #         print(f"  Turing robustness:   {robustness:.1f}% ({turing_count}/{n_valid})")
-
-    # print("\n" + "="*70)
-    # print("SUMMARY TABLE  (robustness = fraction that are proper Turing)")
-    # print("="*70)
-    # print(f"{'CV':<6} {'Mean maxRe':<14} {'Std':<12} {'Valid':<8} {'Discard%':<10} {'Robustness'}")
-    # print("-"*70)
-    # for r in results_by_cv:
-    #     if r['n_valid'] > 0:
-    #         print(f"{r['CV']:<6.2f} {r['mean_eig']:<14.6f} {r['std_eig']:<12.6f} "
-    #               f"{r['n_valid']:<8} {r['discard_rate']:<10.1f} "
-    #               f"{r['robustness']:.1f}% ({r['turing_count']}/{r['n_valid']})")
-    #     else:
-    #         print(f"{r['CV']:<6.2f} {'all discarded':<14} {'-':<12} "
-    #               f"{0:<8} {r['discard_rate']:<10.1f} -")
-    # print("="*70)
-
-    # output_data = {
-    #     'results': results_by_cv,
-    #     'baseline_params': baseline_params,
-    #     'hopping': hopping,
-    #     'n_trials': n_trials,
-    #     'config_id': CONFIG_TO_TEST,
-    #     'config_name': row['config_name']
-    # }
-    # output_file = f'1754_cv_sweep_{CONFIG_LABEL}_config{CONFIG_TO_TEST}_N{N_cells}.pkl'
-    # with open(output_file, 'wb') as f:
-    #     pickle.dump(output_data, f)
-    # print(f"\nSaved results to {output_file}")
-
     for CV in [0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4]:
 
             print(f"\n{'='*70}")
@@ -356,19 +299,10 @@ if __name__ == "__main__":
 
             for trial in range(n_trials):
                 if CV == 0:
-                    J_ring = build_ring_jacobian_homogeneous(
-                        N_cells=N_cells,
-                        steady_state=steady_state_expected,
-                        params=baseline_params,
-                        hopping=hopping
-                    )
+                    J_ring = build_ring_jacobian_homogeneous(N_cells=N_cells, steady_state=steady_state_expected,params=baseline_params, hopping=hopping)
                 else:
-                    J_ring, reason, params_hetero = build_ring_jacobian_heterogeneous(
-                        N_cells=N_cells,
-                        baseline_params=baseline_params,
-                        hopping=hopping,
-                        CV=CV
-                    )
+                    # J_ring, reason, params_hetero = build_ring_jacobian_heterogeneous(N_cells=N_cells, baseline_params=baseline_params, hopping=hopping, CV=CV)
+
                     if J_ring is None:
                         discarded_count += 1
                         continue
@@ -480,3 +414,100 @@ if __name__ == "__main__":
     with open(output_file, 'wb') as f:
         pickle.dump(output_data, f)
     print(f"\nSaved results to {output_file}")
+
+
+
+
+
+
+    # for CV in [0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4]:
+
+    #     print(f"\n{'='*70}")
+    #     print(f"CV = {CV}")
+    #     print(f"{'='*70}")
+
+    #     max_eigenvalues = []
+    #     turing_count = 0
+    #     discarded_count = 0   # a cell had no positive isolated fixed point
+
+    #     for trial in range(n_trials):
+    #         if CV == 0:
+    #             J_ring = build_ring_jacobian_homogeneous(N_cells=N_cells, steady_state=steady_state_expected, params=baseline_params, hopping=hopping)
+    #         else:
+    #             J_ring, reason, params_hetero = build_ring_jacobian_heterogeneous(N_cells=N_cells, baseline_params=baseline_params, hopping=hopping, CV=CV)
+    #             if J_ring is None:
+    #                 discarded_count += 1
+    #                 continue
+
+    #         # ---- PROPER TURING CLASSIFICATION via projected dispersion ----
+    #         disp = fourier_projected_dispersion(J_ring, PROJECTORS)
+    #         max_eigenvalues.append(np.max(disp))
+    #         if is_turing_ring(disp):          # m=0 stable AND some m>0 unstable
+    #             turing_count += 1
+
+    #     max_eigenvalues = np.array(max_eigenvalues)
+    #     n_valid = len(max_eigenvalues)
+    #     discard_rate = 100 * discarded_count / n_trials
+
+    #     if n_valid > 0:
+    #         robustness = 100 * turing_count / n_valid
+    #         result = {
+    #             'CV': CV,
+    #             'mean_eig': np.mean(max_eigenvalues),
+    #             'std_eig': np.std(max_eigenvalues),
+    #             'median_eig': np.median(max_eigenvalues),
+    #             'min_eig': np.min(max_eigenvalues),
+    #             'max_eig': np.max(max_eigenvalues),
+    #             'turing_count': turing_count,
+    #             'n_valid': n_valid,
+    #             'n_discarded': discarded_count,
+    #             'discard_rate': discard_rate,
+    #             'robustness': robustness,
+    #             'all_eigenvalues': max_eigenvalues
+    #         }
+    #     else:
+    #         result = {
+    #             'CV': CV,
+    #             'mean_eig': np.nan, 'std_eig': np.nan, 'median_eig': np.nan,
+    #             'min_eig': np.nan, 'max_eig': np.nan,
+    #             'turing_count': 0, 'n_valid': 0,
+    #             'n_discarded': discarded_count,
+    #             'discard_rate': discard_rate, 'robustness': np.nan,
+    #             'all_eigenvalues': np.array([])
+    #         }
+
+    #     results_by_cv.append(result)
+
+    #     print(f"  Valid trials:  {n_valid}/{n_trials}")
+    #     print(f"  Discarded:     {discarded_count} ({discard_rate:.1f}%)  (no positive isolated SS)")
+    #     if n_valid > 0:
+    #         print(f"  max proj Re(lambda): {result['mean_eig']:.6f} +/- {result['std_eig']:.6f}")
+    #         print(f"  Turing robustness:   {robustness:.1f}% ({turing_count}/{n_valid})")
+
+    # print("\n" + "="*70)
+    # print("SUMMARY TABLE  (robustness = fraction that are proper Turing)")
+    # print("="*70)
+    # print(f"{'CV':<6} {'Mean maxRe':<14} {'Std':<12} {'Valid':<8} {'Discard%':<10} {'Robustness'}")
+    # print("-"*70)
+    # for r in results_by_cv:
+    #     if r['n_valid'] > 0:
+    #         print(f"{r['CV']:<6.2f} {r['mean_eig']:<14.6f} {r['std_eig']:<12.6f} "
+    #               f"{r['n_valid']:<8} {r['discard_rate']:<10.1f} "
+    #               f"{r['robustness']:.1f}% ({r['turing_count']}/{r['n_valid']})")
+    #     else:
+    #         print(f"{r['CV']:<6.2f} {'all discarded':<14} {'-':<12} "
+    #               f"{0:<8} {r['discard_rate']:<10.1f} -")
+    # print("="*70)
+
+    # output_data = {
+    #     'results': results_by_cv,
+    #     'baseline_params': baseline_params,
+    #     'hopping': hopping,
+    #     'n_trials': n_trials,
+    #     'config_id': CONFIG_TO_TEST,
+    #     'config_name': row['config_name']
+    # }
+    # output_file = f'1754_cv_sweep_{CONFIG_LABEL}_config{CONFIG_TO_TEST}_N{N_cells}.pkl'
+    # with open(output_file, 'wb') as f:
+    #     pickle.dump(output_data, f)
+    # print(f"\nSaved results to {output_file}")

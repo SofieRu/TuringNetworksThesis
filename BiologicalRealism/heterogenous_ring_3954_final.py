@@ -207,7 +207,14 @@ def build_ring_jacobian_heterogeneous(N_cells, baseline_params, hopping, CV):
     for i in range(N_cells):
         idx = 3 * i
         J_ring[idx:idx+3, idx:idx+3] += compute_jacobian(steady_states[i], params_list[i])
-
+    
+    x_star = np.concatenate(steady_states)
+    print("  ||(L⊗D)x*|| =", np.linalg.norm(Ldiff @ x_star),
+          "   ||x*|| =", np.linalg.norm(x_star))
+    
+    print("full J_ring maxRe:", np.max(np.real(np.linalg.eigvals(J_ring))))
+    print("projected max:    ", np.max(disp))
+    
     return J_ring, steady_states, params_list
 
 
@@ -219,7 +226,7 @@ if __name__ == "__main__":
 
     CONFIG_TO_TEST = 49 #maybe 21 or 3 
     CONFIG_LABEL = "high"   # "high" or "low" or "lab"
-    n_trials = 200
+    n_trials = 1000
     N_cells = 10
 
     df_file = pd.read_csv('../TopologyRanking/Topology3954/3954_FINAL_lhs_results_parameters.csv')
@@ -249,6 +256,42 @@ if __name__ == "__main__":
         print("   ", find_steady_state(baseline_params))
     print("="*70)
     # ============== END DIAGNOSTIC ================
+
+    print("\n" + "="*70)
+    print("baseline_params:", np.array2string(baseline_params, precision=4))
+    print("="*70)
+
+    np.random.seed(123)
+    CV_test = 0.05
+    sigma = np.sqrt(np.log(1 + CV_test**2))
+    mu = -sigma**2 / 2
+    NP = len(baseline_params)          # 15 for 1754, 16 for 3954
+
+    print(f"\nONE TRIAL AT CV={CV_test}: per-cell steady states and local eigenvalues")
+    print(f"{'cell':<5} {'u*':<10} {'v*':<10} {'w*':<10} {'maxRe J_i':<12} {'||J_i||'}")
+    print("-"*70)
+    J_list = []
+    for i in range(N_cells):
+        params_i = baseline_params * np.random.lognormal(mu, sigma, size=NP)
+        ss_i = find_steady_state(params_i)
+        if ss_i is None:
+            print(f"{i:<5} NO STEADY STATE")
+            continue
+        J_i = compute_jacobian(ss_i, params_i)
+        J_list.append(J_i)
+        print(f"{i:<5} {ss_i[0]:<10.5f} {ss_i[1]:<10.5f} {ss_i[2]:<10.5f} "
+              f"{np.max(np.real(np.linalg.eigvals(J_i))):<+12.5f} "
+              f"{np.linalg.norm(J_i):.3f}")
+
+    print("-"*70)
+    print("baseline  ", np.array2string(steady_state_expected, precision=5))
+    J_base = compute_jacobian(steady_state_expected, baseline_params)
+    print(f"baseline maxRe J = {np.max(np.real(np.linalg.eigvals(J_base))):+.5f}   "
+          f"||J|| = {np.linalg.norm(J_base):.3f}")
+    if J_list:
+        J_mean = np.mean(J_list, axis=0)
+        print(f"mean(J_i) maxRe   = {np.max(np.real(np.linalg.eigvals(J_mean))):+.5f}")
+    print("="*70)
 
     # projectors built ONCE (geometry only, reused every trial)
     PROJECTORS = _fourier_projectors(N_cells)
