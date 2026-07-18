@@ -11,7 +11,7 @@ import matplotlib.gridspec as gridspec
 # have to run this first: module load matplotlib/3.9.2-gfbf-2024a
 # have to run this first: module load SciPy-bundle/2024.05-gfbf-2024a
 
-CSV     = "1823_rmt_results_summary.csv"
+CSV     = "1823_FINAL_rmt_results_summary.csv"
 OUT_DIR = Path("plots")
 OUT_DIR.mkdir(exist_ok=True)
 
@@ -123,16 +123,16 @@ def complete_robustness_figure(df, sigma_val):
             continue
         color = TYPE_COLORS[t]
         
-        kde = gaussian_kde(t_data, bw_method=0.3)
-        y_range = np.linspace(t_data.min() - t_data.std()*0.3, t_data.max() + t_data.std()*0.3, 200)
-        kde_vals = kde(y_range)
-        kde_vals = kde_vals / kde_vals.max() * 0.35
-        ax_dot.fill_betweenx(y_range, i - kde_vals, i, color=color, alpha=1.0, linewidth=0, zorder=2)
+        # kde = gaussian_kde(t_data, bw_method=0.3)
+        # y_range = np.linspace(t_data.min() - t_data.std()*0.3, t_data.max() + t_data.std()*0.3, 200)
+        # kde_vals = kde(y_range)
+        # kde_vals = kde_vals / kde_vals.max() * 0.35
+        # ax_dot.fill_betweenx(y_range, i - kde_vals, i, color=color, alpha=1.0, linewidth=0, zorder=2)
 
-        mean_val = t_data.mean()
-        closest_idx = np.argmin(np.abs(y_range - mean_val))
-        kde_at_mean = kde_vals[closest_idx]
-        ax_dot.hlines(mean_val, i - kde_at_mean, i, color="black", linewidth=1.0, zorder=4)
+        # mean_val = t_data.mean()
+        # closest_idx = np.argmin(np.abs(y_range - mean_val))
+        # kde_at_mean = kde_vals[closest_idx]
+        # ax_dot.hlines(mean_val, i - kde_at_mean, i, color="black", linewidth=1.0, zorder=4)
 
         for val in t_data:
             jitter = i + random.uniform(0.08, 0.35)
@@ -163,4 +163,4 @@ def complete_robustness_figure(df, sigma_val):
 ########### RUN THE WHOLE THING ############
 
 df = load_data()
-complete_robustness_figure(df, sigma_val=0.6)
+complete_robustness_figure(df, sigma_val=0.58)

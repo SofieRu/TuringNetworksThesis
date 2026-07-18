@@ -11,7 +11,7 @@ import matplotlib.gridspec as gridspec
 # have to run this first: module load matplotlib/3.9.2-gfbf-2024a
 # have to run this first: module load SciPy-bundle/2024.05-gfbf-2024a
 
-CSV     = "3954_PREFINAL_rmt_results_summary.csv"
+CSV     = "3954_FINAL_rmt_results_summary.csv"
 OUT_DIR = Path("plots")
 OUT_DIR.mkdir(exist_ok=True)
 
@@ -162,7 +162,7 @@ def complete_robustness_figure(df, sigma_val):
 ########### RUN THE WHOLE THING ############
 
 df = load_data()
-complete_robustness_figure(df, sigma_val=0.6)
+complete_robustness_figure(df, sigma_val=0.58)
 
 
 

@@ -1,6 +1,0 @@
-config_name,config_id,diffusion,n_samples,steady_states,stable_without_diffusion,diego_turing,shaberi_total,shaberi_type_I,shaberi_type_II,shaberi_hopf,rob_diego,rob_shaberi_total,rob_shaberi_type_I,rob_shaberi_excl_II
-LHS_1823_CDD_Type1,0,"{'dU': 10.0, 'dV': 0.0, 'dW': 1.0}",1000000,995111,992778,12,12,12,0,0,0.0012,0.0012,0.0012,0.0012
-LHS_1823_CDD_Type1_Control,1,"{'dU': 1.0, 'dV': 0.0, 'dW': 1.0}",1000000,995111,992778,0,0,0,0,0,0.0,0.0,0.0,0.0
-LHS_1823_CDD_Type2_Actual,2,"{'dU': 0.0, 'dV': 1.0, 'dW': 0.0}",1000000,995111,992778,0,0,0,0,0,0.0,0.0,0.0,0.0
-LHS_1823_CDD_Type2_Diego,3,"{'dU': 1.0, 'dV': 1.0, 'dW': 0.0}",1000000,995111,992778,0,0,0,0,0,0.0,0.0,0.0,0.0
-LHS_1823_CDD_Type3,4,"{'dU': 1.0, 'dV': 0.0, 'dW': 1.0}",1000000,995111,992778,0,0,0,0,0,0.0,0.0,0.0,0.0

@@ -6,7 +6,7 @@ import pandas as pd
 # have to run this first: module load matplotlib/3.9.2-gfbf-2024a, module load SciPy-bundle/2024.05-gfbf-2024a
 
 # Find all RMT pickle files (only RMT_1754 files, 100k samples)
-result_files = sorted(glob.glob('results/NEW_RMT_1754_*_100k.pkl'))
+result_files = sorted(glob.glob('results/FINAL_RMT_1754_*.pkl'))
 
 # Load all results and flatten sigma results
 all_rows = []
@@ -34,6 +34,7 @@ for filepath in result_files:
                 'shaberi_type_I': sigma_result['shaberi_type_I'],
                 'shaberi_type_II': sigma_result['shaberi_type_II'],
                 'shaberi_hopf': sigma_result['shaberi_hopf'],
+                'filter_count': sigma_result['filter_count'],
                 'rob_diego': sigma_result['rob_diego'],
                 'rob_shaberi_total': sigma_result['rob_shaberi_total'],
                 'rob_shaberi_type_I': sigma_result['rob_shaberi_type_I'],
@@ -53,12 +54,13 @@ cols_display = [
     'diego_turing',
     'shaberi_total',
     'rob_diego',
-    'rob_shaberi_total'
+    'rob_shaberi_total',
+    'filter_count'
 ]
 
 print("TOPOLOGY #1754 RMT TURING PATTERN ROBUSTNESS SUMMARY")
 print("="*140)
 print(df[cols_display].to_string(index=False))
 
-output_file = '1754_PREFINAL_rmt_results_summary.csv'
+output_file = '1754_FINAL_rmt_results_summary.csv'
 df.to_csv(output_file, index=False)

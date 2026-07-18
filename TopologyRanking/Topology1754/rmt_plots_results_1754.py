@@ -8,7 +8,7 @@ import matplotlib.patches as mpatches
 from scipy.stats import gaussian_kde
 import matplotlib.gridspec as gridspec
 
-CSV     = "1754_PREFINAL_rmt_results_summary.csv"
+CSV     = "1754_FINAL_rmt_results_summary.csv"
 OUT_DIR = Path("plots")
 OUT_DIR.mkdir(exist_ok=True)
 
@@ -163,4 +163,4 @@ def complete_robustness_figure(df, sigma_val):
 ########### RUN THE WHOLE THING ############
 
 df = load_data()
-complete_robustness_figure(df, sigma_val=0.6)
+complete_robustness_figure(df, sigma_val=0.58)

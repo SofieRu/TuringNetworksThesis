@@ -8,7 +8,7 @@ import matplotlib.patches as mpatches
 from scipy.stats import gaussian_kde
 import matplotlib.gridspec as gridspec
 
-CSV     = "1838_rmt_results_summary.csv"
+CSV     = "1838_FINAL_rmt_results_summary.csv"
 OUT_DIR = Path("plots")
 OUT_DIR.mkdir(exist_ok=True)
 
@@ -154,13 +154,13 @@ def complete_robustness_figure(df, sigma_val):
     ]
     ax_dot.legend(handles=rain_handles, frameon=False, loc="upper center", bbox_to_anchor=(0.5, -0.12), ncol=2, fontsize=12)
 
-    fig.suptitle("Random Matrix Theory Results, 1 million simulations\nRobustness of different diffusion rate configurations for Topology #1823", fontsize=14, y=0.98)
+    fig.suptitle("Random Matrix Theory Results, 1 million simulations\nRobustness of different diffusion rate configurations for Topology #1838", fontsize=14, y=0.98)
     fig.subplots_adjust(left=0.06, right=0.94, top=0.89, bottom=0.10, hspace=0.38, wspace=0.2)
     
-    save(fig, f"final_1823_rmt_overview_sigma{sigma_val}")
+    save(fig, f"final_1823_rmt_overview_sigma")
 
 
 ########### RUN THE WHOLE THING ############
 
 df = load_data()
-complete_robustness_figure(df, sigma_val=0.6)
+complete_robustness_figure(df, sigma_val=0.58)
