@@ -41,7 +41,8 @@ def load_data():
     df["turing_type"] = df["config_name"].str.extract(r"(Type[123])")
     return df
 
-TYPE_COLORS = {"Type1": 'lightseagreen', "Type2": 'teal', "Type3": 'mediumpurple',} 
+#TYPE_COLORS = {"Type1": 'lightseagreen', "Type2": 'teal', "Type3": 'mediumpurple',} 
+TYPE_COLORS = {"Type1": "#2E9F6E", "Type2": "#2B72DB", "Type3": "#E34D93"}
 
 
 ########## Robustness vs Sigma overview ##########

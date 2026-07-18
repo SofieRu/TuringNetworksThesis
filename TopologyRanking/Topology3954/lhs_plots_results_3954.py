@@ -32,11 +32,9 @@ plt.rcParams.update({
     "axes.spines.right": False,
 })
 
-TYPE_COLORS = {
-    "Type1": 'lightseagreen',
-    "Type2": 'teal',
-    "Type3": 'mediumpurple',
-} 
+#TYPE_COLORS = {"Type1": 'lightseagreen', "Type2": 'teal', "Type3": 'mediumpurple',} 
+TYPE_COLORS = {"Type1": "#2E9F6E", "Type2": "#2B72DB", "Type3": "#E34D93"}
+
 
 def save(fig, name):
     for ext in ("png",):

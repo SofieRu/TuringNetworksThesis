@@ -18,8 +18,8 @@ import matplotlib.lines as mlines
 
 CSVS = {
     "#1754": "Topology1754/1754_FINAL_lhs_results_summary.csv",
-    "#1823": "Topology1823/1823_PREFINAL_lhs_results_summary.csv",
-    "#1838": "Topology1838/1838_PREFINAL_lhs_results_summary.csv",
+    "#1823": "Topology1823/1823_FINAL_lhs_results_summary.csv",
+    "#1838": "Topology1838/1838_FINAL_lhs_results_summary.csv",
     "#3954": "Topology3954/3954_FINAL_lhs_results_summary.csv",
 }
 
@@ -40,11 +40,12 @@ plt.rcParams.update({
     "axes.spines.right": False,
 })
 
-TYPE_COLORS = {"Type1": 'lightseagreen',"Type2": 'teal',"Type3": 'mediumpurple'} 
+
+#TYPE_COLORS = {"Type1": 'lightseagreen', "Type2": 'teal', "Type3": 'mediumpurple',} 
+TYPE_COLORS = {"Type1": "#2E9F6E", "Type2": "#2B72DB", "Type3": "#E34D93"}
 PATTERN_COLORS = {"Type I" : 'steelblue',"Type II" : 'mediumvioletred',"Hopf" : 'darkorange',"Turing Filter" : 'seagreen',}
 TOPO_MARKERS = {"#1754": "o", "#1823": "s", "#1838": "^", "#3954": "D",}
 
-topo_colors = {"#1754": "mediumorchid", "#3954": "cornflowerblue"}
 topo_order = ["#1754", "#3954"]
 
 def save(fig, name):
@@ -260,6 +261,7 @@ def fig_pseudo_phase_combined(df):
 
 
 
+
 # think about maybe comparing different parametres so not necessarily beta u, beta v and beta w
 def fig_3d_parameter_space_comparison():
     df_params = pd.read_csv(PARAMS_CSV)
@@ -349,8 +351,8 @@ def fig_3d_parameter_space_comparison():
 
 
 
-
 def fig_thesis_combined_robustness_analysis(df):
+    topo_colors = {"#1754": "#B167D1FF", "#3954": "#4CD4E9FF"}
 
     # Heatmap 1 data (Total Robustness)
     pivot_total = (df.groupby(["topology_id", "turing_type"])["rob_shaberi_total"].max().unstack("topology_id").reindex(index=["Type3", "Type2", "Type1"]))
@@ -396,7 +398,7 @@ def fig_thesis_combined_robustness_analysis(df):
     ax_box_tot.set_xlabel("Topology ID", fontsize=12.5)
     ax_box_tot.set_ylabel("Robustness Score (%)", fontsize=12.5)
 
-    handles_tot = [mpatches.Patch(color="mediumorchid"), mpatches.Patch(color="cornflowerblue"), line_median,line_mean,]
+    handles_tot = [mpatches.Patch(color="#B167D1FF"), mpatches.Patch(color="#4CD4E9FF"), line_median,line_mean,]
     
     labels_tot = [f"#1754 (Med: {med_tot_1754:.4f}%, Mean: {mean_tot_1754:.4f}%)", f"#3954 (Med: {med_tot_3954:.4f}%, Mean: {mean_tot_3954:.4f}%)", "Median", "Mean",]
     
@@ -415,7 +417,7 @@ def fig_thesis_combined_robustness_analysis(df):
     ax_box_t1.set_xlabel("Topology ID", fontsize=12.5)
     ax_box_t1.set_ylabel("Robustness Score (%)", fontsize=12.5)
 
-    handles_t1 = [mpatches.Patch(color="mediumorchid"), mpatches.Patch(color="cornflowerblue"), line_median, line_mean,]
+    handles_t1 = [mpatches.Patch(color="#B167D1FF"), mpatches.Patch(color="#4CD4E9FF"), line_median, line_mean,]
     labels_t1 = [f"#1754 (Med: {med_t1_1754:.4f}%, Mean: {mean_t1_1754:.4f}%)", f"#3954 (Med: {med_t1_3954:.4f}%, Mean: {mean_t1_3954:.4f}%)", "Median", "Mean",]
     ax_box_t1.legend(handles=handles_t1, labels=labels_t1, loc="upper left", fontsize=11, frameon=True)
 
@@ -435,11 +437,9 @@ def fig_thesis_combined_robustness_analysis(df):
 
 
 
-
-
-
 # LAB FOCUS
 def fig6_lab_configs_comparison(df):
+    topo_colors = {"#1754": "#9148C5", "#3954": "#17AAC1"}
     lab_suffixes = ["_WFreeze_Equal1","_WFreeze_Lab1","_WFreeze_Lab2","_WFreeze_Lab3","_WFreeze_Lab4","_WFreeze_Lab5","_WFreeze_Lab6",]
 
     def extract_suffix(config_name):
