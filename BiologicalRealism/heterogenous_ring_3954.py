@@ -5,7 +5,7 @@ import pandas as pd
 import pickle
 
 # have to run this first: module load SciPy-bundle/2024.05-gfbf-2024a
-
+# ORIGINAL VERSION WHERE I AM NOT SURE IF ITS OC
 # FUNCTIONS FROM OBJECTIVE 1 (HILL FUNCTIONS, ODE SYSTEM, STEADY STATE FINDING, JACOBIAN)
 
 n = 2
