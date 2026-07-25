@@ -28,9 +28,9 @@ import pandas as pd
 # ---------------------------------------------------------------------------
 
 N_HILL = 2
-CONFIG_TO_TEST = 21
-CONFIG_LABEL = "low"
-N_CELLS = 10
+CONFIG_TO_TEST = 49
+CONFIG_LABEL = "high"
+N_CELLS = 20
 N_TRIALS = 200
 SEED = 42
 CV_VALUES = [0.0, 0.05, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40]
