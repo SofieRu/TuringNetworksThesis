@@ -112,7 +112,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from heterogenous_ring_3954 import (compute_jacobian, find_steady_state, build_ring_jacobian_heterogeneous)
+from BiologicalRealism.heterogenous_ring_3954_OG import (compute_jacobian, find_steady_state, build_ring_jacobian_heterogeneous)
 
 CSV_PATH = '../TopologyRanking/Topology3954/3954_FINAL_lhs_results_parameters.csv'
 CONFIG_ID = 43

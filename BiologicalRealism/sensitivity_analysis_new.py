@@ -5,7 +5,7 @@ import pandas as pd
 from scipy.optimize import fsolve
 
 # CHANGE THIS BASED ON WHETHER WE ARE TESTING 3954 OR 1754 CONFIGS
-from heterogenous_ring_3954 import (
+from BiologicalRealism.heterogenous_ring_3954_OG import (
     CONFIG_TO_TEST,
     build_ring_jacobian_homogeneous,
     compute_jacobian,

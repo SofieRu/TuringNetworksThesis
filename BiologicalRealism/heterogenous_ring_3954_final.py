@@ -209,11 +209,11 @@ def build_ring_jacobian_heterogeneous(N_cells, baseline_params, hopping, CV):
         J_ring[idx:idx+3, idx:idx+3] += compute_jacobian(steady_states[i], params_list[i])
     
     x_star = np.concatenate(steady_states)
-    print("  ||(L⊗D)x*|| =", np.linalg.norm(Ldiff @ x_star),
-          "   ||x*|| =", np.linalg.norm(x_star))
+    # print("  ||(L⊗D)x*|| =", np.linalg.norm(Ldiff @ x_star),
+    #       "   ||x*|| =", np.linalg.norm(x_star))
     
-    print("full J_ring maxRe:", np.max(np.real(np.linalg.eigvals(J_ring))))
-    print("projected max:    ", np.max(disp))
+    # print("full J_ring maxRe:", np.max(np.real(np.linalg.eigvals(J_ring))))
+    # print("projected max:    ", np.max(disp))
     
     return J_ring, steady_states, params_list
 
@@ -227,7 +227,7 @@ if __name__ == "__main__":
     CONFIG_TO_TEST = 49 #maybe 21 or 3 
     CONFIG_LABEL = "high"   # "high" or "low" or "lab"
     n_trials = 1000
-    N_cells = 10
+    N_cells = 20
 
     df_file = pd.read_csv('../TopologyRanking/Topology3954/3954_FINAL_lhs_results_parameters.csv')
     df_params = df_file[df_file['classification'] == 'Type-I']

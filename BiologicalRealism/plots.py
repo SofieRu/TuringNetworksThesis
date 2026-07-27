@@ -6,7 +6,7 @@ from matplotlib.patches import Patch
 from scipy.optimize import fsolve
 import matplotlib.lines as mlines
 
-from heterogenous_ring_3954 import (
+from BiologicalRealism.heterogenous_ring_3954_OG import (
     hopping,
 )
 

@@ -12,7 +12,7 @@ TOPOLOGY = 1754
 # IMPORT THE RIGHT FUNCTIONS
 # ============================================================================
 if TOPOLOGY == 3954:
-    from heterogenous_ring_3954 import ode_system, compute_jacobian, find_steady_state
+    from BiologicalRealism.heterogenous_ring_3954_OG import ode_system, compute_jacobian, find_steady_state
     CSV_PATH = '../TopologyRanking/Topology3954/3954_NEWTURINGCLASS_lhs_results_parameters.csv'
 else:
     from heterogenous_ring_1754 import ode_system, compute_jacobian, find_steady_state

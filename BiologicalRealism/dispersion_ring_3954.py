@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.lines as mlines
-from heterogenous_ring_3954 import compute_jacobian, find_steady_state, build_ring_jacobian_heterogeneous
+from BiologicalRealism.heterogenous_ring_3954_OG import compute_jacobian, find_steady_state, build_ring_jacobian_heterogeneous
 
 # have to run this first: module load matplotlib/3.9.2-gfbf-2024a
 # have to run this first: module load SciPy-bundle/2024.05-gfbf-2024a
