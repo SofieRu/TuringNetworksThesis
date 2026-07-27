@@ -1,37 +1,24 @@
 #!/usr/bin/env python3
 """
-Heterogeneous ring of Topology-1754 cells: robustness of the Turing instability
+Heterogeneous ring of Topology-3954 cells: robustness of the Turing instability
 to parameter noise.
 
-TOPOLOGY 1754 vs 3954: node u does NOT self-activate.
-  3954:  du = alpha_u + beta_u * H_act(u,K_uu) * H_inh(v,K_vu) - delta_u*u   (16 params)
-  1754:  du = alpha_u + beta_u *                 H_inh(v,K_vu) - delta_u*u   (15 params)
+TOPOLOGY 3954: node u DOES self-activate (16 params).  1754 = same file with the
+u self-activation removed (15 params).
 
-TWO FIXES RELATIVE TO THE FROZEN-COEFFICIENT / FOURIER VERSION
---------------------------------------------------------------
-1. COUPLED STEADY STATE. Each trial solves the FULL coupled ring steady state
-   (Newton on all 3N equations, seeded at the homogeneous baseline) and
-   linearises there. The old "isolated fixed point" linearisation was invalid
-   for strong diffusion (h_w=2.0): the isolated points miss the coupled balance
-   by ||L x*||/||x*|| ~ 2, vs ~1e-15 for the coupled solve.
-
-2. PROJECTION-FREE TURING TEST. Strong heterogeneity mixes the Fourier modes,
-   so the per-mode dispersion is unreliable here (projection error can reach
-   >10). We therefore classify with the EXACT diffusion-driven-instability test,
-   which needs no wavenumber decomposition:
-
-       Condition A (reaction stability):  every cell's local Jacobian is stable
-           reaction_max = max_i  maxRe( J_i(X_i*) )  <  0
-           (= the ring Jacobian with diffusion switched off; block-diagonal)
-
-       Condition B (diffusion drives it): the full ring is unstable
-           full_max = maxRe( J_ring )  >  0
-
+METHOD
+------
+1. COUPLED STEADY STATE via HOMOTOPY CONTINUATION. Start from the exact
+   homogeneous base state (CV=0) and ramp the per-cell noise up in small steps
+   (params_i(s) = baseline * noise_i**s, s: 0 -> 1), refining with Newton at each
+   step. This tracks the near-uniform branch and is robust to the bistability
+   that u self-activation creates (a plain line-search solve stalls there and
+   reports spurious 'no base state' discards). A discard now means the branch
+   genuinely folds away, not solver failure.
+2. PROJECTION-FREE TURING TEST (exact for heterogeneous rings):
+       Condition A (reaction stability): reaction_max = max_i maxRe(J_i(X_i*)) < 0
+       Condition B (diffusion-driven):   full_max     = maxRe(J_ring)          > 0
        Turing  <=>  reaction_max < 0  AND  full_max > 0
-
-   This is exact for heterogeneous rings and reduces to the standard dispersion
-   result for the homogeneous case. The Fourier m=0/band values are still
-   reported as a secondary diagnostic, but the verdict uses the exact test.
 
 # have to run this first: module load SciPy-bundle/2024.05-gfbf-2024a
 """
@@ -42,7 +29,7 @@ import pandas as pd
 import pickle
 
 # ======================================================================
-# REACTION KINETICS  --  TOPOLOGY 1754 (u has no self-activation)
+# REACTION KINETICS  --  TOPOLOGY 3954 (u self-activates)
 # ======================================================================
 
 n = 2
@@ -64,11 +51,9 @@ def ode_system(state, params):
     alpha_u, beta_u, K_uu, K_vu, delta_u = params[0:5]
     alpha_v, beta_v, K_uv, K_wv, delta_v = params[5:10]
     alpha_w, beta_w, K_ww, K_uw, K_vw, delta_w = params[10:16]
-    
     du = alpha_u + beta_u * hill_activation(u, K_uu) * hill_inhibition(v, K_vu) - delta_u * u
     dv = alpha_v + beta_v * hill_activation(u, K_uv) * hill_inhibition(w, K_wv) - delta_v * v
     dw = alpha_w + beta_w * hill_activation(w, K_ww) * hill_inhibition(u, K_uw) * hill_inhibition(v, K_vw) - delta_w * w
-    
     return [du, dv, dw]
 
 def find_steady_state(params, n_attempts=100, guess=None):
@@ -88,20 +73,19 @@ def compute_jacobian(state, params):
     alpha_u, beta_u, K_uu, K_vu, delta_u = params[0:5]
     alpha_v, beta_v, K_uv, K_wv, delta_v = params[5:10]
     alpha_w, beta_w, K_ww, K_uw, K_vw, delta_w = params[10:16]
-    
     J = np.zeros((3, 3))
+    # --- row u: 3954 KEEPS self-activation (differs from 1754) ---
     J[0, 0] = beta_u * dH_act(u, K_uu) * hill_inhibition(v, K_vu) - delta_u
     J[0, 1] = beta_u * hill_activation(u, K_uu) * dH_inh(v, K_vu)
     J[0, 2] = 0
+    # --- rows v, w: identical to 1754 ---
     J[1, 0] = beta_v * dH_act(u, K_uv) * hill_inhibition(w, K_wv)
     J[1, 1] = -delta_v
     J[1, 2] = beta_v * hill_activation(u, K_uv) * dH_inh(w, K_wv)
     J[2, 0] = beta_w * hill_activation(w, K_ww) * dH_inh(u, K_uw) * hill_inhibition(v, K_vw)
     J[2, 1] = beta_w * hill_activation(w, K_ww) * hill_inhibition(u, K_uw) * dH_inh(v, K_vw)
     J[2, 2] = beta_w * dH_act(w, K_ww) * hill_inhibition(u, K_uw) * hill_inhibition(v, K_vw) - delta_w
-    
     return J
-
 
 # ======================================================================
 # CONTINUOUS single-cell dispersion classification (sanity only)
@@ -165,7 +149,7 @@ def k_eff(N):
     return 2 * np.sin(np.pi * np.arange(N // 2 + 1) / N)
 
 # ======================================================================
-# COUPLED RING STEADY STATE + EXACT TURING TEST
+# COUPLED RING STEADY STATE (homotopy) + EXACT TURING TEST
 # ======================================================================
 
 def ring_rhs(X, params_list, Ldiff, N_cells):
@@ -181,26 +165,44 @@ def full_ring_jacobian(X, params_list, Ldiff, N_cells):
     return J
 
 def reaction_max_re(X, params_list, N_cells):
-    """maxRe over the block-diagonal (diffusion off): the largest local growth
-    rate over all cells. Condition A requires this < 0."""
+    """maxRe over the block-diagonal (diffusion off). Condition A wants this < 0."""
     return max(np.max(np.real(np.linalg.eigvals(compute_jacobian(X[3*i:3*i+3], params_list[i]))))
                for i in range(N_cells))
 
-def solve_ring_steady_state(params_list, Ldiff, N_cells, x0, max_iter=100):
-    X = np.array(x0, dtype=float)
-    for _ in range(max_iter):
+def _newton(X, params_list, Ldiff, N_cells, it=40):
+    X = np.array(X, dtype=float)
+    for _ in range(it):
         F = ring_rhs(X, params_list, Ldiff, N_cells)
-        J = full_ring_jacobian(X, params_list, Ldiff, N_cells)
+        if np.linalg.norm(F) < 1e-11:
+            break
         try:
-            dX = np.linalg.solve(J, -F)
+            dX = np.linalg.solve(full_ring_jacobian(X, params_list, Ldiff, N_cells), -F)
         except np.linalg.LinAlgError:
             return None
         X = X + dX
-        if np.max(np.abs(dX)) < 1e-11:
-            break
     if np.max(np.abs(ring_rhs(X, params_list, Ldiff, N_cells))) < 1e-7 and np.all(X > 0):
         return X
     return None
+
+def solve_ring_steady_state(baseline_params, noise_list, Ldiff, N_cells, baseline_ss):
+    """Adaptive homotopy: params_i(s) = baseline * noise_i**s, s from 0 to 1,
+    seeded at the exact homogeneous base state. Step halves on failure and grows
+    back on success. Returns the coupled steady state, or None if the near-uniform
+    branch genuinely folds away."""
+    X = np.tile(baseline_ss, N_cells).astype(float)
+    s, ds = 0.0, 1.0 / 8
+    while s < 1.0 - 1e-9:
+        s_try = min(s + ds, 1.0)
+        params_s = [baseline_params * (nz ** s_try) for nz in noise_list]
+        Xn = _newton(X, params_s, Ldiff, N_cells)
+        if Xn is None:
+            ds *= 0.5
+            if ds < 1e-4:
+                return None                 # genuine fold: base state lost
+            continue
+        X, s = Xn, s_try
+        ds = min(ds * 1.5, 1.0 / 8)
+    return X
 
 def build_ring_jacobian_homogeneous(N_cells, steady_state, params, hopping):
     J_local = compute_jacobian(steady_state, params)
@@ -210,19 +212,17 @@ def build_ring_jacobian_homogeneous(N_cells, steady_state, params, hopping):
     return J_ring
 
 def build_ring_jacobian_heterogeneous(N_cells, baseline_params, hopping, CV, baseline_ss):
-    """Draw noisy per-cell params, solve the coupled ring steady state, and
-    return everything needed for the exact Turing test.
-
-    Returns (J_ring, X, params_list, ring_resid) or
-    (None, 'no_coupled_ss', None, None)."""
+    """Draw per-cell noise, solve the coupled ring steady state by homotopy, and
+    return (J_ring, X, params_list, ring_resid) or (None,'no_coupled_ss',None,None)."""
     sigma = np.sqrt(np.log(1 + CV**2))
     mu = -sigma**2 / 2
-    params_list = [baseline_params * np.random.lognormal(mu, sigma, size=len(baseline_params))
-                   for _ in range(N_cells)]
+    noise_list = [np.random.lognormal(mu, sigma, size=len(baseline_params))
+                  for _ in range(N_cells)]
     Ldiff = build_diffusion_operator(N_cells, hopping)
-    X = solve_ring_steady_state(params_list, Ldiff, N_cells, np.tile(baseline_ss, N_cells))
+    X = solve_ring_steady_state(baseline_params, noise_list, Ldiff, N_cells, baseline_ss)
     if X is None:
         return None, "no_coupled_ss", None, None
+    params_list = [baseline_params * nz for nz in noise_list]
     J_ring = full_ring_jacobian(X, params_list, Ldiff, N_cells)
     ring_resid = np.max(np.abs(ring_rhs(X, params_list, Ldiff, N_cells)))
     return J_ring, X, params_list, ring_resid
@@ -244,16 +244,15 @@ if __name__ == "__main__":
                     (df_params['param_rank'] == 1)].iloc[0]
 
     baseline_params = np.array([
-        row['alpha_u'], row['beta_u'], row['K_uu'], row['K_vu'], row['delta_u'],
-        row['alpha_v'], row['beta_v'], row['K_uv'], row['K_wv'], row['delta_v'],
-        row['alpha_w'], row['beta_w'], row['K_ww'], row['K_uw'], row['K_vw'], row['delta_w']
-    ])
+        row['alpha_u'], row['beta_u'], row['K_uu'], row['K_vu'], row['delta_u'],   # u: 5 (incl K_uu)
+        row['alpha_v'], row['beta_v'], row['K_uv'], row['K_wv'], row['delta_v'],   # v: 5
+        row['alpha_w'], row['beta_w'], row['K_ww'], row['K_uw'], row['K_vw'], row['delta_w']  # w: 6
+    ])                                                                             # total: 16
     steady_state_expected = np.array([row['u_star'], row['v_star'], row['w_star']])
     hopping = {'h_u': row['dU'], 'h_v': row['dV'], 'h_w': row['dW']}
 
     PROJECTORS = fourier_projectors(N_cells)
 
-    # ---- baseline sanity (exact test on the homogeneous ring) ----
     J = compute_jacobian(steady_state_expected, baseline_params)
     turing = is_turing_shaberi(J, np.linalg.eigvals(J),
                                hopping['h_u'], hopping['h_v'], hopping['h_w'])
@@ -261,16 +260,15 @@ if __name__ == "__main__":
                                               baseline_params, hopping)
     react0 = np.max(np.real(np.linalg.eigvals(J)))
     full0  = np.max(np.real(np.linalg.eigvals(J_ring0)))
-    disp0  = projected_dispersion(J_ring0, PROJECTORS)
 
     print("=" * 70)
     print(f"Continuous single-cell classification: {turing}")
+    print(f"Baseline steady state (u*,v*,w*): {np.round(steady_state_expected, 4)} "
+          f"(tiny components => real base-state loss expected under noise)")
     print(f"Discrete N={N_cells} baseline (EXACT): reaction_max {react0:+.4f} (<0?), "
           f"full_max {full0:+.4f} (>0?), Turing={react0 < 0 and full0 > 0}")
-    print(f"  (Fourier reference: m=0 {disp0[0]:+.4f}, band {np.max(disp0[1:]):+.4f})")
     print("=" * 70)
 
-    # ---- CV sweep ----
     np.random.seed(42)
     results_by_cv = []
 
@@ -296,17 +294,14 @@ if __name__ == "__main__":
             full_vals.append(full_max)
             react_vals.append(react_max)
             resids.append(rres)
-            # secondary Fourier diagnostic (unreliable when proj_err large)
             disp = projected_dispersion(J_ring, PROJECTORS)
             proj_err.append(full_max - np.max(disp))
 
-            # EXACT two-condition Turing test
-            is_turing = (react_max < 0) and (full_max > 0)
-            if is_turing:
+            if (react_max < 0) and (full_max > 0):
                 turing_count += 1
-            if react_max >= 0:                 # a cell is locally unstable -> reaction instability
+            if react_max >= 0:
                 fail_reaction += 1
-            if full_max <= 0:                  # ring fully stable -> no instability at all
+            if full_max <= 0:
                 fail_stable += 1
 
         n_valid = n_trials - discarded
@@ -328,16 +323,14 @@ if __name__ == "__main__":
         })
 
         print(f"CV={CV:<5} valid={n_valid}/{n_trials}  discarded={discarded} "
-              f"({100*discarded/n_trials:.1f}%, no coupled base state)")
+              f"({100*discarded/n_trials:.1f}%, base-state fold)")
         if n_valid > 0:
             print(f"    reaction_max mean {np.mean(react_vals):+.5f} (want <0) | "
                   f"full_max mean {np.mean(full_vals):+.5f} (want >0)")
             print(f"    Turing {rob_cond:.1f}% (cond) / {rob_marg:.1f}% (marg) | "
                   f"reaction-unstable={fail_reaction} fully-stable={fail_stable}")
-            print(f"    max ring residual={np.max(resids):.2e}  "
-                  f"(Fourier proj err={np.max(np.abs(proj_err)):.3f}, ignore if large)")
+            print(f"    max ring residual={np.max(resids):.2e}")
 
-    # ---- summary ----
     print("\n" + "=" * 96)
     print(f"{'CV':<6}{'react_max':<12}{'full_max':<12}{'valid':<8}{'disc%':<8}"
           f"{'reactUns':<10}{'fullStab':<10}{'robust(cond)':<14}{'robust(marg)'}")
