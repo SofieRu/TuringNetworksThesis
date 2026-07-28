@@ -5,8 +5,18 @@ import pandas as pd
 from scipy.optimize import fsolve
 
 # CHANGE THIS BASED ON WHETHER WE ARE TESTING 3954 OR 1754 CONFIGS
-from BiologicalRealism.heterogenous_ring_3954_OG import (
-    CONFIG_TO_TEST,
+# from BiologicalRealism.heterogenous_ring_3954_OG import (
+#     CONFIG_TO_TEST,
+#     build_ring_jacobian_homogeneous,
+#     compute_jacobian,
+#     steady_state_expected,
+#     baseline_params,
+#     hopping,
+#     ode_system,
+#     df_params
+# )
+
+from heterogenous_ring_1754_earlyversion import (
     build_ring_jacobian_homogeneous,
     compute_jacobian,
     steady_state_expected,
@@ -15,16 +25,6 @@ from BiologicalRealism.heterogenous_ring_3954_OG import (
     ode_system,
     df_params
 )
-
-# from heterogenous_ring_3954 import (
-#     CONFIG_TO_TEST,
-#     build_ring_jacobian_homogeneous,
-#     compute_jacobian,
-#     steady_state_expected,
-#     baseline_params,
-#     hopping,
-#     ode_system,
-# )
 
 # have to run this first: module load SciPy-bundle/2024.05-gfbf-2024a
 # have to run this first: module load matplotlib/3.9.2-gfbf-2024a
@@ -35,6 +35,7 @@ from BiologicalRealism.heterogenous_ring_3954_OG import (
 # Uses continuation-based steady-state finding to avoid bistability artifacts
 # ============================================================================
 
+CONFIG_TO_TEST = 18
 PERTURBATION = 0.10  # ±10% perturbation per parameter
 LOCAL_TOLERANCE = 0.5  # accept steady states within 50% of baseline (per component), sanity check might adjust later to 0.3 and 0.7?!!
 
@@ -44,7 +45,7 @@ N_cells = 10 # for sanity check run with N = 5, 10 and 20
 PARAM_LABELS = {
     'alpha_u': 'u basal production',
     'beta_u': 'u regulated production',
-    'K_uu': 'u self-activation', # comment or uncomment based on whether we are testing 3954 or 1754 configs
+    #'K_uu': 'u self-activation', # comment or uncomment based on whether we are testing 3954 or 1754 configs
     'K_vu': 'v to u inhibition',
     'delta_u': 'u degradation',
     'alpha_v': 'v basal production',
@@ -61,8 +62,8 @@ PARAM_LABELS = {
 }
 
 # CHANGE THIS BASED ON WHETHER WE ARE TESTING 3954 OR 1754 CONFIGS
-PARAM_NAMES = ['alpha_u', 'beta_u', 'K_uu', 'K_vu', 'delta_u','alpha_v', 'beta_v', 'K_uv', 'K_wv', 'delta_v','alpha_w', 'beta_w', 'K_ww', 'K_uw', 'K_vw', 'delta_w']
-#PARAM_NAMES = ['alpha_u', 'beta_u', 'K_vu', 'delta_u','alpha_v', 'beta_v', 'K_uv', 'K_wv', 'delta_v','alpha_w', 'beta_w', 'K_ww', 'K_uw', 'K_vw', 'delta_w']
+# PARAM_NAMES = ['alpha_u', 'beta_u', 'K_uu', 'K_vu', 'delta_u','alpha_v', 'beta_v', 'K_uv', 'K_wv', 'delta_v','alpha_w', 'beta_w', 'K_ww', 'K_uw', 'K_vw', 'delta_w']
+PARAM_NAMES = ['alpha_u', 'beta_u', 'K_vu', 'delta_u','alpha_v', 'beta_v', 'K_uv', 'K_wv', 'delta_v','alpha_w', 'beta_w', 'K_ww', 'K_uw', 'K_vw', 'delta_w']
 
 
 def find_steady_state_local(params, baseline_ss, tol=LOCAL_TOLERANCE):
@@ -88,15 +89,9 @@ def find_steady_state_local(params, baseline_ss, tol=LOCAL_TOLERANCE):
     
     return ss
 
-
 # ============================================================================
 # Load config info dynamically
 # ============================================================================
-
-# CHANGE HERE BASED ON WHETHER WE WANT TO TEST 3954 OR 1754 CONFIGS
-# df_params = pd.read_csv('../TopologyRanking/Topology3954/3954_NEW_lhs_results_parameters.csv')
-# df_params = pd.read_csv('../TopologyRanking/Topology3954/3954_NEW_lhs_results_parameters.csv')
-# df_params = pd.read_csv('../TopologyRanking/Topology3954/3954_PREFINAL_lhs_results_parameters.csv')
 
 config_data = df_params[(df_params['config_id'] == CONFIG_TO_TEST) & (df_params['param_rank'] == 1)].iloc[0]
 config_name = config_data['config_name']
@@ -252,9 +247,8 @@ sensitivity_data = {
 }
 
 # CHANGE THIS BASED ON WHETHER WE WANT TO TEST 3954 OR 1754 CONFIGS
-output_file = f'3954_sensitivity_results_config{CONFIG_TO_TEST}_N{N_cells}.pkl'
-# output_file = f'1754_sensitivity_results_config{CONFIG_TO_TEST}_N{N_cells}.pkl'
-
+# output_file = f'3954_sensitivity_results_COPY_config{CONFIG_TO_TEST}_N{N_cells}.pkl'
+output_file = f'1754_sensitivity_results_COPY_config{CONFIG_TO_TEST}_N{N_cells}.pkl'
 
 with open(output_file, 'wb') as f:
     pickle.dump(sensitivity_data, f)

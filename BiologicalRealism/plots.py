@@ -11,14 +11,12 @@ from matplotlib.patches import Patch
 # have to run this first: module load SciPy-bundle/2024.05-gfbf-2024a
 # have to run this first: pip install seaborn --user
 
-
 plt.rcParams.update({
-    'font.size': 10, 'axes.titlesize': 11, 'axes.labelsize': 10.5,
-    'xtick.labelsize': 9, 'ytick.labelsize': 9, 'legend.fontsize': 8,
+    'font.size': 12, 'axes.titlesize': 12, 'axes.labelsize': 10.5,
+    'xtick.labelsize': 10, 'ytick.labelsize': 10, 'legend.fontsize': 10,
     'axes.spines.top': False, 'axes.spines.right': False, 'figure.dpi': 110,
 })
 
-# ---------------------------------------------------------------- configuration
 GRID = [('1754', 'robust'), ('1754', 'fragile'),
         ('3954', 'robust'), ('3954', 'fragile')]
 
@@ -33,10 +31,10 @@ CV_FILES = {
 }
 
 SENS_FILES = {
-    ('1754', 'robust'):  ('pastconfigs/1754_sensitivity_results_config43_N10.pkl', 43),
-    ('1754', 'fragile'): ('pastconfigs/1754_sensitivity_results_config14_N10.pkl', 14),
-    ('3954', 'robust'):  ('pastconfigs/3954_sensitivity_results_config43_N10.pkl', 43),
-    ('3954', 'fragile'): ('pastconfigs/3954_sensitivity_results_config17_N10.pkl', 17),
+    ('1754', 'robust'):  ('1754_sensitivity_results_COPY_config49_N10.pkl', 43),
+    ('1754', 'fragile'): ('1754_sensitivity_results_COPY_config18_N10.pkl', 14),
+    ('3954', 'robust'):  ('3954_sensitivity_results_COPY_config49_N10.pkl', 43),
+    ('3954', 'fragile'): ('3954_sensitivity_results_COPY_config21_N10.pkl', 17),
 }
 
 N_SIZES = [10, 20, 30]
@@ -52,7 +50,6 @@ PARAM_LABELS = {
     'K_uw': 'u-w inhibition', 'K_vw': 'v-w inhibition', 'delta_w': 'w degradation',
 }
 
-# ---------------------------------------------------------------- helpers
 def load_pkl(path):
     if not os.path.exists(path):
         return None
@@ -76,7 +73,6 @@ def extract(cv):
 def panel_title(ax, letter, text):
     ax.set_title(f'({letter}) {text}', loc='left', fontsize=11, pad=8)
 
-# ---------------------------------------------------------------- load N=10 data
 data10 = {}
 for k in GRID:
     d = load_pkl(CV_FILES[k].format(N=10))
@@ -85,10 +81,10 @@ for k in GRID:
 
 def desc(key):
     cid = data10[key]['config_id'] if key in data10 else '?'
-    return f"{key[0]} — {key[1]} (ID {cid})"
+    return f"{key[0]} {key[1]} (ID {cid})"
 
-# ================================================================ FIG 1: boxplot
-fig, axes = plt.subplots(2, 2, figsize=(13, 8.5), sharex=True)
+# FIG 1: boxplot
+fig, axes = plt.subplots(2, 2, figsize=(14, 8), sharex=True)
 for i, (ax, key) in enumerate(zip(axes.flat, GRID)):
     if key not in data10:
         ax.set_visible(False); continue
@@ -117,8 +113,8 @@ fig.tight_layout(rect=[0, 0.02, 1, 0.98])
 fig.savefig('cv_boxplot_2x2.png', dpi=300, bbox_inches='tight')
 plt.close(fig); print("Saved: cv_boxplot_2x2.png")
 
-# ================================================================ FIG 2: min-max
-fig, axes = plt.subplots(2, 2, figsize=(13, 8.5), sharex=True)
+# FIG 2: min-max
+fig, axes = plt.subplots(2, 2, figsize=(14, 8), sharex=True)
 for i, (ax, key) in enumerate(zip(axes.flat, GRID)):
     if key not in data10:
         ax.set_visible(False); continue
@@ -142,7 +138,9 @@ fig.tight_layout(rect=[0, 0, 1, 0.98])
 fig.savefig('cv_minmax_2x2.png', dpi=300, bbox_inches='tight')
 plt.close(fig); print("Saved: cv_minmax_2x2.png")
 
-# ================================================================ FIG 3: sensitivity 2x2
+
+
+# FIG 3: sensitivity 2x2
 def sensitivity_on_ax(ax, sens, letter, title_text):
     names = list(sens['param_names'])
     s = np.array(sens['sensitivities'], float)
@@ -151,15 +149,19 @@ def sensitivity_on_ax(ax, sens, letter, title_text):
     order = np.concatenate([clean[np.argsort(s[clean])[::-1]], nans])
     labels = [PARAM_LABELS.get(names[i], names[i]) for i in order]
     vals = s[order]; is_nan = np.isnan(vals)
+    
     bars = ax.bar(range(len(labels)), np.where(is_nan, 1e-4, vals),
                   color='steelblue', alpha=0.9)
+    
     n_clean = int((~is_nan).sum())
-    for j in range(min(3, n_clean)):
-        bars[j].set_color('mediumvioletred')
-    for j in range(max(0, n_clean - 3), n_clean):
-        bars[j].set_color('silver')
-    for j in range(n_clean, len(labels)):
-        bars[j].set_color('lightgray'); bars[j].set_hatch('///'); bars[j].set_alpha(0.6)
+    
+    # 2-TONE COLOR SCHEME: Top 3 are pink (stiff), everything else is blue (sloppy)
+    for j in range(len(labels)):
+        if j < min(3, n_clean):
+            bars[j].set_color('mediumvioletred')
+        else:
+            bars[j].set_color('steelblue')
+            
     ax.set_yscale('log'); ax.set_ylim(bottom=1e-4)
     ax.set_xticks(range(len(labels)))
     ax.set_xticklabels(labels, rotation=45, ha='right', fontsize=8)
@@ -167,24 +169,81 @@ def sensitivity_on_ax(ax, sens, letter, title_text):
     panel_title(ax, letter, title_text)
 
 sens_data = {k: load_pkl(p) for k, (p, _id) in SENS_FILES.items()}
-fig, axes = plt.subplots(2, 2, figsize=(15, 11))
+fig, axes = plt.subplots(2, 2, figsize=(14, 11))
 for i, (ax, key) in enumerate(zip(axes.flat, GRID)):
     sd = sens_data.get(key)
     if sd is None:
         ax.set_visible(False); continue
-    sensitivity_on_ax(ax, sd, LETTERS[i], f"{key[0]} — {key[1]} (ID {SENS_FILES[key][1]})")
+    sensitivity_on_ax(ax, sd, LETTERS[i], f"{key[0]} {key[1]} (ID {SENS_FILES[key][1]})")
 for ax in axes[:, 0]:
     ax.set_ylabel('|Δ growth rate| per 10% parameter change (log)')
+
+# COMBINED LEGEND FOR LOG VERSION
 fig.legend(handles=[
     Patch(facecolor='mediumvioletred', alpha=0.9, label='stiff (critical)'),
-    Patch(facecolor='steelblue', alpha=0.9, label='moderate'),
-    Patch(facecolor='silver', alpha=0.9, label='sloppy (tolerant)'),
-    Patch(facecolor='lightgray', alpha=0.6, hatch='///', label='bifurcation crossing'),
-], loc='lower center', ncol=4, frameon=False, bbox_to_anchor=(0.5, -0.01))
+    Patch(facecolor='steelblue', alpha=0.9, label='sloppy (tolerant)'),
+], loc='lower center', ncol=2, frameon=False, bbox_to_anchor=(0.5, -0.01))
+
 fig.suptitle('Parameter sensitivity of the Turing growth rate (N = 10)', fontsize=13, y=0.99)
 fig.tight_layout(rect=[0, 0.04, 1, 0.98])
-fig.savefig('sensitivity_2x2.png', dpi=300, bbox_inches='tight')
-plt.close(fig); print("Saved: sensitivity_2x2.png")
+fig.savefig('sensitivity_2x2_COPYYY.png', dpi=300, bbox_inches='tight')
+plt.close(fig); print("Saved: sensitivity_2x2_COPYYY.png")
+
+
+
+
+# FIG 3: sensitivity 2x2
+def sensitivity_no_log(ax, sens, letter, title_text):
+    names = list(sens['param_names'])
+    s = np.array(sens['sensitivities'], float)
+    nan_mask = np.isnan(s)
+    clean = np.where(~nan_mask)[0]; nans = np.where(nan_mask)[0]
+    order = np.concatenate([clean[np.argsort(s[clean])[::-1]], nans])
+    labels = [PARAM_LABELS.get(names[i], names[i]) for i in order]
+    vals = s[order]; is_nan = np.isnan(vals)
+    
+    bars = ax.bar(range(len(labels)), np.where(is_nan, 0.0, vals),
+                  color='steelblue', alpha=0.9)
+                  
+    n_clean = int((~is_nan).sum())
+    
+    # 2-TONE COLOR SCHEME: Top 3 are pink (stiff), everything else is blue (sloppy)
+    for j in range(len(labels)):
+        if j < min(3, n_clean):
+            bars[j].set_color('mediumvioletred')
+        else:
+            bars[j].set_color('steelblue')
+        
+    ax.set_ylim(bottom=0) 
+    ax.ticklabel_format(axis='y', style='plain', useOffset=False)
+    
+    ax.set_xticks(range(len(labels)))
+    ax.set_xticklabels(labels, rotation=45, ha='right', fontsize=8)
+    ax.grid(True, alpha=0.3, axis='y', which='major')
+    panel_title(ax, letter, title_text)
+
+sens_data = {k: load_pkl(p) for k, (p, _id) in SENS_FILES.items()}
+fig, axes = plt.subplots(2, 2, figsize=(14, 9))
+for i, (ax, key) in enumerate(zip(axes.flat, GRID)):
+    sd = sens_data.get(key)
+    if sd is None:
+        ax.set_visible(False); continue
+    sensitivity_no_log(ax, sd, LETTERS[i], f"{key[0]} {key[1]} (ID {SENS_FILES[key][1]})")
+for ax in axes[:, 0]:
+    ax.set_ylabel('|Δ growth rate| per 10% parameter change') 
+    
+# COMBINED LEGEND FOR LINEAR VERSION
+fig.legend(handles=[
+    Patch(facecolor='mediumvioletred', alpha=0.9, label='stiff (critical)'),
+    Patch(facecolor='steelblue', alpha=0.9, label='sloppy (tolerant)'),
+], loc='lower center', ncol=2, frameon=False, bbox_to_anchor=(0.5, -0.01))
+
+fig.suptitle('Parameter sensitivity of the Turing growth rate (N = 10)', fontsize=15, y=0.99)
+fig.tight_layout(rect=[0, 0.04, 1, 0.98])
+fig.savefig('sensitivity_2x2_REAL_NOLOG.png', dpi=300, bbox_inches='tight')
+plt.close(fig); print("Saved: sensitivity_2x2_REAL_NOLOG.png")
+
+
 
 # ================================================================ FIG 4: robustness vs CV, N sweep
 robust_data = {}

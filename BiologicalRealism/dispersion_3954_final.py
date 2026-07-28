@@ -10,7 +10,6 @@ import matplotlib.lines as mlines
 #     fourier_projected_dispersion,
 #     is_turing_ring)
 
-
 from heterogenous_ring_3954_earlyversion import (
     compute_jacobian, find_steady_state,
     build_ring_jacobian_heterogeneous,
@@ -40,12 +39,11 @@ type_i = df[df['classification'] == 'Type-I']
 def compute_heterogeneous_dispersion(baseline_params, hopping, N, CV):
     """Projected dispersion of one noisy ring, or None if a cell has no
     positive isolated steady state."""
-    J_ring, steady_states, params_list = build_ring_jacobian_heterogeneous(
-        N, baseline_params, hopping, CV)
+    #J_ring, steady_states, params_list = build_ring_jacobian_heterogeneous(N, baseline_params, hopping, CV)
+    J_ring, steady_states, params_list, _ = build_ring_jacobian_heterogeneous(N, baseline_params, hopping, CV)
     if J_ring is None:                          # (None, reason, None) on failure
         return None
     return projected_dispersion(J_ring, PROJECTORS)
-
 
 # ======================================================================
 # PLOTTING
@@ -53,7 +51,7 @@ def compute_heterogeneous_dispersion(baseline_params, hopping, N, CV):
 
 noisy_cvs = [0.1, 0.2, 0.3, 0.4]
 panel_colors = ['steelblue', 'deeppink', 'darkorange', 'forestgreen']
-fig_multi, axes_multi = plt.subplots(2, 4, figsize=(18, 8.5), sharex=True, sharey='row')
+fig_multi, axes_multi = plt.subplots(2, 4, figsize=(14, 7), sharex=True, sharey='row')
 
 for row_idx, config_id in enumerate(CONFIG_IDS):
 
@@ -104,12 +102,14 @@ for row_idx, config_id in enumerate(CONFIG_IDS):
 
         # colour noisy trials by whether they are still a proper Turing instability
         for i, (disp, is_t) in enumerate(zip(curves, flags)):
-            c = color if is_t else '0.6'
+            c = color
             ax.plot(K_DISCRETE, disp, 'o-', color=c, linewidth=1.2,
                     markersize=5, alpha=0.4, zorder=3)
 
         ax.axhline(0, color='red', linestyle=':', linewidth=1.5, alpha=0.7)
-        ax.set_xticks(K_DISCRETE)
+
+        chosen_indices = [0, 1, 2, 3, 4, 5, 6, 7, 10] 
+        filtered_ticks = [K_DISCRETE[i] for i in chosen_indices]
         ax.grid(alpha=0.3, linestyle='--')
 
         n_turing = int(np.sum(flags))
@@ -117,23 +117,24 @@ for row_idx, config_id in enumerate(CONFIG_IDS):
             ax.set_title(f'CV = {CV:.2f}', fontsize=12)
         if row_idx == 1:
             labels = [f'$k_{{{m}}}$={k:.2f}' for m, k in zip(M_VALUES, K_DISCRETE)]
-            ax.set_xticks(K_DISCRETE)
-            ax.set_xticklabels(labels, rotation=30, ha='right', fontsize=9)
-            ax.set_xlabel('Wavenumber $k_m$', fontsize=11)
+
+            # Filter labels using the exact same indices
+            filtered_labels = [labels[i] for i in chosen_indices]
+            ax.set_xticks(filtered_ticks)
+            ax.set_xticklabels(filtered_labels, rotation=40, ha='right', fontsize=10)
+            ax.set_xlabel("Wavenumber $k_m$", fontsize=12)
 
     row_axes[0].set_ylabel(f'Config {config_id}\nMax Re(λ)', fontsize=12)
 
 fig_multi.subplots_adjust(left=0.09, right=0.96, top=0.85, bottom=0.18, wspace=0.04, hspace=0.06)
 fig_multi.suptitle(
     f'Topology 3954 Heterogeneous Ring Dispersion (Fourier-projected, N={N_RING} cells)\n'
-    f'Rows track Config {CONFIG_IDS[0]} vs Config {CONFIG_IDS[1]}  '
-    f'(coloured = proper Turing, grey = lost Turing)',
+    f'Robust Config {CONFIG_IDS[0]} vs Fragile Config {CONFIG_IDS[1]} ',
     fontsize=14, y=0.97)
 
 legend_handles = [
     mlines.Line2D([], [], color='black', linewidth=2, marker='o', linestyle='-', label='Baseline (CV=0.0)'),
-    mlines.Line2D([], [], color='deeppink', linewidth=1.2, marker='o', linestyle='-', alpha=0.6, label='Noisy trial (Turing)'),
-    mlines.Line2D([], [], color='0.6', linewidth=1.2, marker='o', linestyle='-', alpha=0.6, label='Noisy trial (not Turing)'),
+    # mlines.Line2D([], [], color='deeppink', linewidth=1.2, marker='o', linestyle='-', alpha=0.6, label='Noisy trial (Turing)'),
     mlines.Line2D([], [], color='red', linewidth=1.5, linestyle=':', label='Turing Threshold'),
 ]
 fig_multi.legend(handles=legend_handles, loc='lower center',
