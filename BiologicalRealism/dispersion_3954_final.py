@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.lines as mlines
-from heterogenous_ring_3954_final import (compute_jacobian, find_steady_state,
+from BiologicalRealism.pleasework.heterogenous_ring_3954_final import (compute_jacobian, find_steady_state,
                                     build_ring_jacobian_heterogeneous,
                                     _fourier_projectors, fourier_projected_dispersion,
                                     is_turing_ring)
