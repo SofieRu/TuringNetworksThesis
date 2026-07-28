@@ -2,24 +2,36 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.lines as mlines
-from BiologicalRealism.pleasework.heterogenous_ring_3954_final import (compute_jacobian, find_steady_state,
-                                    build_ring_jacobian_heterogeneous,
-                                    _fourier_projectors, fourier_projected_dispersion,
-                                    is_turing_ring)
+
+# from BiologicalRealism.pleasework.heterogenous_ring_3954_final import (
+#     compute_jacobian, find_steady_state,
+#     build_ring_jacobian_heterogeneous,
+#     _fourier_projectors, 
+#     fourier_projected_dispersion,
+#     is_turing_ring)
+
+
+from heterogenous_ring_3954_earlyversion import (
+    compute_jacobian, find_steady_state,
+    build_ring_jacobian_heterogeneous,
+    fourier_projectors, 
+    projected_dispersion,
+    is_turing_ring)
+
 
 # module load matplotlib/3.9.2-gfbf-2024a
 # module load SciPy-bundle/2024.05-gfbf-2024a
 
 CSV_PATH = '../TopologyRanking/Topology3954/3954_FINAL_lhs_results_parameters.csv'
 CONFIG_IDS = [49, 21]
-N_RING = 10
-N_TRIALS = 30                       # raised so thin panels fill in
+N_RING = 20
+N_TRIALS = 20                       # raised so thin panels fill in
 CV_VALUES = [0.0, 0.1, 0.2, 0.3, 0.4]
 SEED = 42
 
 M_VALUES = np.arange(0, N_RING // 2 + 1)
 K_DISCRETE = 2 * np.sin(M_VALUES * np.pi / N_RING)
-PROJECTORS = _fourier_projectors(N_RING)   # shared with the sweep -> identical computation
+PROJECTORS = fourier_projectors(N_RING)   # shared with the sweep -> identical computation
 
 df = pd.read_csv(CSV_PATH)
 type_i = df[df['classification'] == 'Type-I']
@@ -32,7 +44,7 @@ def compute_heterogeneous_dispersion(baseline_params, hopping, N, CV):
         N, baseline_params, hopping, CV)
     if J_ring is None:                          # (None, reason, None) on failure
         return None
-    return fourier_projected_dispersion(J_ring, PROJECTORS)
+    return projected_dispersion(J_ring, PROJECTORS)
 
 
 # ======================================================================
@@ -102,14 +114,14 @@ for row_idx, config_id in enumerate(CONFIG_IDS):
 
         n_turing = int(np.sum(flags))
         if row_idx == 0:
-            ax.set_title(f'CV = {CV:.2f}  ({n_turing}/{len(curves)} Turing)', fontsize=12)
+            ax.set_title(f'CV = {CV:.2f}', fontsize=12)
         if row_idx == 1:
             labels = [f'$k_{{{m}}}$={k:.2f}' for m, k in zip(M_VALUES, K_DISCRETE)]
             ax.set_xticks(K_DISCRETE)
             ax.set_xticklabels(labels, rotation=30, ha='right', fontsize=9)
             ax.set_xlabel('Wavenumber $k_m$', fontsize=11)
 
-    row_axes[0].set_ylabel(f'Config {config_id}\nHeterogeneous Re(λ)', fontsize=12)
+    row_axes[0].set_ylabel(f'Config {config_id}\nMax Re(λ)', fontsize=12)
 
 fig_multi.subplots_adjust(left=0.09, right=0.96, top=0.85, bottom=0.18, wspace=0.04, hspace=0.06)
 fig_multi.suptitle(
@@ -127,6 +139,6 @@ legend_handles = [
 fig_multi.legend(handles=legend_handles, loc='lower center',
                  bbox_to_anchor=(0.5, 0.02), ncol=4, frameon=False, fontsize=11)
 
-plt.savefig('3954_heterogeneous_dispersion_comparison.png', dpi=200, bbox_inches='tight')
-print("Saved as 3954_heterogeneous_dispersion_comparison.png")
+plt.savefig('3954_heterogeneous_dispersion_comparison_new.png', dpi=200, bbox_inches='tight')
+print("Saved as 3954_heterogeneous_dispersion_comparison_new.png")
 plt.close()
