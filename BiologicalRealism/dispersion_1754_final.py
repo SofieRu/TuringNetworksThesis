@@ -10,7 +10,7 @@ import matplotlib.lines as mlines
 #     fourier_projected_dispersion,
 #     is_turing_ring)
 
-from heterogenous_ring_3954_earlyversion import (
+from heterogenous_ring_1754_earlyversion import (
     compute_jacobian, find_steady_state,
     build_ring_jacobian_heterogeneous,
     fourier_projectors, 
@@ -21,10 +21,10 @@ from heterogenous_ring_3954_earlyversion import (
 # module load matplotlib/3.9.2-gfbf-2024a
 # module load SciPy-bundle/2024.05-gfbf-2024a
 
-CSV_PATH = '../TopologyRanking/Topology3954/3954_FINAL_lhs_results_parameters.csv'
-CONFIG_IDS = [49, 21]
+CSV_PATH = '../TopologyRanking/Topology1754/1754_FINAL_lhs_results_parameters.csv'
+CONFIG_IDS = [49, 18]
 N_RING = 20
-N_TRIALS = 30                       # raised so thin panels fill in
+N_TRIALS = 30 
 CV_VALUES = [0.0, 0.1, 0.2, 0.3, 0.4]
 SEED = 42
 
@@ -59,7 +59,7 @@ for row_idx, config_id in enumerate(CONFIG_IDS):
                       (type_i['param_rank'] == 1)].iloc[0]
 
     baseline_params = np.array([
-        row_data['alpha_u'], row_data['beta_u'], row_data['K_uu'], row_data['K_vu'], row_data['delta_u'],
+        row_data['alpha_u'], row_data['beta_u'], row_data['K_vu'], row_data['delta_u'],
         row_data['alpha_v'], row_data['beta_v'], row_data['K_uv'], row_data['K_wv'], row_data['delta_v'],
         row_data['alpha_w'], row_data['beta_w'], row_data['K_ww'], row_data['K_uw'], row_data['K_vw'], row_data['delta_w']
     ])
@@ -128,7 +128,7 @@ for row_idx, config_id in enumerate(CONFIG_IDS):
 
 fig_multi.subplots_adjust(left=0.09, right=0.96, top=0.85, bottom=0.18, wspace=0.04, hspace=0.06)
 fig_multi.suptitle(
-    f'Topology 3954 Heterogeneous Ring Dispersion (Fourier-projected, N={N_RING} cells)\n'
+    f'Topology 1754 Heterogeneous Ring Dispersion (Fourier-projected, N={N_RING} cells)\n'
     f'Robust Config {CONFIG_IDS[0]} vs Fragile Config {CONFIG_IDS[1]} ',
     fontsize=14, y=0.97)
 
@@ -140,6 +140,6 @@ legend_handles = [
 fig_multi.legend(handles=legend_handles, loc='lower center',
                  bbox_to_anchor=(0.5, 0.02), ncol=4, frameon=False, fontsize=11)
 
-plt.savefig('3954_heterogeneous_dispersion_comparison_new.png', dpi=200, bbox_inches='tight')
-print("Saved as 3954_heterogeneous_dispersion_comparison_new.png")
+plt.savefig('1754_heterogeneous_dispersion_comparison_new.png', dpi=200, bbox_inches='tight')
+print("Saved as 1754_heterogeneous_dispersion_comparison_new.png")
 plt.close()

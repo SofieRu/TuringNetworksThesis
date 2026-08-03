@@ -1,45 +1,20 @@
 #!/usr/bin/env python3
-import pickle
 import numpy as np
 import pandas as pd
-import matplotlib
-matplotlib.use('Agg')  # Forces high-quality silent rendering; prevents headless display crashes
 import matplotlib.pyplot as plt
 import matplotlib.lines as mlines
-from matplotlib.gridspec import GridSpec
-
-# Required cluster environments:
-# module load matplotlib/3.9.2-gfbf-2024a
-# module load SciPy-bundle/2024.05-gfbf-2024a
-# pip install seaborn --user
+import pickle
 
 from heterogenous_ring_3954_earlyversion import (
+    compute_jacobian, 
+    find_steady_state, 
     build_ring_jacobian_heterogeneous, 
     fourier_projectors, 
     projected_dispersion, 
     is_turing_ring
 )
 
-# ============================================================================
-# 1. SETUP & CONFIGURATION
-# ============================================================================
-CSV_PATH = '../TopologyRanking/Topology3954/3954_FINAL_lhs_results_parameters.csv'
-TARGET_CONFIG = 40  # Unified target configuration
-N_RING = 20
-N_TRIALS = 20 
-SEED = 42
-CV_VALUES = [0.0, 0.1, 0.2, 0.3, 0.4]
-NOISY_CVS = [0.1, 0.2, 0.3, 0.4]
-PANEL_COLORS = ['steelblue', 'deeppink', 'darkorange', 'forestgreen']
-
-M_VALUES = np.arange(0, N_RING // 2 + 1)
-K_DISCRETE = 2 * np.sin(M_VALUES * np.pi / N_RING)
-PROJECTORS = fourier_projectors(N_RING)
-
-# ============================================================================
-# 2. DATA LOADING & SIMULATION
-# ============================================================================
-print("Loading wet lab sweep pickle files for Config 40...", flush=True)
+# Load data structures safely
 with open('3954_cv_sweep_wetlab_config40_N10.pkl', 'rb') as f:
     cv_lab_3954_N10 = pickle.load(f)
 with open('3954_cv_sweep_wetlab_config40_N20.pkl', 'rb') as f:
@@ -47,154 +22,113 @@ with open('3954_cv_sweep_wetlab_config40_N20.pkl', 'rb') as f:
 with open('3954_cv_sweep_wetlab_config40_N30.pkl', 'rb') as f:
     cv_lab_3954_N30 = pickle.load(f)
 
-print(f"Reading CSV parameters from: {CSV_PATH}", flush=True)
-try:
-    df = pd.read_csv(CSV_PATH)
-except FileNotFoundError:
-    print(f"\nCRITICAL ERROR: Could not find CSV at path '{CSV_PATH}'!")
-    raise
+CSV_PATH = '../TopologyRanking/Topology3954/3954_FINAL_lhs_results_parameters.csv'
+CONFIG_IDS = [40] 
+TARGET_CONFIG = CONFIG_IDS[0] # Extracted integer for cleaner string printing
+N_RING = 20
+N_TRIALS = 20
+CV_VALUES = [0.0, 0.1, 0.2, 0.3, 0.4]
+SEED = 42
 
+M_VALUES = np.arange(0, N_RING // 2 + 1)
+K_DISCRETE = 2 * np.sin(M_VALUES * np.pi / N_RING)
+PROJECTORS = fourier_projectors(N_RING)
+
+df = pd.read_csv(CSV_PATH)
 type_i = df[df['classification'] == 'Type-I']
 
 def compute_heterogeneous_dispersion(baseline_params, hopping, N, CV):
-    res = build_ring_jacobian_heterogeneous(N, baseline_params, hopping, CV)
-    if res is None:
+    J_ring, steady_states, params_list, _ = build_ring_jacobian_heterogeneous(N, baseline_params, hopping, CV)
+    if J_ring is None:
         return None
-    return projected_dispersion(res, PROJECTORS)
+    return projected_dispersion(J_ring, PROJECTORS)
 
-# Extract and run dispersion simulation strictly for Config 40
-print(f"Beginning dispersion simulations for Config {TARGET_CONFIG}...", flush=True)
-row_data = type_i[(type_i['config_id'] == TARGET_CONFIG) & (type_i['param_rank'] == 1)].iloc[0]
-baseline_params = np.array([
-    row_data['alpha_u'], row_data['beta_u'], row_data['K_uu'], row_data['K_vu'], row_data['delta_u'],
-    row_data['alpha_v'], row_data['beta_v'], row_data['K_uv'], row_data['K_wv'], row_data['delta_v'],
-    row_data['alpha_w'], row_data['beta_w'], row_data['K_ww'], row_data['K_uw'], row_data['K_vw'], row_data['delta_w']
-])
-hopping = {'h_u': row_data['dU'], 'h_v': row_data['dV'], 'h_w': row_data['dW']}
+# ======================================================================
+# PLOT 1: HETEROGENEOUS RING DISPERSION (SINGLE ROW)
+# ======================================================================
+noisy_cvs = [0.1, 0.2, 0.3, 0.4]
+panel_colors = ['steelblue', 'deeppink', 'darkorange', 'forestgreen']
 
-np.random.seed(SEED)
-dispersion_results = {cv: [] for cv in CV_VALUES}
-turing_flags = {cv: [] for cv in CV_VALUES}
+fig_multi, axes_multi = plt.subplots(1, 4, figsize=(14, 4.5), sharex=True, sharey=True)
 
-for cv in CV_VALUES:
-    if cv == 0.0:
-        disp = compute_heterogeneous_dispersion(baseline_params, hopping, N_RING, 0.0)
-        if disp is not None:
-            dispersion_results[cv].append(disp)
-            turing_flags[cv].append(is_turing_ring(disp))
-    else:
-        successful, attempts, max_attempts = 0, 0, N_TRIALS * 100
-        while successful < N_TRIALS and attempts < max_attempts:
-            attempts += 1
-            disp = compute_heterogeneous_dispersion(baseline_params, hopping, N_RING, cv)
-            if disp is None or np.isnan(disp).any():
-                continue
-            dispersion_results[cv].append(disp)
-            turing_flags[cv].append(is_turing_ring(disp))
-            successful += 1
+for row_idx, config_id in enumerate(CONFIG_IDS):
+    row_data = type_i[(type_i['config_id'] == config_id) & (type_i['param_rank'] == 1)].iloc[0]
+    
+    baseline_params = np.array([
+        row_data['alpha_u'], row_data['beta_u'], row_data['K_uu'], row_data['K_vu'], row_data['delta_u'],
+        row_data['alpha_v'], row_data['beta_v'], row_data['K_uv'], row_data['K_wv'], row_data['delta_v'],
+        row_data['alpha_w'], row_data['beta_w'], row_data['K_ww'], row_data['K_uw'], row_data['K_vw'], row_data['delta_w']
+    ])
+    
+    dU, dV, dW = row_data['dU'], row_data['dV'], row_data['dW']
+    hopping = {'h_u': dU, 'h_v': dV, 'h_w': dW}
+    
+    np.random.seed(SEED)
+    dispersion_results = {CV: [] for CV in CV_VALUES}
+    turing_flags = {CV: [] for CV in CV_VALUES}
+    
+    for CV in CV_VALUES:
+        if CV == 0.0:
+            disp = compute_heterogeneous_dispersion(baseline_params, hopping, N_RING, 0.0)
+            if disp is not None:
+                dispersion_results[CV].append(disp)
+                turing_flags[CV].append(is_turing_ring(disp))
+        else:
+            successful = 0
+            attempts = 0
+            max_attempts = N_TRIALS * 100
+            while successful < N_TRIALS and attempts < max_attempts:
+                attempts += 1
+                disp = compute_heterogeneous_dispersion(baseline_params, hopping, N_RING, CV)
+                if disp is None or np.isnan(disp[0]):
+                    continue
+                dispersion_results[CV].append(disp)
+                turing_flags[CV].append(is_turing_ring(disp))
+                successful += 1
+                
+    baseline_disp = (dispersion_results[0.0][0] if len(dispersion_results[0.0]) > 0 else np.zeros(len(K_DISCRETE)))
+    
+    row_axes = axes_multi 
+    
+    for col_idx, (ax, CV, color) in enumerate(zip(row_axes, noisy_cvs, panel_colors)):
+        curves = dispersion_results[CV]
+        flags = turing_flags[CV]
+        
+        ax.plot(K_DISCRETE, baseline_disp, 'o-', color='black', linewidth=2.0, markersize=8, 
+                label='Baseline (CV=0.0)' if col_idx == 0 else "", zorder=5)
+        
+        for i, (disp, is_t) in enumerate(zip(curves, flags)):
+            c = color
+            ax.plot(K_DISCRETE, disp, 'o-', color=c, linewidth=1.2, markersize=5, alpha=0.4, zorder=3)
             
-baseline_disp = dispersion_results[0.0][0] if len(dispersion_results[0.0]) > 0 else np.zeros(len(K_DISCRETE))
-
-# ============================================================================
-# 3. FIGURE LAYOUT & PLOT GENERATION
-# ============================================================================
-print("Generating multi-panel plot layout using GridSpec...", flush=True)
-fig = plt.figure(figsize=(15, 10))
-
-# 3 Rows total: 
-# Row 0: 4 Dispersion plots for Config 40
-# Row 1: Boxplot (left 2 cols) & Robustness Plot (right 2 cols)
-gs = GridSpec(2, 4, height_ratios=[1, 1.4], hspace=0.35, wspace=0.25)
-
-# ----------------------------------------------------------------------------
-# SUBPLOT 1: DISPERSION PLOTS (Top Row - 1 Row, 4 Columns)
-# ----------------------------------------------------------------------------
-for col_idx, cv in enumerate(NOISY_CVS):
-    ax = fig.add_subplot(gs[0, col_idx])
-    curves = dispersion_results[cv]
-    
-    # Plot baseline curve (CV = 0)
-    ax.plot(K_DISCRETE, baseline_disp, 'o-', color='black', linewidth=1.8, markersize=6, zorder=5)
-    
-    # Plot simulated trials
-    for disp in curves:
-        ax.plot(K_DISCRETE, disp, 'o-', color=PANEL_COLORS[col_idx], linewidth=1.0, markersize=4, alpha=0.3, zorder=3)
+        ax.axhline(0, color='red', linestyle=':', linewidth=1.5, alpha=0.7)
         
-    ax.axhline(0, color='red', linestyle=':', linewidth=1.2, alpha=0.7)
-    ax.grid(alpha=0.3, linestyle='--')
-    
-    chosen_indices = [0, 1, 2, 3, 4, 5, 6, 7, 10]
-    filtered_ticks = [K_DISCRETE[i] for i in chosen_indices]
-    
-    ax.set_title(f'CV = {cv:.2f}', fontsize=10, fontweight='semibold')
-    labels = [f'$k_{{{m}}}$={k:.2f}' for m, k in zip(M_VALUES, K_DISCRETE)]
-    ax.set_xticks(filtered_ticks)
-    ax.set_xticklabels([labels[i] for i in chosen_indices], rotation=40, ha='right', fontsize=8)
-    ax.set_xlabel("Wavenumber $k_m$", fontsize=10)
+        chosen_indices = [0, 1, 2, 3, 4, 5, 6, 7, 10]
+        filtered_ticks = [K_DISCRETE[i] for i in chosen_indices]
+        ax.grid(alpha=0.3, linestyle='--')
         
-    if col_idx == 0:
-        ax.set_ylabel(f'Config {TARGET_CONFIG}\nMax Re(λ)', fontsize=10, fontweight='semibold')
+        ax.set_title(f'CV = {CV:.2f}', fontsize=12)
+        
+        labels = [f'$k_{{{m}}}$={k:.2f}' for m, k in zip(M_VALUES, K_DISCRETE)]
+        filtered_labels = [labels[i] for i in chosen_indices]
+        ax.set_xticks(filtered_ticks)
+        ax.set_xticklabels(filtered_labels, rotation=40, ha='right', fontsize=10)
+        ax.set_xlabel("Wavenumber $k_m$", fontsize=12)
+        
+    # FIXED: row_axes is 1D, indexing row_axes[0] here causes layout issues/errors
+    row_axes[0].set_ylabel(f'Config {config_id}\nMax Re(λ)', fontsize=12)
 
-fig.text(0.5, 0.95, f'Topology 3954 (Config {TARGET_CONFIG}) Heterogeneous Ring Dispersion (N={N_RING} cells)', 
-         ha='center', fontsize=12, fontweight='bold')
+fig_multi.subplots_adjust(left=0.09, right=0.96, top=0.78, bottom=0.28, wspace=0.04)
+fig_multi.suptitle(
+    f'Topology 3954 Heterogeneous Ring Dispersion (Fourier-projected, N={N_RING} cells)\n'
+    f'Robust Config {TARGET_CONFIG} Only', fontsize=14, y=0.97)
 
-# ----------------------------------------------------------------------------
-# SUBPLOT 2: BOXPLOT (Bottom Left)
-# ----------------------------------------------------------------------------
-ax_box = fig.add_subplot(gs[1, 0:2])
-bp = ax_box.boxplot(cv_lab_3954_N10['all'], positions=range(len(cv_lab_3954_N10['CV'])), 
-                    widths=0.5, patch_artist=True, showfliers=True,
-                    medianprops=dict(color='black', linewidth=1.5), 
-                    flierprops=dict(marker='o', markersize=3, alpha=0.2))
-
-for patch in bp['boxes']:
-    patch.set_facecolor('lightskyblue')
-    patch.set_alpha(0.8)
-
-ax_box.axhline(y=0, color='red', linestyle='--', linewidth=1.5, label='Turing threshold (Re(λ)=0)', zorder=10)
-ax_box.set_xticks(range(len(cv_lab_3954_N10['CV'])))
-ax_box.set_xticklabels([f'{cv:.2f}' for cv in cv_lab_3954_N10['CV']], fontsize=9)
-ax_box.set_xlabel('CV (Coefficient of Variation)', fontsize=11)
-ax_box.set_ylabel('Max Re(λ)', fontsize=11)
-ax_box.set_title(f'Config {TARGET_CONFIG}: Growth Rate Distribution (N=10)', fontsize=11, fontweight='bold', pad=10)
-ax_box.legend(fontsize=9, loc='upper right')
-ax_box.grid(True, alpha=0.3, axis='y')
-
-# ----------------------------------------------------------------------------
-# SUBPLOT 3: ROBUSTNESS LINE PLOT (Bottom Right)
-# ----------------------------------------------------------------------------
-ax_rob = fig.add_subplot(gs[1, 2:4])
-robustness_curves = [
-    {'label': 'N=10', 'data': cv_lab_3954_N10, 'linestyle': '-'},
-    {'label': 'N=20', 'data': cv_lab_3954_N20, 'linestyle': '--'},
-    {'label': 'N=30', 'data': cv_lab_3954_N30, 'linestyle': ':'},
+legend_handles = [
+    mlines.Line2D([], [], color='black', linewidth=2, marker='o', linestyle='-', label='Baseline (CV=0.0)'),
+    mlines.Line2D([], [], color='red', linewidth=1.5, linestyle=':', label='Turing Threshold'),
 ]
+fig_multi.legend(handles=legend_handles, loc='lower center', bbox_to_anchor=(0.5, 0.05), ncol=2, frameon=False, fontsize=11)
 
-ax_rob.axhline(y=50, color='gray', linestyle=':', linewidth=1.2, alpha=0.5, zorder=1)
-ax_rob.axhline(y=0, color='black', linewidth=0.8, alpha=0.2, zorder=1)
-
-for curve in robustness_curves:
-    ax_rob.plot(
-        curve['data']['CV'], curve['data']['robustness'], 
-        marker='o', color='blue', linestyle=curve['linestyle'], linewidth=2, 
-        markersize=6, markeredgecolor='white', markeredgewidth=1.0, 
-        label=curve['label'], zorder=3
-    )
-
-ax_rob.set_title(f'Config {TARGET_CONFIG}: Robustness Across Ring Sizes', fontsize=11, fontweight='bold', pad=10)
-ax_rob.set_xlabel('CV (Coefficient of Variation)', fontsize=11)
-ax_rob.set_ylabel('Robustness (% trials with Turing instability)', fontsize=11)
-ax_rob.set_xlim(-0.02, 0.42)
-ax_rob.set_ylim(-3, 103)
-ax_rob.grid(True, linestyle=':', alpha=0.4, color='#cccccc')
-ax_rob.legend(fontsize=9, title="Ring Size")
-
-# ============================================================================
-# 4. EXPORT & SAVE
-# ============================================================================
-plt.subplots_adjust(top=0.88, bottom=0.10, left=0.08, right=0.95)
-
-output_filename = '3954_config40_analysis_panel.png'
-plt.savefig(output_filename, dpi=300, bbox_inches='tight')
-print(f"Successfully saved consolidated Config 40 figure: {output_filename}", flush=True)
+plt.savefig('3954_heterogeneous_dispersion_single_config.png', dpi=200, bbox_inches='tight')
+print("Saved as 3954_heterogeneous_dispersion_single_config.png")
 plt.close()

@@ -94,17 +94,19 @@ def fig4_diego_vs_shaberi(df):
 
 
 # PLOT FOR THESIS
-
 def fig_combined_overview_and_raincloud(df):
     df = df.copy()
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(13,8.5)) #previously 14,10, size has to be figsize=(6.3, 5.4) to match dina4 age but liek its sooo small
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(13,6.7)) #previously 14,10, size has to be figsize=(6.3, 5.4) to match dina4 age but liek its sooo small
 
     # PANEL 1: OVERVIEW BAR CHART (ax1)
     colors = df["turing_type"].map(TYPE_COLORS).fillna("#aaaaaa")
 
     ax1.bar(range(len(df)), df["rob_shaberi_total"], color=colors, edgecolor="white", linewidth=0.5, width=0.76,)
     ax1.set_xticks(range(len(df)))
-    ax1.set_xticklabels(df["config_name"].str.replace(r"FINAL_LHS_3954_|Type\d*_", "", regex=True),rotation=55,ha="right",fontsize=8,)
+
+    #ax1.set_xticklabels(df["config_name"].str.replace(r"FINAL_LHS_3954_|Type\d*_", "", regex=True),rotation=55,ha="right",fontsize=8,)
+    ax1.set_xticklabels(df["config_id"], rotation=20, ha="right", fontsize=10)
+    ax1.set_xlabel("ID of Diffusion Configurations", fontsize=12)
 
     ax1.set_ylabel("Robustness Score (in %)", fontsize=12.5, labelpad=10)
     ax1.set_title("Latin Hypercube Sampling Results, 1 million simulations\nRobustness of different diffusion rate configurations for Topology #3954",fontsize=14,loc="center",pad=10,)
@@ -162,7 +164,7 @@ def fig_combined_overview_and_raincloud(df):
 
     fig.legend(handles=bar_handles,frameon=False,loc="lower center",bbox_to_anchor=(0.35, 0.04),ncol=3,fontsize=12)
     fig.legend(handles=rain_handles,frameon=False,loc="lower center",bbox_to_anchor=(0.7, 0.04),ncol=2,fontsize=12)
-    fig.subplots_adjust(left=0.07, right=0.95, top=0.94, bottom=0.14, hspace=0.5)
+    fig.subplots_adjust(left=0.07, right=0.95, top=0.96, bottom=0.14, hspace=0.45)
     save(fig, "final_3954_lhs_overview")
 
 

@@ -13,7 +13,7 @@ from matplotlib.patches import Patch
 
 plt.rcParams.update({
     'font.size': 12, 'axes.titlesize': 14, 'axes.labelsize': 12,
-    'xtick.labelsize': 11, 'ytick.labelsize': 11, 'legend.fontsize': 12,
+    'xtick.labelsize': 12, 'ytick.labelsize': 12, 'legend.fontsize': 12,
     'axes.spines.top': False, 'axes.spines.right': False, 'figure.dpi': 110,
 })
 
@@ -132,9 +132,8 @@ for ax in axes[:, 0]:
     ax.set_ylabel(r'Ring growth rate  max Re($\lambda$)')
 for ax in axes[1, :]:
     ax.set_xlabel('CV (coefficient of variation)')
-fig.suptitle('Mean and full range of ring growth rate vs parameter heterogeneity (N = 10)',
-             fontsize=13, y=0.99)
-fig.tight_layout(rect=[0, 0, 1, 0.98])
+fig.suptitle('Mean and full range of ring growth rate vs parameter heterogeneity (N = 10)', fontsize=13, y=0.99)
+fig.tight_layout(rect=[0, 0.1, 1, 0.98])
 fig.savefig('cv_minmax_2x2.png', dpi=300, bbox_inches='tight')
 plt.close(fig); print("Saved: cv_minmax_2x2.png")
 
@@ -184,7 +183,7 @@ fig.legend(handles=[
 ], loc='lower center', ncol=2, frameon=False, bbox_to_anchor=(0.5, 0))
 
 fig.suptitle('Parameter sensitivity of the Turing growth rate (N = 10, smth with per 10% parameter change)', fontsize=15, y=0.99)
-fig.tight_layout(rect=[0, 0.04, 1, 0.98])
+fig.tight_layout(rect=[0, 0.02, 1, 1])
 fig.savefig('sensitivity_log.png', dpi=300, bbox_inches='tight')
 
 
@@ -218,7 +217,7 @@ def sensitivity_no_log(ax, sens, letter, title_text):
     panel_title(ax, letter, title_text)
 
 sens_data = {k: load_pkl(p) for k, (p, _id) in SENS_FILES.items()}
-fig, axes = plt.subplots(2, 2, figsize=(14, 9))
+fig, axes = plt.subplots(2, 2, figsize=(14, 8.2))
 for i, (ax, key) in enumerate(zip(axes.flat, GRID)):
     sd = sens_data.get(key)
     if sd is None:
@@ -234,7 +233,7 @@ fig.legend(handles=[
 ], loc='lower center', ncol=2, frameon=False, bbox_to_anchor=(0.5, -0.01))
 
 fig.suptitle('Parameter sensitivity of the Turing growth rate (N = 10)', fontsize=15, y=0.99)
-fig.tight_layout(rect=[0, 0.04, 1, 0.98])
+fig.tight_layout(rect=[0, 0, 1, 1])
 fig.savefig('sensitivity_nolog.png', dpi=300, bbox_inches='tight')
 
 
