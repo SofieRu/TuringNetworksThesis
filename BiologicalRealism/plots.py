@@ -31,10 +31,10 @@ CV_FILES = {
 }
 
 SENS_FILES = {
-    ('1754', 'robust'):  ('1754_sensitivity_results_COPY_config49_N10.pkl', 49),
-    ('1754', 'fragile'): ('1754_sensitivity_results_COPY_config18_N10.pkl', 18),
-    ('3954', 'robust'):  ('3954_sensitivity_results_COPY_config49_N10.pkl', 49),
-    ('3954', 'fragile'): ('3954_sensitivity_results_COPY_config21_N10.pkl', 21),
+    ('1754', 'robust'):  ('1754_sensitivity_results_config49_N10.pkl', 49),
+    ('1754', 'fragile'): ('1754_sensitivity_results_config18_N10.pkl', 18),
+    ('3954', 'robust'):  ('3954_sensitivity_results_config49_N10.pkl', 49),
+    ('3954', 'fragile'): ('3954_sensitivity_results_config21_N10.pkl', 21),
 }
 
 N_SIZES = [10, 20, 30]
@@ -175,7 +175,7 @@ for i, (ax, key) in enumerate(zip(axes.flat, GRID)):
         ax.set_visible(False); continue
     sensitivity_on_ax(ax, sd, LETTERS[i], f"{key[0]} {key[1]} (ID {SENS_FILES[key][1]})")
 for ax in axes[:, 0]:
-    ax.set_ylabel('Δ growth rate (log)')
+    ax.set_ylabel('Change in growth rate (log)')
 
 # COMBINED LEGEND FOR LOG VERSION
 fig.legend(handles=[
@@ -185,10 +185,7 @@ fig.legend(handles=[
 
 fig.suptitle('Parameter sensitivity of the Turing growth rate (N = 10, smth with per 10% parameter change)', fontsize=15, y=0.99)
 fig.tight_layout(rect=[0, 0.04, 1, 0.98])
-fig.savefig('sensitivity_2x2_COPYYY.png', dpi=300, bbox_inches='tight')
-plt.close(fig); print("Saved: sensitivity_2x2_COPYYY.png")
-
-
+fig.savefig('sensitivity_log.png', dpi=300, bbox_inches='tight')
 
 
 # FIG 3: sensitivity 2x2
@@ -238,9 +235,7 @@ fig.legend(handles=[
 
 fig.suptitle('Parameter sensitivity of the Turing growth rate (N = 10)', fontsize=15, y=0.99)
 fig.tight_layout(rect=[0, 0.04, 1, 0.98])
-fig.savefig('sensitivity_2x2_REAL_NOLOG.png', dpi=300, bbox_inches='tight')
-plt.close(fig); print("Saved: sensitivity_2x2_REAL_NOLOG.png")
-
+fig.savefig('sensitivity_nolog.png', dpi=300, bbox_inches='tight')
 
 
 # FIG 4: robustness vs CV, N sweep
