@@ -17,6 +17,7 @@ from scipy.optimize import fsolve
 # )
 
 from heterogenous_ring_1754_earlyversion import (
+    CONFIG_TO_TEST,
     build_ring_jacobian_homogeneous,
     compute_jacobian,
     steady_state_expected,
@@ -35,7 +36,7 @@ from heterogenous_ring_1754_earlyversion import (
 # Uses continuation-based steady-state finding to avoid bistability artifacts
 # ============================================================================
 
-CONFIG_TO_TEST = 18
+# CONFIG_TO_TEST = 18
 PERTURBATION = 0.10  # ±10% perturbation per parameter
 LOCAL_TOLERANCE = 0.5  # accept steady states within 50% of baseline (per component), sanity check might adjust later to 0.3 and 0.7?!!
 

@@ -196,10 +196,10 @@ def build_ring_jacobian_heterogeneous(N_cells, baseline_params, hopping, CV):
 # ======================================================================
  
 
-CONFIG_TO_TEST = 49
+CONFIG_TO_TEST = 18
 CONFIG_LABEL   = "high"
 n_trials       = 500
-N_cells        = 10
+N_cells        = 30
  
 df_file = pd.read_csv('../TopologyRanking/Topology1754/1754_FINAL_lhs_results_parameters.csv')
 df_params = df_file[df_file['classification'] == 'Type-I']
@@ -213,13 +213,13 @@ baseline_params = np.array([
 ])
 steady_state_expected = np.array([row['u_star'], row['v_star'], row['w_star']])
 hopping = {'h_u': row['dU'], 'h_v': row['dV'], 'h_w': row['dW']}
- 
+
 if __name__ == "__main__":
  
-    CONFIG_TO_TEST = 49
+    CONFIG_TO_TEST = 18
     CONFIG_LABEL   = "high"
     n_trials       = 500
-    N_cells        = 10
+    N_cells        = 30 
  
     df_file = pd.read_csv('../TopologyRanking/Topology1754/1754_FINAL_lhs_results_parameters.csv')
     df_params = df_file[df_file['classification'] == 'Type-I']

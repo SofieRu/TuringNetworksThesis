@@ -193,10 +193,10 @@ def build_ring_jacobian_heterogeneous(N_cells, baseline_params, hopping, CV):
 # MAIN: MONTE-CARLO CV SWEEP
 # ======================================================================
  
-CONFIG_TO_TEST = 49
-CONFIG_LABEL   = "low"
+CONFIG_TO_TEST = 21
+CONFIG_LABEL   = "high"
 n_trials       = 500
-N_cells        = 20
+N_cells        = 30
  
 df_file = pd.read_csv('../TopologyRanking/Topology3954/3954_FINAL_lhs_results_parameters.csv')
 df_params = df_file[df_file['classification'] == 'Type-I']
@@ -214,10 +214,10 @@ hopping = {'h_u': row['dU'], 'h_v': row['dV'], 'h_w': row['dW']}
 
 if __name__ == "__main__":
  
-    CONFIG_TO_TEST = 49
-    CONFIG_LABEL   = "low"
+    CONFIG_TO_TEST = 21
+    CONFIG_LABEL   = "high"
     n_trials       = 500
-    N_cells        = 20
+    N_cells        = 30
  
     df_file = pd.read_csv('../TopologyRanking/Topology3954/3954_FINAL_lhs_results_parameters.csv')
     df_params = df_file[df_file['classification'] == 'Type-I']
