@@ -13,10 +13,9 @@ import matplotlib.lines as mlines
 from heterogenous_ring_1754_earlyversion import (
     compute_jacobian, find_steady_state,
     build_ring_jacobian_heterogeneous,
-    fourier_projectors, 
+    fourier_projectors,
     projected_dispersion,
     is_turing_ring)
-
 
 # module load matplotlib/3.9.2-gfbf-2024a
 # module load SciPy-bundle/2024.05-gfbf-2024a
@@ -36,14 +35,45 @@ df = pd.read_csv(CSV_PATH)
 type_i = df[df['classification'] == 'Type-I']
 
 
-def compute_heterogeneous_dispersion(baseline_params, hopping, N, CV):
-    """Projected dispersion of one noisy ring, or None if a cell has no
-    positive isolated steady state."""
-    #J_ring, steady_states, params_list = build_ring_jacobian_heterogeneous(N, baseline_params, hopping, CV)
-    J_ring, steady_states, params_list, _ = build_ring_jacobian_heterogeneous(N, baseline_params, hopping, CV)
-    if J_ring is None:                          # (None, reason, None) on failure
+# def compute_heterogeneous_dispersion(baseline_params, hopping, N, CV):
+#     """Projected dispersion of one noisy ring, or None if a cell has no
+#     positive isolated steady state."""
+#     #J_ring, steady_states, params_list = build_ring_jacobian_heterogeneous(N, baseline_params, hopping, CV)
+#     J_ring, steady_states, params_list, _ = build_ring_jacobian_heterogeneous(N, baseline_params, hopping, CV)
+
+#     if J_ring is None:                          # (None, reason, None) on failure
+#         return None
+#     return projected_dispersion(J_ring, PROJECTORS)
+
+
+def eigenvalue_dispersion(J_ring, N):
+    """Honest dispersion for a heterogeneous ring: bin the TRUE eigenvalues by
+    the dominant wavenumber of their eigenvector, take max Re per bin. Equals
+    the Fourier-projected dispersion for a homogeneous ring, but its peak is
+    bounded by the real full-ring max eigenvalue, so it never inflates."""
+    vals, vecs = np.linalg.eig(J_ring)
+    nm = N // 2 + 1
+    disp = np.full(nm, -np.inf)
+    for k in range(len(vals)):
+        vec = vecs[:, k].reshape(N, 3)
+        power = np.zeros(N)
+        for s in range(3):
+            power += np.abs(np.fft.fft(vec[:, s]))**2
+        folded = np.zeros(nm); folded[0] = power[0]
+        for m in range(1, nm):
+            folded[m] = power[m] + power[(N - m) % N]     # m and N-m share |k|
+        m = int(np.argmax(folded))
+        disp[m] = max(disp[m], np.real(vals[k]))
+    disp[np.isinf(disp)] = np.nan                          # empty bins (rare) -> nan
+    return disp
+
+
+def compute_heterogeneous_dispersion(baseline_params, hopping, N, CV, baseline_ss):
+    J_ring, steady_states, params_list, _ = build_ring_jacobian_heterogeneous(
+        N, baseline_params, hopping, CV, baseline_ss)     # <-- 5th arg
+    if J_ring is None:
         return None
-    return projected_dispersion(J_ring, PROJECTORS)
+    return eigenvalue_dispersion(J_ring, N)
 
 # ======================================================================
 # PLOTTING
@@ -63,6 +93,8 @@ for row_idx, config_id in enumerate(CONFIG_IDS):
         row_data['alpha_v'], row_data['beta_v'], row_data['K_uv'], row_data['K_wv'], row_data['delta_v'],
         row_data['alpha_w'], row_data['beta_w'], row_data['K_ww'], row_data['K_uw'], row_data['K_vw'], row_data['delta_w']
     ])
+
+    baseline_ss = np.array([row_data['u_star'], row_data['v_star'], row_data['w_star']])
     dU, dV, dW = row_data['dU'], row_data['dV'], row_data['dW']
     hopping = {'h_u': dU, 'h_v': dV, 'h_w': dW}
 
@@ -72,7 +104,8 @@ for row_idx, config_id in enumerate(CONFIG_IDS):
 
     for CV in CV_VALUES:
         if CV == 0.0:
-            disp = compute_heterogeneous_dispersion(baseline_params, hopping, N_RING, 0.0)
+            # disp = compute_heterogeneous_dispersion(baseline_params, hopping, N_RING, 0.0) # CHANGE
+            disp = compute_heterogeneous_dispersion(baseline_params, hopping, N_RING, 0.0, baseline_ss)
             if disp is not None:
                 dispersion_results[CV].append(disp)
                 turing_flags[CV].append(is_turing_ring(disp))
@@ -82,7 +115,7 @@ for row_idx, config_id in enumerate(CONFIG_IDS):
             max_attempts = N_TRIALS * 100          # generous budget for high-discard configs
             while successful < N_TRIALS and attempts < max_attempts:
                 attempts += 1
-                disp = compute_heterogeneous_dispersion(baseline_params, hopping, N_RING, CV)
+                disp = compute_heterogeneous_dispersion(baseline_params, hopping, N_RING, CV, baseline_ss)
                 if disp is None or np.isnan(disp[0]):
                     continue
                 dispersion_results[CV].append(disp)
