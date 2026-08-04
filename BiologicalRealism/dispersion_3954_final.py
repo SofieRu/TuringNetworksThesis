@@ -12,7 +12,7 @@ import matplotlib.lines as mlines
 
 from heterogenous_ring_3954_earlyversion import (
     compute_jacobian, find_steady_state,
-    build_ring_jacobian_heterogeneous,
+    #build_ring_jacobian_heterogeneous,
     fourier_projectors, 
     projected_dispersion,
     is_turing_ring)
@@ -44,6 +44,52 @@ def compute_heterogeneous_dispersion(baseline_params, hopping, N, CV):
     if J_ring is None:                          # (None, reason, None) on failure
         return None
     return projected_dispersion(J_ring, PROJECTORS)
+
+
+def build_diffusion_operator(N_cells, hopping):
+    h = np.array([hopping["h_u"], hopping["h_v"], hopping["h_w"]])
+    size = 3 * N_cells
+    Ldiff = np.zeros((size, size))
+    for i in range(N_cells):
+        idx = 3 * i
+        left, right = (i - 1) % N_cells, (i + 1) % N_cells
+        for s in range(3):
+            Ldiff[idx+s, idx+s]     -= 2 * h[s]
+            Ldiff[idx+s, 3*left+s]  += h[s]
+            Ldiff[idx+s, 3*right+s] += h[s]
+    return Ldiff
+
+
+def build_ring_jacobian_heterogeneous(N_cells, baseline_params, hopping, CV):
+    """Frozen-coefficient ring: each cell gets its own noisy params and its own
+    ISOLATED reaction fixed point. Returns (J_ring, steady_states, params_list,
+    balance_resid) or (None, "no_isolated_ss", None, None) if a cell has no
+    positive reaction fixed point.
+ 
+    balance_resid = ||Ldiff @ x*|| / ||x*|| quantifies how far the isolated fixed
+    points are from satisfying the coupled diffusion balance. Small => the
+    frozen-coefficient approximation is well justified for that trial."""
+    sigma = np.sqrt(np.log(1 + CV**2))
+    mu = -sigma**2 / 2
+ 
+    params_list, steady_states = [], []
+    for _ in range(N_cells):
+        params_i = baseline_params * np.random.lognormal(mu, sigma, size=len(baseline_params))
+        ss_i = find_steady_state(params_i)
+        if ss_i is None:
+            return None, "no_isolated_ss", None, None
+        params_list.append(params_i)
+        steady_states.append(ss_i)
+ 
+    Ldiff = build_diffusion_operator(N_cells, hopping)
+    J_ring = Ldiff.copy()
+    for i in range(N_cells):
+        J_ring[3*i:3*i+3, 3*i:3*i+3] += compute_jacobian(steady_states[i], params_list[i])
+ 
+    x_star = np.concatenate(steady_states)
+    balance_resid = np.linalg.norm(Ldiff @ x_star) / np.linalg.norm(x_star)
+    return J_ring, steady_states, params_list, balance_resid
+ 
 
 # ======================================================================
 # PLOTTING

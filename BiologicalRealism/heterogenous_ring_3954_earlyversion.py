@@ -353,9 +353,6 @@
 
 
 
-
-
-
 #!/usr/bin/env python3
 """
 Heterogeneous ring of Topology-3954 cells (frozen-coefficient + Fourier).
@@ -523,7 +520,7 @@ if __name__ == "__main__":
     CONFIG_TO_TEST = 21
     CONFIG_LABEL   = "low"
     n_trials       = 500
-    N_cells        = 10
+    N_cells        = 30
 
     df = pd.read_csv('../TopologyRanking/Topology3954/3954_FINAL_lhs_results_parameters.csv')
     df = df[df['classification'] == 'Type-I']

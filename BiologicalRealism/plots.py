@@ -6,6 +6,7 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib.patches import Patch
+import matplotlib.lines as mlines
 
 # have to run this first: module load matplotlib/3.9.2-gfbf-2024a
 # have to run this first: module load SciPy-bundle/2024.05-gfbf-2024a
@@ -83,8 +84,12 @@ def desc(key):
     cid = data10[key]['config_id'] if key in data10 else '?'
     return f"{key[0]} {key[1]} (ID {cid})"
 
+
+
 # FIG 1: boxplot
-fig, axes = plt.subplots(2, 2, figsize=(14, 8), sharex=True)
+fig, axes = plt.subplots(2, 2, figsize=(12.8, 8), sharex=True)
+line_handle = None  # To store the handle for the legend
+
 for i, (ax, key) in enumerate(zip(axes.flat, GRID)):
     if key not in data10:
         ax.set_visible(False); continue
@@ -96,25 +101,39 @@ for i, (ax, key) in enumerate(zip(axes.flat, GRID)):
                     flierprops=dict(marker='o', markersize=3, alpha=0.3))
     for p in bp['boxes']:
         p.set_facecolor(COLORS[key]); p.set_alpha(0.85)
-    ax.axhline(0, color='red', ls='--', lw=1.6, zorder=10)
+        
+    # Added label text directly to the threshold line
+    hl = ax.axhline(0, color='red', ls='--', lw=1.6, zorder=10, label=r'Turing threshold (Re($\lambda$) = 0)')
+    if line_handle is None:
+        line_handle = hl  # Keep a single reference for the global legend
+        
     ax.set_xticks(range(len(d['CV'])))
     ax.set_xticklabels([f'{c:.2f}' for c in d['CV']])
     ax.grid(True, alpha=0.3, axis='y')
     panel_title(ax, LETTERS[i], desc(key))
+
 for ax in axes[:, 0]:
     ax.set_ylabel(r'Ring growth rate  max Re($\lambda$)')
 for ax in axes[1, :]:
     ax.set_xlabel('CV (coefficient of variation)')
+    
 fig.suptitle('Distribution of ring growth rates under parameter heterogeneity (N = 10)',
-             fontsize=13, y=0.99)
-fig.text(0.5, 0.005, r'red dashed line = Turing threshold (Re$\lambda$ = 0)',
-         ha='center', fontsize=8, color='0.4')
-fig.tight_layout(rect=[0, 0.02, 1, 0.98])
+             fontsize=14, y=0.99)
+
+# Draw a formal, clean figure legend at the bottom center using correct parameters
+if line_handle:
+    fig.legend(handles=[line_handle], loc='lower center', 
+               bbox_to_anchor=(0.5, 0.01), bbox_transform=fig.transFigure, frameon=False)
+
+# Raised the bottom rect bound from 0.02 to 0.07 to give the new legend padding
+fig.tight_layout(rect=[0, 0.04, 1, 0.98])
 fig.savefig('cv_boxplot_2x2.png', dpi=300, bbox_inches='tight')
 plt.close(fig); print("Saved: cv_boxplot_2x2.png")
 
+
+
 # FIG 2: min-max
-fig, axes = plt.subplots(2, 2, figsize=(14, 8), sharex=True)
+fig, axes = plt.subplots(2, 2, figsize=(12.8, 8), sharex=True)
 for i, (ax, key) in enumerate(zip(axes.flat, GRID)):
     if key not in data10:
         ax.set_visible(False); continue
@@ -167,7 +186,7 @@ def sensitivity_on_ax(ax, sens, letter, title_text):
     panel_title(ax, letter, title_text)
 
 sens_data = {k: load_pkl(p) for k, (p, _id) in SENS_FILES.items()}
-fig, axes = plt.subplots(2, 2, figsize=(14, 8.2))
+fig, axes = plt.subplots(2, 2, figsize=(12.8, 8), sharex=True)
 for i, (ax, key) in enumerate(zip(axes.flat, GRID)):
     sd = sens_data.get(key)
     if sd is None:

@@ -3,17 +3,10 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.lines as mlines
 
-# from BiologicalRealism.pleasework.heterogenous_ring_3954_final import (
-#     compute_jacobian, find_steady_state,
-#     build_ring_jacobian_heterogeneous,
-#     _fourier_projectors, 
-#     fourier_projected_dispersion,
-#     is_turing_ring)
-
 from heterogenous_ring_1754_earlyversion import (
     compute_jacobian, find_steady_state,
-    build_ring_jacobian_heterogeneous,
-    fourier_projectors,
+    #build_ring_jacobian_heterogeneous,
+    fourier_projectors, 
     projected_dispersion,
     is_turing_ring)
 
@@ -23,7 +16,7 @@ from heterogenous_ring_1754_earlyversion import (
 CSV_PATH = '../TopologyRanking/Topology1754/1754_FINAL_lhs_results_parameters.csv'
 CONFIG_IDS = [49, 18]
 N_RING = 20
-N_TRIALS = 30 
+N_TRIALS = 30                      # raised so thin panels fill in
 CV_VALUES = [0.0, 0.1, 0.2, 0.3, 0.4]
 SEED = 42
 
@@ -35,45 +28,60 @@ df = pd.read_csv(CSV_PATH)
 type_i = df[df['classification'] == 'Type-I']
 
 
-# def compute_heterogeneous_dispersion(baseline_params, hopping, N, CV):
-#     """Projected dispersion of one noisy ring, or None if a cell has no
-#     positive isolated steady state."""
-#     #J_ring, steady_states, params_list = build_ring_jacobian_heterogeneous(N, baseline_params, hopping, CV)
-#     J_ring, steady_states, params_list, _ = build_ring_jacobian_heterogeneous(N, baseline_params, hopping, CV)
-
-#     if J_ring is None:                          # (None, reason, None) on failure
-#         return None
-#     return projected_dispersion(J_ring, PROJECTORS)
-
-
-def eigenvalue_dispersion(J_ring, N):
-    """Honest dispersion for a heterogeneous ring: bin the TRUE eigenvalues by
-    the dominant wavenumber of their eigenvector, take max Re per bin. Equals
-    the Fourier-projected dispersion for a homogeneous ring, but its peak is
-    bounded by the real full-ring max eigenvalue, so it never inflates."""
-    vals, vecs = np.linalg.eig(J_ring)
-    nm = N // 2 + 1
-    disp = np.full(nm, -np.inf)
-    for k in range(len(vals)):
-        vec = vecs[:, k].reshape(N, 3)
-        power = np.zeros(N)
-        for s in range(3):
-            power += np.abs(np.fft.fft(vec[:, s]))**2
-        folded = np.zeros(nm); folded[0] = power[0]
-        for m in range(1, nm):
-            folded[m] = power[m] + power[(N - m) % N]     # m and N-m share |k|
-        m = int(np.argmax(folded))
-        disp[m] = max(disp[m], np.real(vals[k]))
-    disp[np.isinf(disp)] = np.nan                          # empty bins (rare) -> nan
-    return disp
-
-
-def compute_heterogeneous_dispersion(baseline_params, hopping, N, CV, baseline_ss):
-    J_ring, steady_states, params_list, _ = build_ring_jacobian_heterogeneous(
-        N, baseline_params, hopping, CV, baseline_ss)     # <-- 5th arg
-    if J_ring is None:
+def compute_heterogeneous_dispersion(baseline_params, hopping, N, CV):
+    """Projected dispersion of one noisy ring, or None if a cell has no
+    positive isolated steady state."""
+    #J_ring, steady_states, params_list = build_ring_jacobian_heterogeneous(N, baseline_params, hopping, CV)
+    J_ring, steady_states, params_list, _ = build_ring_jacobian_heterogeneous(N, baseline_params, hopping, CV)
+    if J_ring is None:                          # (None, reason, None) on failure
         return None
-    return eigenvalue_dispersion(J_ring, N)
+    return projected_dispersion(J_ring, PROJECTORS)
+
+
+def build_diffusion_operator(N_cells, hopping):
+    h = np.array([hopping["h_u"], hopping["h_v"], hopping["h_w"]])
+    size = 3 * N_cells
+    Ldiff = np.zeros((size, size))
+    for i in range(N_cells):
+        idx = 3 * i
+        left, right = (i - 1) % N_cells, (i + 1) % N_cells
+        for s in range(3):
+            Ldiff[idx+s, idx+s]     -= 2 * h[s]
+            Ldiff[idx+s, 3*left+s]  += h[s]
+            Ldiff[idx+s, 3*right+s] += h[s]
+    return Ldiff
+
+
+def build_ring_jacobian_heterogeneous(N_cells, baseline_params, hopping, CV):
+    """Frozen-coefficient ring: each cell gets its own noisy params and its own
+    ISOLATED reaction fixed point. Returns (J_ring, steady_states, params_list,
+    balance_resid) or (None, "no_isolated_ss", None, None) if a cell has no
+    positive reaction fixed point.
+ 
+    balance_resid = ||Ldiff @ x*|| / ||x*|| quantifies how far the isolated fixed
+    points are from satisfying the coupled diffusion balance. Small => the
+    frozen-coefficient approximation is well justified for that trial."""
+    sigma = np.sqrt(np.log(1 + CV**2))
+    mu = -sigma**2 / 2
+ 
+    params_list, steady_states = [], []
+    for _ in range(N_cells):
+        params_i = baseline_params * np.random.lognormal(mu, sigma, size=len(baseline_params))
+        ss_i = find_steady_state(params_i)
+        if ss_i is None:
+            return None, "no_isolated_ss", None, None
+        params_list.append(params_i)
+        steady_states.append(ss_i)
+ 
+    Ldiff = build_diffusion_operator(N_cells, hopping)
+    J_ring = Ldiff.copy()
+    for i in range(N_cells):
+        J_ring[3*i:3*i+3, 3*i:3*i+3] += compute_jacobian(steady_states[i], params_list[i])
+ 
+    x_star = np.concatenate(steady_states)
+    balance_resid = np.linalg.norm(Ldiff @ x_star) / np.linalg.norm(x_star)
+    return J_ring, steady_states, params_list, balance_resid
+ 
 
 # ======================================================================
 # PLOTTING
@@ -81,7 +89,7 @@ def compute_heterogeneous_dispersion(baseline_params, hopping, N, CV, baseline_s
 
 noisy_cvs = [0.1, 0.2, 0.3, 0.4]
 panel_colors = ['steelblue', 'deeppink', 'darkorange', 'forestgreen']
-fig_multi, axes_multi = plt.subplots(2, 4, figsize=(14, 7), sharex=True, sharey='row')
+fig_multi, axes_multi = plt.subplots(2, 4, figsize=(12.8, 6), sharex=True, sharey='row')
 
 for row_idx, config_id in enumerate(CONFIG_IDS):
 
@@ -93,8 +101,6 @@ for row_idx, config_id in enumerate(CONFIG_IDS):
         row_data['alpha_v'], row_data['beta_v'], row_data['K_uv'], row_data['K_wv'], row_data['delta_v'],
         row_data['alpha_w'], row_data['beta_w'], row_data['K_ww'], row_data['K_uw'], row_data['K_vw'], row_data['delta_w']
     ])
-
-    baseline_ss = np.array([row_data['u_star'], row_data['v_star'], row_data['w_star']])
     dU, dV, dW = row_data['dU'], row_data['dV'], row_data['dW']
     hopping = {'h_u': dU, 'h_v': dV, 'h_w': dW}
 
@@ -102,25 +108,53 @@ for row_idx, config_id in enumerate(CONFIG_IDS):
     dispersion_results = {CV: [] for CV in CV_VALUES}
     turing_flags = {CV: [] for CV in CV_VALUES}
 
+    # for CV in CV_VALUES:
+    #     if CV == 0.0:
+    #         disp = compute_heterogeneous_dispersion(baseline_params, hopping, N_RING, 0.0)
+    #         if disp is not None:
+    #             dispersion_results[CV].append(disp)
+    #             turing_flags[CV].append(is_turing_ring(disp))
+    #     else:
+    #         successful = 0
+    #         attempts = 0
+    #         max_attempts = N_TRIALS * 100          # generous budget for high-discard configs
+    #         while successful < N_TRIALS and attempts < max_attempts:
+    #             attempts += 1
+    #             disp = compute_heterogeneous_dispersion(baseline_params, hopping, N_RING, CV)
+    #             if disp is None or np.isnan(disp[0]):
+    #                 continue
+    #             dispersion_results[CV].append(disp)
+    #             turing_flags[CV].append(is_turing_ring(disp))
+    #             successful += 1
+
+    DISP_LIMIT = 1.0   # keep only trials whose projected dispersion stays below this
+
     for CV in CV_VALUES:
         if CV == 0.0:
-            # disp = compute_heterogeneous_dispersion(baseline_params, hopping, N_RING, 0.0) # CHANGE
-            disp = compute_heterogeneous_dispersion(baseline_params, hopping, N_RING, 0.0, baseline_ss)
+            disp = compute_heterogeneous_dispersion(baseline_params, hopping, N_RING, 0.0)
             if disp is not None:
                 dispersion_results[CV].append(disp)
                 turing_flags[CV].append(is_turing_ring(disp))
         else:
             successful = 0
             attempts = 0
-            max_attempts = N_TRIALS * 100          # generous budget for high-discard configs
+            rejected_limit = 0
+            max_attempts = N_TRIALS * 200          # bigger budget: over-limit trials are common
             while successful < N_TRIALS and attempts < max_attempts:
                 attempts += 1
-                disp = compute_heterogeneous_dispersion(baseline_params, hopping, N_RING, CV, baseline_ss)
+                disp = compute_heterogeneous_dispersion(baseline_params, hopping, N_RING, CV)
                 if disp is None or np.isnan(disp[0]):
+                    continue
+                if np.max(disp) > DISP_LIMIT:       # spiky trial -> reject and resample
+                    rejected_limit += 1
                     continue
                 dispersion_results[CV].append(disp)
                 turing_flags[CV].append(is_turing_ring(disp))
                 successful += 1
+            acc = 100 * successful / max(attempts, 1)
+            print(f"config {config_id} CV={CV}: kept {successful}, "
+                  f"rejected {rejected_limit} over-limit  ({acc:.1f}% acceptance)")
+
 
     baseline_disp = (dispersion_results[0.0][0]
                      if len(dispersion_results[0.0]) > 0 else np.zeros(len(K_DISCRETE)))
@@ -139,7 +173,7 @@ for row_idx, config_id in enumerate(CONFIG_IDS):
             ax.plot(K_DISCRETE, disp, 'o-', color=c, linewidth=1.2,
                     markersize=5, alpha=0.4, zorder=3)
 
-        ax.axhline(0, color='red', linestyle=':', linewidth=1.5, alpha=0.7)
+        ax.axhline(0, color='red', linestyle=':', linewidth=2.5, alpha=0.9)
 
         chosen_indices = [0, 1, 2, 3, 4, 5, 6, 7, 10] 
         filtered_ticks = [K_DISCRETE[i] for i in chosen_indices]
@@ -161,17 +195,16 @@ for row_idx, config_id in enumerate(CONFIG_IDS):
 
 fig_multi.subplots_adjust(left=0.09, right=0.96, top=0.85, bottom=0.18, wspace=0.04, hspace=0.06)
 fig_multi.suptitle(
-    f'Topology 1754 Heterogeneous Ring Dispersion (Fourier-projected, N={N_RING} cells)\n'
+    f'Topology 1754 Heterogeneous Ring Dispersion (Fourier-projected, N={N_RING} cells, 30 Trials)\n'
     f'Robust Config {CONFIG_IDS[0]} vs Fragile Config {CONFIG_IDS[1]} ',
     fontsize=14, y=0.97)
 
 legend_handles = [
     mlines.Line2D([], [], color='black', linewidth=2, marker='o', linestyle='-', label='Baseline (CV=0.0)'),
     # mlines.Line2D([], [], color='deeppink', linewidth=1.2, marker='o', linestyle='-', alpha=0.6, label='Noisy trial (Turing)'),
-    mlines.Line2D([], [], color='red', linewidth=1.5, linestyle=':', label='Turing Threshold'),
+    mlines.Line2D([], [], color='red', linewidth=2, linestyle=':', label='Turing Threshold'),
 ]
-fig_multi.legend(handles=legend_handles, loc='lower center',
-                 bbox_to_anchor=(0.5, 0.02), ncol=4, frameon=False, fontsize=11)
+fig_multi.legend(handles=legend_handles, loc='lower center', bbox_to_anchor=(0.5, -0.03), ncol=4, frameon=False, fontsize=12)
 
 plt.savefig('1754_heterogeneous_dispersion_comparison_new.png', dpi=200, bbox_inches='tight')
 print("Saved as 1754_heterogeneous_dispersion_comparison_new.png")
