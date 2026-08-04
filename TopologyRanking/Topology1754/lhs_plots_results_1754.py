@@ -93,15 +93,17 @@ def fig4_diego_vs_shaberi(df):
 def fig_combined_overview_and_raincloud(df):
     df = df.copy()
     #fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(13,8.5), gridspec_kw={"height_ratios": [1, 1]})
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(11.5,8))
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12.8,6.6))
 
     # PANEL 1: OVERVIEW BAR CHART (ax1)
     colors = df["turing_type"].map(TYPE_COLORS).fillna("#aaaaaa")
 
     ax1.bar(range(len(df)), df["rob_shaberi_total"], color=colors, edgecolor="white", linewidth=0.5, width=0.76,)
     ax1.set_xticks(range(len(df)))
-    ax1.set_xticklabels(df["config_name"].str.replace(r"FINAL_LHS_1754_|Type\d*_", "", regex=True),rotation=55,ha="right",fontsize=8)
-    #ax1.set_xticklabels(df["config_id"],rotation=55,ha="right",fontsize=8,)
+
+    #ax1.set_xticklabels(df["config_name"].str.replace(r"FINAL_LHS_3954_|Type\d*_", "", regex=True),rotation=55,ha="right",fontsize=8,)
+    ax1.set_xticklabels(df["config_id"], rotation=20, ha="right", fontsize=10)
+    ax1.set_xlabel("ID of Diffusion Configurations", fontsize=12)
 
     ax1.set_ylabel("Robustness Score (in %)", fontsize=13, labelpad=10)
     ax1.set_title("Latin Hypercube Sampling Results, 1 million simulations\nRobustness of different diffusion rate configurations for Topology #1754",fontsize=15,loc="center",pad=10,)
@@ -161,7 +163,8 @@ def fig_combined_overview_and_raincloud(df):
 
     fig.legend(handles=bar_handles,frameon=False,loc="lower center",bbox_to_anchor=(0.35, 0.04),ncol=3,fontsize=13) # title="Turing Type"
     fig.legend(handles=rain_handles,frameon=False,loc="lower center",bbox_to_anchor=(0.7, 0.04),ncol=2,fontsize=13) # title="Diffusion Variant",
-    fig.subplots_adjust(left=0.07, right=0.95, top=0.94, bottom=0.14, hspace=0.55)
+    fig.subplots_adjust(left=0.07, right=0.95, top=0.96, bottom=0.14, hspace=0.4)
+
     save(fig, "final_1754_lhs_overview")
 
 

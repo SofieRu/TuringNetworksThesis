@@ -50,7 +50,7 @@ TYPE_COLORS = {"Type1": "#2E9F6E", "Type2": "#2B72DB", "Type3": "#E34D93"}
 def complete_robustness_figure(df, sigma_val):
     random.seed(42)
     
-    fig = plt.figure(figsize=(13, 9.6))
+    fig = plt.figure(figsize=(12.8, 7.5))
     gs = gridspec.GridSpec(2, 2, figure=fig, height_ratios=[1, 1])
     ax_stable = fig.add_subplot(gs[0, :])
     ax_avg = fig.add_subplot(gs[1, 0])
@@ -59,6 +59,9 @@ def complete_robustness_figure(df, sigma_val):
     # PANEL A: SIGMA VS ROBUSTNESS OVERVIEW (TOP ROW)
     stable = df.groupby("sigma")["stable_without_diffusion"].first()
     ax_stable.plot(stable.index, stable.values, color="black", linewidth=2, linestyle="--", label="Stable steady state count", zorder=5)
+
+    ax_stable.set_xticks(range(int(stable.index.min()), int(stable.index.max()) + 1))
+
     ax_stable.set_xlabel("Sigma (σ)", fontsize=12)
     ax_stable.set_ylabel("Number of stable steady states", fontsize=12)
     ax_stable.xaxis.grid(False)
@@ -89,7 +92,7 @@ def complete_robustness_figure(df, sigma_val):
 
     lines1, labels1 = ax_stable.get_legend_handles_labels()
     lines2, labels2 = ax_rob.get_legend_handles_labels()
-    ax_stable.legend(lines1 + lines2, labels1 + labels2, frameon=False, loc="upper center", bbox_to_anchor=(0.5, -0.12), ncol=4)
+    ax_stable.legend(lines1 + lines2, labels1 + labels2, frameon=False, loc="upper center", bbox_to_anchor=(0.5, -0.15), ncol=4)
 
     # PANEL B: FOCUSED AVERAGE ROBUSTNESS LINE (BOTTOM LEFT)
     focused_df = df[(df["sigma"] >= 0.2) & (df["sigma"] <= 0.8)].copy()
@@ -112,7 +115,7 @@ def complete_robustness_figure(df, sigma_val):
     ax_avg.xaxis.grid(False)
     ax_avg.yaxis.grid(True)
     ax_avg.set_title("(B) Average Robustness by Diffusion Type (σ = 0.2 to 0.8)", fontsize=12, loc="left", pad=10)
-    ax_avg.legend(frameon=False, loc="upper center", bbox_to_anchor=(0.5, -0.12), ncol=3)
+    ax_avg.legend(frameon=False, loc="upper center", bbox_to_anchor=(0.5, -0.15), ncol=3)
 
     # PANEL C: RAINCLOUD DOT PLOT AT FIXED SIGMA (BOTTOM RIGHT)
     subset_df = df[df["sigma"] == sigma_val].copy()
@@ -153,10 +156,10 @@ def complete_robustness_figure(df, sigma_val):
         mlines.Line2D([], [], color="#313131", marker="o", linestyle="None", markersize=8, markeredgecolor="white", label="Equal Diffusion"),
         mlines.Line2D([], [], color="#313131", marker="^", linestyle="None", markersize=8, markeredgecolor="white", label="Unequal Diffusion")
     ]
-    ax_dot.legend(handles=rain_handles, frameon=False, loc="upper center", bbox_to_anchor=(0.5, -0.12), ncol=2, fontsize=12)
+    ax_dot.legend(handles=rain_handles, frameon=False, loc="upper center", bbox_to_anchor=(0.5, -0.15), ncol=2, fontsize=12)
 
     fig.suptitle("Random Matrix Theory Results, 1 million simulations\nRobustness of different diffusion rate configurations for Topology #1754", fontsize=14, y=0.98)
-    fig.subplots_adjust(left=0.06, right=0.94, top=0.89, bottom=0.10, hspace=0.38, wspace=0.2)
+    fig.subplots_adjust(left=0.06, right=0.94, top=0.86, bottom=0.1, hspace=0.5, wspace=0.2)
     
     save(fig, f"final_1754_rmt_overview_sigma")
 
