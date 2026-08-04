@@ -261,11 +261,10 @@ for i, (ax, topo) in enumerate(zip(axes, ['1754', '3954'])):
     ax.set_xlim(-0.01, 0.42); ax.set_ylim(-3, 103)
     ax.set_xlabel('CV (coefficient of variation)')
     ax.grid(True, ls=':', alpha=0.4)
-    ax.legend(loc='upper right', fontsize=8, ncol=2)
+    ax.legend(loc='upper right', fontsize=10, ncol=2)
     panel_title(ax, LETTERS[i], f'Topology {topo}')
 axes[0].set_ylabel('Robustness (% of trials that stay Turing)')
-fig.suptitle('Robustness to parameter heterogeneity across ring sizes (N = 10, 20, 30)',
-             fontsize=13, y=0.99)
+fig.suptitle('Robustness to parameter heterogeneity across ring sizes (N = 10, 20, 30)', fontsize=14, y=0.99)
 fig.tight_layout(rect=[0, 0, 1, 0.97])
 fig.savefig('robustness_N10_30.png', dpi=300, bbox_inches='tight')
 plt.close(fig); print("Saved: robustness_N10_30.png")

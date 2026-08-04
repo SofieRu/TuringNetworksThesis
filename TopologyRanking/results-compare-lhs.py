@@ -92,7 +92,7 @@ def fig_all_patterns_profile_trends_complete(df):
     )
 
     # 2. Changed layout to 2x2 grid. sharey=False because absolute numbers vs percents need different scales.
-    fig, axes = plt.subplots(2, 2, figsize=(14, 8.5), sharey=False)
+    fig, axes = plt.subplots(2, 2, figsize=(12.8, 7), sharey=False)
 
     for row_idx, topo in enumerate(topo_order):
         topo_data = grouped[grouped["topology_id"] == topo]
@@ -135,25 +135,27 @@ def fig_all_patterns_profile_trends_complete(df):
             ax = axes[row_idx, col_idx]
             current_dataset = percentages if col_idx == 0 else absolutes
 
+            # Maps: (0,0)->A, (0,1)->B, (1,0)->C, (1,1)->D
+            panel_letter = chr(65 + (row_idx * 2 + col_idx)) 
+
             # Plot the structural profile trendline for each pattern type
             for pattern_name, color in PATTERN_COLORS.items():
                 y_values = current_dataset[pattern_name]
 
                 # Main sleek trendline
-                ax.plot(labels,y_values,color=color,linewidth=3.0,marker="o",markersize=7,markeredgecolor="white",markeredgewidth=1.5,label=pattern_name,zorder=3,)
+                ax.plot(labels, y_values, color=color, linewidth=3.0, marker="o", markersize=7, markeredgecolor="white", markeredgewidth=1.5, label=pattern_name, zorder=3)
 
                 # Smooth shaded area under each line
                 ax.fill_between(labels, y_values, 0, color=color, alpha=0.1, zorder=2)
 
             # Contextual labels and limits based on column type
             if col_idx == 0:
-                ax.set_title(f"Topology {topo} Composition Proportion", fontsize=12.5, color="#222222", pad=10)
-                ax.set_ylabel("Pattern Composition Proportion (%)", fontsize=12.5, color="#333333", labelpad=8)
+                ax.set_title(f"({panel_letter}) Topology {topo} Composition Proportion", fontsize=12.5, color="#222222", loc="left", pad=10)
+                ax.set_ylabel("Instability Proportion (%)", fontsize=12.5, color="#333333", labelpad=8)
                 ax.set_ylim(-3, 103)
             else:
-                ax.set_title(f"Topology {topo} Absolute Densities", fontsize=12.5, color="#222222", pad=10)
+                ax.set_title(f"({panel_letter}) Topology {topo} Absolute Count", fontsize=12.5, color="#222222", loc="left", pad=10)
                 ax.set_ylabel("Absolute Pattern Count (Total)", fontsize=12.5, color="#333333", labelpad=8)
-                # Let absolute limits autoscale elegantly with small baseline padding
                 ax.autoscale(enable=True, axis='y', tight=False)
 
             # Panel styling and visual polish
@@ -167,12 +169,12 @@ def fig_all_patterns_profile_trends_complete(df):
             ax.spines["left"].set_color("#cccccc")
             ax.spines["bottom"].set_color("#cccccc")
 
-    plt.suptitle("Distribution of Turing Instability Types Across Topological Types", fontsize=14, y=0.97,ha="center",color="#111111")
+    plt.suptitle("Distribution of Turing Instability Types Across Diffusion Types", fontsize=14, y=0.97,ha="center",color="#111111")
 
     legend_handles = [mlines.Line2D([], [], color=c,linewidth=3.0, marker="o", markersize=7, markeredgecolor="white", markeredgewidth=1.5, label=l) for l, c in PATTERN_COLORS.items()]
     
-    fig.legend(handles=legend_handles,loc="lower center",bbox_to_anchor=(0.5, 0.02),ncol=4,frameon=False,fontsize=12.5)
-    fig.subplots_adjust(left=0.08, right=0.95, top=0.88, bottom=0.12, wspace=0.18, hspace=0.35)
+    fig.legend(handles=legend_handles,loc="lower center",bbox_to_anchor=(0.5, -0.01),ncol=4,frameon=False,fontsize=12.5)
+    fig.subplots_adjust(left=0.08, right=0.95, top=0.88, bottom=0.12, wspace=0.24, hspace=0.4)
     
     save(fig, "final_type_profile_trends")
 
@@ -352,7 +354,7 @@ def fig_3d_parameter_space_comparison():
 
 
 def fig_thesis_combined_robustness_analysis(df):
-    topo_colors = {"#1754": "#B167D1FF", "#3954": "#4CD4E9FF"}
+    topo_colors = {"#1754": "#8348BB6D", "#3954": "#6C96DA68"}
 
     # Heatmap 1 data (Total Robustness)
     pivot_total = (df.groupby(["topology_id", "turing_type"])["rob_shaberi_total"].max().unstack("topology_id").reindex(index=["Type3", "Type2", "Type1"]))
@@ -381,12 +383,12 @@ def fig_thesis_combined_robustness_analysis(df):
     line_mean = mlines.Line2D([], [], color="#D32F2F", linestyle="--", linewidth=1.5)
 
     # 2 rows, 2 columns grid mapping
-    fig, axes = plt.subplots(2, 2, figsize=(14, 10))
+    fig, axes = plt.subplots(2, 2, figsize=(13.4, 9))
     ((ax_hm_tot, ax_box_tot), (ax_hm_t1, ax_box_t1)) = axes
 
     # Left Column: Heatmap
     sns.heatmap(pivot_total,annot=True,fmt=".4f",cmap="BuPu",linewidths=0.5,linecolor="white",ax=ax_hm_tot,cbar_kws={"label": "Robustness Score (in %)"},)
-    ax_hm_tot.set_title("(A) Maximum Robustness Score Across Turing Instability Types", fontsize=13, loc="left", pad=10,)
+    ax_hm_tot.set_title("(A) Maximum Robustness Score Across Turing Instability Types", fontsize=12, loc="left", pad=10,)
     ax_hm_tot.set_xlabel("Topology ID", fontsize=12.5)
     ax_hm_tot.set_ylabel("Type (Diego et al. 2018)", fontsize=12.5)
 
@@ -394,30 +396,30 @@ def fig_thesis_combined_robustness_analysis(df):
     sns.boxplot(data=df_box, x="topology_id", y="rob_shaberi_total", order=topo_order, palette=topo_colors, ax=ax_box_tot, width=0.4, fliersize=0, linewidth=2.0, showmeans=True, meanline=True, meanprops={"linestyle": "--", "linewidth": 2.2, "color": "#D32F2F"},)
     sns.stripplot(data=df_box, x="topology_id", y="rob_shaberi_total", order=topo_order, color="#222222", alpha=0.25, size=4, jitter=0.15, ax=ax_box_tot,)
     
-    ax_box_tot.set_title("(B) Total Robustness Distribution", fontsize=13, loc="left", pad=10,)
+    ax_box_tot.set_title("(B) Total Robustness Distribution", fontsize=12, loc="left", pad=10,)
     ax_box_tot.set_xlabel("Topology ID", fontsize=12.5)
     ax_box_tot.set_ylabel("Robustness Score (%)", fontsize=12.5)
 
-    handles_tot = [mpatches.Patch(color="#B167D1FF"), mpatches.Patch(color="#4CD4E9FF"), line_median,line_mean,]
+    handles_tot = [mpatches.Patch(color="#8448BBFF"), mpatches.Patch(color="#6C96DAFF"), line_median,line_mean,]
     
     labels_tot = [f"#1754 (Med: {med_tot_1754:.4f}%, Mean: {mean_tot_1754:.4f}%)", f"#3954 (Med: {med_tot_3954:.4f}%, Mean: {mean_tot_3954:.4f}%)", "Median", "Mean",]
     
     ax_box_tot.legend(handles=handles_tot, labels=labels_tot, loc="upper left", fontsize=11, frameon=True,)
 
     # Left Column: Heatmap
-    sns.heatmap(pivot_typeI, annot=True, fmt=".4f", cmap="PuBu", linewidths=0.5, linecolor="white", ax=ax_hm_t1, cbar_kws={"label": "Robustness Score (in %)"},)
-    ax_hm_t1.set_title("(C) Maximum Robustness Score for Turing Instability Type I", fontsize=13, loc="left", pad=10,)
+    sns.heatmap(pivot_typeI, annot=True, fmt=".4f", cmap="Blues", linewidths=0.5, linecolor="white", ax=ax_hm_t1, cbar_kws={"label": "Robustness Score (in %)"},)
+    ax_hm_t1.set_title("(C) Maximum Robustness Score for Turing Instability Type I", fontsize=12, loc="left", pad=10,)
     ax_hm_t1.set_xlabel("Topology ID", fontsize=12.5)
     ax_hm_t1.set_ylabel("Type (Diego et al. 2018)", fontsize=12.5)
 
     # Right Column: Boxplot
     sns.boxplot(data=df_box, x="topology_id", y="rob_shaberi_type_I", order=topo_order, palette=topo_colors, ax=ax_box_t1, width=0.4, fliersize=0, linewidth=2.0, showmeans=True, meanline=True, meanprops={"linestyle": "--", "linewidth": 2.2, "color": "#D32F2F"},)
     sns.stripplot(data=df_box, x="topology_id", y="rob_shaberi_type_I", order=topo_order, color="#222222", alpha=0.25, size=4, jitter=0.15, ax=ax_box_t1,)
-    ax_box_t1.set_title("(D) Turing Type I Robustness Distribution", fontsize=13, loc="left", pad=10,)
+    ax_box_t1.set_title("(D) Turing Type I Robustness Distribution", fontsize=12, loc="left", pad=10,)
     ax_box_t1.set_xlabel("Topology ID", fontsize=12.5)
     ax_box_t1.set_ylabel("Robustness Score (%)", fontsize=12.5)
 
-    handles_t1 = [mpatches.Patch(color="#B167D1FF"), mpatches.Patch(color="#4CD4E9FF"), line_median, line_mean,]
+    handles_t1 = [mpatches.Patch(color="#8448BBFF"), mpatches.Patch(color="#6C96DAFF"), line_median, line_mean,]
     labels_t1 = [f"#1754 (Med: {med_t1_1754:.4f}%, Mean: {mean_t1_1754:.4f}%)", f"#3954 (Med: {med_t1_3954:.4f}%, Mean: {mean_t1_3954:.4f}%)", "Median", "Mean",]
     ax_box_t1.legend(handles=handles_t1, labels=labels_t1, loc="upper left", fontsize=11, frameon=True)
 
@@ -430,7 +432,7 @@ def fig_thesis_combined_robustness_analysis(df):
     fig.text(0.5, 0.97, title_text, fontsize=14, color="#111111", ha="center",)
 
     # Adjust margins tightly to avoid overlap with labels/titles
-    fig.subplots_adjust(left=0.1, right=0.95, top=0.92, bottom=0.07, wspace=0.12, hspace=0.27)
+    fig.subplots_adjust(left=0.1, right=0.95, top=0.9, bottom=0.07, wspace=0.15, hspace=0.28)
 
     save(fig, "final_robustness_analysis")
 
@@ -439,7 +441,7 @@ def fig_thesis_combined_robustness_analysis(df):
 
 # LAB FOCUS
 def fig6_lab_configs_comparison(df):
-    topo_colors = {"#1754": "#9148C5", "#3954": "#17AAC1"}
+    topo_colors = {"#1754": "#8448BBFF", "#3954": "#6C96DAFF"}
     lab_suffixes = ["_WFreeze_Equal1","_WFreeze_Lab1","_WFreeze_Lab2","_WFreeze_Lab3","_WFreeze_Lab4","_WFreeze_Lab5","_WFreeze_Lab6",]
 
     def extract_suffix(config_name):
@@ -474,11 +476,17 @@ def fig6_lab_configs_comparison(df):
             dU = row["dU"].iloc[0]
             dV = row["dV"].iloc[0]
             dW = row["dW"].iloc[0]
+
             # Short display: strip "WFreeze_" prefix
             short_name = suffix.replace("_WFreeze_", "")
-            # Format diffusion as ratio (dU:dV:dW)
-            diff_str = f"{dU:g},{dV:g},{dW:g}"
+
+            diff_str = f"dU:{dU:g}, dV:{dV:g}, dW:{dW:g}"
             x_labels.append(f"{short_name}\n({diff_str})")
+
+            # Format diffusion as ratio (dU:dV:dW)
+            # diff_str = f"{dU:g},{dV:g},{dW:g}"
+            # x_labels.append(f"{short_name}\n({diff_str})")
+
         else:
             x_labels.append(suffix.replace("_WFreeze_", ""))
 
@@ -486,7 +494,7 @@ def fig6_lab_configs_comparison(df):
     x = np.arange(n_configs)
     bar_width = 0.38
 
-    fig, ax = plt.subplots(figsize=(13, 6))
+    fig, ax = plt.subplots(figsize=(12.8, 6))
 
     bars_by_topo = {}
     for i, topo_id in enumerate(topo_order):
@@ -511,22 +519,22 @@ def fig6_lab_configs_comparison(df):
                     f"{val:.3f}%",
                     ha="center",
                     va="bottom",
-                    fontsize=9,
+                    fontsize=10.5,
                     color="#222222",
                 )
 
-    ax.set_xlabel("Diffusion configuration", fontsize=11, labelpad=8)
-    ax.set_ylabel("Type-I Turing robustness (%)", fontsize=11, labelpad=8)
+    ax.set_xlabel("Diffusion configuration", fontsize=12, labelpad=8)
+    ax.set_ylabel("Type I Turing robustness (%)", fontsize=12, labelpad=8)
     ax.set_title(
-        "Type-I robustness across biologically-realistic diffusion configurations "
+        "Type I Robustness across Biologically-Realistic Diffusion Configurations "
         "(#3954 vs #1754)",
-        fontsize=12, loc="left", pad=12,
+        fontsize=14, loc="center", pad=12,
     )
     ax.set_xticks(x)
-    ax.set_xticklabels(x_labels, rotation=0, ha="center", fontsize=9)
+    ax.set_xticklabels(x_labels, rotation=0, ha="center", fontsize=11)
 
     legend = ax.legend(
-        fontsize=10,
+        fontsize=12,
         loc="upper right",
         frameon=True,
         framealpha=1.0,

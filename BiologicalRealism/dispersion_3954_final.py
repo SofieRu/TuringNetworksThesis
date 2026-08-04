@@ -51,7 +51,7 @@ def compute_heterogeneous_dispersion(baseline_params, hopping, N, CV):
 
 noisy_cvs = [0.1, 0.2, 0.3, 0.4]
 panel_colors = ['steelblue', 'deeppink', 'darkorange', 'forestgreen']
-fig_multi, axes_multi = plt.subplots(2, 4, figsize=(14, 7), sharex=True, sharey='row')
+fig_multi, axes_multi = plt.subplots(2, 4, figsize=(12.8, 6), sharex=True, sharey='row')
 
 for row_idx, config_id in enumerate(CONFIG_IDS):
 
@@ -106,7 +106,7 @@ for row_idx, config_id in enumerate(CONFIG_IDS):
             ax.plot(K_DISCRETE, disp, 'o-', color=c, linewidth=1.2,
                     markersize=5, alpha=0.4, zorder=3)
 
-        ax.axhline(0, color='red', linestyle=':', linewidth=1.5, alpha=0.7)
+        ax.axhline(0, color='red', linestyle=':', linewidth=2.5, alpha=0.9)
 
         chosen_indices = [0, 1, 2, 3, 4, 5, 6, 7, 10] 
         filtered_ticks = [K_DISCRETE[i] for i in chosen_indices]
@@ -128,17 +128,16 @@ for row_idx, config_id in enumerate(CONFIG_IDS):
 
 fig_multi.subplots_adjust(left=0.09, right=0.96, top=0.85, bottom=0.18, wspace=0.04, hspace=0.06)
 fig_multi.suptitle(
-    f'Topology 3954 Heterogeneous Ring Dispersion (Fourier-projected, N={N_RING} cells)\n'
+    f'Topology 3954 Heterogeneous Ring Dispersion (Fourier-projected, N={N_RING} cells, 30 Trials)\n'
     f'Robust Config {CONFIG_IDS[0]} vs Fragile Config {CONFIG_IDS[1]} ',
     fontsize=14, y=0.97)
 
 legend_handles = [
     mlines.Line2D([], [], color='black', linewidth=2, marker='o', linestyle='-', label='Baseline (CV=0.0)'),
     # mlines.Line2D([], [], color='deeppink', linewidth=1.2, marker='o', linestyle='-', alpha=0.6, label='Noisy trial (Turing)'),
-    mlines.Line2D([], [], color='red', linewidth=1.5, linestyle=':', label='Turing Threshold'),
+    mlines.Line2D([], [], color='red', linewidth=2, linestyle=':', label='Turing Threshold'),
 ]
-fig_multi.legend(handles=legend_handles, loc='lower center',
-                 bbox_to_anchor=(0.5, 0.02), ncol=4, frameon=False, fontsize=11)
+fig_multi.legend(handles=legend_handles, loc='lower center', bbox_to_anchor=(0.5, -0.03), ncol=4, frameon=False, fontsize=12)
 
 plt.savefig('3954_heterogeneous_dispersion_comparison_new.png', dpi=200, bbox_inches='tight')
 print("Saved as 3954_heterogeneous_dispersion_comparison_new.png")
