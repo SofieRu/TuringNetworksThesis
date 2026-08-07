@@ -13,9 +13,9 @@ import matplotlib.lines as mlines
 # have to run this first: pip install seaborn --user
 
 plt.rcParams.update({
-    'font.size': 12, 'axes.titlesize': 14, 'axes.labelsize': 12,
-    'xtick.labelsize': 12, 'ytick.labelsize': 12, 'legend.fontsize': 12,
-    'axes.spines.top': False, 'axes.spines.right': False, 'figure.dpi': 110,
+    'font.size': 13, 'axes.titlesize': 16, 'axes.labelsize': 13,
+    'xtick.labelsize': 13, 'ytick.labelsize': 13, 'legend.fontsize': 13,
+    'axes.spines.top': False, 'axes.spines.right': False, 'figure.dpi': 300,
 })
 
 GRID = [('1754', 'robust'), ('1754', 'fragile'),
@@ -26,9 +26,9 @@ COLORS = {('1754', 'robust'): 'blueviolet',    ('1754', 'fragile'): 'mediumorchi
 
 CV_FILES = {
     ('1754', 'robust'):  '1754_cv_sweep_high_config49_N{N}.pkl',
-    ('1754', 'fragile'): '1754_cv_sweep_low_config18_N{N}.pkl',
+    ('1754', 'fragile'): '1754_cv_sweep_low_config14_N{N}.pkl',
     ('3954', 'robust'):  '3954_cv_sweep_high_config49_N{N}.pkl',
-    ('3954', 'fragile'): '3954_cv_sweep_low_config21_N{N}.pkl',
+    ('3954', 'fragile'): '3954_cv_sweep_low_config12_N{N}.pkl',
 }
 
 SENS_FILES = {
@@ -72,7 +72,7 @@ def extract(cv):
             'config_id': cv.get('config_id', '?'), 'hopping': cv.get('hopping', {})}
 
 def panel_title(ax, letter, text):
-    ax.set_title(f'({letter}) {text}', loc='left', fontsize=12, pad=8)
+    ax.set_title(f'({letter}) {text}', loc='left', fontsize=12.8, pad=8)
 
 data10 = {}
 for k in GRID:
@@ -133,7 +133,7 @@ plt.close(fig); print("Saved: cv_boxplot_2x2.png")
 
 
 # FIG 2: min-max
-fig, axes = plt.subplots(2, 2, figsize=(12.8, 8), sharex=True)
+fig, axes = plt.subplots(2, 2, figsize=(12.8, 9), sharex=True)
 for i, (ax, key) in enumerate(zip(axes.flat, GRID)):
     if key not in data10:
         ax.set_visible(False); continue
@@ -151,7 +151,7 @@ for ax in axes[:, 0]:
     ax.set_ylabel(r'Ring growth rate  max Re($\lambda$)')
 for ax in axes[1, :]:
     ax.set_xlabel('CV (coefficient of variation)')
-fig.suptitle('Mean and full range of ring growth rate vs parameter heterogeneity (N = 10)', fontsize=13, y=0.99)
+fig.suptitle('Mean and full range of ring growth rate vs parameter heterogeneity (N = 10)', fontsize=16, y=0.99)
 fig.tight_layout(rect=[0, 0.1, 1, 0.98])
 fig.savefig('cv_minmax_2x2.png', dpi=300, bbox_inches='tight')
 plt.close(fig); print("Saved: cv_minmax_2x2.png")
@@ -181,12 +181,12 @@ def sensitivity_on_ax(ax, sens, letter, title_text):
             
     ax.set_yscale('log'); ax.set_ylim(bottom=1e-4)
     ax.set_xticks(range(len(labels)))
-    ax.set_xticklabels(labels, rotation=45, ha='right', fontsize=8)
+    ax.set_xticklabels(labels, rotation=45, ha='right', fontsize=12)
     ax.grid(True, alpha=0.3, axis='y', which='major')
     panel_title(ax, letter, title_text)
 
 sens_data = {k: load_pkl(p) for k, (p, _id) in SENS_FILES.items()}
-fig, axes = plt.subplots(2, 2, figsize=(12.8, 8), sharex=True)
+fig, axes = plt.subplots(2, 2, figsize=(12.8, 9), sharex=True)
 for i, (ax, key) in enumerate(zip(axes.flat, GRID)):
     sd = sens_data.get(key)
     if sd is None:
@@ -199,9 +199,9 @@ for ax in axes[:, 0]:
 fig.legend(handles=[
     Patch(facecolor='mediumvioletred', alpha=0.9, label='stiff (critical)'),
     Patch(facecolor='steelblue', alpha=0.9, label='sloppy (tolerant)'),
-], loc='lower center', ncol=2, frameon=False, bbox_to_anchor=(0.5, 0))
+], loc='lower center', ncol=2, frameon=False, bbox_to_anchor=(0.5, -0.02))
 
-fig.suptitle('Parameter sensitivity of the Turing growth rate (N = 10, smth with per 10% parameter change)', fontsize=15, y=0.99)
+fig.suptitle('Parameter sensitivity of the Turing growth rate (N = 10, smth with per 10% parameter change)', fontsize=16, y=0.99)
 fig.tight_layout(rect=[0, 0.02, 1, 1])
 fig.savefig('sensitivity_log.png', dpi=300, bbox_inches='tight')
 
@@ -231,7 +231,7 @@ def sensitivity_no_log(ax, sens, letter, title_text):
     ax.ticklabel_format(axis='y', style='plain', useOffset=False)
     
     ax.set_xticks(range(len(labels)))
-    ax.set_xticklabels(labels, rotation=45, ha='right', fontsize=8)
+    ax.set_xticklabels(labels, rotation=45, ha='right', fontsize=12)
     ax.grid(True, alpha=0.3, axis='y', which='major')
     panel_title(ax, letter, title_text)
 
@@ -251,7 +251,7 @@ fig.legend(handles=[
     Patch(facecolor='steelblue', alpha=0.9, label='sloppy (tolerant)'),
 ], loc='lower center', ncol=2, frameon=False, bbox_to_anchor=(0.5, -0.01))
 
-fig.suptitle('Parameter sensitivity of the Turing growth rate (N = 10)', fontsize=15, y=0.99)
+fig.suptitle('Parameter sensitivity of the Turing growth rate (N = 10)', fontsize=16, y=0.99)
 fig.tight_layout(rect=[0, 0, 1, 1])
 fig.savefig('sensitivity_nolog.png', dpi=300, bbox_inches='tight')
 
@@ -264,7 +264,7 @@ for k in GRID:
         if d is not None:
             robust_data[(k[0], k[1], N)] = extract(d)
 
-fig, axes = plt.subplots(1, 2, figsize=(13, 5.6), sharey=True)
+fig, axes = plt.subplots(1, 2, figsize=(12, 5), sharey=True)
 for i, (ax, topo) in enumerate(zip(axes, ['1754', '3954'])):
     ax.axhline(50, color='gray', ls=':', lw=1.1, alpha=0.7, zorder=1)
     for kind in ['robust', 'fragile']:
@@ -280,10 +280,10 @@ for i, (ax, topo) in enumerate(zip(axes, ['1754', '3954'])):
     ax.set_xlim(-0.01, 0.42); ax.set_ylim(-3, 103)
     ax.set_xlabel('CV (coefficient of variation)')
     ax.grid(True, ls=':', alpha=0.4)
-    ax.legend(loc='upper right', fontsize=10, ncol=2)
+    ax.legend(loc='upper right', fontsize=12, ncol=2)
     panel_title(ax, LETTERS[i], f'Topology {topo}')
 axes[0].set_ylabel('Robustness (% of trials that stay Turing)')
-fig.suptitle('Robustness to parameter heterogeneity across ring sizes (N = 10, 20, 30)', fontsize=14, y=0.99)
+fig.suptitle('Robustness to parameter heterogeneity across ring sizes (N = 10, 20, 30)', fontsize=16, y=0.99)
 fig.tight_layout(rect=[0, 0, 1, 0.97])
 fig.savefig('robustness_N10_30.png', dpi=300, bbox_inches='tight')
 plt.close(fig); print("Saved: robustness_N10_30.png")

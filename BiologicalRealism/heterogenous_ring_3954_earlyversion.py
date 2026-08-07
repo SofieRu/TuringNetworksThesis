@@ -780,10 +780,10 @@ def build_ring_jacobian_heterogeneous(N_cells, baseline_params, hopping, CV, bas
 # MAIN
 # ======================================================================
 if __name__ == "__main__":
-    CONFIG_TO_TEST = 24
-    CONFIG_LABEL   = "low"
-    n_trials       = 500
-    N_cells        = 10
+    CONFIG_TO_TEST = 49
+    CONFIG_LABEL   = "high"
+    n_trials       = 1000
+    N_cells        = 20
 
     df = pd.read_csv('../TopologyRanking/Topology3954/3954_FINAL_lhs_results_parameters.csv')
     df = df[df['classification'] == 'Type-I']
