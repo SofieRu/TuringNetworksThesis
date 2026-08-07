@@ -413,8 +413,8 @@ def build_ring_jacobian_heterogeneous(N_cells, baseline_params, hopping, CV, bas
 # MAIN
 # ======================================================================
 if __name__ == "__main__":
-    CONFIG_TO_TEST = 49
-    CONFIG_LABEL   = "high"
+    CONFIG_TO_TEST = 22
+    CONFIG_LABEL   = "low"
     n_trials       = 500
     N_cells        = 10
 
