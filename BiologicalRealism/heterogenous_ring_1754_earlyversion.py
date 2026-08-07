@@ -413,9 +413,9 @@ def build_ring_jacobian_heterogeneous(N_cells, baseline_params, hopping, CV, bas
 # MAIN
 # ======================================================================
 if __name__ == "__main__":
-    CONFIG_TO_TEST = 31
-    CONFIG_LABEL   = "low"
-    n_trials       = 500
+    CONFIG_TO_TEST = 49
+    CONFIG_LABEL   = "high"
+    n_trials       = 1000
     N_cells        = 10
 
     df = pd.read_csv('../TopologyRanking/Topology1754/1754_FINAL_lhs_results_parameters.csv')
@@ -432,20 +432,14 @@ if __name__ == "__main__":
     PROJECTORS = fourier_projectors(N_cells)
 
     J = compute_jacobian(steady_state_expected, baseline_params)
-    turing = is_turing_shaberi(J, np.linalg.eigvals(J),
-                               hopping['h_u'], hopping['h_v'], hopping['h_w'])
-    disp0 = projected_dispersion(
-        build_ring_jacobian_homogeneous(N_cells, steady_state_expected, baseline_params, hopping),
-        PROJECTORS)
-    print("=" * 70)
+    turing = is_turing_shaberi(J, np.linalg.eigvals(J), hopping['h_u'], hopping['h_v'], hopping['h_w'])
+    disp0 = projected_dispersion(build_ring_jacobian_homogeneous(N_cells, steady_state_expected, baseline_params, hopping), PROJECTORS)
     print(f"Continuous classification: {turing}")
     print(f"Discrete N={N_cells} baseline: m=0 {disp0[0]:+.4f}, "
           f"max(m>0) {np.max(disp0[1:]):+.4f}, Turing={is_turing_ring(disp0)}")
-    print("=" * 70)
 
     # baseline reaction stability (diffusion off) = the exact "m=0" condition
-    react0 = np.max(np.real(np.linalg.eigvals(
-        compute_jacobian(steady_state_expected, baseline_params))))
+    react0 = np.max(np.real(np.linalg.eigvals(compute_jacobian(steady_state_expected, baseline_params))))
 
     np.random.seed(42)
     results_by_cv = []
@@ -495,7 +489,6 @@ if __name__ == "__main__":
             print(f"    robustness {rob_cond:.1f}% cond / {rob_marg:.1f}% marg  "
                   f"(reactfail {fail_react}, fullstable {fail_stable})")
 
-    print("\n" + "=" * 92)
     print(f"{'CV':<6}{'reaction':<12}{'full':<12}{'valid':<8}{'disc%':<8}"
           f"{'robust(cond)':<14}{'robust(marg)'}")
     print("-" * 92)
@@ -503,11 +496,8 @@ if __name__ == "__main__":
         print(f"{r['CV']:<6.2f}{r['mean_reaction']:<+12.4f}{r['mean_full']:<+12.4f}"
               f"{r['n_valid']:<8}{r['discard_rate']:<8.1f}"
               f"{r['robustness_conditional']:<14.1f}{r['robustness_marginal']:.1f}")
-    print("=" * 92)
 
     out = f'1754_cv_sweep_{CONFIG_LABEL}_config{CONFIG_TO_TEST}_N{N_cells}.pkl'
     with open(out, 'wb') as f:
-        pickle.dump({'results': results_by_cv, 'baseline_params': baseline_params,
-                     'hopping': hopping, 'n_trials': n_trials,
-                     'config_id': CONFIG_TO_TEST, 'config_name': row['config_name']}, f)
+        pickle.dump({'results': results_by_cv, 'baseline_params': baseline_params,'hopping': hopping, 'n_trials': n_trials,'config_id': CONFIG_TO_TEST, 'config_name': row['config_name']}, f)
     print(f"Saved -> {out}")

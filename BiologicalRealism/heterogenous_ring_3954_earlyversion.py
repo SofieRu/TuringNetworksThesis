@@ -693,7 +693,6 @@ def compute_jacobian(state, params):
     J[2, 2] = beta_w * dH_act(w, K_ww) * hill_inhibition(u, K_uw) * hill_inhibition(v, K_vw) - delta_w
     return J
  
-
 # ======================================================================
 # single-cell continuous classification (sanity only)
 # ======================================================================
@@ -780,8 +779,8 @@ def build_ring_jacobian_heterogeneous(N_cells, baseline_params, hopping, CV, bas
 # MAIN
 # ======================================================================
 if __name__ == "__main__":
-    CONFIG_TO_TEST = 49
-    CONFIG_LABEL   = "high"
+    CONFIG_TO_TEST = 12
+    CONFIG_LABEL   = "low"
     n_trials       = 1000
     N_cells        = 20
 
@@ -789,32 +788,20 @@ if __name__ == "__main__":
     df = df[df['classification'] == 'Type-I']
     row = df[(df['config_id'] == CONFIG_TO_TEST) & (df['param_rank'] == 1)].iloc[0]
 
-    baseline_params = np.array([
-        row['alpha_u'], row['beta_u'], row['K_uu'], row['K_vu'], row['delta_u'],
-        row['alpha_v'], row['beta_v'], row['K_uv'], row['K_wv'], row['delta_v'],
-        row['alpha_w'], row['beta_w'], row['K_ww'], row['K_uw'], row['K_vw'], row['delta_w']
-    ])
+    baseline_params = np.array([row['alpha_u'], row['beta_u'], row['K_uu'], row['K_vu'], row['delta_u'], row['alpha_v'], row['beta_v'], row['K_uv'], row['K_wv'], row['delta_v'], row['alpha_w'], row['beta_w'], row['K_ww'], row['K_uw'], row['K_vw'], row['delta_w']])
 
     steady_state_expected = np.array([row['u_star'], row['v_star'], row['w_star']])
     hopping = {'h_u': row['dU'], 'h_v': row['dV'], 'h_w': row['dW']}
 
     PROJECTORS = fourier_projectors(N_cells)
-
     J = compute_jacobian(steady_state_expected, baseline_params)
-    turing = is_turing_shaberi(J, np.linalg.eigvals(J),
-                               hopping['h_u'], hopping['h_v'], hopping['h_w'])
-    disp0 = projected_dispersion(
-        build_ring_jacobian_homogeneous(N_cells, steady_state_expected, baseline_params, hopping),
-        PROJECTORS)
-    print("=" * 70)
+    turing = is_turing_shaberi(J, np.linalg.eigvals(J), hopping['h_u'], hopping['h_v'], hopping['h_w'])
+    disp0 = projected_dispersion(build_ring_jacobian_homogeneous(N_cells, steady_state_expected, baseline_params, hopping), PROJECTORS)
     print(f"Continuous classification: {turing}")
-    print(f"Discrete N={N_cells} baseline: m=0 {disp0[0]:+.4f}, "
-          f"max(m>0) {np.max(disp0[1:]):+.4f}, Turing={is_turing_ring(disp0)}")
-    print("=" * 70)
+    print(f"Discrete N={N_cells} baseline: m=0 {disp0[0]:+.4f}, "f"max(m>0) {np.max(disp0[1:]):+.4f}, Turing={is_turing_ring(disp0)}")
 
     # baseline reaction stability (diffusion off) = the exact "m=0" condition
-    react0 = np.max(np.real(np.linalg.eigvals(
-        compute_jacobian(steady_state_expected, baseline_params))))
+    react0 = np.max(np.real(np.linalg.eigvals(compute_jacobian(steady_state_expected, baseline_params))))
 
     np.random.seed(42)
     results_by_cv = []
@@ -859,12 +846,9 @@ if __name__ == "__main__":
         print(f"CV={CV:<5} valid={n_valid}/{n_trials} disc={discarded} "
               f"({100*discarded/n_trials:.1f}%)")
         if n_valid > 0:
-            print(f"    reaction max {np.mean(react_eig):+.4f} (want <0) | "
-                  f"full-ring max {np.mean(full_eig):+.4f} (want >0)")
-            print(f"    robustness {rob_cond:.1f}% cond / {rob_marg:.1f}% marg  "
-                  f"(reactfail {fail_react}, fullstable {fail_stable})")
+            print(f"    reaction max {np.mean(react_eig):+.4f} (want <0) | "f"full-ring max {np.mean(full_eig):+.4f} (want >0)")
+            print(f"    robustness {rob_cond:.1f}% cond / {rob_marg:.1f}% marg  "f"(reactfail {fail_react}, fullstable {fail_stable})")
 
-    print("\n" + "=" * 92)
     print(f"{'CV':<6}{'reaction':<12}{'full':<12}{'valid':<8}{'disc%':<8}"
           f"{'robust(cond)':<14}{'robust(marg)'}")
     print("-" * 92)
@@ -872,15 +856,8 @@ if __name__ == "__main__":
         print(f"{r['CV']:<6.2f}{r['mean_reaction']:<+12.4f}{r['mean_full']:<+12.4f}"
               f"{r['n_valid']:<8}{r['discard_rate']:<8.1f}"
               f"{r['robustness_conditional']:<14.1f}{r['robustness_marginal']:.1f}")
-    print("=" * 92)
 
     out = f'3954_cv_sweep_{CONFIG_LABEL}_config{CONFIG_TO_TEST}_N{N_cells}.pkl'
     with open(out, 'wb') as f:
-        pickle.dump({'results': results_by_cv, 'baseline_params': baseline_params,
-                     'hopping': hopping, 'n_trials': n_trials,
-                     'config_id': CONFIG_TO_TEST, 'config_name': row['config_name']}, f)
+        pickle.dump({'results': results_by_cv, 'baseline_params': baseline_params, 'hopping': hopping, 'n_trials': n_trials, 'config_id': CONFIG_TO_TEST, 'config_name': row['config_name']}, f)
     print(f"Saved -> {out}")
-
-
-
-
