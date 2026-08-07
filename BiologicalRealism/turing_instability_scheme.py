@@ -47,7 +47,7 @@ for ax, (name, re, im) in zip(axes, TYPES):
     if im is not None:
         ax.plot(k, im, color='0.45', lw=1.8, ls='--', zorder=2)
         
-    ax.axhline(0, color='red', ls=':', lw=1.8, zorder=2)
+    ax.axhline(0, color='red', ls='--', lw=2, zorder=2)
     ax.set_title(name, fontsize=16, loc='center', fontweight='bold', color=c)
     ax.set_ylim(-0.6, 0.75)
     ax.set_xlim(0, 6)
@@ -56,7 +56,7 @@ for ax, (name, re, im) in zip(axes, TYPES):
 axes[0].set_ylabel(r'max Re($\lambda$)')
 
 legend_handles = [
-    mlines.Line2D([], [], color='red', ls=':', lw=1.8, label=r'Turing threshold (Re($\lambda$) = 0)'),
+    mlines.Line2D([], [], color='red', ls='--', lw=2, label=r'Turing threshold (Re($\lambda$) = 0)'),
     mlines.Line2D([], [], color='0.45', ls='--', lw=1.8, label=r'Im($\lambda$) (Hopf)'),
 ]
 

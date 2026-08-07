@@ -779,10 +779,10 @@ def build_ring_jacobian_heterogeneous(N_cells, baseline_params, hopping, CV, bas
 # MAIN
 # ======================================================================
 if __name__ == "__main__":
-    CONFIG_TO_TEST = 12
+    CONFIG_TO_TEST = 17
     CONFIG_LABEL   = "low"
     n_trials       = 1000
-    N_cells        = 20
+    N_cells        = 10
 
     df = pd.read_csv('../TopologyRanking/Topology3954/3954_FINAL_lhs_results_parameters.csv')
     df = df[df['classification'] == 'Type-I']
@@ -798,7 +798,7 @@ if __name__ == "__main__":
     turing = is_turing_shaberi(J, np.linalg.eigvals(J), hopping['h_u'], hopping['h_v'], hopping['h_w'])
     disp0 = projected_dispersion(build_ring_jacobian_homogeneous(N_cells, steady_state_expected, baseline_params, hopping), PROJECTORS)
     print(f"Continuous classification: {turing}")
-    print(f"Discrete N={N_cells} baseline: m=0 {disp0[0]:+.4f}, "f"max(m>0) {np.max(disp0[1:]):+.4f}, Turing={is_turing_ring(disp0)}")
+    print(f"Discrete N={N_cells} baseline: m=0 {disp0[0]:+.4f}, " f"max(m>0) {np.max(disp0[1:]):+.4f}, Turing={is_turing_ring(disp0)}")
 
     # baseline reaction stability (diffusion off) = the exact "m=0" condition
     react0 = np.max(np.real(np.linalg.eigvals(compute_jacobian(steady_state_expected, baseline_params))))
@@ -846,16 +846,13 @@ if __name__ == "__main__":
         print(f"CV={CV:<5} valid={n_valid}/{n_trials} disc={discarded} "
               f"({100*discarded/n_trials:.1f}%)")
         if n_valid > 0:
-            print(f"    reaction max {np.mean(react_eig):+.4f} (want <0) | "f"full-ring max {np.mean(full_eig):+.4f} (want >0)")
-            print(f"    robustness {rob_cond:.1f}% cond / {rob_marg:.1f}% marg  "f"(reactfail {fail_react}, fullstable {fail_stable})")
+            print(f"    reaction max {np.mean(react_eig):+.4f} (want <0) , " f"full-ring max {np.mean(full_eig):+.4f} (want >0)")
+            print(f"    robustness {rob_cond:.1f}% cond / {rob_marg:.1f}% marg  " f"(reactfail {fail_react}, fullstable {fail_stable})")
 
-    print(f"{'CV':<6}{'reaction':<12}{'full':<12}{'valid':<8}{'disc%':<8}"
-          f"{'robust(cond)':<14}{'robust(marg)'}")
+    print(f"{'CV':<6}{'reaction':<12}{'full':<12}{'valid':<8}{'disc%':<8}" f"{'robust(cond)':<14}{'robust(marg)'}")
     print("-" * 92)
     for r in results_by_cv:
-        print(f"{r['CV']:<6.2f}{r['mean_reaction']:<+12.4f}{r['mean_full']:<+12.4f}"
-              f"{r['n_valid']:<8}{r['discard_rate']:<8.1f}"
-              f"{r['robustness_conditional']:<14.1f}{r['robustness_marginal']:.1f}")
+        print(f"{r['CV']:<6.2f}{r['mean_reaction']:<+12.4f}{r['mean_full']:<+12.4f}" f"{r['n_valid']:<8}{r['discard_rate']:<8.1f}" f"{r['robustness_conditional']:<14.1f}{r['robustness_marginal']:.1f}")
 
     out = f'3954_cv_sweep_{CONFIG_LABEL}_config{CONFIG_TO_TEST}_N{N_cells}.pkl'
     with open(out, 'wb') as f:
