@@ -18,7 +18,7 @@ k = np.linspace(0, 6, 500)
 reI  = 0.85 * np.exp(-((k - 1.8) / 1.1) ** 2) - 0.42                                  # Type I  (restabilises)
 reII = 0.34 * np.tanh(1.4 * (k - 1.0)) + 0.26 * np.exp(-((k - 2.2)/1.2) ** 2) - 0.05  # Type II (stays positive)
 reH  = 0.85 * np.exp(-((k - 1.8) / 1.1) ** 2) - 0.40                                  # Hopf Re
-imH  = 0.42 * np.exp(-((k - 1.8) / 1.25) ** 2)                                        # Hopf Im (clean bump)
+imH  = 0.42 * np.exp(-((k - 1.8) / 1.2) ** 2)                                        # Hopf Im (clean bump)
 reF  = 0.45 * np.tanh((k - 1.9) / 0.9)                                                # Filter (monotonic)
 
 COLORS = {'Type I': 'steelblue', 'Type II': 'mediumvioletred',
