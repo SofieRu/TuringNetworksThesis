@@ -92,7 +92,7 @@ def fig_all_patterns_profile_trends_complete(df):
     )
 
     # 2. Changed layout to 2x2 grid. sharey=False because absolute numbers vs percents need different scales.
-    fig, axes = plt.subplots(2, 2, figsize=(12.8, 7), sharey=False)
+    fig, axes = plt.subplots(2, 2, figsize=(12.6, 7), sharey=False)
 
     for row_idx, topo in enumerate(topo_order):
         topo_data = grouped[grouped["topology_id"] == topo]
@@ -150,17 +150,17 @@ def fig_all_patterns_profile_trends_complete(df):
 
             # Contextual labels and limits based on column type
             if col_idx == 0:
-                ax.set_title(f"({panel_letter}) Topology {topo} Composition Proportion", fontsize=12.5, color="#222222", loc="left", pad=10)
-                ax.set_ylabel("Instability Proportion (%)", fontsize=12.5, color="#333333", labelpad=8)
+                ax.set_title(f"({panel_letter}) Topology {topo} Composition Proportion", fontsize=13, color="#222222", loc="left", pad=10)
+                ax.set_ylabel("Instability Proportion (%)", fontsize=13, color="#333333", labelpad=8)
                 ax.set_ylim(-3, 103)
             else:
-                ax.set_title(f"({panel_letter}) Topology {topo} Absolute Count", fontsize=12.5, color="#222222", loc="left", pad=10)
-                ax.set_ylabel("Absolute Pattern Count (Total)", fontsize=12.5, color="#333333", labelpad=8)
+                ax.set_title(f"({panel_letter}) Topology {topo} Absolute Count", fontsize=13, color="#222222", loc="left", pad=10)
+                ax.set_ylabel("Absolute Pattern Count (Total)", fontsize=13, color="#333333", labelpad=8)
                 ax.autoscale(enable=True, axis='y', tight=False)
 
             # Panel styling and visual polish
-            ax.set_xlabel("Type (Diego et al. 2018)", fontsize=12.5, color="#333333", labelpad=6)
-            ax.tick_params(axis="both", which="major", labelsize=11, labelleft=True, colors="#444444")
+            ax.set_xlabel("Type (Diego et al. 2018)", fontsize=13, color="#333333", labelpad=6)
+            ax.tick_params(axis="both", which="major", labelsize=13, labelleft=True, colors="#444444")
             ax.grid(True, axis="both", linestyle=":", alpha=0.5, color="#cccccc", zorder=0)
             
             # Remove top and right borders
@@ -169,192 +169,172 @@ def fig_all_patterns_profile_trends_complete(df):
             ax.spines["left"].set_color("#cccccc")
             ax.spines["bottom"].set_color("#cccccc")
 
-    plt.suptitle("Distribution of Turing Instability Types Across Diffusion Types", fontsize=14, y=0.97,ha="center",color="#111111")
+    plt.suptitle("Distribution of Turing Instability Types Across Diffusion Types", fontsize=16, y=0.97,ha="center",color="#111111")
 
     legend_handles = [mlines.Line2D([], [], color=c,linewidth=3.0, marker="o", markersize=7, markeredgecolor="white", markeredgewidth=1.5, label=l) for l, c in PATTERN_COLORS.items()]
     
-    fig.legend(handles=legend_handles,loc="lower center",bbox_to_anchor=(0.5, -0.01),ncol=4,frameon=False,fontsize=12.5)
-    fig.subplots_adjust(left=0.08, right=0.95, top=0.88, bottom=0.12, wspace=0.24, hspace=0.4)
+    fig.legend(handles=legend_handles,loc="lower center",bbox_to_anchor=(0.5, -0.02),ncol=4,frameon=False,fontsize=14)
+    fig.subplots_adjust(left=0.08, right=0.95, top=0.87, bottom=0.12, wspace=0.27, hspace=0.45)
     
     save(fig, "final_type_profile_trends")
 
 
+
+
+
+
+
+
+
+
 def fig_pseudo_phase_combined(df):
 
-    # Filter data for both topologies
-    sub_all = df[df["topology_id"].isin(topo_order)].copy()
-    # Normalize globally across both topologies so colors are directly comparable
-    norm = mcolors.Normalize(
-        vmin=sub_all["rob_shaberi_type_I"].min(), # was before rob_shaberi_total
-        vmax=sub_all["rob_shaberi_type_I"].max(),
-    )
-
+    robustness_col = "rob_shaberi_type_I"
+    diffusion_cols = ["dU", "dV", "dW"]
     pairs = [("dU", "dV"), ("dU", "dW"), ("dV", "dW")]
 
-    # 2 rows (one per topology), 3 columns (pairs)
-    # Added sharex and sharey to keep the panels aligned and clean
-    fig, axes = plt.subplots(
-        2, 3, figsize=(14, 7.5), sharex=True, sharey=True
-    )
+    sub_original = df[df["topology_id"].isin(topo_order)].copy()
+    sub_original = sub_original[~sub_original["config_name"].str.contains("_Lab", case=False, na=False, regex=False)].copy()
+    sub_original["_config_key"] = sub_original["config_name"].str.replace(r"^FINAL_LHS_\d+_", "", regex=True)
+    sub_original[robustness_col] = pd.to_numeric(sub_original[robustness_col], errors="coerce")
 
-    #ax.tick_params(labelbottom=True)
+    config_keys = sub_original["_config_key"].dropna().unique()
+    complete_grid = pd.MultiIndex.from_product([topo_order, config_keys], names=["topology_id", "_config_key"]).to_frame(index=False)
+    sub_all = complete_grid.merge(sub_original, on=["topology_id", "_config_key"], how="left")
 
-    # Loop through each row (topology) and column (variable pair)
+    diffusion_lookup = sub_original.dropna(subset=["_config_key"]).groupby("_config_key")[diffusion_cols].first()
+
+    for column in diffusion_cols:
+        sub_all[column] = sub_all[column].fillna(sub_all["_config_key"].map(diffusion_lookup[column]))
+
+    sub_all[robustness_col] = sub_all[robustness_col].fillna(0.0)
+    sub_all = sub_all.dropna(subset=diffusion_cols)
+    max_robustness = sub_all[robustness_col].max()
+
+    max_robustness = max_robustness if pd.notna(max_robustness) and max_robustness > 0 else 1.0
+    norm = mcolors.Normalize(vmin=0.0, vmax=max_robustness)
+    fig, axes = plt.subplots(len(topo_order), 3, figsize=(12.4, 7.4), sharex=True, sharey=True, squeeze=False)
+
     for row_idx, topo in enumerate(topo_order):
-        sub = sub_all[sub_all["topology_id"] == topo]
-
+        sub = sub_all[sub_all["topology_id"] == topo].sort_values(robustness_col)
         for col_idx, (xvar, yvar) in enumerate(pairs):
             ax = axes[row_idx, col_idx]
-
-            sc = ax.scatter(
-                sub[xvar],
-                sub[yvar],
-                c=sub["rob_shaberi_type_I"],
-                cmap="PuRd",
-                norm=norm,
-                s=250,  # Slightly smaller to prevent overcrowding in stacked views
-                edgecolors="#444444",
-                linewidths=0.5,
-            )
-
-            # Apply scales to all axes
+            sc = ax.scatter(sub[xvar], sub[yvar], c=sub[robustness_col], cmap="PuRd", norm=norm, s=250, edgecolors="#444444", linewidths=0.5)
             ax.set_xscale("symlog", linthresh=0.1)
             ax.set_yscale("symlog", linthresh=0.1)
             ax.xaxis.grid(False)
-
-            # Only set pair titles on the top row to avoid duplication
             if row_idx == 0:
-                ax.set_title(f"{xvar} vs {yvar}", fontsize=11, pad=8)
+                ax.set_title(f"{xvar} vs {yvar}", fontsize=13, pad=8)
+            if row_idx == len(topo_order) - 1:
+                ax.set_xlabel(xvar, fontsize=13)
+            ax.set_ylabel(f"{topo}\n{yvar}" if col_idx == 0 else yvar, fontsize=13)
 
-            # Only set x-labels on the bottom row to prevent overcrowding
-            if row_idx == 1:
-                ax.set_xlabel(xvar, fontsize=11)
-            
-            # ax.set_xlabel(xvar, fontsize=11) to add label to the first row
-
-            # Only set y-labels on the left-most column
-            if col_idx == 0:
-                ax.set_ylabel(f"{topo}\n{yvar}", fontsize=11) # fontweight="bold"
-            else:
-                ax.set_ylabel(yvar, fontsize=11)
-
-    # 1. Dedicated vertical axis box for the single global colour bar
-    # Height adjusted to 0.70 to scale nicely with the taller 2-row figure
     cbar_ax = fig.add_axes([0.88, 0.12, 0.02, 0.70])
     cbar = fig.colorbar(sc, cax=cbar_ax)
-    cbar.set_label("Robustness of Turing Type I", fontsize=11)
+    cbar.set_label("Robustness of Turing Type I", fontsize=13)
 
-    fig.suptitle(
-        "Phase Diagram Across Diffusion Rate Combinations for Topologies #3954 and #1754",
-        fontsize=13,
-        x=0.04,
-        y=0.96,
-        ha="left",
-        fontweight="semibold",
-    )
-
-    # 2. Tight manual spacing adjustments for the 2D grid matrix
-    # hspace handles the vertical gap between row 1 and row 2
-    fig.subplots_adjust(
-        left=0.06, right=0.84, top=0.88, bottom=0.12, wspace=0.2, hspace=0.26
-    )
-
+    fig.suptitle(f"Phase Diagram Across Diffusion Rate Combinations for Topologies {' and '.join(topo_order)}", fontsize=16, ha="center")
+    fig.subplots_adjust(left=0.06, right=0.84, top=0.88, bottom=0.12, wspace=0.2, hspace=0.26)
     save(fig, "thesis_combined_phase_diagram")
 
 
 
 
-# think about maybe comparing different parametres so not necessarily beta u, beta v and beta w
-def fig_3d_parameter_space_comparison():
-    df_params = pd.read_csv(PARAMS_CSV)
-    
-    # Choose three configs to compare
-    config_a = 4    # type I config 
-    config_b = 32   # type II config
-    config_c = 50   # type III config
-    
-    df_a = df_params[df_params['config_id'] == config_a] # type I config 
-    df_b = df_params[df_params['config_id'] == config_b] # type II config
-    df_c = df_params[df_params['config_id'] == config_c] # type III config
-    
-    def format_title(df_sub):
-        if df_sub.empty:
-            return "No Data"
-        
-        # 1. Extract the raw string (e.g., "NEW_LHS_1754_Type1_Control_Slow")
-        raw_name = str(df_sub["config_name"].iloc[0])
-        parts = raw_name.split("_")
-        
-        # Find the part containing "Type" and standardise it to "Type X"
-        type_str = "Type"
-        for part in parts:
-            if "Type" in part:
-                # Converts 'Type1' -> 'Type 1', 'TypeI' -> 'Type 1', etc.
-                if "1" in part or "I" in part and "III" not in part:
-                    type_str = "Type 1"
-                elif "2" in part or "II" in part and "III" not in part:
-                    type_str = "Type 2"
-                elif "3" in part or "III" in part:
-                    type_str = "Type 3"
-                else:
-                    type_str = part
-                break
-        
-        # 2. Pull the numerical diffusion rates from their specific columns
-        du = df_sub["dU"].iloc[0]
-        dv = df_sub["dV"].iloc[0]
-        dw = df_sub["dW"].iloc[0]
-        
-        # 3. Combine into a clean layout with plain dU, dV, dW text
-        return f"{type_str} (dU={du}, dV={dv}, dW={dw})\n{len(df_sub)} Turing sets"
-
-    # Create plot
-    fig = plt.figure(figsize=(18, 6))
-    
-    # Plot A
-    ax1 = fig.add_subplot(131, projection='3d')
-    ax1.scatter(df_a['beta_u'], df_a['beta_v'], df_a['beta_w'],
-               c='blue', s=50, alpha=0.6, edgecolors='k', linewidth=0.5,
-               label=f'Config {config_a}')
-    ax1.set_xlabel('β$_u$', fontsize=11)
-    ax1.set_ylabel('β$_v$', fontsize=11)
-    ax1.set_zlabel('β$_w$', fontsize=11)
-    ax1.set_title(format_title(df_a), fontsize=11)
-    ax1.view_init(elev=30, azim=45) # Changed to look down from above, prev azim = -60
-    
-    # Plot B
-    ax2 = fig.add_subplot(132, projection='3d')
-    ax2.scatter(df_b['beta_u'], df_b['beta_v'], df_b['beta_w'],
-               c='fuchsia', s=50, alpha=0.6, edgecolors='k', linewidth=0.5,
-               label=f'Config {config_b}')
-    ax2.set_xlabel('β$_u$', fontsize=11)
-    ax2.set_ylabel('β$_v$', fontsize=11)
-    ax2.set_zlabel('β$_w$', fontsize=11)
-    ax2.set_title(format_title(df_b), fontsize=11)
-    ax2.view_init(elev=30, azim=45) # Changed to look down from above, prev azim = -60
-
-    # Plot C
-    ax3 = fig.add_subplot(133, projection='3d')
-    ax3.scatter(df_c['beta_u'], df_c['beta_v'], df_c['beta_w'],
-               c='green', s=50, alpha=0.6, edgecolors='k', linewidth=0.5,
-               label=f'Config {config_c}')
-    ax3.set_xlabel('β$_u$', fontsize=11)
-    ax3.set_ylabel('β$_v$', fontsize=11)
-    ax3.set_zlabel('β$_w$', fontsize=11)
-    ax3.set_title(format_title(df_c), fontsize=11)
-    ax3.view_init(elev=30, azim=45) # Changed to look down from above
-    
-    plt.suptitle('3954 Turing Parameter Space Comparison for Turing Instabilities Type I', fontsize=14, y=0.98)
-    save(fig, "new_fig_3d_turing_island_comparison")
 
 
+
+
+def fig_pseudo_phase_3d(df):
+    robustness_col = "rob_shaberi_type_I"
+    diffusion_cols = ["dU", "dV", "dW"]
+
+    sub_original = df[df["topology_id"].isin(topo_order)].copy()
+    sub_original = sub_original[~sub_original["config_name"].str.contains("_Lab", case=False, na=False, regex=False)].copy()
+    sub_original["_config_key"] = sub_original["config_name"].str.replace(r"^FINAL_LHS_\d+_", "", regex=True)
+    sub_original[robustness_col] = pd.to_numeric(sub_original[robustness_col], errors="coerce")
+
+    config_keys = sub_original["_config_key"].dropna().unique()
+    complete_grid = pd.MultiIndex.from_product([topo_order, config_keys], names=["topology_id", "_config_key"]).to_frame(index=False)
+    sub_all = complete_grid.merge(sub_original, on=["topology_id", "_config_key"], how="left")
+
+    diffusion_lookup = sub_original.dropna(subset=["_config_key"]).groupby("_config_key")[diffusion_cols].first()
+    for column in diffusion_cols:
+        sub_all[column] = sub_all[column].fillna(sub_all["_config_key"].map(diffusion_lookup[column]))
+
+    sub_all[robustness_col] = sub_all[robustness_col].fillna(0.0)
+    sub_all = sub_all.dropna(subset=diffusion_cols)
+    max_robustness = sub_all[robustness_col].max()
+    max_robustness = max_robustness if pd.notna(max_robustness) and max_robustness > 0 else 1.0
+    norm = mcolors.Normalize(vmin=0.0, vmax=max_robustness)
+
+    def value_to_grid_index(val):
+        if pd.isna(val) or val <= 0: return 0.0
+        log_val = np.round(np.log10(val), 1)
+        if log_val == -1.0: return 1.0
+        if log_val == 0.0: return 2.0
+        if log_val == 1.0: return 3.0
+        return 0.0
+
+    for col in diffusion_cols:
+        sub_all[f"{col}_grid"] = sub_all[col].apply(value_to_grid_index)
+
+    tick_positions = [0.0, 1.0, 2.0, 3.0]
+    tick_labels = ["0", "$10^{-1}$", "$10^{0}$", "$10^{1}$"]
+
+    fig = plt.figure(figsize=(15.0, 7.5))
+    sc = None
+
+    for idx, topo in enumerate(topo_order):
+        sub = sub_all[sub_all["topology_id"] == topo].sort_values(robustness_col)
+        ax = fig.add_subplot(1, len(topo_order), idx + 1, projection="3d")
+        
+        # 1. DRAW DROPLINES AND SHADOWS FIRST (so they sit behind the main balls)
+        for _, row in sub.iterrows():
+            # Only draw lines for active pattern configurations to avoid clutter
+            if row[robustness_col] > 0:
+                # Vertical line from floating point down to the floor (z = -0.2 boundary)
+                ax.plot([row["dU_grid"], row["dU_grid"]], [row["dV_grid"], row["dV_grid"]], [-0.2, row["dW_grid"]], color="#888888", linestyle=":", linewidth=0.8, zorder=1)
+                # Flat shadow dot on the floor
+                ax.scatter(row["dU_grid"], row["dV_grid"], -0.2, color="#cccccc", s=50, alpha=0.5, zorder=2)
+
+        # 2. PLOT MAIN 3D BALLS
+        sc = ax.scatter(sub["dU_grid"], sub["dV_grid"], sub["dW_grid"], c=sub[robustness_col], cmap="PuRd", norm=norm, s=400, edgecolors="white", linewidths=0.6, alpha=0.95, zorder=10)
+        
+        ax.set_title(f"Topology {topo}", fontsize=14, pad=20, fontweight="bold")
+        ax.set_xlabel("dU", fontsize=12, labelpad=12, fontweight="semibold")
+        ax.set_ylabel("dV", fontsize=12, labelpad=12, fontweight="semibold")
+        ax.set_zlabel("dW", fontsize=12, labelpad=12, fontweight="semibold")
+        
+        for axis_setup in [ax.xaxis, ax.yaxis, ax.zaxis]:
+            axis_setup.set_ticks(tick_positions)
+            axis_setup.set_ticklabels(tick_labels, fontsize=11)
+
+        ax.set_box_aspect((1, 1, 1))
+        ax.set_xlim(-0.2, 3.2)
+        ax.set_ylim(-0.2, 3.2)
+        ax.set_zlim(-0.2, 3.2)
+        
+        ax.xaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))
+        ax.yaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))
+        ax.zaxis.set_pane_color((1.0, 1.0, 1.0, 0.0))
+        
+        ax.view_init(elev=20, azim=130)
+
+    cbar_ax = fig.add_axes([0.91, 0.20, 0.018, 0.55])
+    cbar = fig.colorbar(sc, cax=cbar_ax)
+    cbar.set_label("Robustness of Turing Type I", fontsize=12, labelpad=12, fontweight="semibold")
+
+    fig.suptitle("3D Phase Diagrams with Floor Projections", fontsize=15, y=0.94, fontweight="bold")
+    fig.subplots_adjust(left=0.01, right=0.88, top=0.86, bottom=0.14, wspace=0.15)
+    
+    save(fig, "thesis_combined_3d_phase_diagram")
 
 
 
 
 
 def fig_thesis_combined_robustness_analysis(df):
-    topo_colors = {"#1754": "#8348BB6D", "#3954": "#6C96DA68"}
+    topo_colors = {"#1754": "#C588FDFF", "#3954": "#66A5F3FF"}
 
     # Heatmap 1 data (Total Robustness)
     pivot_total = (df.groupby(["topology_id", "turing_type"])["rob_shaberi_total"].max().unstack("topology_id").reindex(index=["Type3", "Type2", "Type1"]))
@@ -388,17 +368,17 @@ def fig_thesis_combined_robustness_analysis(df):
 
     # Left Column: Heatmap
     sns.heatmap(pivot_total,annot=True,fmt=".4f",cmap="BuPu",linewidths=0.5,linecolor="white",ax=ax_hm_tot,cbar_kws={"label": "Robustness Score (in %)"},)
-    ax_hm_tot.set_title("(A) Maximum Robustness Score Across Turing Instability Types", fontsize=12, loc="left", pad=10,)
-    ax_hm_tot.set_xlabel("Topology ID", fontsize=12.5)
-    ax_hm_tot.set_ylabel("Type (Diego et al. 2018)", fontsize=12.5)
+    ax_hm_tot.set_title("(A) Maximum Robustness Score (Type I, II, Hopf, Filter)", fontsize=14, loc="left", pad=10,)
+    ax_hm_tot.set_xlabel("Topology ID", fontsize=13)
+    ax_hm_tot.set_ylabel("Type (Diego et al. 2018)", fontsize=13)
 
     # Right Column: Boxplot
     sns.boxplot(data=df_box, x="topology_id", y="rob_shaberi_total", order=topo_order, palette=topo_colors, ax=ax_box_tot, width=0.4, fliersize=0, linewidth=2.0, showmeans=True, meanline=True, meanprops={"linestyle": "--", "linewidth": 2.2, "color": "#D32F2F"},)
-    sns.stripplot(data=df_box, x="topology_id", y="rob_shaberi_total", order=topo_order, color="#222222", alpha=0.25, size=4, jitter=0.15, ax=ax_box_tot,)
+    sns.stripplot(data=df_box, x="topology_id", y="rob_shaberi_total", order=topo_order, color="#0F0F0F", alpha=0.4, size=4, jitter=0.15, ax=ax_box_tot,)
     
-    ax_box_tot.set_title("(B) Total Robustness Distribution", fontsize=12, loc="left", pad=10,)
-    ax_box_tot.set_xlabel("Topology ID", fontsize=12.5)
-    ax_box_tot.set_ylabel("Robustness Score (%)", fontsize=12.5)
+    ax_box_tot.set_title("(B) Robustness Distribution (Type I, II, Hopf, Filter)", fontsize=14, loc="left", pad=10,)
+    ax_box_tot.set_xlabel("Topology ID", fontsize=13)
+    ax_box_tot.set_ylabel("Robustness Score (%)", fontsize=13)
 
     handles_tot = [mpatches.Patch(color="#8448BBFF"), mpatches.Patch(color="#6C96DAFF"), line_median,line_mean,]
     
@@ -408,16 +388,16 @@ def fig_thesis_combined_robustness_analysis(df):
 
     # Left Column: Heatmap
     sns.heatmap(pivot_typeI, annot=True, fmt=".4f", cmap="Blues", linewidths=0.5, linecolor="white", ax=ax_hm_t1, cbar_kws={"label": "Robustness Score (in %)"},)
-    ax_hm_t1.set_title("(C) Maximum Robustness Score for Turing Instability Type I", fontsize=12, loc="left", pad=10,)
-    ax_hm_t1.set_xlabel("Topology ID", fontsize=12.5)
-    ax_hm_t1.set_ylabel("Type (Diego et al. 2018)", fontsize=12.5)
+    ax_hm_t1.set_title("(C) Maximum Robustness Score (Type I only)", fontsize=14, loc="left", pad=10,)
+    ax_hm_t1.set_xlabel("Topology ID", fontsize=13)
+    ax_hm_t1.set_ylabel("Type (Diego et al. 2018)", fontsize=13)
 
     # Right Column: Boxplot
     sns.boxplot(data=df_box, x="topology_id", y="rob_shaberi_type_I", order=topo_order, palette=topo_colors, ax=ax_box_t1, width=0.4, fliersize=0, linewidth=2.0, showmeans=True, meanline=True, meanprops={"linestyle": "--", "linewidth": 2.2, "color": "#D32F2F"},)
-    sns.stripplot(data=df_box, x="topology_id", y="rob_shaberi_type_I", order=topo_order, color="#222222", alpha=0.25, size=4, jitter=0.15, ax=ax_box_t1,)
-    ax_box_t1.set_title("(D) Turing Type I Robustness Distribution", fontsize=12, loc="left", pad=10,)
-    ax_box_t1.set_xlabel("Topology ID", fontsize=12.5)
-    ax_box_t1.set_ylabel("Robustness Score (%)", fontsize=12.5)
+    sns.stripplot(data=df_box, x="topology_id", y="rob_shaberi_type_I", order=topo_order, color="#0F0F0F", alpha=0.4, size=4, jitter=0.15, ax=ax_box_t1,)
+    ax_box_t1.set_title("(D) Robustness Distribution (Type I only)", fontsize=14, loc="left", pad=10,)
+    ax_box_t1.set_xlabel("Topology ID", fontsize=13)
+    ax_box_t1.set_ylabel("Robustness Score (%)", fontsize=13)
 
     handles_t1 = [mpatches.Patch(color="#8448BBFF"), mpatches.Patch(color="#6C96DAFF"), line_median, line_mean,]
     labels_t1 = [f"#1754 (Med: {med_t1_1754:.4f}%, Mean: {mean_t1_1754:.4f}%)", f"#3954 (Med: {med_t1_3954:.4f}%, Mean: {mean_t1_3954:.4f}%)", "Median", "Mean",]
@@ -425,14 +405,14 @@ def fig_thesis_combined_robustness_analysis(df):
 
     # CLEAN UP & LAYOUT TUNING
     for ax in axes.flatten():
-        ax.tick_params(axis="both", which="major", labelsize=12.5)
+        ax.tick_params(axis="both", which="major", labelsize=13)
 
     # Global Title Options (Choose one for your figure text below)
-    title_text = "Total Turing Robustness vs Type I Robustness Across Topologies #1754 and #3954"
-    fig.text(0.5, 0.97, title_text, fontsize=14, color="#111111", ha="center",)
+    title_text = "Total Turing Robustness vs Type I Robustness"
+    fig.text(0.5, 0.97, title_text, fontsize=16, color="#111111", ha="center",)
 
     # Adjust margins tightly to avoid overlap with labels/titles
-    fig.subplots_adjust(left=0.1, right=0.95, top=0.9, bottom=0.07, wspace=0.15, hspace=0.28)
+    fig.subplots_adjust(left=0.1, right=0.95, top=0.91, bottom=0.07, wspace=0.14, hspace=0.3)
 
     save(fig, "final_robustness_analysis")
 
@@ -494,7 +474,7 @@ def fig6_lab_configs_comparison(df):
     x = np.arange(n_configs)
     bar_width = 0.38
 
-    fig, ax = plt.subplots(figsize=(12.8, 6))
+    fig, ax = plt.subplots(figsize=(12.4, 5))
 
     bars_by_topo = {}
     for i, topo_id in enumerate(topo_order):
@@ -519,22 +499,22 @@ def fig6_lab_configs_comparison(df):
                     f"{val:.3f}%",
                     ha="center",
                     va="bottom",
-                    fontsize=10.5,
+                    fontsize=10,
                     color="#222222",
                 )
 
-    ax.set_xlabel("Diffusion configuration", fontsize=12, labelpad=8)
-    ax.set_ylabel("Type I Turing robustness (%)", fontsize=12, labelpad=8)
+    ax.set_xlabel("Diffusion configuration", fontsize=14, labelpad=8)
+    ax.set_ylabel("Type I Turing robustness (%)", fontsize=14, labelpad=8)
     ax.set_title(
         "Type I Robustness across Biologically-Realistic Diffusion Configurations "
         "(#3954 vs #1754)",
-        fontsize=14, loc="center", pad=12,
+        fontsize=16, loc="center", pad=12,
     )
     ax.set_xticks(x)
     ax.set_xticklabels(x_labels, rotation=0, ha="center", fontsize=11)
 
     legend = ax.legend(
-        fontsize=12,
+        fontsize=14,
         loc="upper right",
         frameon=True,
         framealpha=1.0,
@@ -557,7 +537,7 @@ def fig6_lab_configs_comparison(df):
 df = load_all()
 fig_all_patterns_profile_trends_complete(df)
 fig_pseudo_phase_combined(df)
-fig_3d_parameter_space_comparison()
+fig_pseudo_phase_3d(df)
 fig_thesis_combined_robustness_analysis(df)
 fig6_lab_configs_comparison(df)
 
@@ -670,3 +650,90 @@ fig6_lab_configs_comparison(df)
 #     fig.subplots_adjust(left=0.08, right=0.94, top=0.84, bottom=0.12, wspace=0.12)
 
 #     save(fig, "thesis_topology_robustness_comparison")
+
+
+
+
+# # think about maybe comparing different parametres so not necessarily beta u, beta v and beta w
+# def fig_3d_parameter_space_comparison():
+#     df_params = pd.read_csv(PARAMS_CSV)
+    
+#     # Choose three configs to compare
+#     config_a = 4    # type I config 
+#     config_b = 32   # type II config
+#     config_c = 50   # type III config
+    
+#     df_a = df_params[df_params['config_id'] == config_a] # type I config 
+#     df_b = df_params[df_params['config_id'] == config_b] # type II config
+#     df_c = df_params[df_params['config_id'] == config_c] # type III config
+    
+#     def format_title(df_sub):
+#         if df_sub.empty:
+#             return "No Data"
+        
+#         # 1. Extract the raw string (e.g., "NEW_LHS_1754_Type1_Control_Slow")
+#         raw_name = str(df_sub["config_name"].iloc[0])
+#         parts = raw_name.split("_")
+        
+#         # Find the part containing "Type" and standardise it to "Type X"
+#         type_str = "Type"
+#         for part in parts:
+#             if "Type" in part:
+#                 # Converts 'Type1' -> 'Type 1', 'TypeI' -> 'Type 1', etc.
+#                 if "1" in part or "I" in part and "III" not in part:
+#                     type_str = "Type 1"
+#                 elif "2" in part or "II" in part and "III" not in part:
+#                     type_str = "Type 2"
+#                 elif "3" in part or "III" in part:
+#                     type_str = "Type 3"
+#                 else:
+#                     type_str = part
+#                 break
+        
+#         # 2. Pull the numerical diffusion rates from their specific columns
+#         du = df_sub["dU"].iloc[0]
+#         dv = df_sub["dV"].iloc[0]
+#         dw = df_sub["dW"].iloc[0]
+        
+#         # 3. Combine into a clean layout with plain dU, dV, dW text
+#         return f"{type_str} (dU={du}, dV={dv}, dW={dw})\n{len(df_sub)} Turing sets"
+
+#     # Create plot
+#     fig = plt.figure(figsize=(18, 6))
+    
+#     # Plot A
+#     ax1 = fig.add_subplot(131, projection='3d')
+#     ax1.scatter(df_a['beta_u'], df_a['beta_v'], df_a['beta_w'],
+#                c='blue', s=50, alpha=0.6, edgecolors='k', linewidth=0.5,
+#                label=f'Config {config_a}')
+#     ax1.set_xlabel('β$_u$', fontsize=11)
+#     ax1.set_ylabel('β$_v$', fontsize=11)
+#     ax1.set_zlabel('β$_w$', fontsize=11)
+#     ax1.set_title(format_title(df_a), fontsize=11)
+#     ax1.view_init(elev=30, azim=45) # Changed to look down from above, prev azim = -60
+    
+#     # Plot B
+#     ax2 = fig.add_subplot(132, projection='3d')
+#     ax2.scatter(df_b['beta_u'], df_b['beta_v'], df_b['beta_w'],
+#                c='fuchsia', s=50, alpha=0.6, edgecolors='k', linewidth=0.5,
+#                label=f'Config {config_b}')
+#     ax2.set_xlabel('β$_u$', fontsize=11)
+#     ax2.set_ylabel('β$_v$', fontsize=11)
+#     ax2.set_zlabel('β$_w$', fontsize=11)
+#     ax2.set_title(format_title(df_b), fontsize=11)
+#     ax2.view_init(elev=30, azim=45) # Changed to look down from above, prev azim = -60
+
+#     # Plot C
+#     ax3 = fig.add_subplot(133, projection='3d')
+#     ax3.scatter(df_c['beta_u'], df_c['beta_v'], df_c['beta_w'],
+#                c='green', s=50, alpha=0.6, edgecolors='k', linewidth=0.5,
+#                label=f'Config {config_c}')
+#     ax3.set_xlabel('β$_u$', fontsize=11)
+#     ax3.set_ylabel('β$_v$', fontsize=11)
+#     ax3.set_zlabel('β$_w$', fontsize=11)
+#     ax3.set_title(format_title(df_c), fontsize=11)
+#     ax3.view_init(elev=30, azim=45) # Changed to look down from above
+    
+#     plt.suptitle('3954 Turing Parameter Space Comparison for Turing Instabilities Type I', fontsize=14, y=0.98)
+#     save(fig, "new_fig_3d_turing_island_comparison")
+
