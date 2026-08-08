@@ -153,7 +153,7 @@ for row_idx, config_id in enumerate(CONFIG_IDS):
 
         ax.axhline(0, color='red', linestyle=':', linewidth=2.5, alpha=0.9)
 
-        chosen_indices = [0, 1, 2, 3, 4, 5, 7, 10] 
+        chosen_indices = [0, 1, 2, 3, 4, 5, 6] 
         filtered_ticks = [K_DISCRETE[i] for i in chosen_indices]
         ax.grid(alpha=0.3, linestyle='--')
 
