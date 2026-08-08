@@ -22,7 +22,7 @@ from scipy.optimize import fsolve
 from scipy.stats import spearmanr
 
 # CHANGE THIS import line for 3954 vs 1754
-from heterogenous_ring_3954_earlyversion import (
+from heterogenous_ring_1754_earlyversion import (
     CONFIG_TO_TEST,
     N_cells, 
     build_ring_jacobian_homogeneous,
@@ -30,17 +30,17 @@ from heterogenous_ring_3954_earlyversion import (
     baseline_params,
     hopping,
     ode_system,
-    df_params,
+    df,
 )
 
-TOPOLOGY_TAG = '3954'  # CHANGE THIS for 3954 vs 1754
+TOPOLOGY_TAG = '1754'  # CHANGE THIS for 3954 vs 1754
 CONT_STEPS   = 10 
 STEPS        = [0.05, 0.10, 0.15]
 REPORT_STEP  = 0.10
 
 PARAM_LABELS = {
     'alpha_u': 'u basal production', 'beta_u': 'u regulated production',
-    'K_uu': 'u self-activation',   # uncomment for 3954
+    #'K_uu': 'u self-activation',   # uncomment for 3954
     'K_vu': 'v to u inhibition', 'delta_u': 'u degradation',
     'alpha_v': 'v basal production', 'beta_v': 'v regulated production',
     'K_uv': 'u to v activation', 'K_wv': 'w to v inhibition', 'delta_v': 'v degradation',
@@ -49,8 +49,8 @@ PARAM_LABELS = {
     'K_vw': 'v to w inhibition', 'delta_w': 'w degradation',
 }
 # CHANGE THIS for 3954 (add 'K_uu' after 'beta_u')
-PARAM_NAMES = ['alpha_u', 'beta_u', 'K_uu', 'K_vu', 'delta_u', 'alpha_v', 'beta_v', 'K_uv', 'K_wv', 'delta_v', 'alpha_w', 'beta_w', 'K_ww', 'K_uw', 'K_vw', 'delta_w'] # 3954
-#PARAM_NAMES = ['alpha_u', 'beta_u', 'K_vu', 'delta_u', 'alpha_v', 'beta_v', 'K_uv', 'K_wv', 'delta_v', 'alpha_w', 'beta_w', 'K_ww', 'K_uw', 'K_vw', 'delta_w'] # 1754
+#PARAM_NAMES = ['alpha_u', 'beta_u', 'K_uu', 'K_vu', 'delta_u', 'alpha_v', 'beta_v', 'K_uv', 'K_wv', 'delta_v', 'alpha_w', 'beta_w', 'K_ww', 'K_uw', 'K_vw', 'delta_w'] # 3954
+PARAM_NAMES = ['alpha_u', 'beta_u', 'K_vu', 'delta_u', 'alpha_v', 'beta_v', 'K_uv', 'K_wv', 'delta_v', 'alpha_w', 'beta_w', 'K_ww', 'K_uw', 'K_vw', 'delta_w'] # 1754
 
 NPAR = len(PARAM_NAMES)
 
@@ -95,8 +95,7 @@ def calculate_sensitivities(h, baseline_output):
         vals.append(S); flags.append(flag)
     return np.array(vals), flags
 
-config_data = df_params[(df_params['config_id'] == CONFIG_TO_TEST) &
-                        (df_params['param_rank'] == 1)].iloc[0]
+config_data = df[(df['config_id'] == CONFIG_TO_TEST) & (df['param_rank'] == 1)].iloc[0]
 config_name = config_data['config_name']
 baseline_output = ring_maxre(steady_state_expected, baseline_params)
 
