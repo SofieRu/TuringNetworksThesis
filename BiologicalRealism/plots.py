@@ -24,14 +24,14 @@ COLORS = {('1754', 'robust'): 'blueviolet',('1754', 'fragile'): 'mediumorchid', 
 
 CV_FILES = {
     ('1754', 'robust'):  '1754_cv_sweep_high_config49_N{N}.pkl',
-    ('1754', 'fragile'): '1754_cv_sweep_low_config14_N{N}.pkl',
+    ('1754', 'fragile'): '1754_cv_sweep_low_config12_N{N}.pkl',
     ('3954', 'robust'):  '3954_cv_sweep_high_config49_N{N}.pkl',
     ('3954', 'fragile'): '3954_cv_sweep_low_config17_N{N}.pkl',
 }
 
 SENS_FILES = {
     ('1754', 'robust'):  ('1754_sensitivity_results_config49_N10.pkl', 49),
-    ('1754', 'fragile'): ('1754_sensitivity_results_config14_N10.pkl', 14),
+    ('1754', 'fragile'): ('1754_sensitivity_results_config12_N10.pkl', 12),
     ('3954', 'robust'):  ('3954_sensitivity_results_config49_N10.pkl', 49),
     ('3954', 'fragile'): ('3954_sensitivity_results_config17_N10.pkl', 17),
 }
@@ -123,7 +123,7 @@ if line_handle:
     fig.legend(handles=[line_handle], loc='lower center', bbox_to_anchor=(0.5, 0), bbox_transform=fig.transFigure, frameon=False)
 
 fig.tight_layout(rect=[0, 0.04, 1, 0.94])
-fig.subplots_adjust(wspace=0.18)
+fig.subplots_adjust(wspace=0.14)
 fig.savefig('cv_boxplot_2x2.png', dpi=300, bbox_inches='tight')
 plt.close(fig); print("Saved: cv_boxplot_2x2.png")
 
@@ -131,7 +131,7 @@ plt.close(fig); print("Saved: cv_boxplot_2x2.png")
 
 
 # FIG 2: min-max
-fig, axes = plt.subplots(2, 2, figsize=(12.8, 9), sharex=True)
+fig, axes = plt.subplots(2, 2, figsize=(12.6, 9), sharex=True)
 for i, (ax, key) in enumerate(zip(axes.flat, GRID)):
     if key not in data10:
         ax.set_visible(False); continue
@@ -231,7 +231,7 @@ for k in GRID:
 
 fig, axes = plt.subplots(1, 2, figsize=(12, 5), sharey=True)
 for i, (ax, topo) in enumerate(zip(axes, ['1754', '3954'])):
-    ax.axhline(50, color='gray', ls=':', lw=1.1, alpha=0.7, zorder=1)
+    #ax.axhline(50, color='gray', ls=':', lw=1.1, alpha=0.7, zorder=1)
     for kind in ['robust', 'fragile']:
         col = COLORS[(topo, kind)]
         for N in N_SIZES:
@@ -245,10 +245,10 @@ for i, (ax, topo) in enumerate(zip(axes, ['1754', '3954'])):
     ax.set_xlim(-0.01, 0.42); ax.set_ylim(-3, 103)
     ax.set_xlabel('CV (coefficient of variation)')
     ax.grid(True, ls=':', alpha=0.4)
-    ax.legend(loc='upper right', fontsize=12, ncol=2)
+    ax.legend(loc='upper right', fontsize=11, ncol=2)
     panel_title(ax, LETTERS[i], f'Topology {topo}')
 axes[0].set_ylabel('Robustness (% of trials that stay Turing)')
-fig.suptitle('Robustness to parameter heterogeneity across ring sizes (N = 10, 20, 30)', fontsize=16, y=0.93)
+fig.suptitle('Robustness to parameter noise across ring sizes (N = 10, 20, 30)', fontsize=16, y=0.93)
 fig.tight_layout(rect=[0, 0, 1, 0.97])
 fig.savefig('robustness_N10_30.png', dpi=300, bbox_inches='tight')
 plt.close(fig); print("Saved: robustness_N10_30.png")

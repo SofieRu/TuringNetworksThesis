@@ -779,24 +779,24 @@ def build_ring_jacobian_heterogeneous(N_cells, baseline_params, hopping, CV, bas
 # MAIN
 # ======================================================================
 
-CONFIG_TO_TEST = 40
-n_trials       = 1000
-N_cells        = 10
+# CONFIG_TO_TEST = 40
+# n_trials       = 1000
+# N_cells        = 10
 
-df = pd.read_csv('../TopologyRanking/Topology3954/3954_FINAL_lhs_results_parameters.csv')
-df = df[df['classification'] == 'Type-I']
-row = df[(df['config_id'] == CONFIG_TO_TEST) & (df['param_rank'] == 1)].iloc[0]
+# df = pd.read_csv('../TopologyRanking/Topology3954/3954_FINAL_lhs_results_parameters.csv')
+# df = df[df['classification'] == 'Type-I']
+# row = df[(df['config_id'] == CONFIG_TO_TEST) & (df['param_rank'] == 1)].iloc[0]
 
-baseline_params = np.array([row['alpha_u'], row['beta_u'], row['K_uu'], row['K_vu'], row['delta_u'], row['alpha_v'], row['beta_v'], row['K_uv'], row['K_wv'], row['delta_v'], row['alpha_w'], row['beta_w'], row['K_ww'], row['K_uw'], row['K_vw'], row['delta_w']])
-steady_state_expected = np.array([row['u_star'], row['v_star'], row['w_star']])
-hopping = {'h_u': row['dU'], 'h_v': row['dV'], 'h_w': row['dW']}
+# baseline_params = np.array([row['alpha_u'], row['beta_u'], row['K_uu'], row['K_vu'], row['delta_u'], row['alpha_v'], row['beta_v'], row['K_uv'], row['K_wv'], row['delta_v'], row['alpha_w'], row['beta_w'], row['K_ww'], row['K_uw'], row['K_vw'], row['delta_w']])
+# steady_state_expected = np.array([row['u_star'], row['v_star'], row['w_star']])
+# hopping = {'h_u': row['dU'], 'h_v': row['dV'], 'h_w': row['dW']}
 
 
 if __name__ == "__main__":
-    CONFIG_TO_TEST = 40
+    CONFIG_TO_TEST = 17
     CONFIG_LABEL   = "low"
     n_trials       = 1000
-    N_cells        = 10
+    N_cells        = 20
 
     df = pd.read_csv('../TopologyRanking/Topology3954/3954_FINAL_lhs_results_parameters.csv')
     df = df[df['classification'] == 'Type-I']

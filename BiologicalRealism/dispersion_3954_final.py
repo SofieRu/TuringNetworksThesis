@@ -22,7 +22,7 @@ from heterogenous_ring_3954_earlyversion import (
 # module load SciPy-bundle/2024.05-gfbf-2024a
 
 CSV_PATH = '../TopologyRanking/Topology3954/3954_FINAL_lhs_results_parameters.csv'
-CONFIG_IDS = [49, 21]
+CONFIG_IDS = [49, 17]
 N_RING = 20
 N_TRIALS = 30                       # raised so thin panels fill in
 CV_VALUES = [0.0, 0.1, 0.2, 0.3, 0.4]
@@ -101,8 +101,7 @@ fig_multi, axes_multi = plt.subplots(2, 4, figsize=(12.8, 6), sharex=True, share
 
 for row_idx, config_id in enumerate(CONFIG_IDS):
 
-    row_data = type_i[(type_i['config_id'] == config_id) &
-                      (type_i['param_rank'] == 1)].iloc[0]
+    row_data = type_i[(type_i['config_id'] == config_id) & (type_i['param_rank'] == 1)].iloc[0]
 
     baseline_params = np.array([
         row_data['alpha_u'], row_data['beta_u'], row_data['K_uu'], row_data['K_vu'], row_data['delta_u'],
@@ -154,7 +153,7 @@ for row_idx, config_id in enumerate(CONFIG_IDS):
 
         ax.axhline(0, color='red', linestyle=':', linewidth=2.5, alpha=0.9)
 
-        chosen_indices = [0, 1, 2, 3, 4, 5, 6, 7, 10] 
+        chosen_indices = [0, 1, 2, 3, 4, 5, 7, 10] 
         filtered_ticks = [K_DISCRETE[i] for i in chosen_indices]
         ax.grid(alpha=0.3, linestyle='--')
 
@@ -183,7 +182,7 @@ legend_handles = [
     # mlines.Line2D([], [], color='deeppink', linewidth=1.2, marker='o', linestyle='-', alpha=0.6, label='Noisy trial (Turing)'),
     mlines.Line2D([], [], color='red', linewidth=2, linestyle=':', label='Turing Threshold'),
 ]
-fig_multi.legend(handles=legend_handles, loc='lower center', bbox_to_anchor=(0.5, -0.03), ncol=4, frameon=False, fontsize=12)
+fig_multi.legend(handles=legend_handles, loc='lower center', bbox_to_anchor=(0.5, -0.04), ncol=4, frameon=False, fontsize=12)
 
 plt.savefig('3954_heterogeneous_dispersion_comparison_new.png', dpi=200, bbox_inches='tight')
 print("Saved as 3954_heterogeneous_dispersion_comparison_new.png")
