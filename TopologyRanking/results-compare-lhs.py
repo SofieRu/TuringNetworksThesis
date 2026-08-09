@@ -213,7 +213,7 @@ def fig_pseudo_phase_combined(df):
 
     max_robustness = max_robustness if pd.notna(max_robustness) and max_robustness > 0 else 1.0
     norm = mcolors.Normalize(vmin=0.0, vmax=max_robustness)
-    fig, axes = plt.subplots(len(topo_order), 3, figsize=(12.4, 7.4), sharex=True, sharey=True, squeeze=False)
+    fig, axes = plt.subplots(len(topo_order), 3, figsize=(12.4, 7), sharex=True, sharey=True, squeeze=False)
 
     for row_idx, topo in enumerate(topo_order):
         sub = sub_all[sub_all["topology_id"] == topo].sort_values(robustness_col)
@@ -234,7 +234,7 @@ def fig_pseudo_phase_combined(df):
     cbar.set_label("Robustness of Turing Type I", fontsize=13)
 
     fig.suptitle(f"Phase Diagram Across Diffusion Rate Combinations for Topologies {' and '.join(topo_order)}", fontsize=16, ha="center")
-    fig.subplots_adjust(left=0.06, right=0.84, top=0.88, bottom=0.12, wspace=0.2, hspace=0.26)
+    fig.subplots_adjust(left=0.06, right=0.84, top=0.88, bottom=0.12, wspace=0.2, hspace=0.2)
     save(fig, "thesis_combined_phase_diagram")
 
 
@@ -504,12 +504,8 @@ def fig6_lab_configs_comparison(df):
                 )
 
     ax.set_xlabel("Diffusion configuration", fontsize=14, labelpad=8)
-    ax.set_ylabel("Type I Turing robustness (%)", fontsize=14, labelpad=8)
-    ax.set_title(
-        "Type I Robustness across Biologically-Realistic Diffusion Configurations "
-        "(#3954 vs #1754)",
-        fontsize=16, loc="center", pad=12,
-    )
+    ax.set_ylabel("Robustness score (%) for Type I", fontsize=14, labelpad=8)
+    ax.set_title("Robustness across Biologically-Realistic Diffusion Configurations for Topologies #3954 and #1754 (Type I only)", fontsize=16, loc="center", pad=12,)
     ax.set_xticks(x)
     ax.set_xticklabels(x_labels, rotation=0, ha="center", fontsize=11)
 

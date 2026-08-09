@@ -110,7 +110,7 @@ def fig_combined_overview_and_raincloud(df):
     ax1.set_xlabel("ID of Diffusion Configurations", fontsize=15)
 
     ax1.set_ylabel("Robustness Score (in %)", fontsize=15, labelpad=10)
-    ax1.set_title("Latin Hypercube Sampling Results, 1 million simulations\nRobustness of different diffusion rate configurations for Topology #3954",fontsize=16,loc="center",pad=10,)
+    ax1.set_title("Latin Hypercube Sampling Results, $10^6$ simulations\nRobustness of different diffusion rate configurations for Topology #3954",fontsize=16,loc="center",pad=10,)
     ax1.spines[["top", "right"]].set_visible(False)
     ax1.set_xlim(-0.5, len(df) - 0.5)
     ax1.xaxis.grid(False)

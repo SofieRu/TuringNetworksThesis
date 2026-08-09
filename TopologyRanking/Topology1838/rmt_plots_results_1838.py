@@ -152,7 +152,7 @@ def complete_robustness_figure(df, sigma_val):
         mlines.Line2D([], [], color='#313131', marker='^', linestyle='None',markersize=8, markeredgecolor='white', label='Unequal Diffusion',),]
 
     fig.legend(handles=global_handles, frameon=False, loc='lower center', bbox_to_anchor=(0.5, 0.01), ncol=6, fontsize=13, handlelength=2.4, columnspacing=1.6,)
-    fig.suptitle('Random Matrix Theory Results, 1 million simulations\n' 'Robustness of different diffusion rate configurations for Topology #1838', fontsize=16, y=0.98,)
+    fig.suptitle('Random Matrix Theory Results, $5 \\times 10^5$ simulations\n' 'Robustness of different diffusion rate configurations for Topology #1838', fontsize=16, y=0.98,)
     fig.subplots_adjust(left=0.07, right=0.93, top=0.86, bottom=0.12, hspace=0.4, wspace=0.2,) # hspace is gap between Panel A and Panels B/C,  wspace is gap between Panels B and C
 
     # Increase all y-axis tick-label sizes
