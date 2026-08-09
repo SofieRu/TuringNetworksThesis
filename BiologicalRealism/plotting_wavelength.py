@@ -61,23 +61,12 @@ def compute_jacobian(state, params):
     
     return J
 
-# CONFIG
 CSV_PATH = '../TopologyRanking/Topology3954/3954_FINAL_lhs_results_parameters.csv'
 
-# Pick one config per classification — choose configs you know have good
-# examples of that type. Adjust these based on your CSV's content.
-
-# CONFIG_PER_CATEGORY = {
-#     'Type-I':  44,
-#     'Type-II': 44,
-#     'Hopf':    49,
-#     'Filter':  54,
-# }
-
 CONFIG_PER_CATEGORY = {
-    'Type-I':  13,
-    'Type-II': 49,
-    'Hopf':    50,
+    'Type-I':  49,
+    'Type-II': 46,
+    'Hopf':    48,
     'Filter':  55,
 }
 
@@ -93,25 +82,6 @@ SEED = 42
 df = pd.read_csv(CSV_PATH)
 
 categories = list(CONFIG_PER_CATEGORY.keys())
-
-# samples_per_category = {}
-# for category in categories:
-#     config_id = CONFIG_PER_CATEGORY[category]
-#     subset = df[(df['config_id'] == config_id) &
-#                 (df['classification'] == category)]
-    
-#     if len(subset) == 0:
-#         print(f"  {category} (config {config_id}): NO samples found! Skipping.")
-#         samples_per_category[category] = None
-#         continue
-    
-#     # Random sample of N_SAMPLES_PER_TYPE from this category
-#     rng = np.random.default_rng(SEED + categories.index(category))  # different seed per category
-#     n_to_sample = min(N_SAMPLES_PER_TYPE, len(subset))
-#     sample_indices = rng.choice(len(subset), size=n_to_sample, replace=False)
-#     random_samples = subset.iloc[sample_indices]
-#     samples_per_category[category] = random_samples
-
 
 samples_per_category = {}
 K_PEAK_FILTER = 0.3
@@ -169,12 +139,10 @@ for category in categories:
             samples_per_category[category] = subset.sort_values('param_rank').head(N_SAMPLES_PER_TYPE)
 
     else:
-        # Hopf or Filter: just take top samples by rank
         samples_per_category[category] = subset.sort_values('param_rank').head(N_SAMPLES_PER_TYPE)
 
 # PLOT
-
-fig, axes = plt.subplots(N_SAMPLES_PER_TYPE, len(categories),figsize=(4 * len(categories), 3 * N_SAMPLES_PER_TYPE))
+fig, axes = plt.subplots(N_SAMPLES_PER_TYPE, len(categories),figsize=(12.8, 6.5))
 
 for col_idx, category in enumerate(categories):
     samples = samples_per_category[category]
@@ -183,7 +151,7 @@ for col_idx, category in enumerate(categories):
         # No samples available — blank out this column
         for row_idx in range(N_SAMPLES_PER_TYPE):
             axes[row_idx, col_idx].axis('off')
-            axes[row_idx, col_idx].set_title(f"{category}\n(no samples)",fontsize=11)
+            axes[row_idx, col_idx].set_title(f"{category}\n(no samples)",fontsize=12)
         continue
     
     config_id = CONFIG_PER_CATEGORY[category]
@@ -216,31 +184,28 @@ for col_idx, category in enumerate(categories):
         
         # Plot
         #ax.plot(k_values, max_reals, 'b-', linewidth=2) # just one colour blue
-        ax.plot(k_values, max_reals, color=COLOR_PER_CATEGORY[category], linewidth=2)
-        ax.axhline(0, color='red', linestyle='--', alpha=0.6, linewidth=1.6)
-        
-        # Mark classifier boundary at k=10
-        ax.axvline(x=10, color='gray', linestyle=':', linewidth=1.4,alpha=0.7)
+        ax.plot(k_values, max_reals, color=COLOR_PER_CATEGORY[category], linewidth=2.2)
+        ax.axhline(0, color='red', linestyle='--', alpha=0.6, linewidth=2)
         
         # Mark peak
         peak_idx = np.argmax(max_reals)
         peak_k = k_values[peak_idx]
         peak_val = max_reals[peak_idx]
-        # ax.plot(peak_k, peak_val, 'o', color='black', markersize=8, zorder=5)
-        
-        ax.set_xlabel('k', fontsize=11)
-        ax.set_ylabel('Re(λ)', fontsize=11) # QUESTION: is it max Re or just Re???
-        # title = (f"{category} (rank {int(row['param_rank'])})\n"f"config {config_id}, peak k={peak_k:.2f}, λ_max={peak_val:.3f}")
-        title = (f"{category} (sample {row_idx + 1})\n"f"config {config_id}, peak k={peak_k:.2f}, lambda max={peak_val:.3f}")
-        ax.set_title(title, fontsize=11)
+
+        ax.set_xlabel('wavenumber $k$', fontsize=12.8)
+        ax.set_ylabel('Re(λ)', fontsize=12.8)
+        title = (f"{category} (sample {row_idx + 1})\n"f"peak $k$={peak_k:.2f}, max Re(λ)={peak_val:.2f}")
+        ax.set_title(title, fontsize=12)
         ax.grid(alpha=0.5)
 
-fig.suptitle(
-    'Dispersion Relations Across the Four Turing Classifications\n''Two samples per class, with classifier boundary at k=10',
-    fontsize=14, y=1.00
+fig.suptitle('Dispersion Relations for Each Classified Turing Instability Type\n''Two random samples per group to verify sorting accuracy', fontsize=16, y=1.00)
+
+fig.subplots_adjust(left=0.06, right=0.96, top=0.88, bottom=0.08, 
+    wspace=0,  # Close horizontal gap
+    hspace=0.4   # Vertical gap for titles
 )
 
 plt.tight_layout()
-plt.savefig('classifier_validation_final.png', dpi=150, bbox_inches='tight')
-print("\nSaved: classifier_validation_final.png")
+plt.savefig('thesis_classifier_validation.png', dpi=300, bbox_inches='tight')
+print("\nSaved: thesis_classifier_validation.png")
 plt.close()

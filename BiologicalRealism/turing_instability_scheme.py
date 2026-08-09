@@ -51,16 +51,16 @@ for ax, (name, re, im) in zip(axes, TYPES):
     ax.set_title(name, fontsize=16, loc='center', fontweight='bold', color=c)
     ax.set_ylim(-0.6, 0.75)
     ax.set_xlim(0, 6)
-    ax.set_xlabel('wavenumber $k$')
+    ax.set_xlabel('wavenumber $k$', fontsize=14)
     
-axes[0].set_ylabel(r'max Re($\lambda$)')
+axes[0].set_ylabel(r'max Re($\lambda$)', fontsize=14)
 
 legend_handles = [
     mlines.Line2D([], [], color='red', ls='--', lw=2, label=r'Turing threshold (Re($\lambda$) = 0)'),
     mlines.Line2D([], [], color='0.45', ls='--', lw=1.8, label=r'Im($\lambda$) (Hopf)'),
 ]
 
-fig.legend(handles=legend_handles, loc='lower center', ncol=2, frameon=False, bbox_to_anchor=(0.5, -0.04), fontsize=12.8)
+fig.legend(handles=legend_handles, loc='lower center', ncol=2, frameon=False, bbox_to_anchor=(0.5, -0.05), fontsize=14)
 fig.tight_layout(rect=[0, 0.03, 1, 1])
 fig.savefig('turing_types_schematic.png', dpi=300, bbox_inches='tight')
 
