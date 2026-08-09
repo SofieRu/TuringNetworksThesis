@@ -17,17 +17,17 @@ fig, axes = plt.subplots(1, 2, figsize=(13, 4.5), sharey=True)
 ax = axes[0]
 ax.plot(cells, mode_1, 'o-', color='darkorchid', linewidth=2.2, markersize=7)
 ax.axhline(0, color='gray', linewidth=0.9, linestyle='--', alpha=0.7)
-ax.set_xlabel('Cell index', fontsize=12)
-ax.set_ylabel('Eigenvector amplitude', fontsize=12)
-ax.set_title(f'm=1, $k_1 = {k_1:.3f}$', fontsize=12)
+ax.set_xlabel('Cell index', fontsize=14)
+ax.set_ylabel('Eigenvector amplitude', fontsize=14)
+ax.set_title(f'm=1, $k_1 = {k_1:.3f}$', fontsize=14)
 ax.grid(alpha=0.3)
 ax.set_xticks(np.arange(0, N + 1, 2))
 
 ax = axes[1]
 ax.plot(cells, mode_5, 'o-', color='darkorchid', linewidth=2.2, markersize=7)
 ax.axhline(0, color='gray', linewidth=0.9, linestyle='--', alpha=0.7)
-ax.set_xlabel('Cell index', fontsize=12)
-ax.set_title(f'm=5, $k_5 = {k_5:.3f}$',fontsize=12)
+ax.set_xlabel('Cell index', fontsize=14)
+ax.set_title(f'm=5, $k_5 = {k_5:.3f}$',fontsize=14)
 ax.grid(alpha=0.3)
 ax.set_xticks(np.arange(0, N + 1, 2))
 
@@ -40,7 +40,7 @@ ax.set_xticks(np.arange(0, N + 1, 2))
 # 1. Add the main title
 fig.suptitle(
     f'Discrete spatial modes on a ring of N={N} cells', 
-    fontsize=14, 
+    fontsize=16, 
 )
 
 plt.tight_layout()
