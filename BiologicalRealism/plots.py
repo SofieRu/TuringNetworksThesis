@@ -264,51 +264,51 @@ plt.close(fig); print("Saved: robustness_N10_30.png")
 
 ###### BACKUP ######
 
-# # FIG 3: sensitivity 2x2
-# def sensitivity_no_log(ax, sens, letter, title_text):
-#     names = list(sens['param_names'])
-#     s = np.array(sens['sensitivities'], float)
-#     nan_mask = np.isnan(s)
-#     clean = np.where(~nan_mask)[0]; nans = np.where(nan_mask)[0]
-#     order = np.concatenate([clean[np.argsort(s[clean])[::-1]], nans])
-#     labels = [PARAM_LABELS.get(names[i], names[i]) for i in order]
-#     vals = s[order]; is_nan = np.isnan(vals)
+# FIG 3: sensitivity 2x2
+def sensitivity_no_log(ax, sens, letter, title_text):
+    names = list(sens['param_names'])
+    s = np.array(sens['sensitivities'], float)
+    nan_mask = np.isnan(s)
+    clean = np.where(~nan_mask)[0]; nans = np.where(nan_mask)[0]
+    order = np.concatenate([clean[np.argsort(s[clean])[::-1]], nans])
+    labels = [PARAM_LABELS.get(names[i], names[i]) for i in order]
+    vals = s[order]; is_nan = np.isnan(vals)
     
-#     bars = ax.bar(range(len(labels)), np.where(is_nan, 0.0, vals), color='steelblue', alpha=0.9)
+    bars = ax.bar(range(len(labels)), np.where(is_nan, 0.0, vals), color='steelblue', alpha=0.9)
                   
-#     n_clean = int((~is_nan).sum())
+    n_clean = int((~is_nan).sum())
     
-#     # 2-TONE COLOR SCHEME: Top 3 are pink (stiff), everything else is blue (sloppy)
-#     for j in range(len(labels)):
-#         if j < min(3, n_clean):
-#             bars[j].set_color('mediumvioletred')
-#         else:
-#             bars[j].set_color('steelblue')
+    # 2-TONE COLOR SCHEME: Top 3 are pink (stiff), everything else is blue (sloppy)
+    for j in range(len(labels)):
+        if j < min(5, n_clean):
+            bars[j].set_color('mediumvioletred')
+        else:
+            bars[j].set_color('steelblue')
         
-#     ax.set_ylim(bottom=0) 
-#     ax.ticklabel_format(axis='y', style='plain', useOffset=False)
+    ax.set_ylim(bottom=0) 
+    ax.ticklabel_format(axis='y', style='plain', useOffset=False)
     
-#     ax.set_xticks(range(len(labels)))
-#     ax.set_xticklabels(labels, rotation=45, ha='right', fontsize=12)
-#     ax.grid(True, alpha=0.3, axis='y', which='major')
-#     panel_title(ax, letter, title_text)
+    ax.set_xticks(range(len(labels)))
+    ax.set_xticklabels(labels, rotation=45, ha='right', fontsize=12)
+    ax.grid(True, alpha=0.3, axis='y', which='major')
+    panel_title(ax, letter, title_text)
 
-# sens_data = {k: load_pkl(p) for k, (p, _id) in SENS_FILES.items()}
-# fig, axes = plt.subplots(2, 2, figsize=(14, 8.2))
-# for i, (ax, key) in enumerate(zip(axes.flat, GRID)):
-#     sd = sens_data.get(key)
-#     if sd is None:
-#         ax.set_visible(False); continue
-#     sensitivity_no_log(ax, sd, LETTERS[i], f"{key[0]} {key[1]} (ID {SENS_FILES[key][1]})")
-# for ax in axes[:, 0]:
-#     ax.set_ylabel('|Δ growth rate| per 10% parameter change') 
+sens_data = {k: load_pkl(p) for k, (p, _id) in SENS_FILES.items()}
+fig, axes = plt.subplots(2, 2, figsize=(12.2, 7.6))
+for i, (ax, key) in enumerate(zip(axes.flat, GRID)):
+    sd = sens_data.get(key)
+    if sd is None:
+        ax.set_visible(False); continue
+    sensitivity_no_log(ax, sd, LETTERS[i], f"{key[0]} {key[1]} (ID {SENS_FILES[key][1]})")
+for ax in axes[:, 0]:
+    ax.set_ylabel('Change in growth rate (No log)') 
     
-# # COMBINED LEGEND FOR LINEAR VERSION
-# fig.legend(handles=[
-#     Patch(facecolor='mediumvioletred', alpha=0.9, label='stiff (critical)'),
-#     Patch(facecolor='steelblue', alpha=0.9, label='sloppy (tolerant)'),
-# ], loc='lower center', ncol=2, frameon=False, bbox_to_anchor=(0.5, -0.01))
+# COMBINED LEGEND FOR LINEAR VERSION
+fig.legend(handles=[
+    Patch(facecolor='mediumvioletred', alpha=0.9, label='Top 5 Stiff Parameters'),
+    Patch(facecolor='steelblue', alpha=0.9, label='Sloppy Parameters'),
+], loc='lower center', ncol=2, frameon=False, bbox_to_anchor=(0.5, -0.04))
 
-# fig.suptitle('Parameter sensitivity of the Turing growth rate (N = 10)', fontsize=16, y=0.99)
-# fig.tight_layout(rect=[0, 0, 1, 1])
-# fig.savefig('sensitivity_nolog.png', dpi=300, bbox_inches='tight')
+fig.suptitle('Local Sensitivity Analysis of Turing Growth Rates (N = 10, 10% Perturbation)', fontsize=16, y=0.99)
+fig.tight_layout(rect=[0, 0, 1, 1])
+fig.savefig('sensitivity_nolog.png', dpi=300, bbox_inches='tight')
