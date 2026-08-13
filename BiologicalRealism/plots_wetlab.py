@@ -83,7 +83,7 @@ def desc(key):
 
 
 #### BOXPLOT 
-fig, axes = plt.subplots(1, 2, figsize=(12.8, 5.2), sharex=True)
+fig, axes = plt.subplots(1, 2, figsize=(12.8, 5), sharex=True)
 line_handle = None
 
 for i, (ax, key) in enumerate(zip(axes.flat, GRID)):
@@ -121,7 +121,7 @@ for ax in axes:
     ax.set_ylabel(r'Ring growth rate max Re($\lambda$)', fontsize=14)
     ax.set_xlabel('CV (coefficient of variation)', fontsize=14)
 
-fig.suptitle('Distribution of Growth Rates under Parameter Heterogeneity (N=10) for Wet-Lab Configurations', fontsize=16, y=0.92)
+fig.suptitle('Distribution of Growth Rates under Parameter Heterogeneity (N=10) for Wet-Lab Configurations', fontsize=16, y=0.88)
 
 if line_handle:
     fig.legend(handles=[line_handle], loc='lower center', bbox_to_anchor=(0.5, -0.01), frameon=False)

@@ -116,7 +116,7 @@ def ring_curve(ode, jac, base, D, kgrid, CV, ss0, rng, N):
     return np.max(cells, axis=0)
 
 M_VALUES = np.arange(0, N_RING // 2 + 1) # mode indices m = 0..N/2
-fig, axes = plt.subplots(len(PKLS), len(CVS), figsize=(12.8, 6.8), sharex=True, sharey='row')
+fig, axes = plt.subplots(len(PKLS), len(CVS), figsize=(12.8, 6.4), sharex=True, sharey='row')
 
 for row, (label, pkl) in enumerate(PKLS.items()):
     d = pickle.load(open(pkl, 'rb'))
@@ -167,5 +167,5 @@ legend_handles = [
     mlines.Line2D([], [], color='red', linewidth=2, linestyle='--', label='Turing Threshold'),
 ]
 
-fig.legend(handles=legend_handles, loc='lower center', bbox_to_anchor=(0.5, -0.04), ncol=4, frameon=False, fontsize=14)
+fig.legend(handles=legend_handles, loc='lower center', bbox_to_anchor=(0.5, -0.045), ncol=4, frameon=False, fontsize=14)
 fig.savefig('thesis_dispersion_relation_robust.png', dpi=300, bbox_inches='tight')

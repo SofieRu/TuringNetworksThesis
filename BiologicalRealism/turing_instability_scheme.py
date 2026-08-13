@@ -36,7 +36,7 @@ TYPES = [
     ('Filter', reF, None)
 ]
 
-fig, axes = plt.subplots(1, 4, figsize=(14, 4), sharey=True)
+fig, axes = plt.subplots(1, 4, figsize=(14, 3.6), sharey=True)
 
 for ax, (name, re, im) in zip(axes, TYPES):
     c = COLORS[name]
@@ -49,11 +49,11 @@ for ax, (name, re, im) in zip(axes, TYPES):
         
     ax.axhline(0, color='red', ls='--', lw=2, zorder=2)
     ax.set_title(name, fontsize=16, loc='center', fontweight='bold', color=c)
-    ax.set_ylim(-0.6, 0.75)
+    ax.set_ylim(-0.5, 0.6)
     ax.set_xlim(0, 6)
-    ax.set_xlabel('wavenumber $k$', fontsize=14)
+    ax.set_xlabel('wavenumber $k$', fontsize=15)
     
-axes[0].set_ylabel(r'max Re($\lambda$)', fontsize=14)
+axes[0].set_ylabel(r'max Re($\lambda$)', fontsize=15)
 
 legend_handles = [
     mlines.Line2D([], [], color='red', ls='--', lw=2, label=r'Turing threshold (Re($\lambda$) = 0)'),

@@ -174,7 +174,7 @@ def fig_all_patterns_profile_trends_complete(df):
     legend_handles = [mlines.Line2D([], [], color=c,linewidth=3.0, marker="o", markersize=7, markeredgecolor="white", markeredgewidth=1.5, label=l) for l, c in PATTERN_COLORS.items()]
     
     fig.legend(handles=legend_handles,loc="lower center",bbox_to_anchor=(0.5, -0.02),ncol=4,frameon=False,fontsize=14)
-    fig.subplots_adjust(left=0.08, right=0.95, top=0.87, bottom=0.12, wspace=0.27, hspace=0.45)
+    fig.subplots_adjust(left=0.08, right=0.95, top=0.87, bottom=0.12, wspace=0.3, hspace=0.45)
     
     save(fig, "final_type_profile_trends")
 
@@ -219,7 +219,7 @@ def fig_pseudo_phase_combined(df):
         sub = sub_all[sub_all["topology_id"] == topo].sort_values(robustness_col)
         for col_idx, (xvar, yvar) in enumerate(pairs):
             ax = axes[row_idx, col_idx]
-            sc = ax.scatter(sub[xvar], sub[yvar], c=sub[robustness_col], cmap="PuRd", norm=norm, s=250, edgecolors="#444444", linewidths=0.5)
+            sc = ax.scatter(sub[xvar], sub[yvar], c=sub[robustness_col], cmap="PuRd", norm=norm, s=250, edgecolors="#4E4242", linewidths=0.4, clip_on=False)
             ax.set_xscale("symlog", linthresh=0.1)
             ax.tick_params(axis='y', labelsize=14)
             ax.set_yscale("symlog", linthresh=0.1)

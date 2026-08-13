@@ -120,7 +120,7 @@ for ax in axes[1, :]:
 fig.suptitle('Distribution of ring growth rates under parameter heterogeneity (N = 10)', fontsize=16, y=0.92)
 
 if line_handle:
-    fig.legend(handles=[line_handle], loc='lower center', bbox_to_anchor=(0.5, 0), bbox_transform=fig.transFigure, frameon=False)
+    fig.legend(handles=[line_handle], loc='lower center', bbox_to_anchor=(0.5, 0.02), bbox_transform=fig.transFigure, frameon=False)
 
 fig.tight_layout(rect=[0, 0.04, 1, 0.94])
 fig.subplots_adjust(wspace=0.14)
@@ -188,7 +188,7 @@ def sensitivity_on_ax(ax, sens, letter, title_text):
 sens_data = {k: load_pkl(p) for k, (p, _id) in SENS_FILES.items()}
 
 # CHANGED: Removed sharex=True so the top subplots keep their own independent x-axes
-fig, axes = plt.subplots(2, 2, figsize=(12.6, 11))
+fig, axes = plt.subplots(2, 2, figsize=(12.6, 10))
 
 for i, (ax, key) in enumerate(zip(axes.flat, GRID)):
     sd = sens_data.get(key)
@@ -229,7 +229,7 @@ for k in GRID:
         if d is not None:
             robust_data[(k[0], k[1], N)] = extract(d)
 
-fig, axes = plt.subplots(1, 2, figsize=(12, 5), sharey=True)
+fig, axes = plt.subplots(1, 2, figsize=(12, 4.6), sharey=True)
 for i, (ax, topo) in enumerate(zip(axes, ['1754', '3954'])):
     #ax.axhline(50, color='gray', ls=':', lw=1.1, alpha=0.7, zorder=1)
     for kind in ['robust', 'fragile']:

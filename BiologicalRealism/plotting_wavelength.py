@@ -142,7 +142,7 @@ for category in categories:
         samples_per_category[category] = subset.sort_values('param_rank').head(N_SAMPLES_PER_TYPE)
 
 # PLOT
-fig, axes = plt.subplots(N_SAMPLES_PER_TYPE, len(categories),figsize=(12.8, 6))
+fig, axes = plt.subplots(N_SAMPLES_PER_TYPE, len(categories),figsize=(12.8, 5.4))
 
 for col_idx, category in enumerate(categories):
     samples = samples_per_category[category]
@@ -198,7 +198,7 @@ for col_idx, category in enumerate(categories):
         ax.set_title(title, fontsize=12)
         ax.grid(alpha=0.5)
 
-fig.suptitle('Dispersion Relations for Each Classified Turing Instability Type\n''Two random samples per group to verify sorting accuracy', fontsize=16, y=0.98)
+fig.suptitle('Dispersion Relations for Each Classified Turing Instability Type', fontsize=16, y=0.98)
 
 fig.subplots_adjust(left=0.06, right=0.96, top=0.88, bottom=0.08, 
     wspace=0,  # Close horizontal gap

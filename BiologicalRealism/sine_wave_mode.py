@@ -12,7 +12,7 @@ mode_5 = np.cos(2 * np.pi * 5 * cells / N)  # five cycles across the ring
 k_1 = 2 * np.sin(1 * np.pi / N)
 k_5 = 2 * np.sin(5 * np.pi / N)
 
-fig, axes = plt.subplots(1, 2, figsize=(13, 4.5), sharey=True)
+fig, axes = plt.subplots(1, 2, figsize=(13, 3.8), sharey=True)
 
 ax = axes[0]
 ax.plot(cells, mode_1, 'o-', color='darkorchid', linewidth=2.2, markersize=7)
