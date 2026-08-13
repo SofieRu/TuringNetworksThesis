@@ -86,7 +86,7 @@ def desc(key):
 
 
 # FIG 1: boxplot
-fig, axes = plt.subplots(2, 2, figsize=(12.8, 8.6), sharex=True)
+fig, axes = plt.subplots(2, 2, figsize=(12.4, 7.8), sharex=True)
 line_handle = None
 
 for i, (ax, key) in enumerate(zip(axes.flat, GRID)):

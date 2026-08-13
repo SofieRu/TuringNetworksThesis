@@ -92,7 +92,7 @@ def fig_all_patterns_profile_trends_complete(df):
     )
 
     # 2. Changed layout to 2x2 grid. sharey=False because absolute numbers vs percents need different scales.
-    fig, axes = plt.subplots(2, 2, figsize=(12.6, 7), sharey=False)
+    fig, axes = plt.subplots(2, 2, figsize=(12.6, 6.4), sharey=False)
 
     for row_idx, topo in enumerate(topo_order):
         topo_data = grouped[grouped["topology_id"] == topo]
@@ -213,7 +213,7 @@ def fig_pseudo_phase_combined(df):
 
     max_robustness = max_robustness if pd.notna(max_robustness) and max_robustness > 0 else 1.0
     norm = mcolors.Normalize(vmin=0.0, vmax=max_robustness)
-    fig, axes = plt.subplots(len(topo_order), 3, figsize=(12.4, 7), sharex=True, sharey=True, squeeze=False)
+    fig, axes = plt.subplots(len(topo_order), 3, figsize=(12.4, 6.2), sharex=True, sharey=True, squeeze=False)
 
     for row_idx, topo in enumerate(topo_order):
         sub = sub_all[sub_all["topology_id"] == topo].sort_values(robustness_col)
@@ -221,7 +221,9 @@ def fig_pseudo_phase_combined(df):
             ax = axes[row_idx, col_idx]
             sc = ax.scatter(sub[xvar], sub[yvar], c=sub[robustness_col], cmap="PuRd", norm=norm, s=250, edgecolors="#444444", linewidths=0.5)
             ax.set_xscale("symlog", linthresh=0.1)
+            ax.tick_params(axis='y', labelsize=14)
             ax.set_yscale("symlog", linthresh=0.1)
+            ax.tick_params(axis='x', labelsize=14)
             ax.xaxis.grid(False)
             if row_idx == 0:
                 ax.set_title(f"{xvar} vs {yvar}", fontsize=13, pad=8)

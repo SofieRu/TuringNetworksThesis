@@ -102,10 +102,11 @@ def fig_combined_overview_and_raincloud(df):
     ax1.set_xticks(range(len(df)))
 
     #ax1.set_xticklabels(df["config_name"].str.replace(r"FINAL_LHS_3954_|Type\d*_", "", regex=True),rotation=55,ha="right",fontsize=8,)
-    ax1.set_xticklabels(df["config_id"], rotation=40, ha="right", fontsize=12)
+    ax1.set_xticklabels(df["config_id"], rotation=50, ha="right", fontsize=12)
     ax1.set_xlabel("ID of Diffusion Configurations", fontsize=15)
 
     ax1.set_ylabel("Robustness Score (in %)", fontsize=15, labelpad=10)
+    ax1.tick_params(axis='y', labelsize=13)
     #ax1.set_title("Latin Hypercube Sampling Results, 1 million simulations\nRobustness of different diffusion rate configurations for Topology #1754",fontsize=16,loc="center",pad=10,)
     ax1.set_title("Latin Hypercube Sampling Results, $10^6$ simulations\nRobustness of different diffusion rate configurations for Topology #1754", fontsize=16, loc="center", pad=10)
     ax1.spines[["top", "right"]].set_visible(False)
@@ -151,6 +152,7 @@ def fig_combined_overview_and_raincloud(df):
     ax2.set_xticks(range(len(types)))
     ax2.set_xticklabels(labels, fontsize=13)
     ax2.set_ylabel("Robustness Score (in %)", fontsize=14, labelpad=10)
+    ax2.tick_params(axis='y', labelsize=13)
     ax2.set_title("Robustness distribution by Type for Topology #1754",fontsize=16,loc="center",pad=10,)
     ax2.xaxis.grid(False)
     ax2.yaxis.grid(True)
