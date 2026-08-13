@@ -50,7 +50,7 @@ def complete_robustness_figure(df, sigma_val):
     import matplotlib.ticker as mticker
 
     random.seed(42)
-    fig = plt.figure(figsize=(12.4, 7))
+    fig = plt.figure(figsize=(12.4, 6.6))
     gs = gridspec.GridSpec(2, 2, figure=fig, height_ratios=[1, 1])
     ax_stable = fig.add_subplot(gs[0, :])
     ax_avg = fig.add_subplot(gs[1, 0])
@@ -157,7 +157,7 @@ def complete_robustness_figure(df, sigma_val):
         mlines.Line2D([], [], color='#313131', marker='^', linestyle='None',markersize=8, markeredgecolor='white', label='Unequal Diffusion',),]
 
     fig.legend(handles=global_handles, frameon=False, loc='lower center', bbox_to_anchor=(0.5, -0.01), ncol=6, fontsize=13, handlelength=2.4, columnspacing=1.6,)
-    fig.suptitle('Random Matrix Theory Results, $5 \\times 10^5$ simulations\n' 'Robustness of different diffusion rate configurations for Topology #3954', fontsize=16, y=0.99,)
+    fig.suptitle('Random Matrix Theory Results, $5 \\times 10^5$ simulations, Topology #3954', fontsize=16, y=0.96,)
     fig.subplots_adjust(left=0.07, right=0.93, top=0.86, bottom=0.12, hspace=0.4, wspace=0.2,) # hspace is gap between Panel A and Panels B/C,  wspace is gap between Panels B and C
     save(fig, 'final_3954_rmt_overview_sigma')
 

@@ -93,7 +93,7 @@ def fig4_diego_vs_shaberi(df):
 def fig_combined_overview_and_raincloud(df):
     df = df.copy()
     #fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(13,8.5), gridspec_kw={"height_ratios": [1, 1]})
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12.4,6.8))
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12.4,6.2))
 
     # PANEL 1: OVERVIEW BAR CHART (ax1)
     colors = df["turing_type"].map(TYPE_COLORS).fillna("#aaaaaa")
