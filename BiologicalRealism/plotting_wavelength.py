@@ -142,7 +142,7 @@ for category in categories:
         samples_per_category[category] = subset.sort_values('param_rank').head(N_SAMPLES_PER_TYPE)
 
 # PLOT
-fig, axes = plt.subplots(N_SAMPLES_PER_TYPE, len(categories),figsize=(12.8, 5.4))
+fig, axes = plt.subplots(N_SAMPLES_PER_TYPE, len(categories),figsize=(12.8, 6.2))
 
 for col_idx, category in enumerate(categories):
     samples = samples_per_category[category]
@@ -151,7 +151,7 @@ for col_idx, category in enumerate(categories):
         # No samples available — blank out this column
         for row_idx in range(N_SAMPLES_PER_TYPE):
             axes[row_idx, col_idx].axis('off')
-            axes[row_idx, col_idx].set_title(f"{category}\n(no samples)",fontsize=12)
+            axes[row_idx, col_idx].set_title(f"{category}\n(no samples)",fontsize=14)
         continue
     
     config_id = CONFIG_PER_CATEGORY[category]
@@ -192,16 +192,16 @@ for col_idx, category in enumerate(categories):
         peak_k = k_values[peak_idx]
         peak_val = max_reals[peak_idx]
 
-        ax.set_xlabel('wavenumber $k$', fontsize=12.8)
-        ax.set_ylabel('Re(λ)', fontsize=12.8)
+        ax.set_xlabel('wavenumber $k$', fontsize=14)
+        ax.set_ylabel('Re(λ)', fontsize=14)
         title = (f"{category} (sample {row_idx + 1})\n"f"peak $k$={peak_k:.2f}, max Re(λ)={peak_val:.2f}")
-        ax.set_title(title, fontsize=12)
+        ax.set_title(title, fontsize=14)
         ax.grid(alpha=0.5)
 
-fig.suptitle('Dispersion Relations for Each Classified Turing Instability Type', fontsize=16, y=0.98)
+fig.suptitle('Dispersion Relations for Each Classified Turing Instability Type', fontsize=18, y=0.98)
 
 fig.subplots_adjust(left=0.06, right=0.96, top=0.88, bottom=0.08, 
-    wspace=0,  # Close horizontal gap
+    wspace=0.3,  # Close horizontal gap
     hspace=0.4   # Vertical gap for titles
 )
 

@@ -13,8 +13,8 @@ import matplotlib.lines as mlines
 # have to run this first: pip install seaborn --user
 
 plt.rcParams.update({
-    'font.size': 13, 'axes.titlesize': 16, 'axes.labelsize': 13,
-    'xtick.labelsize': 13, 'ytick.labelsize': 13, 'legend.fontsize': 13,
+    'font.size': 14, 'axes.titlesize': 18, 'axes.labelsize': 16,
+    'xtick.labelsize': 14, 'ytick.labelsize': 13, 'legend.fontsize': 15,
     'axes.spines.top': False, 'axes.spines.right': False, 'figure.dpi': 300,
 })
 
@@ -70,7 +70,7 @@ def extract(cv):
             'config_id': cv.get('config_id', '?'), 'hopping': cv.get('hopping', {})}
 
 def panel_title(ax, letter, text):
-    ax.set_title(f'({letter}) {text}', loc='left', fontsize=12.8, pad=8)
+    ax.set_title(f'({letter}) {text}', loc='left', fontsize=16, pad=8)
 
 data10 = {}
 for k in GRID:
@@ -86,7 +86,7 @@ def desc(key):
 
 
 # FIG 1: boxplot
-fig, axes = plt.subplots(2, 2, figsize=(12.4, 7.8), sharex=True)
+fig, axes = plt.subplots(2, 2, figsize=(12.4, 8.6), sharex=True)
 line_handle = None
 
 for i, (ax, key) in enumerate(zip(axes.flat, GRID)):
@@ -113,17 +113,19 @@ for i, (ax, key) in enumerate(zip(axes.flat, GRID)):
     panel_title(ax, LETTERS[i], desc(key))
 
 for ax in axes[:, 0]:
-    ax.set_ylabel(r'Ring growth rate max Re($\lambda$)', fontsize=14)
+    ax.set_ylabel(r'max Re($\lambda$)', fontsize=16)
+    ax.tick_params(axis='y', labelsize=15)
 for ax in axes[1, :]:
-    ax.set_xlabel('CV (coefficient of variation)', fontsize=14)
+    ax.set_xlabel('CV (coefficient of variation)', fontsize=16)
+    ax.tick_params(axis='x', labelsize=15)
 
-fig.suptitle('Distribution of ring growth rates under parameter heterogeneity (N = 10)', fontsize=16, y=0.92)
+fig.suptitle('Distribution of ring growth rates under parameter heterogeneity (N = 10)', fontsize=18, y=0.92)
 
 if line_handle:
-    fig.legend(handles=[line_handle], loc='lower center', bbox_to_anchor=(0.5, 0.02), bbox_transform=fig.transFigure, frameon=False)
+    fig.legend(handles=[line_handle], loc='lower center', bbox_to_anchor=(0.5, 0), bbox_transform=fig.transFigure, frameon=False)
 
 fig.tight_layout(rect=[0, 0.04, 1, 0.94])
-fig.subplots_adjust(wspace=0.14)
+fig.subplots_adjust(wspace=0.17, hspace=0.22)
 fig.savefig('cv_boxplot_2x2.png', dpi=300, bbox_inches='tight')
 plt.close(fig); print("Saved: cv_boxplot_2x2.png")
 
@@ -177,7 +179,7 @@ def sensitivity_on_ax(ax, sens, letter, title_text):
             
     ax.set_yscale('log'); ax.set_ylim(bottom=1e-4)
     ax.set_xticks(range(len(labels)))
-    ax.set_xticklabels(labels, rotation=40, ha='right', fontsize=13)
+    ax.set_xticklabels(labels, rotation=40, ha='right', fontsize=14)
     
     # CHANGED: Force labels to stay visible on every single panel
     ax.tick_params(labelbottom=True)
@@ -188,7 +190,7 @@ def sensitivity_on_ax(ax, sens, letter, title_text):
 sens_data = {k: load_pkl(p) for k, (p, _id) in SENS_FILES.items()}
 
 # CHANGED: Removed sharex=True so the top subplots keep their own independent x-axes
-fig, axes = plt.subplots(2, 2, figsize=(12.6, 10))
+fig, axes = plt.subplots(2, 2, figsize=(12.6, 11.6))
 
 for i, (ax, key) in enumerate(zip(axes.flat, GRID)):
     sd = sens_data.get(key)
@@ -196,7 +198,7 @@ for i, (ax, key) in enumerate(zip(axes.flat, GRID)):
         ax.set_visible(False); continue
     sensitivity_on_ax(ax, sd, LETTERS[i], f"{key[0]} {key[1]} (ID {SENS_FILES[key][1]})")
 for ax in axes[:, 0]:
-    ax.set_ylabel('Change in growth rate (log)', fontsize=15)
+    ax.set_ylabel('Change in growth rate (log)', fontsize=16)
 
 # COMBINED LEGEND FOR LOG VERSION
 fig.legend(handles=[
@@ -204,7 +206,7 @@ fig.legend(handles=[
     Patch(facecolor='steelblue', alpha=0.9, label='Sloppy Parameters'),
 ], loc='lower center', ncol=2, frameon=False, bbox_to_anchor=(0.5, 0.01)) # Shifted anchor slightly up for padding
 
-fig.suptitle('Local Sensitivity Analysis of Turing Growth Rates (N = 10, 10% Perturbation)', fontsize=16, y=0.92)
+fig.suptitle('Local Sensitivity Analysis (N = 10, 10% Perturbation)', fontsize=18, y=0.92)
 fig.tight_layout(rect=[0, 0.04, 1, 0.94])
 
 # CHANGED: Added vertical spacing (hspace) so the top row's rotated labels don't crash into bottom row titles
@@ -229,7 +231,7 @@ for k in GRID:
         if d is not None:
             robust_data[(k[0], k[1], N)] = extract(d)
 
-fig, axes = plt.subplots(1, 2, figsize=(12, 4.6), sharey=True)
+fig, axes = plt.subplots(1, 2, figsize=(12, 5.2), sharey=True)
 for i, (ax, topo) in enumerate(zip(axes, ['1754', '3954'])):
     #ax.axhline(50, color='gray', ls=':', lw=1.1, alpha=0.7, zorder=1)
     for kind in ['robust', 'fragile']:
@@ -248,7 +250,7 @@ for i, (ax, topo) in enumerate(zip(axes, ['1754', '3954'])):
     ax.legend(loc='upper right', fontsize=11, ncol=2)
     panel_title(ax, LETTERS[i], f'Topology {topo}')
 axes[0].set_ylabel('Robustness (% of trials that stay Turing)')
-fig.suptitle('Robustness to parameter noise across ring sizes (N = 10, 20, 30)', fontsize=16, y=0.93)
+fig.suptitle('Robustness to parameter noise across ring sizes (N = 10, 20, 30)', fontsize=18, y=0.93)
 fig.tight_layout(rect=[0, 0, 1, 0.97])
 fig.savefig('robustness_N10_30.png', dpi=300, bbox_inches='tight')
 plt.close(fig); print("Saved: robustness_N10_30.png")

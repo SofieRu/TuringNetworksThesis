@@ -36,7 +36,7 @@ TYPES = [
     ('Filter', reF, None)
 ]
 
-fig, axes = plt.subplots(1, 4, figsize=(14, 3.6), sharey=True)
+fig, axes = plt.subplots(1, 4, figsize=(14, 3.4), sharey=True)
 
 for ax, (name, re, im) in zip(axes, TYPES):
     c = COLORS[name]
