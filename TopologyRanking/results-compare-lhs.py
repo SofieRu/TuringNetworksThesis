@@ -169,7 +169,7 @@ def fig_all_patterns_profile_trends_complete(df):
             ax.spines["left"].set_color("#cccccc")
             ax.spines["bottom"].set_color("#cccccc")
 
-    plt.suptitle("Distribution of Turing Instability Types Across Diffusion Types", fontsize=18, y=0.97,ha="center",color="#111111")
+    plt.suptitle("Distribution of Turing Instability Types Across Diffusion Types", fontsize=18, y=0.99,ha="center",color="#111111")
 
     legend_handles = [mlines.Line2D([], [], color=c,linewidth=3.0, marker="o", markersize=7, markeredgecolor="white", markeredgewidth=1.5, label=l) for l, c in PATTERN_COLORS.items()]
     
@@ -303,7 +303,7 @@ def fig_pseudo_phase_combined(df):
     cbar = fig.colorbar(sc, cax=cbar_ax)
     cbar.set_label("Robustness of Turing Type I", fontsize=14)
     
-    fig.suptitle(f"Phase Diagram Across Diffusion Rate Combinations for Topologies {' and '.join(topo_order)}", fontsize=18, ha="center")
+    fig.suptitle(f"Phase Diagram Across Diffusion Rate Combinations for {' and '.join(topo_order)}", fontsize=18, ha="center")
     fig.subplots_adjust(left=0.06, right=0.84, top=0.85, bottom=0.12, wspace=0.2, hspace=0.2)
     
     save(fig, "thesis_combined_phase_diagram")
