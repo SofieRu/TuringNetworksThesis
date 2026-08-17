@@ -116,7 +116,7 @@ def ring_curve(ode, jac, base, D, kgrid, CV, ss0, rng, N):
     return np.max(cells, axis=0)
 
 M_VALUES = np.arange(0, N_RING // 2 + 1) # mode indices m = 0..N/2
-fig, axes = plt.subplots(len(PKLS), len(CVS), figsize=(12.8, 6.4), sharex=True, sharey='row')
+fig, axes = plt.subplots(len(PKLS), len(CVS), figsize=(12.8, 7.2), sharex=True, sharey='row')
 
 for row, (label, pkl) in enumerate(PKLS.items()):
     d = pickle.load(open(pkl, 'rb'))
@@ -145,27 +145,27 @@ for row, (label, pkl) in enumerate(PKLS.items()):
         ax.axhline(0, color='red', linestyle='--', linewidth=2.5, alpha=0.9)
         ax.grid(alpha=0.3, linestyle='--')
         if row == 0:
-            ax.set_title(f'CV = {CV:.2f}', fontsize=14)
+            ax.set_title(f'CV = {CV:.2f}', fontsize=15)
         if row == len(PKLS) - 1:
             # thin out near-duplicate high-k modes so labels don't collide
             keep = [i for i in range(len(kd)) if i != len(kd) - 2]
             ax.set_xticks(kd[keep])
-            ax.set_xticklabels([f'$k_{{{M_VALUES[i]}}}$={kd[i]:.2f}' for i in keep], rotation=40, ha='right', fontsize=12)
-            ax.set_xlabel('Wavenumber $k_m$', fontsize=14)
+            ax.set_xticklabels([f'$k_{{{M_VALUES[i]}}}$={kd[i]:.2f}' for i in keep], rotation=40, ha='right', fontsize=14)
+            ax.set_xlabel('Wavenumber $k_m$', fontsize=15)
 
-    axes[row, 0].set_ylabel(f'{label}\n' + r'Max Re($\lambda$)', fontsize=14)
+    axes[row, 0].set_ylabel(f'{label}\n' + r'Max Re($\lambda$)', fontsize=15)
     axes[row, 0].yaxis.set_major_locator(MultipleLocator(0.15 if '3954' in label else 0.25))
     for col in range(axes.shape[1]):
         axes[row, col].tick_params(axis='y', labelsize=12)
 
 fig.align_ylabels(axes[:, 0])
 fig.subplots_adjust(left=0.09, right=0.96, top=0.83, bottom=0.18, wspace=0.07, hspace=0.06)
-fig.suptitle(f'Dispersion Relation under Parameter Noise (N={N_RING} cells, ' f'{RINGS_PANEL} trials)\n' f'Robust Topology #1754 vs Robust Topology #3954', fontsize=16, y=0.97)
+fig.suptitle(f'Dispersion Relation under Parameter Noise (N={N_RING} cells, ' f'{RINGS_PANEL} trials)\n' f'Robust Topology #1754 vs Robust Topology #3954', fontsize=18, y=0.97)
 
 legend_handles = [
     mlines.Line2D([], [], color='black', linewidth=2, marker='o', linestyle='-', label='Baseline (CV=0.0)'),
     mlines.Line2D([], [], color='red', linewidth=2, linestyle='--', label='Turing Threshold'),
 ]
 
-fig.legend(handles=legend_handles, loc='lower center', bbox_to_anchor=(0.5, -0.045), ncol=4, frameon=False, fontsize=14)
+fig.legend(handles=legend_handles, loc='lower center', bbox_to_anchor=(0.5, -0.06), ncol=4, frameon=False, fontsize=15)
 fig.savefig('thesis_dispersion_relation_robust.png', dpi=300, bbox_inches='tight')

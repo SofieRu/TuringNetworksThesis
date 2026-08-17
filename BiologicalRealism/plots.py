@@ -86,7 +86,7 @@ def desc(key):
 
 
 # FIG 1: boxplot
-fig, axes = plt.subplots(2, 2, figsize=(12.4, 8.6), sharex=True)
+fig, axes = plt.subplots(2, 2, figsize=(12.4, 8.8), sharex=True)
 line_handle = None
 
 for i, (ax, key) in enumerate(zip(axes.flat, GRID)):
@@ -231,7 +231,7 @@ for k in GRID:
         if d is not None:
             robust_data[(k[0], k[1], N)] = extract(d)
 
-fig, axes = plt.subplots(1, 2, figsize=(12, 5.2), sharey=True)
+fig, axes = plt.subplots(1, 2, figsize=(12, 6), sharey=True)
 for i, (ax, topo) in enumerate(zip(axes, ['1754', '3954'])):
     #ax.axhline(50, color='gray', ls=':', lw=1.1, alpha=0.7, zorder=1)
     for kind in ['robust', 'fragile']:
