@@ -47,11 +47,12 @@ TYPE_COLORS = {"Type1": "#2E9F6E", "Type2": "#2B72DB", "Type3": "#E34D93"}
 ########## Robustness vs Sigma overview ##########
 
 
+import matplotlib.ticker as mticker
+
 def complete_robustness_figure(df, sigma_val):
-    import matplotlib.ticker as mticker
 
     random.seed(42)
-    fig = plt.figure(figsize=(12.4, 7))
+    fig = plt.figure(figsize=(12.4, 7.8))
     gs = gridspec.GridSpec(2, 2, figure=fig, height_ratios=[1, 1])
     ax_stable = fig.add_subplot(gs[0, :])
     ax_avg = fig.add_subplot(gs[1, 0])
@@ -61,13 +62,13 @@ def complete_robustness_figure(df, sigma_val):
     stable = df.groupby('sigma')['stable_without_diffusion'].first()
     ax_stable.plot(stable.index, stable.values, color='black', linewidth=2, linestyle='--', zorder=5,)
     ax_stable.set_xticks(range(int(stable.index.min()), int(stable.index.max()) + 1))
-    ax_stable.set_xlabel('Sigma (σ)', fontsize=13)
-    ax_stable.tick_params(axis='x', labelsize=13)
+    ax_stable.set_xlabel('Sigma (σ)', fontsize=15)
+    ax_stable.tick_params(axis='x', labelsize=14)
 
     # Show 100,000, 200,000, ... as 1, 2, ... and put the scale in the label once.
     ax_stable.yaxis.set_major_formatter(mticker.FuncFormatter(lambda value, position: f'{value / 1e5:g}'))
-    ax_stable.set_ylabel(r'Stable steady states ($\times 10^5$)', fontsize=13)
-    ax_stable.tick_params(axis='y', labelsize=13)
+    ax_stable.set_ylabel(r'Stable steady states ($\times 10^5$)', fontsize=14.5)
+    ax_stable.tick_params(axis='y', labelsize=14)
     ax_stable.xaxis.grid(False)
 
     ax_rob = ax_stable.twinx()
@@ -77,13 +78,13 @@ def complete_robustness_figure(df, sigma_val):
         line_color = TYPE_COLORS.get(t_type, 'black')
         ax_rob.plot(subset['sigma'],subset['rob_shaberi_total'],color=line_color,linewidth=1.5,zorder=3,)
 
-    ax_rob.set_ylabel('Robustness Score (in %)', fontsize=13)
-    ax_rob.tick_params(axis='y', labelsize=13)
+    ax_rob.set_ylabel('Robustness Score (in %)', fontsize=15)
+    ax_rob.tick_params(axis='y', labelsize=14)
     ax_rob.spines['right'].set_visible(True)
     ax_rob.spines['top'].set_visible(False)
     ax_rob.yaxis.grid(False)
     ax_rob.xaxis.grid(False)
-    ax_stable.set_title('(A) Sigma vs Robustness and Stability Profile',fontsize=13,loc='left',pad=10,)
+    ax_stable.set_title('(A) Sigma vs Robustness and Stability Profile',fontsize=16,loc='left',pad=10,)
 
     # PANEL B: FOCUSED AVERAGE ROBUSTNESS LINE (BOTTOM LEFT)
     focused_df = df[(df['sigma'] >= 0.2) & (df['sigma'] <= 0.8)].copy()
@@ -97,15 +98,15 @@ def complete_robustness_figure(df, sigma_val):
         color = TYPE_COLORS.get(t, 'black')
         ax_avg.plot(subset['sigma'],subset['rob_shaberi_total'],color=color,linewidth=2.5,)
 
-    ax_avg.set_xlabel('Sigma (σ)', fontsize=13)
-    ax_avg.tick_params(axis='x', labelsize=13)
-    ax_avg.set_ylabel('Average Robustness Score (in %)', fontsize=13)
-    ax_avg.tick_params(axis='y', labelsize=13)
+    ax_avg.set_xlabel('Sigma (σ)', fontsize=15)
+    ax_avg.tick_params(axis='x', labelsize=14)
+    ax_avg.set_ylabel('Robustness Score (in %)', fontsize=15)
+    ax_avg.tick_params(axis='y', labelsize=14)
     ax_avg.set_xlim(0.2, 0.8)
     ax_avg.spines[['top', 'right']].set_visible(False)
     ax_avg.xaxis.grid(False)
     ax_avg.yaxis.grid(True)
-    ax_avg.set_title('(B) Average Robustness by Type (σ = 0.2 - 0.8)',fontsize=13,loc='left',pad=10,)
+    ax_avg.set_title('(B) Average Robustness by Type (σ = 0.2-0.8)',fontsize=16,loc='left',pad=10,)
 
     # PANEL C: RAINCLOUD DOT PLOT AT FIXED SIGMA (BOTTOM RIGHT)
     subset_df = df[df['sigma'] == sigma_val].copy()
@@ -140,14 +141,14 @@ def complete_robustness_figure(df, sigma_val):
             ax_dot.scatter(jitter,val,color=color,marker=marker,s=120,edgecolors='white',linewidths=0.4,zorder=3,)
 
     ax_dot.set_xticks(range(len(types)))
-    ax_dot.set_xticklabels(dot_labels, fontsize=13)
-    ax_dot.set_ylabel('Robustness Score (in %)', fontsize=13, labelpad=10)
-    ax_dot.tick_params(axis='y', labelsize=13)
+    ax_dot.set_xticklabels(dot_labels, fontsize=14)
+    ax_dot.set_ylabel('Robustness Score (in %)', fontsize=15, labelpad=10)
+    ax_dot.tick_params(axis='y', labelsize=14)
     ax_dot.xaxis.grid(False)
     ax_dot.yaxis.grid(True)
     ax_dot.set_xlim(-0.5, len(types) - 0.5)
     ax_dot.spines[['top', 'right']].set_visible(False)
-    ax_dot.set_title(f'(C) Robustness Distribution by Type at σ = {sigma_val}',fontsize=13,loc='left',pad=10,)
+    ax_dot.set_title(f'(C) Robustness Distribution at σ = {sigma_val}',fontsize=16,loc='left',pad=10,)
 
     global_handles = [
         mlines.Line2D([], [], color='black', linewidth=2, linestyle='--',label='Stable-state count'),
@@ -157,9 +158,9 @@ def complete_robustness_figure(df, sigma_val):
         mlines.Line2D([], [], color='#313131', marker='o', linestyle='None',markersize=8, markeredgecolor='white', label='Equal Diffusion',),
         mlines.Line2D([], [], color='#313131', marker='^', linestyle='None',markersize=8, markeredgecolor='white', label='Unequal Diffusion',),]
 
-    fig.legend(handles=global_handles, frameon=False, loc='lower center', bbox_to_anchor=(0.5, -0.01), ncol=6, fontsize=13, handlelength=2.4, columnspacing=1.6,)
-    fig.suptitle('Random Matrix Theory Results, $5 \\times 10^5$ simulations\n' 'Robustness of different diffusion rate configurations for Topology #1838', fontsize=16, y=0.99,)
-    fig.subplots_adjust(left=0.07, right=0.93, top=0.86, bottom=0.12, hspace=0.4, wspace=0.2,) # hspace is gap between Panel A and Panels B/C,  wspace is gap between Panels B and C
+    fig.legend(handles=global_handles, frameon=False, loc='lower center', bbox_to_anchor=(0.5, -0.01), ncol=6, fontsize=14.5, handlelength=1.5, columnspacing=1.4,)
+    fig.suptitle('Random Matrix Theory Results, $5 \\times 10^5$ simulations\n' 'Robustness of different diffusion rate configurations for Topology #1838', fontsize=18, y=1.0,)
+    fig.subplots_adjust(left=0.07, right=0.93, top=0.86, bottom=0.12, hspace=0.45, wspace=0.28,) # hspace is gap between Panel A and Panels B/C,  wspace is gap between Panels B and C
     save(fig, 'final_1838_rmt_overview_sigma')
 
 
