@@ -86,7 +86,7 @@ def desc(key):
 
 
 # FIG 1: boxplot
-fig, axes = plt.subplots(2, 2, figsize=(12.4, 8.8), sharex=True)
+fig, axes = plt.subplots(2, 2, figsize=(12.4, 9), sharex=True)
 line_handle = None
 
 for i, (ax, key) in enumerate(zip(axes.flat, GRID)):
@@ -190,7 +190,7 @@ def sensitivity_on_ax(ax, sens, letter, title_text):
 sens_data = {k: load_pkl(p) for k, (p, _id) in SENS_FILES.items()}
 
 # CHANGED: Removed sharex=True so the top subplots keep their own independent x-axes
-fig, axes = plt.subplots(2, 2, figsize=(12.6, 11.6))
+fig, axes = plt.subplots(2, 2, figsize=(12.6, 11.4))
 
 for i, (ax, key) in enumerate(zip(axes.flat, GRID)):
     sd = sens_data.get(key)
@@ -231,7 +231,7 @@ for k in GRID:
         if d is not None:
             robust_data[(k[0], k[1], N)] = extract(d)
 
-fig, axes = plt.subplots(1, 2, figsize=(12, 6), sharey=True)
+fig, axes = plt.subplots(1, 2, figsize=(12, 5.8), sharey=True)
 for i, (ax, topo) in enumerate(zip(axes, ['1754', '3954'])):
     #ax.axhline(50, color='gray', ls=':', lw=1.1, alpha=0.7, zorder=1)
     for kind in ['robust', 'fragile']:
@@ -249,7 +249,7 @@ for i, (ax, topo) in enumerate(zip(axes, ['1754', '3954'])):
     ax.grid(True, ls=':', alpha=0.4)
     ax.legend(loc='upper right', fontsize=11, ncol=2)
     panel_title(ax, LETTERS[i], f'Topology {topo}')
-axes[0].set_ylabel('Robustness (% of trials that stay Turing)')
+axes[0].set_ylabel('Robustness ( in %)')
 fig.suptitle('Robustness to parameter noise across ring sizes (N = 10, 20, 30)', fontsize=18, y=0.93)
 fig.tight_layout(rect=[0, 0, 1, 0.97])
 fig.savefig('robustness_N10_30.png', dpi=300, bbox_inches='tight')

@@ -10,10 +10,16 @@ import matplotlib.lines as mlines
 from matplotlib.ticker import MultipleLocator
 
 
-plt.rcParams.update({
-    'font.size': 13, 'axes.titlesize': 16, 'axes.labelsize': 13,
-    'xtick.labelsize': 13, 'ytick.labelsize': 13, 'legend.fontsize': 13,
-    'axes.spines.top': False, 'axes.spines.right': False, 'figure.dpi': 300,
+plt.rcParams.update({ 
+    'font.size': 15, 
+    'axes.titlesize': 16, 
+    'axes.labelsize': 15, 
+    'xtick.labelsize': 15, 
+    'ytick.labelsize': 15, 
+    'legend.fontsize': 15, 
+    'axes.spines.top': False, 
+    'axes.spines.right': False, 
+    'figure.dpi': 300
 })
 
 # ---> FIX 1: FIX THE DUPLICATE TYPO TO INCLUDE THE SECOND TOPOLOGY <---
@@ -64,7 +70,7 @@ def extract(cv):
     }
 
 def panel_title(ax, letter, text):
-    ax.set_title(f'({letter}) {text}', loc='left', fontsize=12.8, pad=8)
+    ax.set_title(f'({letter}) {text}', loc='left', fontsize=15, pad=8)
 
 # Load data into tracking dictionary
 data10 = {}
@@ -83,7 +89,7 @@ def desc(key):
 
 
 #### BOXPLOT 
-fig, axes = plt.subplots(1, 2, figsize=(12.8, 5), sharex=True)
+fig, axes = plt.subplots(1, 2, figsize=(12.8, 6), sharex=True)
 line_handle = None
 
 for i, (ax, key) in enumerate(zip(axes.flat, GRID)):
@@ -118,10 +124,10 @@ for i, (ax, key) in enumerate(zip(axes.flat, GRID)):
     panel_title(ax, LETTERS[i], desc(key))
 
 for ax in axes:
-    ax.set_ylabel(r'Ring growth rate max Re($\lambda$)', fontsize=14)
-    ax.set_xlabel('CV (coefficient of variation)', fontsize=14)
+    ax.set_ylabel(r'max Re($\lambda$)', fontsize=16)
+    ax.set_xlabel('CV (coefficient of variation)', fontsize=16)
 
-fig.suptitle('Distribution of Growth Rates under Parameter Heterogeneity (N=10) for Wet-Lab Configurations', fontsize=16, y=0.88)
+fig.suptitle('Distribution of Growth Rates under Parameter Heterogeneity (N=10) for Wet-Lab Configurations', fontsize=17, y=0.9)
 
 if line_handle:
     fig.legend(handles=[line_handle], loc='lower center', bbox_to_anchor=(0.5, -0.01), frameon=False)
