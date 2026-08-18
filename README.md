@@ -1,6 +1,6 @@
 # Thesis Research Project
 
-Master Thesis on designing synthetic Turing networks using Random Matrix Theory and Machine Learning.
+Master Thesis on Developing a computational framework for quantifying the Robustness of synthetic Turing Gene Regulatory Networks
 
 All my code and simulations for this research project. 
 
