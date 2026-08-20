@@ -18,29 +18,16 @@ plt.rcParams.update({
     'axes.spines.top': False, 'axes.spines.right': False, 'figure.dpi': 300,
 })
 
-GRID = [('1754', 'robust'), ('1754', 'fragile'), ('3954', 'robust'), ('3954', 'fragile')]
+grid = [('1754', 'robust'), ('1754', 'fragile'), ('3954', 'robust'), ('3954', 'fragile')]
+colors = {('1754', 'robust'): 'blueviolet',('1754', 'fragile'): 'mediumorchid', ('3954', 'robust'): 'cornflowerblue', ('3954', 'fragile'): 'lightskyblue'}
+cv_files = { ('1754', 'robust'):  '1754_cv_sweep_high_config49_N{N}.pkl', ('1754', 'fragile'): '1754_cv_sweep_low_config12_N{N}.pkl', ('3954', 'robust'):  '3954_cv_sweep_high_config49_N{N}.pkl', ('3954', 'fragile'): '3954_cv_sweep_low_config17_N{N}.pkl',}
+sens_files = {('1754', 'robust'):  ('1754_sensitivity_results_config49_N10.pkl', 49), ('1754', 'fragile'): ('1754_sensitivity_results_config12_N10.pkl', 12), ('3954', 'robust'):  ('3954_sensitivity_results_config49_N10.pkl', 49), ('3954', 'fragile'): ('3954_sensitivity_results_config17_N10.pkl', 17),}
 
-COLORS = {('1754', 'robust'): 'blueviolet',('1754', 'fragile'): 'mediumorchid', ('3954', 'robust'): 'cornflowerblue', ('3954', 'fragile'): 'lightskyblue'}
+n_sizes = [10, 20, 30]
+n_style = {10: ('-', 'o'), 20: ('--', 's'), 30: (':', '^')}
+letters = ['A', 'B', 'C', 'D']
 
-CV_FILES = {
-    ('1754', 'robust'):  '1754_cv_sweep_high_config49_N{N}.pkl',
-    ('1754', 'fragile'): '1754_cv_sweep_low_config12_N{N}.pkl',
-    ('3954', 'robust'):  '3954_cv_sweep_high_config49_N{N}.pkl',
-    ('3954', 'fragile'): '3954_cv_sweep_low_config17_N{N}.pkl',
-}
-
-SENS_FILES = {
-    ('1754', 'robust'):  ('1754_sensitivity_results_config49_N10.pkl', 49),
-    ('1754', 'fragile'): ('1754_sensitivity_results_config12_N10.pkl', 12),
-    ('3954', 'robust'):  ('3954_sensitivity_results_config49_N10.pkl', 49),
-    ('3954', 'fragile'): ('3954_sensitivity_results_config17_N10.pkl', 17),
-}
-
-N_SIZES = [10, 20, 30]
-N_STYLE = {10: ('-', 'o'), 20: ('--', 's'), 30: (':', '^')}
-LETTERS = ['A', 'B', 'C', 'D']
-
-PARAM_LABELS = {
+param_labels = {
     'alpha_u': 'u basal prod.', 'beta_u': 'u reg. prod.', 'K_uu': 'u self-activation',
     'K_vu': 'v-u inhibition', 'delta_u': 'u degradation',
     'alpha_v': 'v basal prod.', 'beta_v': 'v reg. prod.', 'K_uv': 'u-v activation',
@@ -73,8 +60,8 @@ def panel_title(ax, letter, text):
     ax.set_title(f'({letter}) {text}', loc='left', fontsize=16, pad=8)
 
 data10 = {}
-for k in GRID:
-    d = load_pkl(CV_FILES[k].format(N=10))
+for k in grid:
+    d = load_pkl(cv_files[k].format(N=10))
     if d is not None:
         data10[k] = extract(d)
 
@@ -89,7 +76,7 @@ def desc(key):
 fig, axes = plt.subplots(2, 2, figsize=(12.4, 9), sharex=True)
 line_handle = None
 
-for i, (ax, key) in enumerate(zip(axes.flat, GRID)):
+for i, (ax, key) in enumerate(zip(axes.flat, grid)):
     if key not in data10:
         ax.set_visible(False); continue
     d = data10[key]
@@ -97,7 +84,7 @@ for i, (ax, key) in enumerate(zip(axes.flat, GRID)):
     bp = ax.boxplot(box, positions=range(len(d['CV'])), widths=0.78, patch_artist=True, showfliers=True, medianprops=dict(color='black', linewidth=1.4), flierprops=dict(marker='o', markersize=3, alpha=0.3))
     
     for p in bp['boxes']:
-        p.set_facecolor(COLORS[key]); p.set_alpha(0.85)
+        p.set_facecolor(colors[key]); p.set_alpha(0.85)
         
     hl = ax.axhline(0, color='red', ls='--', lw=2, zorder=10, label=r'Turing threshold (Re($\lambda$) = 0)')
     if line_handle is None:
@@ -110,7 +97,7 @@ for i, (ax, key) in enumerate(zip(axes.flat, GRID)):
     # Increase nbins (e.g., to 10 or 12) if you want even more ticks
     ax.yaxis.set_major_locator(plt.MaxNLocator(nbins=8))
     ax.grid(True, alpha=0.3, axis='y')
-    panel_title(ax, LETTERS[i], desc(key))
+    panel_title(ax, letters[i], desc(key))
 
 for ax in axes[:, 0]:
     ax.set_ylabel(r'max Re($\lambda$)', fontsize=16)
@@ -134,16 +121,16 @@ plt.close(fig); print("Saved: cv_boxplot_2x2.png")
 
 # FIG 2: min-max
 fig, axes = plt.subplots(2, 2, figsize=(12.6, 9), sharex=True)
-for i, (ax, key) in enumerate(zip(axes.flat, GRID)):
+for i, (ax, key) in enumerate(zip(axes.flat, grid)):
     if key not in data10:
         ax.set_visible(False); continue
     d = data10[key]
-    ax.fill_between(d['CV'], d['min'], d['max'], alpha=0.2, color=COLORS[key], label='full range (min-max)', zorder=1)
-    ax.plot(d['CV'], d['mean'], 'o-', color=COLORS[key], lw=2.2, ms=6, markeredgecolor='black', markeredgewidth=0.6, label=r'mean max Re($\lambda$)', zorder=3)
+    ax.fill_between(d['CV'], d['min'], d['max'], alpha=0.2, color=colors[key], label='full range (min-max)', zorder=1)
+    ax.plot(d['CV'], d['mean'], 'o-', color=colors[key], lw=2.2, ms=6, markeredgecolor='black', markeredgewidth=0.6, label=r'mean max Re($\lambda$)', zorder=3)
     ax.axhline(0, color='red', ls='--', lw=1.6, zorder=2)
     ax.grid(True, alpha=0.3)
     ax.legend(loc='upper left')
-    panel_title(ax, LETTERS[i], desc(key))
+    panel_title(ax, letters[i], desc(key))
 for ax in axes[:, 0]:
     ax.set_ylabel(r'Ring growth rate  max Re($\lambda$)', fontsize=14)
 for ax in axes[1, :]:
@@ -163,7 +150,7 @@ def sensitivity_on_ax(ax, sens, letter, title_text):
     nan_mask = np.isnan(s)
     clean = np.where(~nan_mask)[0]; nans = np.where(nan_mask)[0]
     order = np.concatenate([clean[np.argsort(s[clean])[::-1]], nans])
-    labels = [PARAM_LABELS.get(names[i], names[i]) for i in order]
+    labels = [param_labels.get(names[i], names[i]) for i in order]
     vals = s[order]; is_nan = np.isnan(vals)
     
     bars = ax.bar(range(len(labels)), np.where(is_nan, 1e-4, vals), color='steelblue')
@@ -187,16 +174,16 @@ def sensitivity_on_ax(ax, sens, letter, title_text):
     ax.grid(True, alpha=0.3, axis='y', which='major')
     panel_title(ax, letter, title_text)
 
-sens_data = {k: load_pkl(p) for k, (p, _id) in SENS_FILES.items()}
+sens_data = {k: load_pkl(p) for k, (p, _id) in sens_files.items()}
 
 # CHANGED: Removed sharex=True so the top subplots keep their own independent x-axes
 fig, axes = plt.subplots(2, 2, figsize=(12.6, 11.4))
 
-for i, (ax, key) in enumerate(zip(axes.flat, GRID)):
+for i, (ax, key) in enumerate(zip(axes.flat, grid)):
     sd = sens_data.get(key)
     if sd is None:
         ax.set_visible(False); continue
-    sensitivity_on_ax(ax, sd, LETTERS[i], f"{key[0]} {key[1]} (ID {SENS_FILES[key][1]})")
+    sensitivity_on_ax(ax, sd, letters[i], f"{key[0]} {key[1]} (ID {sens_files[key][1]})")
 for ax in axes[:, 0]:
     ax.set_ylabel('Change in growth rate (log)', fontsize=16)
 
@@ -225,9 +212,9 @@ plt.close(fig); print("Saved: sensitivity_log.png")
 
 # FIG 4: robustness vs CV, N sweep
 robust_data = {}
-for k in GRID:
-    for N in N_SIZES:
-        d = load_pkl(CV_FILES[k].format(N=N))
+for k in grid:
+    for N in n_sizes:
+        d = load_pkl(cv_files[k].format(N=N))
         if d is not None:
             robust_data[(k[0], k[1], N)] = extract(d)
 
@@ -235,12 +222,12 @@ fig, axes = plt.subplots(1, 2, figsize=(12, 5.8), sharey=True)
 for i, (ax, topo) in enumerate(zip(axes, ['1754', '3954'])):
     #ax.axhline(50, color='gray', ls=':', lw=1.1, alpha=0.7, zorder=1)
     for kind in ['robust', 'fragile']:
-        col = COLORS[(topo, kind)]
-        for N in N_SIZES:
+        col = colors[(topo, kind)]
+        for N in n_sizes:
             d = robust_data.get((topo, kind, N))
             if d is None:
                 continue
-            ls, mk = N_STYLE[N]
+            ls, mk = n_style[N]
             ax.plot(d['CV'], d['robustness'], marker=mk, color=col, linestyle=ls,
                     lw=2, markersize=6, markeredgecolor='white', markeredgewidth=0.9,
                     label=f'{kind}, N={N}', zorder=3)
@@ -248,7 +235,7 @@ for i, (ax, topo) in enumerate(zip(axes, ['1754', '3954'])):
     ax.set_xlabel('CV (coefficient of variation)')
     ax.grid(True, ls=':', alpha=0.4)
     ax.legend(loc='upper right', fontsize=11, ncol=2)
-    panel_title(ax, LETTERS[i], f'Topology {topo}')
+    panel_title(ax, letters[i], f'Topology {topo}')
 axes[0].set_ylabel('Robustness ( in %)')
 fig.suptitle('Robustness to parameter noise across ring sizes (N = 10, 20, 30)', fontsize=18, y=0.93)
 fig.tight_layout(rect=[0, 0, 1, 0.97])
@@ -273,7 +260,7 @@ def sensitivity_no_log(ax, sens, letter, title_text):
     nan_mask = np.isnan(s)
     clean = np.where(~nan_mask)[0]; nans = np.where(nan_mask)[0]
     order = np.concatenate([clean[np.argsort(s[clean])[::-1]], nans])
-    labels = [PARAM_LABELS.get(names[i], names[i]) for i in order]
+    labels = [param_labels.get(names[i], names[i]) for i in order]
     vals = s[order]; is_nan = np.isnan(vals)
     
     bars = ax.bar(range(len(labels)), np.where(is_nan, 0.0, vals), color='steelblue', alpha=0.9)
@@ -295,13 +282,13 @@ def sensitivity_no_log(ax, sens, letter, title_text):
     ax.grid(True, alpha=0.3, axis='y', which='major')
     panel_title(ax, letter, title_text)
 
-sens_data = {k: load_pkl(p) for k, (p, _id) in SENS_FILES.items()}
+sens_data = {k: load_pkl(p) for k, (p, _id) in sens_files.items()}
 fig, axes = plt.subplots(2, 2, figsize=(12.2, 7.6))
-for i, (ax, key) in enumerate(zip(axes.flat, GRID)):
+for i, (ax, key) in enumerate(zip(axes.flat, grid)):
     sd = sens_data.get(key)
     if sd is None:
         ax.set_visible(False); continue
-    sensitivity_no_log(ax, sd, LETTERS[i], f"{key[0]} {key[1]} (ID {SENS_FILES[key][1]})")
+    sensitivity_no_log(ax, sd, letters[i], f"{key[0]} {key[1]} (ID {sens_files[key][1]})")
 for ax in axes[:, 0]:
     ax.set_ylabel('Change in growth rate (No log)') 
     

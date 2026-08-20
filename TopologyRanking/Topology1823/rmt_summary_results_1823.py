@@ -5,10 +5,8 @@ import pandas as pd
 
 # have to run this first: module load matplotlib/3.9.2-gfbf-2024a, module load SciPy-bundle/2024.05-gfbf-2024a
 
-# Find all RMT pickle files (only RMT_1823 files, 100k samples)
 result_files = sorted(glob.glob('results/NEW_RMT_1823_*_1mio.pkl'))
 
-# Load all results and flatten sigma results
 all_rows = []
 for filepath in result_files:
     with open(filepath, 'rb') as f:
@@ -43,7 +41,6 @@ for filepath in result_files:
 
 df = pd.DataFrame(all_rows)
 
-# Sort by config_id then sigma
 df = df.sort_values(['config_id', 'sigma'], ascending=True)
 
 cols_display = [

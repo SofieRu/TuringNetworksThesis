@@ -47,7 +47,6 @@ def load_data():
     return df
 
 
-
 # PLOT FOR THESIS
 
 def fig_combined_overview_and_raincloud(df):
@@ -73,7 +72,7 @@ def fig_combined_overview_and_raincloud(df):
     ax1.xaxis.grid(False)
     ax1.yaxis.grid(True)
 
-    # PANEL 2: RAINCLOUD DISTRIBUTION (ax2)
+    # PANEL 2 RAINCLOUD DISTRIBUTION (ax2)
     random.seed(42)
     types = ["Type1", "Type2", "Type3"]
     labels = ["Type 1", "Type 2", "Type 3"]
@@ -118,7 +117,7 @@ def fig_combined_overview_and_raincloud(df):
     ax2.set_xlim(-0.5, len(types) - 0.5)
     ax2.spines[["top", "right"]].set_visible(False)
 
-    # GLOBAL UNIFIED BOTTOM LEGENDS
+    # legenddd
     bar_handles =  [mpatches.Patch(color=c, label=t) for t, c in TYPE_COLORS.items()]
     rain_handles = [mlines.Line2D([],[],color="#313131",marker="o",linestyle="None",markersize=8,markeredgecolor="white",label="Equal Diffusion",),
                     mlines.Line2D([],[],color="#313131",marker="^",linestyle="None",markersize=8,markeredgecolor="white",label="Unequal Diffusion",),]
@@ -126,12 +125,7 @@ def fig_combined_overview_and_raincloud(df):
     fig.legend(handles=bar_handles,frameon=False,loc="lower center",bbox_to_anchor=(0.3, 0.02),ncol=3,fontsize=15) # title="Turing Type"
     fig.legend(handles=rain_handles,frameon=False,loc="lower center",bbox_to_anchor=(0.7, 0.02),ncol=2,fontsize=15) # title="Diffusion Variant",
     fig.subplots_adjust(left=0.07, right=0.95, top=0.96, bottom=0.14, hspace=0.5)
-
     save(fig, "final_1838_lhs_overview")
-
-
-
-########### RUN THE WHOLE THING ############
 
 df = load_data()
 fig_combined_overview_and_raincloud(df)

@@ -53,14 +53,14 @@ def complete_robustness_figure(df, sigma_val):
     ax_avg = fig.add_subplot(gs[1, 0])
     ax_dot = fig.add_subplot(gs[1, 1])
 
-    # PANEL A: SIGMA VS ROBUSTNESS OVERVIEW (TOP ROW)
+    # PANEL A SIGMA VS ROBUSTNESS OVERVIEW (TOP ROW)
     stable = df.groupby('sigma')['stable_without_diffusion'].first()
     ax_stable.plot(stable.index, stable.values, color='black', linewidth=2, linestyle='--', zorder=5,)
     ax_stable.set_xticks(range(int(stable.index.min()), int(stable.index.max()) + 1))
     ax_stable.set_xlabel('Sigma (σ)', fontsize=15)
     ax_stable.tick_params(axis='x', labelsize=14)
 
-    # Show 100,000, 200,000, ... as 1, 2, ... and put the scale in the label once.
+    # Show 100,000, 200,000, ... as 1, 2, ... and put the scale in the label once
     ax_stable.yaxis.set_major_formatter(mticker.FuncFormatter(lambda value, position: f'{value / 1e5:g}'))
     ax_stable.set_ylabel(r'Stable steady states ($\times 10^5$)', fontsize=14.5)
     ax_stable.tick_params(axis='y', labelsize=14)
@@ -81,7 +81,7 @@ def complete_robustness_figure(df, sigma_val):
     ax_rob.xaxis.grid(False)
     ax_stable.set_title('(A) Sigma vs Robustness and Stability Profile',fontsize=16,loc='left',pad=10,)
 
-    # PANEL B: FOCUSED AVERAGE ROBUSTNESS LINE (BOTTOM LEFT)
+    # PANEL B FOCUSED AVERAGE ROBUSTNESS LINE (BOTTOM LEFT)
     focused_df = df[(df['sigma'] >= 0.2) & (df['sigma'] <= 0.8)].copy()
     avg_df = (focused_df.groupby(['sigma', 'turing_type'])['rob_shaberi_total'].mean().reset_index())
     types = ['Type1', 'Type2', 'Type3']
@@ -103,7 +103,7 @@ def complete_robustness_figure(df, sigma_val):
     ax_avg.yaxis.grid(True)
     ax_avg.set_title('(B) Average Robustness by Type (σ = 0.2-0.8)',fontsize=16,loc='left',pad=10,)
 
-    # PANEL C: RAINCLOUD DOT PLOT AT FIXED SIGMA (BOTTOM RIGHT)
+    # PANEL C RAINCLOUD DOT PLOT AT FIXED SIGMA (BOTTOM RIGHT)
     subset_df = df[df['sigma'] == sigma_val].copy()
     dot_labels = ['Type 1', 'Type 2', 'Type 3']
     for i, t in enumerate(types):
@@ -125,13 +125,7 @@ def complete_robustness_figure(df, sigma_val):
 
         for val in t_data:
             matching_rows = subset_df[(subset_df['turing_type'] == t) & (subset_df['rob_shaberi_total'] == val)]
-            marker = ('^'
-                if any(
-                    'Unequal' in row['config_name']
-                    for _, row in matching_rows.iterrows()
-                )
-                else 'o'
-            )
+            marker = ('^' if any('Unequal' in row['config_name'] for _, row in matching_rows.iterrows()) else 'o')
             jitter = i + random.uniform(0.08, 0.35)
             ax_dot.scatter(jitter,val,color=color,marker=marker,s=120,edgecolors='white',linewidths=0.4,zorder=3,)
 
@@ -161,7 +155,7 @@ def complete_robustness_figure(df, sigma_val):
 
 
 
-########### RUN THE WHOLE THING ############
+###### RUN THE WHOLE THING 
 
 df = load_data()
 complete_robustness_figure(df, sigma_val=0.58)

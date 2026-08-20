@@ -7,17 +7,15 @@ import pandas as pd
 from scipy.optimize import fsolve
 from scipy.stats import qmc
 
-# Create directories
 os.makedirs("results", exist_ok=True)
 os.makedirs("logs", exist_ok=True)
 
 ################ LHS ANALYSIS FOR TOPOLOGY #1754 ################
-# DIFFERENCE FROM #3954: U is NOT self-activating (no K_uu parameter)
+# no K_uu parameter
 
-# HILL FUNCTIONS AND ODE SYSTEM
+# HILL FUNCTIONS AND ODE SYSTEM and so on
 
 n = 2
-
 def hill_activation(X, K):
     return X**n / (K**n + X**n)
 
@@ -30,11 +28,12 @@ def dH_act(x, K):
 def dH_inh(x, K):
     return -n * K**n * x**(n-1) / (K**n + x**n)**2
 
+# essentially the same as 3954 but without the self activation on node u i think
 def ode_system(state, params):
     u, v, w = state
-    alpha_u, beta_u, K_vu, delta_u = params[0:4]               # K_uu removed
-    alpha_v, beta_v, K_uv, K_wv, delta_v = params[4:9]         # reindexed
-    alpha_w, beta_w, K_ww, K_uw, K_vw, delta_w = params[9:15]  # reindexed
+    alpha_u, beta_u, K_vu, delta_u = params[0:4]  
+    alpha_v, beta_v, K_uv, K_wv, delta_v = params[4:9] 
+    alpha_w, beta_w, K_ww, K_uw, K_vw, delta_w = params[9:15]
     
     du = alpha_u + beta_u * hill_inhibition(v, K_vu) - delta_u * u  # no hill_activation(u) term
     dv = alpha_v + beta_v * hill_activation(u, K_uv) * hill_inhibition(w, K_wv) - delta_v * v
@@ -52,14 +51,16 @@ def find_steady_state(params, n_attempts=10):
             return steady_state
     return None
 
+# changed the indexing from 3954 so 1754 only has 15 parameters in total and not 16
 def compute_jacobian(state, params):
     u, v, w = state
     alpha_u, beta_u, K_vu, delta_u = params[0:4]
     alpha_v, beta_v, K_uv, K_wv, delta_v = params[4:9]
     alpha_w, beta_w, K_ww, K_uw, K_vw, delta_w = params[9:15]
-    
+
+    # no activation thingy
     J = np.zeros((3, 3))
-    J[0, 0] = -delta_u                             # NO self-activation term
+    J[0, 0] = -delta_u
     J[0, 1] = beta_u * dH_inh(v, K_vu)
     J[0, 2] = 0
     J[1, 0] = beta_v * dH_act(u, K_uv) * hill_inhibition(w, K_wv)
@@ -71,8 +72,9 @@ def compute_jacobian(state, params):
     
     return J
 
-# TURING DETECTION METHODS
+# TWO TURING DETECTION METHODS
 
+# follows the mthod from the diego paper but will take that out and not include in analysis bc idk
 def is_turing_diego(J, DU, DV, DW):
     a1_0 = -np.trace(J)
     a2_0 = (J[0,0]*J[1,1] - J[0,1]*J[1,0] +
@@ -83,7 +85,6 @@ def is_turing_diego(J, DU, DV, DW):
     if not (a1_0 > 0 and a3_0 > 0 and a1_0*a2_0 - a3_0 > 0):
         return False
     
-    # SUPPOSED TO BE 0.01 STEP, BUT INCREASED TO 0.1 FOR SPEED, CHANGE BACK LATER 
     D = np.diag([DU, DV, DW])
     for k in np.arange(0.01, 10.01, 0.01):
         M = J - k**2 * D
@@ -97,101 +98,15 @@ def is_turing_diego(J, DU, DV, DW):
             return True
     return False
 
-# VERSION WITHOUT TURING FILTER COUNTER
-# def is_turing_shaberi(J, eigs_0, DU, DV, DW):
-#     # STEP 1: Stability at k=0
-#     if np.max(np.real(eigs_0)) >= 0:
-#         return None
-    
-#     # STEP 2: Check for instability with diffusion, # SUPPOSED TO BE 0.01 STEP, BUT INCREASED TO 0.1 FOR SPEED, CHANGE BACK LATER 
-#     D = np.diag([DU, DV, DW])
-#     k_values = np.arange(0.01, 10.01, 0.1)
-    
-#     has_instability = False
-#     is_oscillatory = False
-    
-#     for k in k_values:
-#         M = J - k**2 * D
-#         eigs_k = np.linalg.eigvals(M)
-        
-#         if np.max(np.real(eigs_k)) > 0:
-#             has_instability = True
-            
-#             unstable_eigs = eigs_k[np.real(eigs_k) > 0]
-#             if np.any(np.abs(np.imag(unstable_eigs)) > 1e-8):
-#                 is_oscillatory = True
-#                 break
-    
-#     if not has_instability:
-#         return None
-    
-#     if is_oscillatory:
-#         return 'Hopf'
-    
-#     # STEP 3: Check RESTABILIZATION (Shaberi's method)
-#     k_high_values = np.linspace(10, 50, 20)
-#     for k in k_high_values:
-#         M = J - k**2 * D
-#         eigs_k = np.linalg.eigvals(M)
-#         if np.max(np.real(eigs_k)) < 0:
-#             return 'Type-I'  # Restabilizes
-    
-#     return 'Type-II'  # Doesn't restabilize
-
-# def is_turing_shaberi(J, eigs_0, DU, DV, DW):
-#     # STEP 1: Homogeneous steady state must be stable
-#     if np.max(np.real(eigs_0)) >= 0:
-#         return None
-    
-#     # STEP 2: Sweep k ∈ [0, 10] with step 0.01 (Shaberi 2025 methodology)
-#     D = np.diag([DU, DV, DW])
-#     k_values = np.arange(0.01, 10.01, 0.01)
-    
-#     max_reals = np.zeros(len(k_values))
-#     has_complex_unstable = False
-    
-#     for i, k in enumerate(k_values):
-#         M = J - (k**2) * D
-#         eigs_k = np.linalg.eigvals(M)
-#         max_reals[i] = np.max(np.real(eigs_k))
-        
-#         # Hopf check: any unstable eigenvalues with nonzero imaginary parts?
-#         if max_reals[i] > 0:
-#             unstable_eigs = eigs_k[np.real(eigs_k) > 0]
-#             if np.any(np.abs(np.imag(unstable_eigs)) > 1e-8):
-#                 has_complex_unstable = True
-    
-#     # No instability at any swept k
-#     if np.max(max_reals) <= 0:
-#         return None
-    
-#     # Hopf takes precedence (oscillatory instability is qualitatively distinct)
-#     if has_complex_unstable:
-#         return 'Hopf'
-    
-#     # STEP 3: Type-I = dispersion restabilises (negative) by k=10
-#     if max_reals[-1] < 0:
-#         return 'Type-I'
-    
-#     # STEP 4: Sub-classify the "non-restabilising" cases.
-#     # Filter (Diego 2018, Sec V): monotonic plateau - late-range mean ≈ overall max
-#     # Type-II (Shaberi 2025): has an intermediate peak that drops slightly
-#     late_range_mean = np.mean(max_reals[-len(max_reals) // 5:])  # last 20%
-#     overall_max = np.max(max_reals)
-    
-#     if overall_max > 0 and late_range_mean > 0.85 * overall_max:
-#         return 'Filter'
-    
-#     return 'Type-II'
-
+# shaberi paper version so they check from 0.01 to 10.01 in steps of 0.01 and they check type I and II but i included filter here to kinda match the diego paper
 def is_turing_shaberi(J, eigs_0, DU, DV, DW):
-    # STEP 1: Homogeneous steady state must be stable
+    # STEP 1 homogeneous steady state must be stable
     if np.max(np.real(eigs_0)) >= 0:
         return None
     
-    # STEP 2: Sweep k ∈ [0, 10] with step 0.01 (Shaberi 2025 methodology)
+    # STEP 2 sweep k[0, 10] with step 0.01
     D = np.diag([DU, DV, DW])
-    k_values = np.arange(0.01, 10.01, 0.01) # change later back to 0.01
+    k_values = np.arange(0.01, 10.01, 0.01)
     
     max_reals = np.zeros(len(k_values))
     has_complex_unstable = False
@@ -208,50 +123,26 @@ def is_turing_shaberi(J, eigs_0, DU, DV, DW):
     
     if np.max(max_reals) <= 0:
         return None
-    
+
+    # the moment one of the eigenvalues is unstable its a hopf instability
     if has_complex_unstable:
         return 'Hopf'
     
-    # STEP 3: Type-I = restabilises (goes negative) by k=10
+    # STEP 3 if restabilises its type I so it needs to go negative again
     if max_reals[-1] < 0:
         return 'Type-I'
     
-    # STEP 4: Distinguish Filter from Type-II by peak location
-    # Filter (Diego 2018): monotonic — max sits at the END of the range
-    # Type-II: has an interior peak — max is somewhere in the middle
+    # STEP 4 difference between filter and tpye ii 
     max_idx = np.argmax(max_reals)
     
-    # Allow a tiny buffer for floating-point noise (last 0.2% of range)
+    # buffer for floating-point noise so last 0.2% of range
+    # filter are monotonic so their peak will be at the end of the k range and ii somewhre in the middl e
     if max_idx >= len(k_values) - 2:
         return 'Filter'
-    
     return 'Type-II'
 
 
-# DIFFUSION CONFIGURATIONS
-
-# DIFFUSION_CONFIGS = {
-#     0:  {"name": "NEW_LHS_1754_Type1_V1_Equal",     "dU": 10.0, "dV": 1.0,  "dW": 1.0},
-#     1:  {"name": "NEW_LHS_1754_Type1_V1_Control",   "dU": 1.0,  "dV": 1.0,  "dW": 1.0},
-#     2:  {"name": "NEW_LHS_1754_Type1_V1_Unequal1",  "dU": 10.0, "dV": 5.0,  "dW": 1.0},
-#     3:  {"name": "NEW_LHS_1754_Type1_V1_Unequal2",  "dU": 10.0, "dV": 1.0,  "dW": 5.0},
-
-#     4:  {"name": "NEW_LHS_1754_Type2_V1_Equal",     "dU": 1.0,  "dV": 0.0,  "dW": 1.0},
-#     5:  {"name": "NEW_LHS_1754_Type2_V1_Unequal1",  "dU": 1.0,  "dV": 0.0,  "dW": 5.0},
-#     6:  {"name": "NEW_LHS_1754_Type2_V1_Unequal2",  "dU": 5.0,  "dV": 0.0,  "dW": 1.0},
-#     7:  {"name": "NEW_LHS_1754_Type2_V1_Unequal3",  "dU": 1.0,  "dV": 0.0,  "dW": 0.1},
-#     8:  {"name": "NEW_LHS_1754_Type2_V1_Unequal4",  "dU": 0.1,  "dV": 0.0,  "dW": 1.0},
-
-#     9:  {"name": "NEW_LHS_1754_Type3_V1_Equal",     "dU": 1.0,  "dV": 1.0,  "dW": 0.0},
-#     10: {"name": "NEW_LHS_1754_Type3_V1_Unequal1",  "dU": 5.0,  "dV": 1.0,  "dW": 0.0},
-#     11: {"name": "NEW_LHS_1754_Type3_V1_Unequal2",  "dU": 1.0,  "dV": 5.0,  "dW": 0.0},
-#     12: {"name": "NEW_LHS_1754_Type3_V1_Unequal3",  "dU": 1.0,  "dV": 0.1,  "dW": 0.0},
-#     13: {"name": "NEW_LHS_1754_Type3_V1_Unequal4",  "dU": 0.1,  "dV": 1.0,  "dW": 0.0},
-
-#     14: {"name": "NEW_LHS_1754_Type3_V2_Equal",     "dU": 1.0,  "dV": 0.0,  "dW": 0.0},
-#     15: {"name": "NEW_LHS_1754_Type3_V2_Unequal1",  "dU": 0.1,  "dV": 0.0,  "dW": 0.0},
-#     16: {"name": "NEW_LHS_1754_Type3_V2_Unequal2",  "dU": 10.0, "dV": 0.0,  "dW": 0.0},
-# }
+# DIFFUSION CONFIGURATIONS (need to put in appendix and like name type 1 2 3)
 
 DIFFUSION_CONFIGS = {
     # TYPE 1
@@ -331,7 +222,7 @@ DIFFUSION_CONFIGS = {
     52: {"name": "FINAL_LHS_1754_Type3_VWFreeze_Equal3",      "dU": 10.0, "dV": 0.0, "dW": 0.0},
 }
 
-# MAIN ANALYSIS FUNCTION
+# MAIN ANALYSIS
 
 def run_analysis(config_id, n_samples, save_successful_params=False, max_successful=100):
 
@@ -341,14 +232,14 @@ def run_analysis(config_id, n_samples, save_successful_params=False, max_success
     
     print(f"Starting {config_name}: dU={DU}, dV={DV}, dW={DW}, n_samples={n_samples:,}")
     
-    # Parameter ranges (15 parameters - K_uu removed!)
+    # parameter ranges (15 parameters bc k_uu removed!)
     param_ranges = [
         (0.001, 0.1), (0.1, 10), (0.01, 1), (0.01, 1),
         (0.001, 0.1), (0.1, 10), (0.01, 1), (0.01, 1), (0.01, 1),
         (0.001, 0.1), (0.1, 10), (0.01, 1), (0.01, 1), (0.01, 1), (0.01, 1)
     ]
     
-    # Generate LHS samples (d=15 instead of 16!)
+    # generate lhs samples 
     sampler = qmc.LatinHypercube(d=15, seed=42)
     samples = sampler.random(n=n_samples)
     params_log = np.zeros((n_samples, 15))
@@ -358,7 +249,7 @@ def run_analysis(config_id, n_samples, save_successful_params=False, max_success
         log_max = np.log10(param_ranges[i][1])
         params_log[:, i] = 10**(log_min + samples[:, i] * (log_max - log_min))
     
-    # Initialize counters
+    # counters for the csv files and so on
     steady_states = 0
     stable_without_diffusion = 0
     diego_turing = 0
@@ -368,10 +259,10 @@ def run_analysis(config_id, n_samples, save_successful_params=False, max_success
     shaberi_hopf = 0
     filter_count = 0
     
-    # NEW: List to collect ALL successful parameters
+    # write down the successful parameters to run objective 2
     successful_params = [] if save_successful_params else None
 
-    # Main loop
+    # main loop
     np.random.seed(42)
     for i in range(n_samples):
         params = params_log[i]
@@ -390,10 +281,11 @@ def run_analysis(config_id, n_samples, save_successful_params=False, max_success
                 if is_turing_diego(J, DU, DV, DW):
                     diego_turing += 1
                 
-                # Shaberi (reuses eigs_0)
+                # shaberi (reuses eigs_0)
                 turing_type = is_turing_shaberi(J, eigs_0, DU, DV, DW)
-                
-                if turing_type is not None: # NEW, do not count Hopf as Turing for Shaberi
+
+                # last minute change: do not count hopf as overall stability bc its not i guess...
+                if turing_type is not None:
                     if turing_type == 'Hopf':
                         shaberi_hopf += 1
                     else:
@@ -405,7 +297,7 @@ def run_analysis(config_id, n_samples, save_successful_params=False, max_success
                         elif turing_type == 'Filter':
                             filter_count += 1
                         
-                    # SAVE ALL classified parameters (regardless of type)
+                    # save classified parameters (regardless of type)
                     if save_successful_params:
                         D = np.diag([DU, DV, DW])
                         max_growth_rate = -np.inf
@@ -423,12 +315,11 @@ def run_analysis(config_id, n_samples, save_successful_params=False, max_success
             print(f"[{config_name}] {i+1:,}/{n_samples:,} | Stable: {stable_without_diffusion} | "
                   f"Diego: {diego_turing} | Shaberi: {shaberi_total}")
     
-    # NEW: After loop, select BEST parameter sets (most stable)
+    # find the best parameter set for objective 2
     if save_successful_params and len(successful_params) > 0:
-        successful_params.sort(key=lambda x: x['max_growth_rate'], reverse=True)  # Sort by most negative max growth rate
-        #successful_params = successful_params[:max_successful]  # CHANGE Keep only top N
+        successful_params.sort(key=lambda x: x['max_growth_rate'], reverse=True)  # sort by most negative max growth rate
     
-    # Calculate robustness
+    # calculate robustness scores
     rob_diego = 100 * diego_turing / n_samples
     rob_shaberi_total = 100 * shaberi_total / n_samples
     rob_shaberi_type_I = 100 * shaberi_type_I / n_samples
@@ -451,7 +342,6 @@ def run_analysis(config_id, n_samples, save_successful_params=False, max_success
         "rob_shaberi_type_I": rob_shaberi_type_I,
     }
     
-    # NEW: Add successful parameters if they were saved
     if save_successful_params and successful_params:
         results['successful_params'] = successful_params
         results['n_successful_saved'] = len(successful_params)
@@ -466,11 +356,11 @@ if __name__ == "__main__":
         sys.exit(1)
     
     config_id = int(sys.argv[1])
-    n_samples = 1_000_000 # change later to 1_000_000
+    n_samples = 1_000_000 # if time increase to 10 mio
 
-    # NEW: Check for parameter saving flags
+    # check for parameter saving 
     save_successful_params = '--save-params' in sys.argv
-    max_successful = 100  # Default to saving top 2 parameter sets
+    max_successful = 100  # save top 100 though i think can reduce bc only interested in the top 1 
 
     for arg in sys.argv:
         if arg.startswith('--n-to-save='):
@@ -478,12 +368,12 @@ if __name__ == "__main__":
     
     results = run_analysis(config_id, n_samples, save_successful_params, max_successful)
     
-    # Save as pickle
+    # pickle ffile
     output_pkl = f"results/{results['config_name']}_1mio_with_params.pkl"
     with open(output_pkl, 'wb') as f:
         pickle.dump(results, f)
     
-    # Save as CSV
+    # save as CSV
     results_flat = {
         'config_name': results['config_name'],
         'config_id': results['config_id'],
@@ -506,7 +396,7 @@ if __name__ == "__main__":
     output_csv = f"results/{results['config_name']}_1mio_with_params.csv"
     pd.DataFrame([results_flat]).to_csv(output_csv, index=False)
     
-    # Print summary
+    # summaryyy
     print(f"Diego Turing:    {results['diego_turing']} ({results['rob_diego']:.4f}%)")
     print(f"Shaberi Total:   {results['shaberi_total']} ({results['rob_shaberi_total']:.4f}%)")
     print(f"  Type-I:        {results['shaberi_type_I']}")

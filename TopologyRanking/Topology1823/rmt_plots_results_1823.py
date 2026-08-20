@@ -113,17 +113,6 @@ def complete_robustness_figure(df, sigma_val):
             continue
 
         color = TYPE_COLORS[t]
-        # kde = gaussian_kde(t_data, bw_method=0.3)
-        # y_range = np.linspace(t_data.min() - t_data.std() * 0.3,t_data.max() + t_data.std() * 0.3,200,)
-        # kde_vals = kde(y_range)
-        # kde_vals = kde_vals / kde_vals.max() * 0.35
-        # ax_dot.fill_betweenx(y_range,i - kde_vals,i,color=color,alpha=1.0,linewidth=0,zorder=2,)
-
-        # mean_val = t_data.mean()
-        # closest_idx = np.argmin(np.abs(y_range - mean_val))
-        # kde_at_mean = kde_vals[closest_idx]
-        # ax_dot.hlines(mean_val,i - kde_at_mean,i,color='black',linewidth=1.0,zorder=4,)
-
         for val in t_data:
             matching_rows = subset_df[(subset_df['turing_type'] == t) & (subset_df['rob_shaberi_total'] == val)]
             marker = ('^'
@@ -158,10 +147,6 @@ def complete_robustness_figure(df, sigma_val):
     fig.suptitle('Random Matrix Theory Results, $5 \\times 10^5$ simulations\n' 'Robustness of different diffusion rate configurations for Topology #1823', fontsize=18, y=1.0,)
     fig.subplots_adjust(left=0.07, right=0.93, top=0.86, bottom=0.12, hspace=0.45, wspace=0.32,) # hspace is gap between Panel A and Panels B/C,  wspace is gap between Panels B and C
     save(fig, 'final_1823_rmt_overview_sigma')
-
-
-
-########### RUN THE WHOLE THING ############
 
 df = load_data()
 complete_robustness_figure(df, sigma_val=0.58)

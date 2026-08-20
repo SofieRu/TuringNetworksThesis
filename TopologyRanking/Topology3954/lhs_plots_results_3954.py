@@ -35,7 +35,6 @@ plt.rcParams.update({
 #TYPE_COLORS = {"Type1": 'lightseagreen', "Type2": 'teal', "Type3": 'mediumpurple',} 
 TYPE_COLORS = {"Type1": "#2E9F6E", "Type2": "#2B72DB", "Type3": "#E34D93"}
 
-
 def save(fig, name):
     for ext in ("png",):
         fig.savefig(OUT_DIR / f"{name}.{ext}", bbox_inches="tight", dpi=300)
@@ -50,37 +49,23 @@ def load_data():
     return df
 
 
-##################################### FIGURE 4: Scatter Plot Shaberi vs Diego Robustness across Type 1 to 3 #####################################
+## scatter plot shaberi vs diego 
 
 def fig4_diego_vs_shaberi(df):
     fig, ax = plt.subplots(figsize=(6, 5))
  
     for t in ["Type1", "Type2", "Type3"]:
         subset = df[df["turing_type"] == t]
-        ax.scatter(
-            subset["rob_diego"],
-            subset["rob_shaberi_total"],
-            color=TYPE_COLORS[t],
-            label=t,
-            s=80,
-            edgecolors="white",
-            linewidths=0.5,
-        )
+        ax.scatter(subset["rob_diego"],subset["rob_shaberi_total"],color=TYPE_COLORS[t],label=t,s=80, edgecolors="white", linewidths=0.5,)
  
     lim = df[["rob_diego", "rob_shaberi_total"]].max().max() * 1.05 # 1:1 line
-    ax.plot([0, lim], [0, lim], color="#444444", linewidth=0.8,
-            linestyle="--", label="1:1 line")
+    ax.plot([0, lim], [0, lim], color="#444444", linewidth=0.8, linestyle="--", label="1:1 line")
     ax.set_xlim(0, lim)
     ax.set_ylim(0, lim)
- 
     ax.set_xlabel("Robustness Score using Characteristic Polynomial (Diego)", fontsize=12)
     ax.set_ylabel("Robustness Score using Eigenvalues (Shaberi)", fontsize=12)
-    ax.set_title(
-        "Robustness Scores Diego vs Shaberi for #3954\n(Latin Hypercube Sampling, 1 million simulations)",
-        fontsize=12, loc="left", pad=10,
-    )
-    ax.legend(title="Turing Type", frameon=False,
-              loc="upper center", bbox_to_anchor=(0.5, -0.15), ncol=4)
+    ax.set_title("Robustness Scores Diego vs Shaberi for #3954\n(Latin Hypercube Sampling, 1 million simulations)", fontsize=12, loc="left", pad=10,)
+    ax.legend(title="Turing Type", frameon=False, loc="upper center", bbox_to_anchor=(0.5, -0.15), ncol=4)
  
     fig.tight_layout()
     save(fig, "new_3954_lhs_fig4_diego_vs_shaberi")
@@ -92,7 +77,7 @@ def fig_combined_overview_and_raincloud(df):
     #fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(13,8.5), gridspec_kw={"height_ratios": [1, 1]})
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12.4,5.7))
 
-    # PANEL 1: OVERVIEW BAR CHART (ax1)
+    # PANEL 1 OVERVIEW BAR CHART (ax1)
     colors = df["turing_type"].map(TYPE_COLORS).fillna("#aaaaaa")
 
     ax1.bar(range(len(df)), df["rob_shaberi_total"], color=colors, edgecolor="white", linewidth=0.5, width=0.76,)
@@ -111,7 +96,7 @@ def fig_combined_overview_and_raincloud(df):
     ax1.xaxis.grid(False)
     ax1.yaxis.grid(True)
 
-    # PANEL 2: RAINCLOUD DISTRIBUTION (ax2)
+    # PANEL 2 RAINCLOUD DISTRIBUTION (ax2)
     random.seed(42)
     types = ["Type1", "Type2", "Type3"]
     labels = ["Type 1", "Type 2", "Type 3"]
@@ -121,7 +106,6 @@ def fig_combined_overview_and_raincloud(df):
 
         color = TYPE_COLORS[t]
         # violin distribution cloud
-
         kde = gaussian_kde(subset, bw_method=0.3)
         y_range = np.linspace(subset.min() - subset.std()*0.3, subset.max() + subset.std()*0.3, 200)
         #y_range = np.linspace(subset.min(), subset.max(), 200) # getting rid of the puffer
@@ -166,9 +150,6 @@ def fig_combined_overview_and_raincloud(df):
     fig.subplots_adjust(left=0.07, right=0.95, top=0.96, bottom=0.14, hspace=0.55)
 
     save(fig, "final_3954_lhs_overview")
-
-
-########### RUN THE WHOLE THING ############
 
 df = load_data()
 # fig4_diego_vs_shaberi(df)

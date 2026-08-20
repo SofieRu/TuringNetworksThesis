@@ -197,13 +197,13 @@ def run_analysis(config_id, n_samples):
     print(f"Testing {len(SIGMA_VALUES)} sigma values with {n_samples:,} samples each")
     print(f"=" * 70)
     
-    # Store results for all sigma values
+    # results for all sigma values
     results_by_sigma = []
     
     for sigma_idx, sigma in enumerate(SIGMA_VALUES):
-        np.random.seed(42)  # Same seed for all configs for fair comparison
+        np.random.seed(42)  # same seed for all configs for fair comparison
         
-        # Initialize counters
+        # counters
         stable = 0
         diego_turing = 0
         shaberi_total = 0
@@ -212,22 +212,22 @@ def run_analysis(config_id, n_samples):
         shaberi_hopf = 0
         filter_count = 0
         
-        # Main loop
+        # loop
         for i in range(n_samples):
             J = generate_jacobian_1838(sigma)
             eigs_0 = eigvals(J)
 
-            if np.max(np.real(eigs_0)) < 0:  #Use existing eigenvalues!
+            if np.max(np.real(eigs_0)) < 0:  # use existing eigenvalues!
                 stable += 1
                 
-                # Diego method
+                # diego method
                 if is_turing_diego(J, DU, DV, DW):
                     diego_turing += 1
                 
-                # Shaberi method
+                # shaberi method
                 turing_type = is_turing_shaberi(J, eigs_0, DU, DV, DW)
                 
-                if turing_type is not None: # NEW, do not count Hopf as Turing for Shaberi
+                if turing_type is not None: # do not count Hopf as Turing for Shaberi
                     if turing_type == 'Hopf':
                         shaberi_hopf += 1
                     else:
@@ -239,17 +239,17 @@ def run_analysis(config_id, n_samples):
                         elif turing_type == 'Filter':
                             filter_count += 1
                     
-            # Progress indicator
+            # progress indicator
             if (i + 1) % 100000 == 0:
                 print(f"  [sig={sigma:.1f}] {i+1:,}/{n_samples:,} | Stable: {stable} | "
                       f"Diego: {diego_turing} | Shaberi: {shaberi_total}")
         
-        # Calculate robustness
+        # robustness score
         rob_diego = 100 * diego_turing / n_samples
         rob_shaberi_total = 100 * shaberi_total / n_samples
         rob_shaberi_type_I = 100 * shaberi_type_I / n_samples
         
-        # Store results for this sigma
+        # store results for this sigma
         sigma_result = {
             "sigma": sigma,
             "n_samples": n_samples,
@@ -267,7 +267,7 @@ def run_analysis(config_id, n_samples):
 
         results_by_sigma.append(sigma_result)
     
-    # Create summary results
+    # summary results
     results = {
         "config_name": config_name,
         "config_id": config_id,
@@ -292,12 +292,12 @@ if __name__ == "__main__":
     
     results = run_analysis(config_id, n_samples)
     
-    # Save as pickle
+    # save pickle
     output_pkl = f"results/{results['config_name']}_1mio.pkl"
     with open(output_pkl, 'wb') as f:
         pickle.dump(results, f)
     
-    # Save as CSV (flatten sigma results)
+    # save as CSV 
     csv_rows = []
     for sigma_result in results['results_by_sigma']:
         row = {
@@ -324,7 +324,7 @@ if __name__ == "__main__":
     output_csv = f"results/{results['config_name']}_100k.csv"
     pd.DataFrame(csv_rows).to_csv(output_csv, index=False)
     
-    # Print summary
+    # summary
     print(f"\n{'='*70}")
     print(f"COMPLETED: {results['config_name']}")
     print(f"{'='*70}")

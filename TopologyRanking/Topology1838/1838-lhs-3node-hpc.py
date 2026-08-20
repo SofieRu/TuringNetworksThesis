@@ -7,7 +7,6 @@ import pandas as pd
 from scipy.optimize import fsolve
 from scipy.stats import qmc
 
-# Create directories (for local testing)
 os.makedirs("results", exist_ok=True)
 os.makedirs("logs", exist_ok=True)
 
@@ -16,7 +15,6 @@ os.makedirs("logs", exist_ok=True)
 # HILL FUNCTIONS AND ODE SYSTEM
 
 n = 2
-
 def hill_activation(X, K):
     return X**n / (K**n + X**n)
 
@@ -60,15 +58,15 @@ def compute_jacobian(state, params):
     alpha_w, beta_w, K_vw, K_uw, K_ww, delta_w = params[9:15]
 
     J = np.zeros((3, 3))
-    J[0, 0] = -delta_u                  # no self-regulation
+    J[0, 0] = -delta_u       # no self-regulation
     J[0, 1] = beta_u * dH_act(v, K_vu)  # V activates U
-    J[0, 2] = 0                         # W has no effect on U
-    J[1, 0] = beta_v * dH_act(u, K_uv) * hill_inhibition(w, K_wv)   # U activates V
-    J[1, 1] = -delta_v                                              # no self-regulation
-    J[1, 2] = beta_v * hill_activation(u, K_uv) * dH_inh(w, K_wv)   # W inhibits V
-    J[2, 0] = beta_w * hill_activation(v, K_vw) * dH_inh(u, K_uw) * hill_inhibition(w, K_ww)            # A inhibits C
-    J[2, 1] = beta_w * dH_act(v, K_vw) * hill_inhibition(u, K_uw) * hill_inhibition(w, K_ww)            # B activates C
-    J[2, 2] = beta_w * hill_activation(v, K_vw) * hill_inhibition(u, K_uw) * dH_inh(w, K_ww) - delta_w  # W self-inhibits
+    J[0, 2] = 0  # W has no effect on U
+    J[1, 0] = beta_v * dH_act(u, K_uv) * hill_inhibition(w, K_wv)  # U activates V
+    J[1, 1] = -delta_v                                         
+    J[1, 2] = beta_v * hill_activation(u, K_uv) * dH_inh(w, K_wv)  # W inhibits V
+    J[2, 0] = beta_w * hill_activation(v, K_vw) * dH_inh(u, K_uw) * hill_inhibition(w, K_ww)   
+    J[2, 1] = beta_w * dH_act(v, K_vw) * hill_inhibition(u, K_uw) * hill_inhibition(w, K_ww)  
+    J[2, 2] = beta_w * hill_activation(v, K_vw) * hill_inhibition(u, K_uw) * dH_inh(w, K_ww) - delta_w 
 
     return J
 
@@ -102,13 +100,13 @@ def is_turing_diego(J, DU, DV, DW):
 
 
 def is_turing_shaberi(J, eigs_0, DU, DV, DW):
-    # STEP 1: Homogeneous steady state must be stable
+    # STEP 1 homogeneous steady state must be stable
     if np.max(np.real(eigs_0)) >= 0:
         return None
     
-    # STEP 2: Sweep k ∈ [0, 10] with step 0.01 (Shaberi 2025 methodology)
+    # k from 0.01 to 10.01 in steps of 0.01
     D = np.diag([DU, DV, DW])
-    k_values = np.arange(0.01, 10.01, 0.01) # change later back to 0.01
+    k_values = np.arange(0.01, 10.01, 0.01)
     
     max_reals = np.zeros(len(k_values))
     has_complex_unstable = False
@@ -129,16 +127,16 @@ def is_turing_shaberi(J, eigs_0, DU, DV, DW):
     if has_complex_unstable:
         return 'Hopf'
     
-    # STEP 3: Type-I = restabilises (goes negative) by k=10
+    # (goes negative) by k=10
     if max_reals[-1] < 0:
         return 'Type-I'
     
-    # STEP 4: Distinguish Filter from Type-II by peak location
-    # Filter (Diego 2018): monotonic — max sits at the END of the range
-    # Type-II: has an interior peak — max is somewhere in the middle
+    # peak location
+    # Filter monotonic
+    # interior peak 
     max_idx = np.argmax(max_reals)
     
-    # Allow a tiny buffer for floating-point noise (last 0.2% of range)
+    # buffer for floating-point noise (last 0.2% of range)
     if max_idx >= len(k_values) - 2:
         return 'Filter'
     return 'Type-II'
@@ -210,28 +208,26 @@ def run_analysis(config_id, n_samples):
     config_name = config["name"]
     
     print(f"Starting {config_name}: dU={DU}, dV={DV}, dW={DW}, n_samples={n_samples:,}")
-    
-    # Parameter ranges
 
     param_ranges = [
-        (0.001, 0.1),  # alpha_A
-        (0.1, 10),     # beta_A
-        (0.01, 1),     # K_BA
-        (0.01, 1),     # delta_A
-        (0.001, 0.1),  # alpha_B
-        (0.1, 10),     # beta_B
-        (0.01, 1),     # K_AB
-        (0.01, 1),     # K_CB
-        (0.01, 1),     # delta_B
-        (0.001, 0.1),  # alpha_C
-        (0.1, 10),     # beta_C
-        (0.01, 1),     # K_BC
-        (0.01, 1),     # K_AC
-        (0.01, 1),     # K_CC
-        (0.01, 1),     # delta_C
+        (0.001, 0.1), # alpha_A
+        (0.1, 10),  # beta_A
+        (0.01, 1), # K_BA
+        (0.01, 1),  # delta_A
+        (0.001, 0.1), # alpha_B
+        (0.1, 10), # beta_B
+        (0.01, 1),  # K_AB
+        (0.01, 1), # K_CB
+        (0.01, 1),  # delta_B
+        (0.001, 0.1), # alpha_C
+        (0.1, 10),  # beta_C
+        (0.01, 1),   # K_BC
+        (0.01, 1), # K_AC
+        (0.01, 1),   # K_CC
+        (0.01, 1),  # delta_C
     ]
     
-    # Generate LHS samples
+    # LHS samples
     sampler = qmc.LatinHypercube(d=15, seed=42)
     samples = sampler.random(n=n_samples)
     params_log = np.zeros((n_samples, 15))
@@ -241,7 +237,7 @@ def run_analysis(config_id, n_samples):
         log_max = np.log10(param_ranges[i][1])
         params_log[:, i] = 10**(log_min + samples[:, i] * (log_max - log_min))
     
-    # Initialize counters
+    # counters
     steady_states = 0
     stable_without_diffusion = 0
     diego_turing = 0
@@ -250,7 +246,7 @@ def run_analysis(config_id, n_samples):
     shaberi_type_II = 0
     shaberi_hopf = 0
     
-    # Main loop
+    # loop
     np.random.seed(42)
     for i in range(n_samples):
         params = params_log[i]
@@ -260,17 +256,17 @@ def run_analysis(config_id, n_samples):
             steady_states += 1
             J = compute_jacobian(steady, params)
             
-            # Compute eigenvalues ONCE
+            # compute eigenvalues ONCE
             eigs_0 = np.linalg.eigvals(J)
             
             if np.max(np.real(eigs_0)) < 0:
                 stable_without_diffusion += 1
                 
-                # Diego (uses trace/det only)
+                # (uses trace/det only)
                 if is_turing_diego(J, DU, DV, DW):
                     diego_turing += 1
                 
-                # Shaberi (reuses eigs_0)
+                # shaberi (reuses eigs_0)
                 turing_type = is_turing_shaberi(J, eigs_0, DU, DV, DW)
                 
                 if turing_type is not None:
@@ -282,12 +278,12 @@ def run_analysis(config_id, n_samples):
                     elif turing_type == 'Hopf':
                         shaberi_hopf += 1
         
-        # Progress tracking
+        # progress tracking
         if (i + 1) % 100000 == 0:
             print(f"[{config_name}] {i+1:,}/{n_samples:,} | Stable: {stable_without_diffusion} | "
                   f"Diego: {diego_turing} | Shaberi: {shaberi_total}")
     
-    # Calculate robustness
+    # robustness score
     rob_diego = 100 * diego_turing / n_samples
     rob_shaberi_total = 100 * shaberi_total / n_samples
     rob_shaberi_type_I = 100 * shaberi_type_I / n_samples
@@ -330,12 +326,12 @@ if __name__ == "__main__":
     
     results = run_analysis(config_id, n_samples)
     
-    # Save as pickle (for Python)
+    # save as pickle
     output_pkl = f"results/{results['config_name']}_1mio.pkl"
     with open(output_pkl, 'wb') as f:
         pickle.dump(results, f)
     
-    # Save as CSV (for Excel)
+    # save as CSV
     results_flat = {
         'config_name': results['config_name'],
         'config_id': results['config_id'],
@@ -358,7 +354,7 @@ if __name__ == "__main__":
     output_csv = f"results/{results['config_name']}_1mio.csv"
     pd.DataFrame([results_flat]).to_csv(output_csv, index=False)
     
-    # Print summary
+    # summary
     print(f"\n{'='*70}")
     print(f"COMPLETED: {results['config_name']}")
     print(f"{'='*70}")

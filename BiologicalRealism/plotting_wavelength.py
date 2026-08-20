@@ -61,31 +61,24 @@ def compute_jacobian(state, params):
     
     return J
 
-CSV_PATH = '../TopologyRanking/Topology3954/3954_FINAL_lhs_results_parameters.csv'
+csv_path = '../TopologyRanking/Topology3954/3954_FINAL_lhs_results_parameters.csv'
+config_per_category = {'Type-I': 49, 'Type-II': 46, 'Hopf': 48, 'Filter': 55,}
 
-CONFIG_PER_CATEGORY = {
-    'Type-I':  49,
-    'Type-II': 46,
-    'Hopf':    48,
-    'Filter':  55,
-}
-
-COLOR_PER_CATEGORY = {
+color_per_category = {
     'Type-I':  'steelblue',
     'Type-II': 'mediumvioletred',
     'Hopf':    'darkorange',
     'Filter':  'seagreen',
 }
 
-N_SAMPLES_PER_TYPE = 2
-SEED = 42
-df = pd.read_csv(CSV_PATH)
+n_samples_per_type = 2
+seed = 42
+df = pd.read_csv(csv_path)
 
-categories = list(CONFIG_PER_CATEGORY.keys())
-
+categories = list(config_per_category.keys())
 samples_per_category = {}
-K_PEAK_FILTER = 0.3
-MAX_SEARCH_DEPTH = 100
+k_peak_filter = 0.3
+max_search_depth = 100
 
 k_values = np.arange(0.01, 20.01, 0.05)
 
@@ -103,14 +96,12 @@ def find_peak_k(row, dU, dV, dW):
     for k in k_values:
         M = J - k**2 * D
         max_reals.append(np.max(np.real(np.linalg.eigvals(M))))
-    
     return k_values[np.argmax(max_reals)]
 
 
 for category in categories:
-    config_id = CONFIG_PER_CATEGORY[category]
-    subset = df[(df['config_id'] == config_id) &
-                (df['classification'] == category)]
+    config_id = config_per_category[category]
+    subset = df[(df['config_id'] == config_id) & (df['classification'] == category)]
     
     if len(subset) == 0:
         samples_per_category[category] = None
@@ -122,45 +113,43 @@ for category in categories:
     config_name = subset['config_name'].iloc[0]
     
     if category in ('Type-I', 'Type-II'):
-        # Filter for samples with peak k < K_PEAK_FILTER
-        sorted_subset = subset.sort_values('param_rank').head(MAX_SEARCH_DEPTH)
+        # filter for samples with peak k < k_peak_filter
+        sorted_subset = subset.sort_values('param_rank').head(max_search_depth)
         selected = []
         
         for _, row in sorted_subset.iterrows():
             peak_k = find_peak_k(row, dU, dV, dW)
-            if peak_k < K_PEAK_FILTER:
+            if peak_k < k_peak_filter:
                 selected.append(row)
-                if len(selected) >= N_SAMPLES_PER_TYPE:
+                if len(selected) >= n_samples_per_type:
                     break
         
         if selected:
             samples_per_category[category] = pd.DataFrame(selected)
         else:
-            samples_per_category[category] = subset.sort_values('param_rank').head(N_SAMPLES_PER_TYPE)
+            samples_per_category[category] = subset.sort_values('param_rank').head(n_samples_per_type)
 
     else:
-        samples_per_category[category] = subset.sort_values('param_rank').head(N_SAMPLES_PER_TYPE)
+        samples_per_category[category] = subset.sort_values('param_rank').head(n_samples_per_type)
 
 # PLOT
-fig, axes = plt.subplots(N_SAMPLES_PER_TYPE, len(categories),figsize=(12.8, 6.2))
-
+fig, axes = plt.subplots(n_samples_per_type, len(categories),figsize=(12.8, 6.2))
 for col_idx, category in enumerate(categories):
     samples = samples_per_category[category]
     
     if samples is None:
-        # No samples available — blank out this column
-        for row_idx in range(N_SAMPLES_PER_TYPE):
+        for row_idx in range(n_samples_per_type):
             axes[row_idx, col_idx].axis('off')
             axes[row_idx, col_idx].set_title(f"{category}\n(no samples)",fontsize=14)
         continue
     
-    config_id = CONFIG_PER_CATEGORY[category]
+    config_id = config_per_category[category]
     dU = samples['dU'].iloc[0]
     dV = samples['dV'].iloc[0]
     dW = samples['dW'].iloc[0]
     D = np.diag([dU, dV, dW])
     
-    for row_idx in range(N_SAMPLES_PER_TYPE):
+    for row_idx in range(n_samples_per_type):
         ax = axes[row_idx, col_idx]
         
         if row_idx >= len(samples):
@@ -175,7 +164,7 @@ for col_idx, category in enumerate(categories):
         ])
         ss = np.array([row['u_star'], row['v_star'], row['w_star']])
         
-        # Compute dispersion
+        # dispersion
         J = compute_jacobian(ss, params)
         max_reals = np.zeros(len(k_values))
         for i, k in enumerate(k_values):
@@ -184,7 +173,7 @@ for col_idx, category in enumerate(categories):
         
         # Plot
         #ax.plot(k_values, max_reals, 'b-', linewidth=2) # just one colour blue
-        ax.plot(k_values, max_reals, color=COLOR_PER_CATEGORY[category], linewidth=2.2)
+        ax.plot(k_values, max_reals, color=color_per_category[category], linewidth=2.2)
         ax.axhline(0, color='red', linestyle='--', alpha=0.6, linewidth=2)
         
         # Mark peak
@@ -199,11 +188,7 @@ for col_idx, category in enumerate(categories):
         ax.grid(alpha=0.5)
 
 fig.suptitle('Dispersion Relations for Each Classified Turing Instability Type', fontsize=18, y=0.98)
-
-fig.subplots_adjust(left=0.06, right=0.96, top=0.88, bottom=0.08, 
-    wspace=0.3,  # Close horizontal gap
-    hspace=0.4   # Vertical gap for titles
-)
+fig.subplots_adjust(left=0.06, right=0.96, top=0.88, bottom=0.08, wspace=0.3, hspace=0.)
 
 plt.tight_layout()
 plt.savefig('thesis_classifier_validation.png', dpi=300, bbox_inches='tight')

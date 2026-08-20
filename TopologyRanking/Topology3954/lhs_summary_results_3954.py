@@ -7,14 +7,11 @@ import pandas as pd
 
 result_files = sorted(glob.glob('results/FINAL_LHS_3954_*_1mio_with_params.pkl'))
 
-# PART 1: SUMMARY CSV (one row per configuration)
-
 all_results = []
 for filepath in result_files:
     with open(filepath, 'rb') as f:
         result = pickle.load(f)
         
-        # Flatten ONLY the summary stats (not the parameter arrays!)
         row = {
             'config_name': result['config_name'],
             'config_id': result['config_id'],
@@ -36,7 +33,6 @@ for filepath in result_files:
         }
         all_results.append(row)
 
-# Create DataFrame
 df = pd.DataFrame(all_results)
 df = df.sort_values('config_id', ascending=True)
 
@@ -44,21 +40,18 @@ df = df.sort_values('config_id', ascending=True)
 df.to_csv('3954_FINAL_lhs_results_summary.csv', index=False)
 print("\nSaved to: 3954_FINAL_lhs_results_summary.csv")
 
-# PART 2: DETAILED CSV (one row per saved parameter set)
-
 all_params = []
 for filepath in result_files:
     with open(filepath, 'rb') as f:
         result = pickle.load(f)
         
-        # Check if this config saved parameters
         if 'successful_params' in result and result['successful_params']:
             
             for idx, param_set in enumerate(result['successful_params']):
                 params_array = param_set['params_array']
                 steady_state = param_set['steady_state']
                 
-                # Create one row with all info
+                # one row with all info
                 row = {
                     'config_name': result['config_name'],
                     'config_id': result['config_id'],

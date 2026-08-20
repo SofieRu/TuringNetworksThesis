@@ -58,7 +58,7 @@ def complete_robustness_figure(df, sigma_val):
     ax_avg = fig.add_subplot(gs[1, 0])
     ax_dot = fig.add_subplot(gs[1, 1])
 
-    # PANEL A: SIGMA VS ROBUSTNESS OVERVIEW (TOP ROW)
+    # PANEL A SIGMA VS ROBUSTNESS OVERVIEW (TOP ROW)
     stable = df.groupby('sigma')['stable_without_diffusion'].first()
     ax_stable.plot(stable.index, stable.values, color='black', linewidth=2, linestyle='--', zorder=5,)
     ax_stable.set_xticks(range(int(stable.index.min()), int(stable.index.max()) + 1))
@@ -86,7 +86,7 @@ def complete_robustness_figure(df, sigma_val):
     ax_rob.xaxis.grid(False)
     ax_stable.set_title('(A) Sigma vs Robustness and Stability Profile',fontsize=16,loc='left',pad=10,)
 
-    # PANEL B: FOCUSED AVERAGE ROBUSTNESS LINE (BOTTOM LEFT)
+    # PANEL B FOCUSED AVERAGE ROBUSTNESS LINE (BOTTOM LEFT)
     focused_df = df[(df['sigma'] >= 0.2) & (df['sigma'] <= 0.8)].copy()
     avg_df = (focused_df.groupby(['sigma', 'turing_type'])['rob_shaberi_total'].mean().reset_index())
     types = ['Type1', 'Type2', 'Type3']
@@ -108,7 +108,7 @@ def complete_robustness_figure(df, sigma_val):
     ax_avg.yaxis.grid(True)
     ax_avg.set_title('(B) Average Robustness by Type (σ = 0.2-0.8)',fontsize=16,loc='left',pad=10,)
 
-    # PANEL C: RAINCLOUD DOT PLOT AT FIXED SIGMA (BOTTOM RIGHT)
+    # PANEL C RAINCLOUD DOT PLOT AT FIXED SIGMA (BOTTOM RIGHT)
     subset_df = df[df['sigma'] == sigma_val].copy()
     dot_labels = ['Type 1', 'Type 2', 'Type 3']
     for i, t in enumerate(types):
@@ -162,9 +162,6 @@ def complete_robustness_figure(df, sigma_val):
     fig.suptitle('Random Matrix Theory Results, $5 \\times 10^5$ simulations\n' 'Robustness of different diffusion rate configurations for Topology #1838', fontsize=18, y=1.0,)
     fig.subplots_adjust(left=0.07, right=0.93, top=0.86, bottom=0.12, hspace=0.45, wspace=0.28,) # hspace is gap between Panel A and Panels B/C,  wspace is gap between Panels B and C
     save(fig, 'final_1838_rmt_overview_sigma')
-
-
-########### RUN THE WHOLE THING ############
 
 df = load_data()
 complete_robustness_figure(df, sigma_val=0.58)

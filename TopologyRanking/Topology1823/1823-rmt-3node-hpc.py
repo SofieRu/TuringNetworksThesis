@@ -17,36 +17,36 @@ os.makedirs("logs", exist_ok=True)
 # Topology: u activates v, u inhibits w, v inhibits u, v activates w, w activates v, w inhibits w
 
 adjacency_matrix_1823 = np.array([
-    [0, 1, 0],  # u affected by: v
-    [1, 0, 1],  # v affected by: u, w
-    [1, 1, 0],  # w affected by: u, v
+    [0, 1, 0],  # u affected by v
+    [1, 0, 1],  # v affected by u, w
+    [1, 1, 0],  # w affected by u, v
 ])
 
 def sign_constraints_1823(J):
-    J[0, 1] = -abs(J[0, 1])   # v inhibits u → NEGATIVE
-    J[1, 0] =  abs(J[1, 0])   # u activates v → POSITIVE
-    J[1, 2] =  abs(J[1, 2])   # w activates v → POSITIVE
-    J[2, 0] = -abs(J[2, 0])   # u inhibits w → NEGATIVE
-    J[2, 1] =  abs(J[2, 1])   # v activates w → POSITIVE
+    J[0, 1] = -abs(J[0, 1])   # v inhibits u -> NEGATIVE
+    J[1, 0] =  abs(J[1, 0])   # u activates v -> POSITIVE
+    J[1, 2] =  abs(J[1, 2])   # w activates v -> POSITIVE
+    J[2, 0] = -abs(J[2, 0])   # u inhibits w -> NEGATIVE
+    J[2, 1] =  abs(J[2, 1])   # v activates w -> POSITIVE
     return J
 
-# v → u : inhibition  → J[0,1] < 0
-# u → v : activation  → J[1,0] > 0
-# w → v : activation  → J[1,2] > 0
-# u → w : inhibition  → J[2,0] < 0
-# v → w : activation  → J[2,1] > 0
-# self-loops (w→w): handled by diagonal = -1
+# v -> u : inhibition  -> J[0,1] < 0
+# u -> v : activation  -> J[1,0] > 0
+# w -> v : activation  -> J[1,2] > 0
+# u -> w : inhibition  -> J[2,0] < 0
+# v -> w : activation  -> J[2,1] > 0
+# self-loops (w->w): handled by diagonal = -1
 
 def generate_jacobian_1823(sigma):
     
-    # Random matrix
+    # gaussian matrix thingy
     G = np.random.normal(0, sigma, (3, 3))
     np.fill_diagonal(G, 0)
     
     # J = G - I (diagonal becomes -1, self-decay)
     J = G - np.eye(3)
     
-    # Apply sparsity mask (off-diagonal only)
+    # (off-diagonal only)
     for i in range(3): 
         for j in range(3):
             if i != j and adjacency_matrix_1823[i, j] == 0:
@@ -69,9 +69,8 @@ def is_turing_diego(J, DU, DV, DW):
     if not (a1_0 > 0 and a3_0 > 0 and a1_0*a2_0 - a3_0 > 0):
         return False
     
-    # SUPPOSED TO BE 0.01 STEP, BUT INCREASED TO 0.1 FOR SPEED, CHANGE BACK LATER 
     D = np.diag([DU, DV, DW])
-    for k in np.arange(0.01, 10.01, 0.1):   
+    for k in np.arange(0.01, 10.01, 0.01):   
         M = J - k**2 * D
         a1 = -np.trace(M)
         a2 = (M[0,0]*M[1,1] - M[0,1]*M[1,0] +
@@ -85,13 +84,13 @@ def is_turing_diego(J, DU, DV, DW):
 
 
 def is_turing_shaberi(J, eigs_0, DU, DV, DW):
-    # STEP 1: Homogeneous steady state must be stable
+    # STEP 1 homogeneous steady state must be stable
     if np.max(np.real(eigs_0)) >= 0:
         return None
     
-    # STEP 2: Sweep k ∈ [0, 10] with step 0.01 (Shaberi 2025 methodology)
+    # STEP 2 sweep k[0, 10] with step 0.01
     D = np.diag([DU, DV, DW])
-    k_values = np.arange(0.01, 10.01, 0.1) # change later back to 0.01
+    k_values = np.arange(0.01, 10.01, 0.01) # change later back to 0.01
     
     max_reals = np.zeros(len(k_values))
     has_complex_unstable = False
@@ -112,16 +111,14 @@ def is_turing_shaberi(J, eigs_0, DU, DV, DW):
     if has_complex_unstable:
         return 'Hopf'
     
-    # STEP 3: Type-I = restabilises (goes negative) by k=10
+    # STEP 3 difference between type I and II
     if max_reals[-1] < 0:
         return 'Type-I'
     
-    # STEP 4: Distinguish Filter from Type-II by peak location
-    # Filter (Diego 2018): monotonic — max sits at the END of the range
-    # Type-II: has an interior peak — max is somewhere in the middle
+    # STEP 4 filter peaks at the end of the range
     max_idx = np.argmax(max_reals)
     
-    # Allow a tiny buffer for floating-point noise (last 0.2% of range)
+    # buffer for floating-point noise (last 0.2% of range)
     if max_idx >= len(k_values) - 2:
         return 'Filter'
     return 'Type-II'
@@ -184,7 +181,7 @@ DIFFUSION_CONFIGS = {
 #full range sigma values but to test we do less values
 SIGMA_VALUES = [0.1, 0.2, 0.3, 0.4, 0.5, 0.58, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.8, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 3.6, 3.8, 4.0, 4.5, 5.0, 5.5, 6.0, 7.0 , 8.0, 9.0, 10.0]
 
-# MAIN ANALYSIS FUNCTION
+# MAIN ANALYSIS
 def run_analysis(config_id, n_samples):
     
     config = DIFFUSION_CONFIGS[config_id]
@@ -195,13 +192,13 @@ def run_analysis(config_id, n_samples):
     print(f"Testing {len(SIGMA_VALUES)} sigma values with {n_samples:,} samples each")
     print(f"=" * 70)
     
-    # Store results for all sigma values
+    # results for all sigma values
     results_by_sigma = []
     
     for sigma_idx, sigma in enumerate(SIGMA_VALUES):
-        np.random.seed(42)  # Same seed for all configs for fair comparison
+        np.random.seed(42)  # same seed for all configs for fair comparison
         
-        # Initialize counters
+        # counters
         stable = 0
         diego_turing = 0
         shaberi_total = 0
@@ -210,22 +207,22 @@ def run_analysis(config_id, n_samples):
         shaberi_hopf = 0
         filter_count = 0
         
-        # Main loop
+        # main loop
         for i in range(n_samples):
             J = generate_jacobian_1823(sigma)
             eigs_0 = eigvals(J)
 
-            if np.max(np.real(eigs_0)) < 0:  #Use existing eigenvalues!
+            if np.max(np.real(eigs_0)) < 0:  # use existing eigenvalues!
                 stable += 1
                 
-                # Diego method
+                # diego method but will not use
                 if is_turing_diego(J, DU, DV, DW):
                     diego_turing += 1
                 
-                # Shaberi method
+                # shaberi method
                 turing_type = is_turing_shaberi(J, eigs_0, DU, DV, DW)
                 
-                if turing_type is not None: # NEW, do not count Hopf as Turing for Shaberi
+                if turing_type is not None: # do not count Hopf as Turing for Shaberi
                     if turing_type == 'Hopf':
                         shaberi_hopf += 1
                     else:
@@ -237,17 +234,17 @@ def run_analysis(config_id, n_samples):
                         elif turing_type == 'Filter':
                             filter_count += 1
                     
-            # Progress indicator
+            # progressss for the logs
             if (i + 1) % 100000 == 0:
                 print(f"  [sig={sigma:.1f}] {i+1:,}/{n_samples:,} | Stable: {stable} | "
                       f"Diego: {diego_turing} | Shaberi: {shaberi_total}")
         
-        # Calculate robustness
+        # robustness score
         rob_diego = 100 * diego_turing / n_samples
         rob_shaberi_total = 100 * shaberi_total / n_samples
         rob_shaberi_type_I = 100 * shaberi_type_I / n_samples
         
-        # Store results for this sigma
+        # results for this sigma
         sigma_result = {
             "sigma": sigma,
             "n_samples": n_samples,
@@ -265,7 +262,7 @@ def run_analysis(config_id, n_samples):
 
         results_by_sigma.append(sigma_result)
     
-    # Create summary results
+    # summary results
     results = {
         "config_name": config_name,
         "config_id": config_id,
@@ -290,12 +287,12 @@ if __name__ == "__main__":
     
     results = run_analysis(config_id, n_samples)
     
-    # Save as pickle
+    # save as pickle
     output_pkl = f"results/{results['config_name']}_1mio.pkl"
     with open(output_pkl, 'wb') as f:
         pickle.dump(results, f)
     
-    # Save as CSV (flatten sigma results)
+    # saveee as CSV (flatten sigma results)
     csv_rows = []
     for sigma_result in results['results_by_sigma']:
         row = {
@@ -322,7 +319,7 @@ if __name__ == "__main__":
     output_csv = f"results/{results['config_name']}_100k.csv"
     pd.DataFrame(csv_rows).to_csv(output_csv, index=False)
     
-    # Print summary
+    # summaryyyy
     print(f"\n{'='*70}")
     print(f"COMPLETED: {results['config_name']}")
     print(f"{'='*70}")

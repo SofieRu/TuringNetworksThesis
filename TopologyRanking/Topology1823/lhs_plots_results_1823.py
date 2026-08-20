@@ -69,7 +69,7 @@ def fig_combined_overview_and_raincloud(df):
     ax1.xaxis.grid(False)
     ax1.yaxis.grid(True)
 
-    # PANEL 2: RAINCLOUD DISTRIBUTION (ax2)
+    # PANEL 2 RAINCLOUD DISTRIBUTION (ax2)
     random.seed(42)
     types = ["Type1", "Type2", "Type3"]
     labels = ["Type 1", "Type 2", "Type 3"]
@@ -78,20 +78,6 @@ def fig_combined_overview_and_raincloud(df):
         subset = (df[df["turing_type"] == t]["rob_shaberi_total"].dropna().values)
 
         color = TYPE_COLORS[t]
-        # # violin distribution cloud
-        # kde = gaussian_kde(subset, bw_method=0.3)
-        # y_range = np.linspace(subset.min() - subset.std()*0.3, subset.max() + subset.std()*0.3, 200)
-        # #y_range = np.linspace(subset.min(), subset.max(), 200) # getting rid of the puffer
-        # kde_vals = kde(y_range)
-        # kde_vals = kde_vals / kde_vals.max() * 0.35
-        # ax2.fill_betweenx(y_range, i - kde_vals, i, color=color, alpha=1.0, linewidth=0)
-
-        # # mean bar inside the cloud
-        # mean_val = subset.mean() # new
-        # closest_idx = np.argmin(np.abs(y_range - mean_val))
-        # kde_at_mean = kde_vals[closest_idx]
-        # ax2.hlines(mean_val, i - kde_at_mean, i, color="black", linewidth=1.0, zorder=4) # linestyle="--",
-
         for val in subset:
             jitter = i + random.uniform(0.08, 0.35)
             marker = (
@@ -113,7 +99,7 @@ def fig_combined_overview_and_raincloud(df):
     ax2.set_xlim(-0.5, len(types) - 0.5)
     ax2.spines[["top", "right"]].set_visible(False)
 
-    # GLOBAL UNIFIED BOTTOM LEGENDS
+    # LEGENDS
     bar_handles =  [mpatches.Patch(color=c, label=t) for t, c in TYPE_COLORS.items()]
     rain_handles = [mlines.Line2D([],[],color="#313131",marker="o",linestyle="None",markersize=8,markeredgecolor="white",label="Equal Diffusion",),
                     mlines.Line2D([],[],color="#313131",marker="^",linestyle="None",markersize=8,markeredgecolor="white",label="Unequal Diffusion",),]
@@ -121,11 +107,7 @@ def fig_combined_overview_and_raincloud(df):
     fig.legend(handles=bar_handles,frameon=False,loc="lower center",bbox_to_anchor=(0.3, 0.02),ncol=3,fontsize=15) # title="Turing Type"
     fig.legend(handles=rain_handles,frameon=False,loc="lower center",bbox_to_anchor=(0.7, 0.02),ncol=2,fontsize=15) # title="Diffusion Variant",
     fig.subplots_adjust(left=0.07, right=0.95, top=0.96, bottom=0.14, hspace=0.5)
-
     save(fig, "final_1823_lhs_overview")
-
-
-########### RUN THE WHOLE THING ############
 
 df = load_data()
 fig_combined_overview_and_raincloud(df)
