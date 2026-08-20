@@ -8,7 +8,7 @@ All my code and simulations for this research project.
 
 ## Push Changes to GitHub
 
-How to commit my changes in VS Code:
+How to commit changes in VS Code:
 
 ```bash
 git status
@@ -23,7 +23,7 @@ git push origin main
 
 ## If git push origin main is rejected
 
-This usually means GitHub has newer changes that are not on your computer yet.
+This usually means GitHub has newer changes that are not synced yet.
 
 ```bash
 git status
